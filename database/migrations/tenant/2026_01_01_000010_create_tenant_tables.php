@@ -240,6 +240,30 @@ return new class extends Migration
             $table->enum('status_verifikasi', ['menunggu', 'diterima', 'ditolak'])->default('menunggu');
             $table->timestamps();
         });
+
+        // 23. Ekstrakurikuler
+        Schema::connection('tenant')->create('ekstrakurikuler', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_ekstrakurikuler', 150);
+            $table->text('deskripsi')->nullable();
+            $table->string('foto', 255)->nullable();
+            $table->string('hari_jadwal', 50)->nullable();
+            $table->string('waktu_jadwal', 50)->nullable();
+            $table->boolean('is_aktif')->default(true);
+            $table->timestamps();
+        });
+
+        // 24. Prestasi Siswa
+        Schema::connection('tenant')->create('prestasi_siswa', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_siswa', 150);
+            $table->string('nama_prestasi', 200);
+            $table->string('tingkat', 100)->nullable();
+            $table->date('tanggal')->nullable();
+            $table->string('foto', 255)->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -247,6 +271,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::connection('tenant')->dropIfExists('prestasi_siswa');
+        Schema::connection('tenant')->dropIfExists('ekstrakurikuler');
         Schema::connection('tenant')->dropIfExists('pendaftar_ppdb');
         Schema::connection('tenant')->dropIfExists('pengaturan_ppdb');
         Schema::connection('tenant')->dropIfExists('pesan_masuk');

@@ -74,112 +74,173 @@
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav x-data="{ open: false, scrolled: false }" 
-         @scroll.window="scrolled = (window.pageYOffset > 20)"
-         :class="{'bg-white shadow-md py-2': scrolled, 'bg-white/90 backdrop-blur-md py-4': !scrolled}" 
-         class="sticky top-0 z-50 transition-all duration-300 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <div class="flex items-center">
-                    <a href="{{ url(app('tenant')->slug) }}" class="flex items-center space-x-3 group">
-                        @if(!empty($sekolah['logo']))
-                            <img src="{{ $sekolah['logo'] }}" alt="Logo {{ $sekolah['nama'] ?? 'Sekolah' }}" class="h-12 w-auto object-contain">
-                        @else
-                            <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xl group-hover:bg-indigo-700 transition">
-                                {{ substr($sekolah['nama'] ?? 'S', 0, 1) }}
+        <!-- Navigation -->
+        <nav x-data="{ open: false, scrolled: false }" 
+             @scroll.window="scrolled = (window.pageYOffset > 20)"
+             :class="{'bg-white shadow-md py-2': scrolled, 'bg-white/90 backdrop-blur-md py-4': !scrolled}" 
+             class="sticky top-0 z-50 transition-all duration-300 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="{{ url(app('tenant')->slug) }}" class="flex items-center space-x-3 group">
+                            @if(!empty($sekolah['logo']))
+                                <img src="{{ $sekolah['logo'] }}" alt="Logo {{ $sekolah['nama'] ?? 'Sekolah' }}" class="h-12 w-auto object-contain">
+                            @else
+                                <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xl group-hover:bg-indigo-700 transition">
+                                    {{ substr($sekolah['nama'] ?? 'S', 0, 1) }}
+                                </div>
+                            @endif
+                            <div>
+                                <h1 class="font-heading font-bold text-xl leading-tight text-slate-900 group-hover:theme-text transition">{{ $sekolah['nama'] ?? 'SMK N 2 Bandung' }}</h1>
+                                <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">{{ $sekolah['slogan'] ?? 'Sekolah Pusat Keunggulan' }}</p>
                             </div>
-                        @endif
-                        <div>
-                            <h1 class="font-heading font-bold text-xl leading-tight text-slate-900 group-hover:theme-text transition">{{ $sekolah['nama'] ?? 'SMK N 2 Bandung' }}</h1>
-                            <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">{{ $sekolah['slogan'] ?? 'Sekolah Pusat Keunggulan' }}</p>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
+    
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-6">
+                        @php
+                            $navMenus = $menus ?? \App\Models\Tenant\Menu::whereNull('parent_id')
+                                ->where('is_aktif', true)
+                                ->with(['children' => function ($query) {
+                                    $query->where('is_aktif', true)->orderBy('urutan')
+                                          ->with(['children' => function ($q) {
+                                              $q->where('is_aktif', true)->orderBy('urutan');
+                                          }]);
+                                }])
+                                ->orderBy('urutan')
+                                ->get();
+                        @endphp
+    
+                        @foreach($navMenus as $menu)
+                            @php
+                                $path = ltrim($menu->url, '/');
+                                $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($path ? '/' . $path : ''));
+                            @endphp
+                            @if($menu->children->isEmpty())
+                                <a href="{{ $menuUrl }}" class="theme-text font-medium hover:text-indigo-600 transition">{{ $menu->name }}</a>
+                            @else
+                                <div class="relative" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                                    <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                                        {{ $menu->name }} <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div x-show="dropdownOpen" 
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 translate-y-1"
+                                         x-transition:enter-end="opacity-100 translate-y-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 translate-y-0"
+                                         x-transition:leave-end="opacity-0 translate-y-1"
+                                         style="display: none;" 
+                                         class="absolute top-full left-0 w-56 z-50 pt-2">
+                                        <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-visible py-2">
+                                            @foreach($menu->children as $child)
+                                                @php
+                                                    $childPath = ltrim($child->url, '/');
+                                                    $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($childPath ? '/' . $childPath : ''));
+                                                @endphp
+                                                @if($child->children->isEmpty())
+                                                    <a href="{{ $childUrl }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $child->name }}</a>
+                                                @else
+                                                    <!-- Sub-dropdown -->
+                                                    <div class="relative" x-data="{ subOpen: false }" @mouseenter="subOpen = true" @mouseleave="subOpen = false">
+                                                        <a href="{{ $childUrl }}" class="flex justify-between items-center px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 w-full text-left">
+                                                            {{ $child->name }}
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                                        </a>
+                                                        <div x-show="subOpen" 
+                                                             x-transition:enter="transition ease-out duration-200"
+                                                             x-transition:enter-start="opacity-0 -translate-x-2"
+                                                             x-transition:enter-end="opacity-100 translate-x-0"
+                                                             x-transition:leave="transition ease-in duration-150"
+                                                             x-transition:leave-start="opacity-100 translate-x-0"
+                                                             x-transition:leave-end="opacity-0 -translate-x-2"
+                                                             style="display: none;" 
+                                                             class="absolute left-full top-0 w-56 pl-1">
+                                                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                                                                @foreach($child->children as $subchild)
+                                                                    @php
+                                                                        $subPath = ltrim($subchild->url, '/');
+                                                                        $subchildUrl = $subchild->url === '#' ? '#' : url(app('tenant')->slug . ($subPath ? '/' . $subPath : ''));
+                                                                    @endphp
+                                                                    <a href="{{ $subchildUrl }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $subchild->name }}</a>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+    
+                        <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md shadow-indigo-200">
+                            PPDB 2026
+                        </a>
+                    </div>
+    
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button @click="open = !open" class="text-slate-600 hover:text-indigo-600 focus:outline-none">
+                            <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                            <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-6">
-                    @php
-                        $navMenus = $menus ?? \App\Models\Tenant\Menu::whereNull('parent_id')
-                            ->where('is_aktif', true)
-                            ->with(['children' => function ($query) {
-                                $query->where('is_aktif', true)->orderBy('urutan');
-                            }])
-                            ->orderBy('urutan')
-                            ->get();
-                    @endphp
-
+            </div>
+    
+            <!-- Mobile Menu Panel -->
+            <div x-show="open" x-transition.opacity style="display: none;" class="md:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full max-h-[80vh] overflow-y-auto">
+                <div class="px-4 pt-2 pb-6 space-y-1">
                     @foreach($navMenus as $menu)
                         @php
-                            $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($menu->url === '/' ? '' : (str_starts_with($menu->url, '/') ? $menu->url : '/' . $menu->url)));
+                            $path = ltrim($menu->url, '/');
+                            $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($path ? '/' . $path : ''));
                         @endphp
                         @if($menu->children->isEmpty())
-                            <a href="{{ $menuUrl }}" class="theme-text font-medium hover:text-indigo-600 transition">{{ $menu->name }}</a>
+                            <a href="{{ $menuUrl }}" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $menu->name }}</a>
                         @else
-                            <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                                <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
-                                    {{ $menu->name }} <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <div x-data="{ expanded: false }">
+                                <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                                    {{ $menu->name }} <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </button>
-                                <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
-                                    <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                        @foreach($menu->children as $child)
-                                            @php
-                                                $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($child->url === '/' ? '' : (str_starts_with($child->url, '/') ? $child->url : '/' . $child->url)));
-                                            @endphp
-                                            <a href="{{ $childUrl }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $child->name }}</a>
-                                        @endforeach
-                                    </div>
+                                <div x-show="expanded" x-transition.opacity class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                                    @foreach($menu->children as $child)
+                                        @php
+                                            $childPath = ltrim($child->url, '/');
+                                            $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($childPath ? '/' . $childPath : ''));
+                                        @endphp
+                                        @if($child->children->isEmpty())
+                                            <a href="{{ $childUrl }}" class="block py-2 text-sm text-slate-600 hover:text-indigo-600">{{ $child->name }}</a>
+                                        @else
+                                            <div x-data="{ subExpanded: false }" class="py-1">
+                                                <button @click="subExpanded = !subExpanded" class="w-full flex justify-between items-center py-2 text-sm text-slate-700 hover:text-indigo-600 font-medium">
+                                                    {{ $child->name }} <svg :class="{'rotate-180': subExpanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                </button>
+                                                <div x-show="subExpanded" x-transition.opacity class="pl-4 py-2 space-y-2 border-l-2 border-indigo-100 ml-2">
+                                                    @foreach($child->children as $subchild)
+                                                        @php
+                                                            $subPath = ltrim($subchild->url, '/');
+                                                            $subchildUrl = $subchild->url === '#' ? '#' : url(app('tenant')->slug . ($subPath ? '/' . $subPath : ''));
+                                                        @endphp
+                                                        <a href="{{ $subchildUrl }}" class="block text-sm text-slate-500 hover:text-indigo-600">{{ $subchild->name }}</a>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </div>
                         @endif
                     @endforeach
-
-                    <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md shadow-indigo-200">
-                        PPDB 2026
-                    </a>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button @click="open = !open" class="text-slate-600 hover:text-indigo-600 focus:outline-none">
-                        <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                        <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
+    
+                    <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700">Daftar PPDB</a>
                 </div>
             </div>
-        </div>
-
-        <!-- Mobile Menu Panel -->
-        <div x-show="open" style="display: none;" class="md:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full max-h-[80vh] overflow-y-auto">
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                @foreach($navMenus as $menu)
-                    @php
-                        $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($menu->url === '/' ? '' : (str_starts_with($menu->url, '/') ? $menu->url : '/' . $menu->url)));
-                    @endphp
-                    @if($menu->children->isEmpty())
-                        <a href="{{ $menuUrl }}" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $menu->name }}</a>
-                    @else
-                        <div x-data="{ expanded: false }">
-                            <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
-                                {{ $menu->name }} <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </button>
-                            <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                                @foreach($menu->children as $child)
-                                    @php
-                                        $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($child->url === '/' ? '' : (str_starts_with($child->url, '/') ? $child->url : '/' . $child->url)));
-                                    @endphp
-                                    <a href="{{ $childUrl }}" class="block text-sm text-slate-600 hover:text-indigo-600">{{ $child->name }}</a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-                @endforeach
-
-                <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700">Daftar PPDB</a>
-            </div>
-        </div>
-    </nav>
+        </nav>
 
     <!-- Main Content -->
     <main class="flex-grow">

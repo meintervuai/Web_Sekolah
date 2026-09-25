@@ -180,5 +180,5 @@ To update antislop later: `npx antislop-ai --update`, or run `npx antislop-ai` a
 1. Card Grid Layouts: Use responsive grid cards for listing items (like Jurusan, Berita, Galeri) instead of standard lists to match modern school portals.
 2. Hover Interactions: Implement smooth hover effects (transform: translateY, shadow-lg, and zoom images on hover) to increase engagement.
 3. Modals and Lightboxes: Use Alpine.js to build lightboxes for viewing gallery images to ensure a native and seamless feel.
-4. Mobile-first approach: Always design for mobile primarily using standard Tailwind breakpoints.
+4. Mobile-first approach: Always design for mobile primarily using standard Tailwind breakpoints. ATURAN MUTLAK: Jika di desktop menggunakan layout horizontal (misalnya grid kolom), maka di mobile wajib diubah menjadi horizontal carousel/slideshow atau bento grid. Selain itu, pastikan semua ukuran elemen (font, ukuran kartu, gambar, margin, padding, dll.) diperkecil dan disesuaikan untuk proporsi layar mobile.
 

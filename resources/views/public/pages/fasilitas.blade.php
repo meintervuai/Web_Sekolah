@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($fasilitas as $f)
             <div class="group rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300">
-                <div class="aspect-w-16 aspect-h-10 overflow-hidden relative">
+                <div class="aspect-video w-full overflow-hidden relative">
                     <img src="{{ $f->foto_utama }}" alt="{{ $f->nama_fasilitas }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">

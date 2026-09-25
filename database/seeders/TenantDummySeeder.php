@@ -39,6 +39,14 @@ class TenantDummySeeder extends Seeder
                 'gambar_banner' => 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1200&auto=format&fit=crop',
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'judul' => 'OSIS & MPK',
+                'slug' => 'osis',
+                'isi_konten' => '<p>Organisasi Siswa Intra Sekolah (OSIS) dan Majelis Perwakilan Kelas (MPK) adalah wadah pembinaan kesiswaan untuk mengembangkan minat, bakat, serta potensi kepemimpinan.</p><h3>Visi OSIS</h3><p>Mewujudkan siswa yang aktif, kreatif, inovatif, dan berakhlak mulia.</p>',
+                'gambar_banner' => 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200&auto=format&fit=crop',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ];
         $tenantDb->table('halaman_statis')->insert($halaman_statis);
@@ -139,6 +147,64 @@ class TenantDummySeeder extends Seeder
         ];
         $tenantDb->table('fasilitas')->insert($fasilitas);
 
+        // Ekstrakurikuler
+        $tenantDb->table('ekstrakurikuler')->truncate();
+        $ekskul = [
+            [
+                'nama_ekstrakurikuler' => 'Pramuka',
+                'deskripsi' => 'Ekstrakurikuler wajib untuk membangun karakter mandiri dan disiplin.',
+                'foto' => 'https://images.unsplash.com/photo-1542385151-efd9000785a0?q=80&w=800&auto=format&fit=crop',
+                'hari_jadwal' => 'Jumat',
+                'waktu_jadwal' => '14:00 - 16:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Paskibra',
+                'deskripsi' => 'Membentuk kedisiplinan dan rasa nasionalisme tinggi.',
+                'foto' => 'https://images.unsplash.com/photo-1563207153-f4087b0a7018?q=80&w=800&auto=format&fit=crop',
+                'hari_jadwal' => 'Rabu & Sabtu',
+                'waktu_jadwal' => '15:30 - 17:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_ekstrakurikuler' => 'PMR',
+                'deskripsi' => 'Palang Merah Remaja, melatih kepedulian sosial dan kesehatan.',
+                'foto' => 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800&auto=format&fit=crop',
+                'hari_jadwal' => 'Kamis',
+                'waktu_jadwal' => '15:30 - 17:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ];
+        $tenantDb->table('ekstrakurikuler')->insert($ekskul);
+
+        // Prestasi Siswa
+        $tenantDb->table('prestasi_siswa')->truncate();
+        $prestasi = [
+            [
+                'nama_siswa' => 'Budi Santoso',
+                'nama_prestasi' => 'Juara 1 Lomba Web Design Provinsi',
+                'tingkat' => 'Provinsi',
+                'tanggal' => '2026-05-15',
+                'deskripsi' => 'Budi berhasil memenangkan lomba Web Design antar SMK se-Jawa Barat.',
+                'foto' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_siswa' => 'Siti Aminah',
+                'nama_prestasi' => 'Medali Emas Olimpiade Jaringan Nasional',
+                'tingkat' => 'Nasional',
+                'tanggal' => '2026-08-20',
+                'deskripsi' => 'Siti meraih medali emas pada kompetisi instalasi jaringan tingkat nasional.',
+                'foto' => 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?q=80&w=800&auto=format&fit=crop',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        ];
+        $tenantDb->table('prestasi_siswa')->insert($prestasi);
         // Kalender Akademik
         $tenantDb->table('kalender_akademik')->truncate();
         $kalender = [
@@ -282,6 +348,13 @@ class TenantDummySeeder extends Seeder
             ['name' => 'Pengumuman', 'url' => '/informasi/pengumuman', 'parent_id' => $menuInformasiId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Agenda Kegiatan', 'url' => '/informasi/agenda', 'parent_id' => $menuInformasiId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Galeri', 'url' => '/informasi/galeri', 'parent_id' => $menuInformasiId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+        
+        $menuKesiswaanId = $tenantDb->table('menus')->insertGetId(['name' => 'Kesiswaan', 'url' => '#', 'type' => 'dropdown', 'urutan' => 5, 'created_at' => now(), 'updated_at' => now()]);
+        $tenantDb->table('menus')->insert([
+            ['name' => 'Organisasi Siswa (OSIS)', 'url' => '/kesiswaan/osis', 'parent_id' => $menuKesiswaanId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Ekstrakurikuler', 'url' => '/kesiswaan/ekstrakurikuler', 'parent_id' => $menuKesiswaanId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Prestasi Siswa', 'url' => '/kesiswaan/prestasi', 'parent_id' => $menuKesiswaanId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
         
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=1;');

@@ -36,6 +36,11 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     });
 });
 
+// Rute Publik Utama (Landing Page SaaS)
+Route::get('/', function () {
+    return view('welcome'); // Create a welcome.blade.php for the SaaS landing page
+})->name('landing');
+
 // Rute Publik Tenant
 Route::prefix('{tenant}')->middleware(\App\Http\Middleware\TenantMiddleware::class)->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -52,6 +57,12 @@ Route::prefix('{tenant}')->middleware(\App\Http\Middleware\TenantMiddleware::cla
         Route::get('/jurusan', [PageController::class, 'jurusan'])->name('jurusan');
         Route::get('/kurikulum', [PageController::class, 'kurikulum'])->name('kurikulum');
         Route::get('/kalender', [PageController::class, 'kalender'])->name('kalender');
+    });
+
+    Route::prefix('kesiswaan')->name('kesiswaan.')->group(function () {
+        Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('ekstrakurikuler');
+        Route::get('/prestasi', [PageController::class, 'prestasi'])->name('prestasi');
+        Route::get('/osis', [PageController::class, 'osis'])->name('osis');
     });
 
     Route::prefix('informasi')->name('informasi.')->group(function () {

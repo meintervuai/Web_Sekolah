@@ -105,4 +105,22 @@ class PageController extends Controller
         $album = DB::connection('tenant')->table('galeri_album')->get();
         return view('public.pages.galeri', ['sekolah' => $this->getSekolahData(), 'album' => $album]);
     }
+
+    public function ekstrakurikuler()
+    {
+        $ekstrakurikuler = DB::connection('tenant')->table('ekstrakurikuler')->where('is_aktif', true)->get();
+        return view('public.pages.ekstrakurikuler', ['sekolah' => $this->getSekolahData(), 'ekstrakurikuler' => $ekstrakurikuler]);
+    }
+
+    public function prestasi()
+    {
+        $prestasi = DB::connection('tenant')->table('prestasi_siswa')->orderBy('tanggal', 'desc')->get();
+        return view('public.pages.prestasi', ['sekolah' => $this->getSekolahData(), 'prestasi' => $prestasi]);
+    }
+
+    public function osis()
+    {
+        $halaman = Page::where('slug', 'osis')->first();
+        return view('public.pages.osis', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
+    }
 }
