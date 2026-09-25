@@ -103,12 +103,12 @@
                     <a href="/" class="theme-text font-medium hover:text-indigo-600 transition">Beranda</a>
                     
                     <!-- Dropdown Profil -->
-                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
-                            Profil <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                            Profil <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah Sekolah</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi, Misi & Tujuan</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Struktur Organisasi</a>
@@ -119,12 +119,12 @@
                     </div>
 
                     <!-- Dropdown Akademik -->
-                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
-                            Akademik <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                            Akademik <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kurikulum</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kalender Akademik</a>
@@ -133,12 +133,12 @@
                     </div>
 
                     <!-- Dropdown Kesiswaan -->
-                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
-                            Kesiswaan <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                            Kesiswaan <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">OSIS & MPK</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Ekstrakurikuler</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Prestasi Siswa</a>
@@ -147,12 +147,12 @@
                     </div>
 
                     <!-- Dropdown Informasi -->
-                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
-                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
-                            Informasi <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                            Informasi <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Berita & Artikel</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Pengumuman</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Agenda Kegiatan</a>
