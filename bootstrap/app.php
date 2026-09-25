@@ -12,7 +12,21 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->is('superadmin*')) {
+                return route('superadmin.login');
+            }
+
+            return route('superadmin.login');
+        });
+
+        $middleware->redirectUsersTo(function (Request $request) {
+            if (auth('superadmin')->check()) {
+                return route('superadmin.dashboard');
+            }
+
+            return route('superadmin.dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
