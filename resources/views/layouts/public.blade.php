@@ -109,11 +109,11 @@
                         </button>
                         <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
                             <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah Sekolah</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi, Misi & Tujuan</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Struktur Organisasi</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Fasilitas Sekolah</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
+                                <a href="{{ route('profil.sejarah') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah Sekolah</a>
+                                <a href="{{ route('profil.visi-misi') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi, Misi & Tujuan</a>
+                                <a href="{{ route('profil.struktur') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Struktur Organisasi</a>
+                                <a href="{{ route('profil.fasilitas') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Fasilitas Sekolah</a>
+                                <a href="{{ route('profil.guru') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
                             </div>
                         </div>
                     </div>
@@ -125,9 +125,9 @@
                         </button>
                         <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
                             <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kurikulum</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kalender Akademik</a>
+                                <a href="{{ route('akademik.jurusan') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
+                                <a href="{{ route('akademik.kurikulum') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kurikulum</a>
+                                <a href="{{ route('akademik.kalender') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kalender Akademik</a>
                             </div>
                         </div>
                     </div>
@@ -139,9 +139,9 @@
                         </button>
                         <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
                             <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">OSIS & MPK</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Ekstrakurikuler</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Prestasi Siswa</a>
+                                <a href="{{ route('kesiswaan.osis') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">OSIS & MPK</a>
+                                <a href="{{ route('kesiswaan.ekstrakurikuler') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Ekstrakurikuler</a>
+                                <a href="{{ route('kesiswaan.prestasi') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Prestasi Siswa</a>
                             </div>
                         </div>
                     </div>
@@ -153,10 +153,10 @@
                         </button>
                         <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
                             <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Berita & Artikel</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Pengumuman</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Agenda Kegiatan</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Galeri</a>
+                                <a href="{{ route('informasi.berita') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Berita & Artikel</a>
+                                <a href="{{ route('informasi.pengumuman') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Pengumuman</a>
+                                <a href="{{ route('informasi.agenda') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Agenda Kegiatan</a>
+                                <a href="{{ route('informasi.galeri') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Galeri</a>
                             </div>
                         </div>
                     </div>
@@ -186,11 +186,11 @@
                         Profil <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Sejarah Sekolah</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Visi, Misi & Tujuan</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Struktur Organisasi</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Fasilitas Sekolah</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
+                        <a href="{{ route('profil.sejarah') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Sejarah Sekolah</a>
+                        <a href="{{ route('profil.visi-misi') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Visi, Misi & Tujuan</a>
+                        <a href="{{ route('profil.struktur') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Struktur Organisasi</a>
+                        <a href="{{ route('profil.fasilitas') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Fasilitas Sekolah</a>
+                        <a href="{{ route('profil.guru') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
                     </div>
                 </div>
 
@@ -199,9 +199,9 @@
                         Akademik <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Kurikulum</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Kalender Akademik</a>
+                        <a href="{{ route('akademik.jurusan') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
+                        <a href="{{ route('akademik.kurikulum') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Kurikulum</a>
+                        <a href="{{ route('akademik.kalender') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Kalender Akademik</a>
                     </div>
                 </div>
 
@@ -210,9 +210,9 @@
                         Kesiswaan <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">OSIS & MPK</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Ekstrakurikuler</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Prestasi Siswa</a>
+                        <a href="{{ route('kesiswaan.osis') }}" class="block text-sm text-slate-600 hover:text-indigo-600">OSIS & MPK</a>
+                        <a href="{{ route('kesiswaan.ekstrakurikuler') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Ekstrakurikuler</a>
+                        <a href="{{ route('kesiswaan.prestasi') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Prestasi Siswa</a>
                     </div>
                 </div>
 
@@ -221,10 +221,10 @@
                         Informasi <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Berita & Artikel</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Pengumuman</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Agenda Kegiatan</a>
-                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Galeri</a>
+                        <a href="{{ route('informasi.berita') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Berita & Artikel</a>
+                        <a href="{{ route('informasi.pengumuman') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Pengumuman</a>
+                        <a href="{{ route('informasi.agenda') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Agenda Kegiatan</a>
+                        <a href="{{ route('informasi.galeri') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Galeri</a>
                     </div>
                 </div>
 

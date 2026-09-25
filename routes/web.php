@@ -6,9 +6,37 @@ use App\Http\Controllers\Central\TenantController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Tenant\Public\HomeController;
+use App\Http\Controllers\Tenant\Public\PageController;
 
-// Rute Publik Tenant Sementara (untuk demo tampilan)
+// Rute Publik Tenant
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::prefix('profil')->name('profil.')->group(function () {
+    Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah');
+    Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi');
+    Route::get('/struktur-organisasi', [PageController::class, 'struktur'])->name('struktur');
+    Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
+    Route::get('/guru', [PageController::class, 'guru'])->name('guru');
+});
+
+Route::prefix('akademik')->name('akademik.')->group(function () {
+    Route::get('/jurusan', [PageController::class, 'jurusan'])->name('jurusan');
+    Route::get('/kurikulum', [PageController::class, 'kurikulum'])->name('kurikulum');
+    Route::get('/kalender', [PageController::class, 'kalender'])->name('kalender');
+});
+
+Route::prefix('kesiswaan')->name('kesiswaan.')->group(function () {
+    Route::get('/osis', [PageController::class, 'osis'])->name('osis');
+    Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('ekstrakurikuler');
+    Route::get('/prestasi', [PageController::class, 'prestasi'])->name('prestasi');
+});
+
+Route::prefix('informasi')->name('informasi.')->group(function () {
+    Route::get('/berita', [PageController::class, 'berita'])->name('berita');
+    Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
+    Route::get('/agenda', [PageController::class, 'agenda'])->name('agenda');
+    Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+});
 
 // Grup Rute Super Admin (Central)
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
