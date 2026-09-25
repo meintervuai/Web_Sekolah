@@ -5,10 +5,10 @@ use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root to superadmin dashboard or login
-Route::get('/', function () {
-    return redirect()->route('superadmin.login');
-});
+use App\Http\Controllers\Tenant\Public\HomeController;
+
+// Rute Publik Tenant Sementara (untuk demo tampilan)
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Grup Rute Super Admin (Central)
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
