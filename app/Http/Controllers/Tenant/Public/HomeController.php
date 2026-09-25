@@ -4,48 +4,67 @@ namespace App\Http\Controllers\Tenant\Public;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\Tenant\PengaturanUmum;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Dummy data based on the database schema requirements
-        $sekolah = [
-            'nama' => 'SMK Negeri 2 Bandung',
-            'alamat' => 'Jl. Ciliwung No.4, Cihapit, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40114',
-            'telepon' => '(022) 7234285',
-            'email' => 'info@smkn2bandung.sch.id',
-            'deskripsi' => 'Sekolah Menengah Kejuruan Negeri 2 Bandung berkomitmen mencetak lulusan yang unggul, berkarakter, dan siap kerja di era industri 4.0.',
-            'sambutan' => 'Selamat datang di website resmi SMK Negeri 2 Bandung. Kami terus berinovasi dalam memberikan pendidikan vokasi terbaik bagi putra-putri bangsa.',
-            'kepsek' => 'Hasanudin, S.Pd., M.Pd.'
+        $sekolah = app('tenant');
+
+        if (!$sekolah) {
+            abort(404, 'Tenant tidak ditemukan.');
+        }
+
+        // Format data for the view using PengaturanUmum
+        $sekolahData = [
+            'nama' => PengaturanUmum::ambil('nama_sekolah', $sekolah->nama_sekolah),
+            'jenjang' => $sekolah->jenjang,
+            'slogan' => PengaturanUmum::ambil('slogan', $sekolah->jenjang === 'SMK' ? 'Sekolah Pusat Keunggulan' : 'Membangun Generasi Berprestasi'),
+            'alamat' => PengaturanUmum::ambil('alamat', $sekolah->data['alamat'] ?? ''),
+            'telepon' => PengaturanUmum::ambil('no_telepon', $sekolah->data['telepon'] ?? ''),
+            'email' => PengaturanUmum::ambil('email_sekolah', $sekolah->data['email'] ?? ''),
+            'deskripsi' => PengaturanUmum::ambil('deskripsi', 'Website resmi ' . $sekolah->nama_sekolah),
+            'sambutan' => PengaturanUmum::ambil('sambutan_kepsek', 'Selamat datang di website resmi ' . $sekolah->nama_sekolah . '.'),
+            'kepsek' => PengaturanUmum::ambil('nama_kepsek', 'Kepala Sekolah'),
+            'foto_kepsek' => PengaturanUmum::ambil('foto_kepsek', ''),
+            'logo' => PengaturanUmum::ambil('logo', ''),
+            'warna_tema' => PengaturanUmum::ambil('warna_tema', '#4F46E5'),
+            'stat_siswa' => PengaturanUmum::ambil('stat_siswa', '0'),
+            'stat_guru' => PengaturanUmum::ambil('stat_guru', '0'),
+            'stat_prestasi' => PengaturanUmum::ambil('stat_prestasi', '0'),
+            'stat_alumni' => PengaturanUmum::ambil('stat_alumni', '0'),
         ];
 
-        $slider = [
-            [
-                'gambar' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop',
-                'judul' => 'Generasi Vokasi Berprestasi',
-                'subjudul' => 'Membangun masa depan gemilang dengan keterampilan kompeten dan karakter kuat.'
-            ],
-            [
-                'gambar' => 'https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=2086&auto=format&fit=crop',
-                'judul' => 'Fasilitas Praktik Modern',
-                'subjudul' => 'Didukung dengan laboratorium dan bengkel berstandar industri.'
-            ]
-        ];
+        // Fetch from tenant database (fallback to empty arrays if tables are not fully populated)
+        $slider = DB::connection('tenant')->table('slider_beranda')->where('is_aktif', true)->orderBy('urutan')->get();
+        
+        if ($slider->isEmpty()) {
+            // Default slider if empty
+            $slider = collect([
+                (object)[
+                    'gambar' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop',
+                    'judul' => 'Generasi Vokasi Berprestasi',
+                    'subjudul' => 'Membangun masa depan gemilang dengan keterampilan kompeten dan karakter kuat.',
+                    'link_tombol' => '#',
+                    'teks_tombol' => 'Jelajahi'
+                ]
+            ]);
+        }
 
-        $jurusan = [
-            ['nama' => 'Teknik Komputer dan Jaringan', 'ikon' => '🖥️', 'deskripsi' => 'Mempelajari perangkat keras, perakitan komputer, jaringan, dan keamanan siber.'],
-            ['nama' => 'Rekayasa Perangkat Lunak', 'ikon' => '💻', 'deskripsi' => 'Fokus pada pengembangan aplikasi berbasis web, mobile, dan desktop.'],
-            ['nama' => 'Teknik Mesin', 'ikon' => '⚙️', 'deskripsi' => 'Pembelajaran teknik pemesinan, CNC, dan perancangan manufaktur.'],
-            ['nama' => 'Otomatisasi Tata Kelola Perkantoran', 'ikon' => '📄', 'deskripsi' => 'Administrasi bisnis, kearsipan digital, dan manajemen perkantoran.'],
-        ];
+        $jurusan = DB::connection('tenant')->table('jurusan')->where('is_aktif', true)->orderBy('urutan')->get();
+        $berita = DB::connection('tenant')->table('artikel')
+                    ->where('status_publikasi', 'published')
+                    ->orderBy('tgl_publikasi', 'desc')
+                    ->take(3)
+                    ->get();
 
-        $berita = [
-            ['judul' => 'Prestasi Juara 1 Lomba LKS Tingkat Provinsi', 'tanggal' => '12 Sep 2026', 'gambar' => 'https://images.unsplash.com/photo-1567168544813-cc03465b4fa8?q=80&w=800&auto=format&fit=crop'],
-            ['judul' => 'Kunjungan Industri ke PT. Telkom Indonesia', 'tanggal' => '05 Sep 2026', 'gambar' => 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=800&auto=format&fit=crop'],
-            ['judul' => 'Penerimaan Peserta Didik Baru (PPDB) 2026 Dibuka', 'tanggal' => '01 Sep 2026', 'gambar' => 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop'],
-        ];
-
-        return view('public.home', compact('sekolah', 'slider', 'jurusan', 'berita'));
+        return view('public.home', [
+            'sekolah' => $sekolahData,
+            'slider' => $slider,
+            'jurusan' => $jurusan,
+            'berita' => $berita
+        ]);
     }
 }

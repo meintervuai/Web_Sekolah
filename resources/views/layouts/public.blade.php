@@ -14,12 +14,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --theme-color: {{ $sekolah['warna_tema'] ?? '#4F46E5' }};
+            --theme-color-dark: color-mix(in srgb, var(--theme-color) 80%, black);
+            --theme-color-light: color-mix(in srgb, var(--theme-color) 20%, white);
+            --theme-color-transparent: color-mix(in srgb, var(--theme-color) 20%, transparent);
+        }
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Outfit', sans-serif; }
         
         .hero-overlay {
             background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6));
         }
+        
+        .theme-text { color: var(--theme-color); }
+        .theme-bg { background-color: var(--theme-color); }
+        .theme-bg-dark { background-color: var(--theme-color-dark); }
+        .theme-bg-light { background-color: var(--theme-color-light); }
+        .theme-border { border-color: var(--theme-color); }
+        .hover\:theme-text:hover { color: var(--theme-color); }
+        .hover\:theme-bg:hover { background-color: var(--theme-color); }
+        .hover\:theme-bg-dark:hover { background-color: var(--theme-color-dark); }
+        
+        /* Replace hardcoded indigo classes with theme variables */
+        .bg-indigo-600 { background-color: var(--theme-color) !important; }
+        .bg-indigo-700 { background-color: var(--theme-color-dark) !important; }
+        .bg-indigo-900 { background-color: color-mix(in srgb, var(--theme-color) 40%, black) !important; }
+        .bg-indigo-50 { background-color: var(--theme-color-light) !important; }
+        .bg-indigo-100 { background-color: color-mix(in srgb, var(--theme-color) 30%, white) !important; }
+        .text-indigo-600 { color: var(--theme-color) !important; }
+        .text-indigo-700 { color: var(--theme-color-dark) !important; }
+        .text-indigo-500 { color: var(--theme-color) !important; }
+        .text-indigo-400 { color: color-mix(in srgb, var(--theme-color) 70%, white) !important; }
+        .text-indigo-100 { color: color-mix(in srgb, var(--theme-color) 10%, white) !important; }
+        .border-indigo-500 { border-color: var(--theme-color) !important; }
+        .hover\:text-indigo-600:hover { color: var(--theme-color) !important; }
+        .hover\:bg-indigo-600:hover { background-color: var(--theme-color) !important; }
+        .hover\:bg-indigo-700:hover { background-color: var(--theme-color-dark) !important; }
+        .hover\:bg-indigo-50:hover { background-color: var(--theme-color-light) !important; }
+        .focus\:ring-indigo-500:focus { --tw-ring-color: var(--theme-color) !important; }
+        .shadow-indigo-600\/30 { box-shadow: 0 10px 15px -3px var(--theme-color-transparent), 0 4px 6px -4px var(--theme-color-transparent) !important; }
+        .shadow-indigo-200 { box-shadow: 0 4px 6px -1px var(--theme-color-transparent), 0 2px 4px -2px var(--theme-color-transparent) !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased flex flex-col min-h-screen">
@@ -49,38 +84,82 @@
                 <!-- Logo -->
                 <div class="flex items-center">
                     <a href="/" class="flex items-center space-x-3 group">
-                        <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xl group-hover:bg-indigo-700 transition">
-                            2
-                        </div>
+                        @if(!empty($sekolah['logo']))
+                            <img src="{{ $sekolah['logo'] }}" alt="Logo {{ $sekolah['nama'] ?? 'Sekolah' }}" class="h-12 w-auto object-contain">
+                        @else
+                            <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-xl group-hover:bg-indigo-700 transition">
+                                {{ substr($sekolah['nama'] ?? 'S', 0, 1) }}
+                            </div>
+                        @endif
                         <div>
-                            <h1 class="font-heading font-bold text-xl leading-tight text-slate-900 group-hover:text-indigo-600 transition">{{ $sekolah['nama'] ?? 'SMK N 2 Bandung' }}</h1>
-                            <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">Sekolah Pusat Keunggulan</p>
+                            <h1 class="font-heading font-bold text-xl leading-tight text-slate-900 group-hover:theme-text transition">{{ $sekolah['nama'] ?? 'SMK N 2 Bandung' }}</h1>
+                            <p class="text-xs text-slate-500 font-medium tracking-wider uppercase">{{ $sekolah['slogan'] ?? 'Sekolah Pusat Keunggulan' }}</p>
                         </div>
                     </a>
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-indigo-600 font-medium">Beranda</a>
+                <div class="hidden lg:flex items-center space-x-6">
+                    <a href="/" class="theme-text font-medium hover:text-indigo-600 transition">Beranda</a>
                     
                     <!-- Dropdown Profil -->
                     <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
                         <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
                             Profil <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-48">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-1">
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi & Misi</a>
+                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah Sekolah</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi, Misi & Tujuan</a>
                                 <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Struktur Organisasi</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Fasilitas</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Fasilitas Sekolah</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
                             </div>
                         </div>
                     </div>
 
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 font-medium transition">Akademik</a>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 font-medium transition">Berita</a>
-                    <a href="#" class="text-slate-600 hover:text-indigo-600 font-medium transition">Galeri</a>
+                    <!-- Dropdown Akademik -->
+                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
+                            Akademik <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kurikulum</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kalender Akademik</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Kesiswaan -->
+                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
+                            Kesiswaan <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">OSIS & MPK</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Ekstrakurikuler</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Prestasi Siswa</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Informasi -->
+                    <div class="relative group" x-data="{ dropdownOpen: false }" @mouseenter="dropdownOpen = true" @mouseleave="dropdownOpen = false">
+                        <button class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition">
+                            Informasi <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="dropdownOpen" x-transition.opacity class="absolute top-full left-0 pt-2 w-56">
+                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2">
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Berita & Artikel</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Pengumuman</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Agenda Kegiatan</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Galeri</a>
+                            </div>
+                        </div>
+                    </div>
                     
                     <a href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md shadow-indigo-200">
                         PPDB 2026
@@ -88,7 +167,7 @@
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
+                <div class="lg:hidden flex items-center">
                     <button @click="open = !open" class="text-slate-600 hover:text-indigo-600 focus:outline-none">
                         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -98,12 +177,57 @@
         </div>
 
         <!-- Mobile Menu Panel -->
-        <div x-show="open" style="display: none;" class="md:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full">
+        <div x-show="open" style="display: none;" class="lg:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full max-h-[80vh] overflow-y-auto">
             <div class="px-4 pt-2 pb-6 space-y-1">
                 <a href="/" class="block px-3 py-3 rounded-md text-base font-medium text-indigo-600 bg-indigo-50">Beranda</a>
-                <a href="#" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Profil Sekolah</a>
-                <a href="#" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Akademik & Jurusan</a>
-                <a href="#" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">Berita & Informasi</a>
+                
+                <div x-data="{ expanded: false }">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                        Profil <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Sejarah Sekolah</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Visi, Misi & Tujuan</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Struktur Organisasi</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Fasilitas Sekolah</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
+                    </div>
+                </div>
+
+                <div x-data="{ expanded: false }">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                        Akademik <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Kurikulum</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Kalender Akademik</a>
+                    </div>
+                </div>
+
+                <div x-data="{ expanded: false }">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                        Kesiswaan <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">OSIS & MPK</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Ekstrakurikuler</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Prestasi Siswa</a>
+                    </div>
+                </div>
+
+                <div x-data="{ expanded: false }">
+                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                        Informasi <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Berita & Artikel</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Pengumuman</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Agenda Kegiatan</a>
+                        <a href="#" class="block text-sm text-slate-600 hover:text-indigo-600">Galeri</a>
+                    </div>
+                </div>
+
                 <a href="#" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700">Daftar PPDB</a>
             </div>
         </div>
@@ -115,19 +239,19 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t-4 border-indigo-500">
+    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t-4 theme-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 
                 <!-- Identitas -->
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-12 h-12 bg-white text-indigo-700 rounded-lg flex items-center justify-center font-bold text-2xl">
-                            2
+                        <div class="w-12 h-12 bg-white theme-text rounded-lg flex items-center justify-center font-bold text-2xl">
+                            {{ substr($sekolah['nama'] ?? 'S', 0, 1) }}
                         </div>
                         <div>
                             <h2 class="font-heading font-bold text-2xl text-white">{{ $sekolah['nama'] ?? 'SMK N 2 Bandung' }}</h2>
-                            <p class="text-sm text-slate-400">Sekolah Pusat Keunggulan</p>
+                            <p class="text-sm text-slate-400">{{ $sekolah['slogan'] ?? 'Sekolah Pusat Keunggulan' }}</p>
                         </div>
                     </div>
                     <p class="text-slate-400 mb-6 leading-relaxed max-w-md">
