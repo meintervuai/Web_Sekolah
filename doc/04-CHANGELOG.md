@@ -27,3 +27,9 @@ Format changelog ini mengacu pada standar *Keep a Changelog* dan *Semantic Versi
   - `central/tenants/edit.blade.php`: Formulir edit data tenant.
 - **Database Seeder:** `SuperAdminSeeder` untuk menyuntikkan akun Super Admin default (`superadmin@admin.com` / `password123`) serta 4 sampel institusi sekolah lintas jenjang (SD, SMP, SMA, SMK).
 - **Pengujian (Automated Testing):** Pest test komprehensif `tests/Feature/SuperAdminAuthTest.php` mencakup 8 skenario pengujian autentikasi, otorisasi, proteksi guest, operasi tenant, dan logout dengan 100% kelulusan.
+
+### Changed
+- **Menu Navigasi:** Mengubah "Program Keahlian" menjadi menu dinamis dari database tenant.
+
+### Removed
+- **Modul Kesiswaan:** Menghapus entitas dan tabel `ekstrakurikuler` serta `prestasi` dari skema dan dokumentasi.

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Tenant\Public;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tenant\PengaturanUmum;
+use App\Models\Tenant\Page;
+use App\Models\Tenant\Post;
 use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
@@ -25,27 +27,32 @@ class PageController extends Controller
 
     public function sejarah()
     {
-        return view('public.pages.sejarah', ['sekolah' => $this->getSekolahData()]);
+        $halaman = Page::where('slug', 'sejarah')->first();
+        return view('public.pages.sejarah', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
     }
 
     public function visiMisi()
     {
-        return view('public.pages.visi-misi', ['sekolah' => $this->getSekolahData()]);
+        $halaman = Page::where('slug', 'visi-misi')->first();
+        return view('public.pages.visi-misi', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
     }
 
     public function struktur()
     {
-        return view('public.pages.struktur', ['sekolah' => $this->getSekolahData()]);
+        $struktur = DB::connection('tenant')->table('struktur_organisasi')->orderBy('urutan')->get();
+        return view('public.pages.struktur', ['sekolah' => $this->getSekolahData(), 'struktur' => $struktur]);
     }
 
     public function fasilitas()
     {
-        return view('public.pages.fasilitas', ['sekolah' => $this->getSekolahData()]);
+        $fasilitas = DB::connection('tenant')->table('fasilitas')->where('is_aktif', true)->get();
+        return view('public.pages.fasilitas', ['sekolah' => $this->getSekolahData(), 'fasilitas' => $fasilitas]);
     }
 
     public function guru()
     {
-        return view('public.pages.guru', ['sekolah' => $this->getSekolahData()]);
+        $guru = DB::connection('tenant')->table('guru_staf')->where('status_aktif', true)->get();
+        return view('public.pages.guru', ['sekolah' => $this->getSekolahData(), 'guru' => $guru]);
     }
 
     public function jurusan()
@@ -56,46 +63,46 @@ class PageController extends Controller
 
     public function kurikulum()
     {
-        return view('public.pages.kurikulum', ['sekolah' => $this->getSekolahData()]);
+        $halaman = Page::where('slug', 'kurikulum')->first();
+        return view('public.pages.kurikulum', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
     }
 
     public function kalender()
     {
-        return view('public.pages.kalender', ['sekolah' => $this->getSekolahData()]);
-    }
-
-    public function osis()
-    {
-        return view('public.pages.osis', ['sekolah' => $this->getSekolahData()]);
-    }
-
-    public function ekstrakurikuler()
-    {
-        return view('public.pages.ekstrakurikuler', ['sekolah' => $this->getSekolahData()]);
-    }
-
-    public function prestasi()
-    {
-        return view('public.pages.prestasi', ['sekolah' => $this->getSekolahData()]);
+        $kalender = DB::connection('tenant')->table('kalender_akademik')->orderBy('tgl_mulai')->get();
+        return view('public.pages.kalender', ['sekolah' => $this->getSekolahData(), 'kalender' => $kalender]);
     }
 
     public function berita()
     {
-        return view('public.pages.berita', ['sekolah' => $this->getSekolahData()]);
+        $berita = Post::where('is_pengumuman', false)
+            ->where('status_publikasi', 'published')
+            ->orderBy('tgl_publikasi', 'desc')
+            ->get();
+        return view('public.pages.berita', ['sekolah' => $this->getSekolahData(), 'berita' => $berita]);
     }
 
     public function pengumuman()
     {
-        return view('public.pages.pengumuman', ['sekolah' => $this->getSekolahData()]);
+        $pengumuman = Post::where('is_pengumuman', true)
+            ->where('status_publikasi', 'published')
+            ->orderBy('tgl_publikasi', 'desc')
+            ->get();
+        return view('public.pages.pengumuman', ['sekolah' => $this->getSekolahData(), 'pengumuman' => $pengumuman]);
     }
 
     public function agenda()
     {
-        return view('public.pages.agenda', ['sekolah' => $this->getSekolahData()]);
+        $agenda = DB::connection('tenant')->table('kalender_akademik')
+            ->where('tgl_mulai', '>=', now()->toDateString())
+            ->orderBy('tgl_mulai')
+            ->get();
+        return view('public.pages.agenda', ['sekolah' => $this->getSekolahData(), 'agenda' => $agenda]);
     }
 
     public function galeri()
     {
-        return view('public.pages.galeri', ['sekolah' => $this->getSekolahData()]);
+        $album = DB::connection('tenant')->table('galeri_album')->get();
+        return view('public.pages.galeri', ['sekolah' => $this->getSekolahData(), 'album' => $album]);
     }
 }

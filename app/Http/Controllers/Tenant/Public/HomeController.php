@@ -60,11 +60,20 @@ class HomeController extends Controller
                     ->take(3)
                     ->get();
 
+        $menus = \App\Models\Tenant\Menu::whereNull('parent_id')
+                    ->where('is_aktif', true)
+                    ->with(['children' => function ($query) {
+                        $query->where('is_aktif', true)->orderBy('urutan');
+                    }])
+                    ->orderBy('urutan')
+                    ->get();
+
         return view('public.home', [
             'sekolah' => $sekolahData,
             'slider' => $slider,
             'jurusan' => $jurusan,
-            'berita' => $berita
+            'berita' => $berita,
+            'menus' => $menus
         ]);
     }
 }

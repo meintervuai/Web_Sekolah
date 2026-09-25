@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sekolah', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama_sekolah', 200);
+            $table->string('slug', 200)->unique();
             $table->enum('jenjang', ['PAUD', 'TK', 'SD', 'MI', 'MTS', 'SMP', 'SMA', 'SMK', 'MAN']);
             $table->boolean('status_aktif')->default(true);
             $table->date('tgl_berakhir')->nullable();

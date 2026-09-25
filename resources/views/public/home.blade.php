@@ -95,7 +95,7 @@
 <!-- Quick Actions & Stats Overlay -->
 <div class="relative -mt-20 z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24">
     <div class="bg-white/90 backdrop-blur-2xl rounded-3xl shadow-2xl p-2 flex flex-col md:flex-row justify-between items-stretch border border-white">
-        <a href="/ppdb" class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center text-center rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer border-b md:border-b-0 md:border-r border-slate-100">
+        <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center text-center rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer border-b md:border-b-0 md:border-r border-slate-100">
             <div class="w-16 h-16 rounded-2xl theme-bg-light text-indigo-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-indigo-100">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
             </div>
@@ -109,7 +109,7 @@
             <h3 class="text-xl font-bold text-slate-800 mb-1">Program Keahlian</h3>
             <p class="text-sm text-slate-500 font-medium">Jelajahi {{ $sekolah['jenjang'] ?? 'Jurusan' }} Kami</p>
         </a>
-        <a href="/portal" class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center text-center rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer">
+        <a href="{{ url(app('tenant')->slug . '/portal') }}" class="flex-1 p-6 md:p-8 flex flex-col items-center justify-center text-center rounded-2xl hover:bg-slate-50 transition-colors group cursor-pointer">
             <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-amber-100">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
@@ -222,7 +222,7 @@
                 <h2 class="text-4xl md:text-5xl font-heading font-extrabold text-slate-900 leading-tight">Program Keahlian Unggulan</h2>
             </div>
             <div>
-                <a href="/jurusan" class="group inline-flex items-center text-slate-600 font-bold hover:text-indigo-600 transition-colors">
+                <a href="{{ url(app('tenant')->slug . '/akademik/jurusan') }}" class="group inline-flex items-center text-slate-600 font-bold hover:text-indigo-600 transition-colors">
                     Lihat Semua Jurusan 
                     <span class="ml-3 w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-indigo-600 group-hover:bg-indigo-50 transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -251,7 +251,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                         <p class="text-slate-600 mb-6 flex-grow line-clamp-3 text-lg leading-relaxed">{{ $j->deskripsi_singkat ?? 'Program keahlian yang mendidik siswa menjadi tenaga profesional dan siap menghadapi dunia industri modern.' }}</p>
-                        <a href="/jurusan/{{ $j->slug ?? '#' }}" class="inline-flex items-center font-bold theme-text uppercase tracking-wider text-sm group-hover:theme-text-dark transition-colors mt-auto">
+                        <a href="{{ url(app('tenant')->slug . '/akademik/jurusan#' . ($j->slug ?? '')) }}" class="inline-flex items-center font-bold theme-text uppercase tracking-wider text-sm group-hover:theme-text-dark transition-colors mt-auto">
                             Pelajari Kurikulum
                         </a>
                     </div>
@@ -318,7 +318,7 @@
                             {{ \Carbon\Carbon::parse($item->tgl_publikasi)->translatedFormat('d M Y') }}
                         </div>
                         <h3 class="font-heading font-extrabold text-2xl text-slate-900 mb-4 line-clamp-2 group-hover:theme-text transition-colors leading-tight">
-                            <a href="/berita/{{ $item->slug ?? '#' }}" class="focus:outline-none before:absolute before:inset-0">
+                            <a href="{{ url(app('tenant')->slug . '/informasi/berita#' . ($item->slug ?? '')) }}" class="focus:outline-none before:absolute before:inset-0">
                                 {{ $item->judul }}
                             </a>
                         </h3>
@@ -342,7 +342,7 @@
         </div>
         
         <div class="mt-16 text-center">
-            <a href="/berita" class="inline-flex items-center justify-center px-10 py-4 border-2 theme-border text-lg font-bold rounded-xl theme-text bg-transparent hover:theme-bg hover:text-white transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-indigo-200">
+            <a href="{{ url(app('tenant')->slug . '/informasi/berita') }}" class="inline-flex items-center justify-center px-10 py-4 border-2 theme-border text-lg font-bold rounded-xl theme-text bg-transparent hover:theme-bg hover:text-white transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-indigo-200">
                 Lihat Indeks Berita Lengkap
             </a>
         </div>
@@ -370,11 +370,11 @@
             Segera bergabung bersama kami. Wujudkan potensi terbaikmu dan persiapkan diri menghadapi tantangan global di masa depan.
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-6">
-            <a href="/ppdb" class="inline-flex items-center justify-center px-10 py-5 border border-transparent text-xl font-extrabold rounded-2xl theme-text bg-white hover:bg-slate-50 shadow-2xl transition-all transform hover:-translate-y-2 hover:scale-105">
+            <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="inline-flex items-center justify-center px-10 py-5 border border-transparent text-xl font-extrabold rounded-2xl theme-text bg-white hover:bg-slate-50 shadow-2xl transition-all transform hover:-translate-y-2 hover:scale-105">
                 Daftar Sekarang
                 <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </a>
-            <a href="/brosur" class="inline-flex items-center justify-center px-10 py-5 border-2 border-white/80 text-xl font-bold rounded-2xl text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all">
+            <a href="{{ url(app('tenant')->slug . '/brosur') }}" class="inline-flex items-center justify-center px-10 py-5 border-2 border-white/80 text-xl font-bold rounded-2xl text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all">
                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Unduh Brosur
             </a>

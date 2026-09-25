@@ -46,9 +46,7 @@ Tujuan produk adalah menyediakan template website sekolah *white-label* yang dap
   - Daftar Fasilitas dan galeri foto fasilitas.
 - **Akademik & Direktori:**
   - **Program Keahlian / Jurusan:** Daftar ringkas dan halaman detail/penjelasan lengkap (Dapat dinonaktifkan via toggle untuk jenjang PAUD/SD).
-  - **Ekstrakurikuler:** Daftar kegiatan dan halaman detail penjelasan & dokumentasi (Dapat dinonaktifkan via toggle).
   - **Guru & Staf:** Direktori pengajar beserta NIP, jabatan, dan foto.
-  - **Prestasi:** Galeri pencapaian siswa dan institusi.
   - **Kalender Akademik:** Jadwal agenda kegiatan akademik sekolah.
 - **Informasi & Publikasi (CMS):**
   - Artikel & Berita terbagi per Kategori.
@@ -67,14 +65,14 @@ Tujuan produk adalah menyediakan template website sekolah *white-label* yang dap
   - Ubah Logo, Favicon, Nama Sekolah, Alamat, Kontak, dan Media Sosial.
   - Ubah Warna Tema Utama (*Primary Color*) dinamis.
 - **Pengaturan Modul / Fitur (Module Manager / Toggle):**
-  - Sakelar On/Off untuk menampilkan/menyembunyikan menu (Jurusan, PPDB, Ekskul, Prestasi, Kalender, dll).
+  - Sakelar On/Off untuk menampilkan/menyembunyikan menu (Jurusan, PPDB, Kalender, dll).
 - **Media Manager Terintegrasi:**
   - Otomatis mengubah gambar menjadi format `.webp` dan mengompresi kualitas (via `Intervention Image`).
   - Fitur *Crop*, *Rename*, dan manajemen file.
   - Desain penyimpanan abstrak (Siap beralih dari Local Storage ke Amazon S3 tanpa ubah kode).
 - **Manajemen Konten & Master Data (CRUD Lengkap):**
-  - Guru & Staf, Jurusan (beserta konten detail), Ekstrakurikuler (beserta konten detail), Fasilitas.
-  - Slider Beranda, Struktur Organisasi, Prestasi, Kalender Akademik.
+  - Guru & Staf, Jurusan (beserta konten detail), Fasilitas.
+  - Slider Beranda, Struktur Organisasi, Kalender Akademik.
   - Kategori Berita, Artikel/Berita, Galeri Foto & Video, Download Dokumen.
 - **Manajemen PPDB:**
   - Konfigurasi Mode (Eksternal/Internal) dan jadwal.

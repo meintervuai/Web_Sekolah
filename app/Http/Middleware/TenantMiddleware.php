@@ -22,27 +22,31 @@ class TenantMiddleware
             return $next($request);
         }
 
-        $host = $request->getHost();
-        $httpHost = $request->getHttpHost(); // includes port like 127.0.0.1:8000
+        $tenantSlug = $request->route('tenant');
 
-        // Try to find the tenant by domain or domain with port
-        $domain = DomainSekolah::where('domain', $host)
-                    ->orWhere('domain', $httpHost)
-                    ->with('sekolah')
-                    ->first();
+        if (!$tenantSlug) {
+            // Jika bukan route tenant (misal api/superadmin), lanjutkan saja
+            return $next($request);
+        }
 
-        // Fallback for local development if no tenant found
-        if (!$domain && app()->environment('local')) {
-            $sekolah = Sekolah::first();
-            if (!$sekolah) {
-                abort(404, "Tidak ada data sekolah untuk fallback lokal.");
-            }
-        } else {
+        // Try to find the tenant by slug
+        $sekolah = Sekolah::where('slug', $tenantSlug)->first();
+
+        // Fallback for local development if no tenant found by slug, maybe domain?
+        if (!$sekolah) {
+            $host = $request->getHost();
+            $httpHost = $request->getHttpHost();
+
+            $domain = DomainSekolah::where('domain', $host)
+                        ->orWhere('domain', $httpHost)
+                        ->with('sekolah')
+                        ->first();
+            
             $sekolah = $domain ? $domain->sekolah : null;
         }
 
         if (!$sekolah) {
-            abort(404, "Sekolah untuk domain {$host} tidak ditemukan.");
+            abort(404, "Sekolah dengan identifier {$tenantSlug} tidak ditemukan.");
         }
 
         if (!$sekolah->status_aktif) {
@@ -50,10 +54,14 @@ class TenantMiddleware
         }
 
         // Set tenant in the app container
-        app()->instance('tenant', $domain ? $domain->sekolah : $sekolah);
+        app()->instance('tenant', $sekolah);
+        
+        // Remove tenant parameter from URL generation so we don't have to pass it manually
+        \Illuminate\Support\Facades\URL::defaults(['tenant' => $tenantSlug]);
+        $request->route()->forgetParameter('tenant');
 
         // Switch Database connection to the tenant's database
-        $tenantDbName = 'tenant_' . str_replace('-', '_', app('tenant')->id);
+        $tenantDbName = 'tenant_' . str_replace('-', '_', app('tenant')->slug);
         
         // We will configure a dynamic database connection
         \config(['database.connections.tenant' => array_merge(

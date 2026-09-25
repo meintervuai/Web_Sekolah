@@ -108,6 +108,7 @@ test('superadmin dapat melakukan toggle status tenant sekolah', function () {
     $sekolah = Sekolah::create([
         'id' => (string) Str::uuid(),
         'nama_sekolah' => 'SD Negeri Cibubur 03',
+        'slug' => 'sd-negeri-cibubur-03',
         'jenjang' => 'SD',
         'status_aktif' => true,
     ]);

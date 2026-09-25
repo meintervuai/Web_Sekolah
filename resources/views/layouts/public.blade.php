@@ -67,9 +67,9 @@
                 <span class="flex items-center"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> {{ $sekolah['email'] ?? 'info@sekolah.sch.id' }}</span>
             </div>
             <div class="flex space-x-3">
-                <a href="#" class="hover:text-white transition">PPDB</a>
-                <a href="#" class="hover:text-white transition">E-Learning</a>
-                <a href="#" class="hover:text-white transition">Alumni</a>
+                <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="hover:text-white transition">PPDB</a>
+                <a href="{{ url(app('tenant')->slug . '/elearning') }}" class="hover:text-white transition">E-Learning</a>
+                <a href="{{ url(app('tenant')->slug . '/alumni') }}" class="hover:text-white transition">Alumni</a>
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
             <div class="flex justify-between items-center">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <a href="/" class="flex items-center space-x-3 group">
+                    <a href="{{ url(app('tenant')->slug) }}" class="flex items-center space-x-3 group">
                         @if(!empty($sekolah['logo']))
                             <img src="{{ $sekolah['logo'] }}" alt="Logo {{ $sekolah['nama'] ?? 'Sekolah' }}" class="h-12 w-auto object-contain">
                         @else
@@ -99,75 +99,49 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden lg:flex items-center space-x-6">
-                    <a href="/" class="theme-text font-medium hover:text-indigo-600 transition">Beranda</a>
-                    
-                    <!-- Dropdown Profil -->
-                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
-                            Profil <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="{{ route('profil.sejarah') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Sejarah Sekolah</a>
-                                <a href="{{ route('profil.visi-misi') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Visi, Misi & Tujuan</a>
-                                <a href="{{ route('profil.struktur') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Struktur Organisasi</a>
-                                <a href="{{ route('profil.fasilitas') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Fasilitas Sekolah</a>
-                                <a href="{{ route('profil.guru') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    @php
+                        $navMenus = $menus ?? \App\Models\Tenant\Menu::whereNull('parent_id')
+                            ->where('is_aktif', true)
+                            ->with(['children' => function ($query) {
+                                $query->where('is_aktif', true)->orderBy('urutan');
+                            }])
+                            ->orderBy('urutan')
+                            ->get();
+                    @endphp
 
-                    <!-- Dropdown Akademik -->
-                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
-                            Akademik <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="{{ route('akademik.jurusan') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
-                                <a href="{{ route('akademik.kurikulum') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kurikulum</a>
-                                <a href="{{ route('akademik.kalender') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Kalender Akademik</a>
+                    @foreach($navMenus as $menu)
+                        @php
+                            $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($menu->url === '/' ? '' : (str_starts_with($menu->url, '/') ? $menu->url : '/' . $menu->url)));
+                        @endphp
+                        @if($menu->children->isEmpty())
+                            <a href="{{ $menuUrl }}" class="theme-text font-medium hover:text-indigo-600 transition">{{ $menu->name }}</a>
+                        @else
+                            <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
+                                <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
+                                    {{ $menu->name }} <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
+                                    <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
+                                        @foreach($menu->children as $child)
+                                            @php
+                                                $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($child->url === '/' ? '' : (str_starts_with($child->url, '/') ? $child->url : '/' . $child->url)));
+                                            @endphp
+                                            <a href="{{ $childUrl }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $child->name }}</a>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        @endif
+                    @endforeach
 
-                    <!-- Dropdown Kesiswaan -->
-                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
-                            Kesiswaan <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="{{ route('kesiswaan.osis') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">OSIS & MPK</a>
-                                <a href="{{ route('kesiswaan.ekstrakurikuler') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Ekstrakurikuler</a>
-                                <a href="{{ route('kesiswaan.prestasi') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Prestasi Siswa</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Dropdown Informasi -->
-                    <div class="relative" x-data="{ dropdownOpen: false }" @click.away="dropdownOpen = false">
-                        <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-slate-600 hover:text-indigo-600 font-medium transition py-4 focus:outline-none">
-                            Informasi <svg :class="{'rotate-180': dropdownOpen}" class="w-4 h-4 ml-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </button>
-                        <div x-show="dropdownOpen" x-transition.opacity style="display: none;" class="absolute top-full left-0 w-56 z-50">
-                            <div class="bg-white rounded-lg shadow-xl border border-slate-100 overflow-hidden py-2 -mt-2">
-                                <a href="{{ route('informasi.berita') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Berita & Artikel</a>
-                                <a href="{{ route('informasi.pengumuman') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Pengumuman</a>
-                                <a href="{{ route('informasi.agenda') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Agenda Kegiatan</a>
-                                <a href="{{ route('informasi.galeri') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">Galeri</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <a href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md shadow-indigo-200">
+                    <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md shadow-indigo-200">
                         PPDB 2026
                     </a>
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <div class="lg:hidden flex items-center">
+                <div class="md:hidden flex items-center">
                     <button @click="open = !open" class="text-slate-600 hover:text-indigo-600 focus:outline-none">
                         <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                         <svg x-show="open" style="display: none;" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -177,58 +151,32 @@
         </div>
 
         <!-- Mobile Menu Panel -->
-        <div x-show="open" style="display: none;" class="lg:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full max-h-[80vh] overflow-y-auto">
+        <div x-show="open" style="display: none;" class="md:hidden bg-white border-t border-slate-100 shadow-lg absolute w-full left-0 top-full max-h-[80vh] overflow-y-auto">
             <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="/" class="block px-3 py-3 rounded-md text-base font-medium text-indigo-600 bg-indigo-50">Beranda</a>
-                
-                <div x-data="{ expanded: false }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
-                        Profil <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="{{ route('profil.sejarah') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Sejarah Sekolah</a>
-                        <a href="{{ route('profil.visi-misi') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Visi, Misi & Tujuan</a>
-                        <a href="{{ route('profil.struktur') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Struktur Organisasi</a>
-                        <a href="{{ route('profil.fasilitas') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Fasilitas Sekolah</a>
-                        <a href="{{ route('profil.guru') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Guru & Tenaga Kependidikan</a>
-                    </div>
-                </div>
+                @foreach($navMenus as $menu)
+                    @php
+                        $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($menu->url === '/' ? '' : (str_starts_with($menu->url, '/') ? $menu->url : '/' . $menu->url)));
+                    @endphp
+                    @if($menu->children->isEmpty())
+                        <a href="{{ $menuUrl }}" class="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600">{{ $menu->name }}</a>
+                    @else
+                        <div x-data="{ expanded: false }">
+                            <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
+                                {{ $menu->name }} <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
+                                @foreach($menu->children as $child)
+                                    @php
+                                        $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($child->url === '/' ? '' : (str_starts_with($child->url, '/') ? $child->url : '/' . $child->url)));
+                                    @endphp
+                                    <a href="{{ $childUrl }}" class="block text-sm text-slate-600 hover:text-indigo-600">{{ $child->name }}</a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
 
-                <div x-data="{ expanded: false }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
-                        Akademik <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="{{ route('akademik.jurusan') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Program Keahlian (Jurusan)</a>
-                        <a href="{{ route('akademik.kurikulum') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Kurikulum</a>
-                        <a href="{{ route('akademik.kalender') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Kalender Akademik</a>
-                    </div>
-                </div>
-
-                <div x-data="{ expanded: false }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
-                        Kesiswaan <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="{{ route('kesiswaan.osis') }}" class="block text-sm text-slate-600 hover:text-indigo-600">OSIS & MPK</a>
-                        <a href="{{ route('kesiswaan.ekstrakurikuler') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Ekstrakurikuler</a>
-                        <a href="{{ route('kesiswaan.prestasi') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Prestasi Siswa</a>
-                    </div>
-                </div>
-
-                <div x-data="{ expanded: false }">
-                    <button @click="expanded = !expanded" class="w-full flex justify-between items-center px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-slate-50">
-                        Informasi <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div x-show="expanded" class="pl-6 pr-3 py-2 space-y-2 bg-slate-50 rounded-b-md">
-                        <a href="{{ route('informasi.berita') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Berita & Artikel</a>
-                        <a href="{{ route('informasi.pengumuman') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Pengumuman</a>
-                        <a href="{{ route('informasi.agenda') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Agenda Kegiatan</a>
-                        <a href="{{ route('informasi.galeri') }}" class="block text-sm text-slate-600 hover:text-indigo-600">Galeri</a>
-                    </div>
-                </div>
-
-                <a href="#" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700">Daftar PPDB</a>
+                <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-indigo-600 text-white hover:bg-indigo-700">Daftar PPDB</a>
             </div>
         </div>
     </nav>
@@ -274,11 +222,11 @@
                 <div>
                     <h3 class="font-heading text-white text-lg font-semibold mb-6">Tautan Cepat</h3>
                     <ul class="space-y-3">
-                        <li><a href="#" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Profil Sekolah</a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Data Guru & Staf</a></li>
+                        <li><a href="{{ url(app('tenant')->slug . '/profil/sejarah') }}" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Profil Sekolah</a></li>
+                        <li><a href="{{ url(app('tenant')->slug . '/profil/guru') }}" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Data Guru & Staf</a></li>
                         <li><a href="#" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Prestasi Siswa</a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Kalender Akademik</a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> PPDB Online</a></li>
+                        <li><a href="{{ url(app('tenant')->slug . '/akademik/kalender') }}" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> Kalender Akademik</a></li>
+                        <li><a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="hover:text-indigo-400 transition flex items-center"><span class="mr-2 text-indigo-500">›</span> PPDB Online</a></li>
                     </ul>
                 </div>
 

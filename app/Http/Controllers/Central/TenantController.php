@@ -83,6 +83,7 @@ class TenantController extends Controller
         $sekolah = Sekolah::create([
             'id' => (string) Str::uuid(),
             'nama_sekolah' => $validated['nama_sekolah'],
+            'slug' => Str::slug($validated['nama_sekolah']),
             'jenjang' => $validated['jenjang'],
             'status_aktif' => $request->boolean('status_aktif', true),
             'tgl_berakhir' => $validated['tgl_berakhir'] ?? null,

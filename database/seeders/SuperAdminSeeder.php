@@ -29,6 +29,7 @@ class SuperAdminSeeder extends Seeder
         $schools = [
             [
                 'nama_sekolah' => 'SD Negeri 01 Pagi Jakarta',
+                'slug' => 'sd-negeri-01-pagi-jakarta',
                 'jenjang' => 'SD',
                 'status_aktif' => true,
                 'tgl_berakhir' => now()->addYear(),
@@ -41,6 +42,7 @@ class SuperAdminSeeder extends Seeder
             ],
             [
                 'nama_sekolah' => 'SMP Negeri 1 Surabaya',
+                'slug' => 'smp-negeri-1-surabaya',
                 'jenjang' => 'SMP',
                 'status_aktif' => true,
                 'tgl_berakhir' => now()->addMonths(8),
@@ -53,6 +55,7 @@ class SuperAdminSeeder extends Seeder
             ],
             [
                 'nama_sekolah' => 'SMK Negeri 2 Bandung',
+                'slug' => 'smk-negeri-2-bandung',
                 'jenjang' => 'SMK',
                 'status_aktif' => true,
                 'tgl_berakhir' => now()->addMonths(11),
@@ -65,6 +68,7 @@ class SuperAdminSeeder extends Seeder
             ],
             [
                 'nama_sekolah' => 'SMA Nusantara Harapan',
+                'slug' => 'sma-nusantara-harapan',
                 'jenjang' => 'SMA',
                 'status_aktif' => false,
                 'tgl_berakhir' => now()->subDays(5),
@@ -82,6 +86,7 @@ class SuperAdminSeeder extends Seeder
                 ['nama_sekolah' => $item['nama_sekolah']],
                 [
                     'id' => (string) Str::uuid(),
+                    'slug' => $item['slug'],
                     'jenjang' => $item['jenjang'],
                     'status_aktif' => $item['status_aktif'],
                     'tgl_berakhir' => $item['tgl_berakhir'],

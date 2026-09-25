@@ -112,20 +112,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 10. Ekstrakurikuler
-        Schema::connection('tenant')->create('ekstrakurikuler', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_ekskul', 150);
-            $table->string('slug', 150)->unique();
-            $table->string('nama_pembina', 150)->nullable();
-            $table->string('jadwal_kegiatan', 100)->nullable();
-            $table->text('deskripsi_singkat')->nullable();
-            $table->longText('deskripsi_lengkap')->nullable();
-            $table->string('foto_utama', 255)->nullable();
-            $table->boolean('is_aktif')->default(true);
-            $table->timestamps();
-        });
-
         // 11. Fasilitas
         Schema::connection('tenant')->create('fasilitas', function (Blueprint $table) {
             $table->id();
@@ -200,18 +186,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 18. Prestasi
-        Schema::connection('tenant')->create('prestasi', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_penghargaan', 200);
-            $table->enum('tingkat', ['Kecamatan', 'Kota/Kabupaten', 'Provinsi', 'Nasional', 'Internasional']);
-            $table->string('peraih_prestasi', 150);
-            $table->date('tgl_perolehan')->nullable();
-            $table->string('foto_dokumentasi', 255)->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->timestamps();
-        });
-
         // 19. Unduhan
         Schema::connection('tenant')->create('unduhan', function (Blueprint $table) {
             $table->id();
@@ -277,7 +251,7 @@ return new class extends Migration
         Schema::connection('tenant')->dropIfExists('pengaturan_ppdb');
         Schema::connection('tenant')->dropIfExists('pesan_masuk');
         Schema::connection('tenant')->dropIfExists('unduhan');
-        Schema::connection('tenant')->dropIfExists('prestasi');
+
         Schema::connection('tenant')->dropIfExists('galeri_item');
         Schema::connection('tenant')->dropIfExists('galeri_album');
         Schema::connection('tenant')->dropIfExists('artikel');
@@ -285,7 +259,7 @@ return new class extends Migration
         Schema::connection('tenant')->dropIfExists('kalender_akademik');
         Schema::connection('tenant')->dropIfExists('foto_fasilitas');
         Schema::connection('tenant')->dropIfExists('fasilitas');
-        Schema::connection('tenant')->dropIfExists('ekstrakurikuler');
+
         Schema::connection('tenant')->dropIfExists('jurusan');
         Schema::connection('tenant')->dropIfExists('guru_staf');
         Schema::connection('tenant')->dropIfExists('struktur_organisasi');

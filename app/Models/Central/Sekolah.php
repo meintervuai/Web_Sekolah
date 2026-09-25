@@ -40,6 +40,7 @@ class Sekolah extends Model
     protected $fillable = [
         'id',
         'nama_sekolah',
+        'slug',
         'jenjang',
         'status_aktif',
         'tgl_berakhir',

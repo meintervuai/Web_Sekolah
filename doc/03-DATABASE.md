@@ -124,18 +124,6 @@ Menyimpan halaman berformat panjang (Sejarah, Visi Misi).
 - `is_aktif`: BOOLEAN DEFAULT TRUE
 - `created_at`, `updated_at`: TIMESTAMP
 
-### 2.10 Tabel `ekstrakurikuler`
-- `id`: BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
-- `nama_ekskul`: VARCHAR(150) NOT NULL
-- `slug`: VARCHAR(150) UNIQUE NOT NULL
-- `nama_pembina`: VARCHAR(150) NULL
-- `jadwal_kegiatan`: VARCHAR(100) NULL
-- `deskripsi_singkat`: TEXT NULL
-- `deskripsi_lengkap`: LONGTEXT NULL (Mendukung rich text untuk halaman detail)
-- `foto_utama`: VARCHAR(255) NULL
-- `is_aktif`: BOOLEAN DEFAULT TRUE
-- `created_at`, `updated_at`: TIMESTAMP
-
 ### 2.11 Tabel `fasilitas`
 - `id`: BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
 - `nama_fasilitas`: VARCHAR(150) NOT NULL
@@ -194,16 +182,6 @@ Menyimpan halaman berformat panjang (Sejarah, Visi Misi).
 - `album_id`: BIGINT UNSIGNED NOT NULL (FK ke `galeri_album.id` ON DELETE CASCADE)
 - `file_media_atau_link`: VARCHAR(255) NOT NULL (Path file WebP atau URL embed YouTube)
 - `judul_item`: VARCHAR(150) NULL
-- `created_at`, `updated_at`: TIMESTAMP
-
-### 2.18 Tabel `prestasi`
-- `id`: BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
-- `nama_penghargaan`: VARCHAR(200) NOT NULL
-- `tingkat`: ENUM('Kecamatan', 'Kota/Kabupaten', 'Provinsi', 'Nasional', 'Internasional') NOT NULL
-- `peraih_prestasi`: VARCHAR(150) NOT NULL (Nama siswa / tim / sekolah)
-- `tgl_perolehan`: DATE NULL
-- `foto_dokumentasi`: VARCHAR(255) NULL
-- `deskripsi`: TEXT NULL
 - `created_at`, `updated_at`: TIMESTAMP
 
 ### 2.19 Tabel `unduhan`

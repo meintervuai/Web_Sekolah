@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\TenantMiddleware::class,
+            // \App\Http\Middleware\TenantMiddleware::class,
         ]);
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('superadmin*')) {
@@ -35,4 +35,30 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+        
+        $exceptions->render(function (\Illuminate\Database\QueryException $e, Request $request) {
+            \Illuminate\Support\Facades\Log::error('Database error: ' . $e->getMessage());
+            
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Layanan database sedang mengalami gangguan. Silakan coba beberapa saat lagi.'
+                ], 500);
+            }
+
+            return response()->view('errors.500', ['message' => 'Layanan database sedang mengalami gangguan. Silakan coba beberapa saat lagi.'], 500);
+        });
+
+        $exceptions->render(function (\PDOException $e, Request $request) {
+            \Illuminate\Support\Facades\Log::error('PDO error: ' . $e->getMessage());
+            
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Koneksi database gagal. Silakan coba beberapa saat lagi.'
+                ], 500);
+            }
+
+            return response()->view('errors.500', ['message' => 'Koneksi database gagal. Silakan coba beberapa saat lagi.'], 500);
+        });
     })->create();

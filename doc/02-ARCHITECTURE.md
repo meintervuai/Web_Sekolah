@@ -46,9 +46,7 @@ website_sekolah/
 │   │   │           ├── FiturToggleController.php
 │   │   │           ├── GuruStafController.php
 │   │   │           ├── JurusanController.php
-│   │   │           ├── EkstrakurikulerController.php
 │   │   │           ├── FasilitasController.php
-│   │   │           ├── PrestasiController.php
 │   │   │           ├── ArtikelController.php
 │   │   │           ├── GaleriController.php
 │   │   │           ├── MediaManagerController.php
@@ -69,7 +67,6 @@ website_sekolah/
 │   │       ├── StrukturOrganisasi.php
 │   │       ├── GuruStaf.php
 │   │       ├── Jurusan.php
-│   │       ├── Ekstrakurikuler.php
 │   │       ├── Fasilitas.php
 │   │       ├── FotoFasilitas.php
 │   │       ├── KalenderAkademik.php
@@ -77,7 +74,6 @@ website_sekolah/
 │   │       ├── Artikel.php
 │   │       ├── GaleriAlbum.php
 │   │       ├── GaleriItem.php
-│   │       ├── Prestasi.php
 │   │       ├── Unduhan.php
 │   │       ├── PesanMasuk.php
 │   │       ├── PengaturanPpdb.php
