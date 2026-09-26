@@ -80,12 +80,6 @@
                 <div class="absolute inset-0 flex items-center">
                     <div class="container-custom w-full">
                         <div class="max-w-2xl text-white space-y-4">
-                            <!-- Badge -->
-                            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-600/30 border border-blue-400/40 text-blue-200 text-xs sm:text-sm font-semibold backdrop-blur-md">
-                                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                                <span>SMK Pusat Keunggulan Kota Bandung</span>
-                            </div>
-
                             <!-- Heading -->
                             <h2 class="font-heading font-extrabold text-2xl sm:text-4xl lg:text-5xl text-white leading-tight tracking-tight drop-shadow-md">
                                 {{ $item->judul }}
@@ -246,7 +240,7 @@
                         "{{ $sekolahData['sambutan'] }}"
                     </p>
                     <p>
-                        Sebagai Sekolah Pusat Keunggulan yang berdiri sejak 1951 di jantung Kota Bandung, kami terus berinovasi mengintegrasikan kurikulum industri, penguatan Teaching Factory (TEFA), sertifikasi keahlian berstandar BNSP, dan pembentukan karakter Profil Pelajar Pancasila.
+                        Sebagai sekolah yang berdiri sejak 1951 di jantung Kota Bandung, kami terus berinovasi mengintegrasikan kurikulum industri, penguatan Teaching Factory (TEFA), sertifikasi keahlian berstandar BNSP, dan pembentukan karakter Profil Pelajar Pancasila.
                     </p>
                 </div>
                 <div class="pt-2 flex flex-wrap gap-4">
@@ -367,9 +361,9 @@
                 Data program keahlian belum tersedia.
             </div>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
                 @foreach($jurusan as $j)
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover-card border border-slate-200/80 flex flex-col h-full">
+                    <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-2xl overflow-hidden shadow-sm hover-card border border-slate-200/80 flex flex-col h-full">
                         <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
                             <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}" 
                                  alt="{{ $j->nama_jurusan }}" 
@@ -435,9 +429,9 @@
                         Belum ada berita yang dipublikasikan.
                     </div>
                 @else
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                    <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
                         @foreach($berita as $post)
-                            <article class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover-card flex flex-col h-full">
+                            <article class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover-card flex flex-col h-full">
                                 <div class="relative h-40 w-full overflow-hidden bg-slate-100">
                                     <img src="{{ $post->gambar_sampul ?? 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800' }}" 
                                          alt="{{ $post->judul }}" 
@@ -541,9 +535,9 @@
                 Belum ada agenda terdekat.
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
                 @foreach($agenda as $item)
-                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover-card flex flex-col justify-between h-full">
+                    <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover-card flex flex-col justify-between h-full">
                         <div>
                             <div class="flex items-start space-x-3 mb-3">
                                 <!-- Date Badge -->
@@ -605,9 +599,9 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
             @foreach($prestasi as $pres)
-                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover-card flex flex-col justify-between h-full">
+                <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover-card flex flex-col justify-between h-full">
                     <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
                         <img src="{{ $pres->foto }}" alt="{{ $pres->nama_prestasi }}" class="w-full h-full object-cover">
                         <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full shadow">

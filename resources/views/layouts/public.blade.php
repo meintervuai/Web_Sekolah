@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Beranda') - {{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}</title>
-    <meta name="description" content="@yield('meta_description', $sekolah['deskripsi'] ?? 'Website resmi SMK Negeri 2 Bandung - Sekolah Menengah Kejuruan Pusat Keunggulan di Kota Bandung.')">
+    <meta name="description" content="@yield('meta_description', $sekolah['deskripsi'] ?? 'Website resmi SMK Negeri 2 Bandung - Sekolah Menengah Kejuruan di Kota Bandung.')">
     
     <!-- Vite for Tailwind CSS & Alpine.js -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -154,7 +154,7 @@
                         {{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}
                     </h1>
                     <p class="text-xs text-slate-500 font-medium tracking-wide">
-                        {{ $sekolah['slogan'] ?? 'Sekolah Pusat Keunggulan' }}
+                        {{ $sekolah['slogan'] ?? 'Sekolah Menengah Kejuruan' }}
                     </p>
                 </div>
             </a>
@@ -168,6 +168,12 @@
                     }])
                     ->orderBy('urutan')
                     ->get();
+                
+                $navMenus = $navMenus->reject(fn($menu) => str_contains(strtolower($menu->name), 'spmb'))
+                    ->map(function($menu) {
+                        $menu->setRelation('children', $menu->children->reject(fn($child) => str_contains(strtolower($child->name), 'spmb')));
+                        return $menu;
+                    });
                 $currentPath = trim(request()->path(), '/');
                 $tenantSlug = trim(app('tenant')->slug, '/');
                 $relativePath = trim(\Illuminate\Support\Str::after($currentPath, $tenantSlug), '/');
@@ -368,7 +374,7 @@
                         </div>
                         <div>
                             <p class="font-heading font-bold text-lg text-white leading-tight">{{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}</p>
-                            <p class="text-xs text-blue-400 font-medium">Sekolah Pusat Keunggulan</p>
+                            <p class="text-xs text-blue-400 font-medium">Sekolah Menengah Kejuruan</p>
                         </div>
                     </div>
                     <p class="text-sm text-slate-400 leading-relaxed">

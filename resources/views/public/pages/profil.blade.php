@@ -35,7 +35,7 @@
                         <div class="space-y-2">
                             <p><strong class="text-slate-900">Nama Sekolah:</strong> {{ $sekolah['nama'] }}</p>
                             <p><strong class="text-slate-900">NPSN:</strong> {{ $sekolah['npsn'] }}</p>
-                            <p><strong class="text-slate-900">Bentuk Pendidikan:</strong> SMK (Pusat Keunggulan)</p>
+                            <p><strong class="text-slate-900">Bentuk Pendidikan:</strong> SMK</p>
                             <p><strong class="text-slate-900">Status Akreditasi:</strong> <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-xs">Peringkat A</span></p>
                         </div>
                         <div class="space-y-2">
