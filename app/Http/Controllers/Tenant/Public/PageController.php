@@ -103,7 +103,30 @@ class PageController extends Controller
         $this->checkFitur('profil');
         $struktur = StrukturOrganisasi::orderBy('urutan')->get();
 
-        return view('public.pages.struktur', ['sekolah' => $this->getSekolahData(), 'struktur' => $struktur]);
+        // Diagram bagan struktur organisasi (mendukung 1 atau beberapa gambar)
+        $diagrams = [
+            [
+                'judul' => 'Bagan Struktur Utama Manajemen Sekolah',
+                'deskripsi' => 'Alur garis komando dan koordinasi Kepala Sekolah, Komite, Tim Penjaminan Mutu, Wakil Kepala Sekolah, dan Koordinator Tata Usaha.',
+                'gambar' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1600&auto=format&fit=crop',
+            ],
+            [
+                'judul' => 'Bagan Tata Kelola Teaching Factory (TEFA) & Hubungan Industri',
+                'deskripsi' => 'Alur koordinasi unit produksi kejuruan, kemitraan dunia usaha/dunia kerja (DUDI), dan Bursa Kerja Khusus (BKK).',
+                'gambar' => 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=1600&auto=format&fit=crop',
+            ],
+            [
+                'judul' => 'Bagan Tata Kelola Program Keahlian & Laboratorium Praktik',
+                'deskripsi' => 'Struktur pembagian penanggung jawab bengkel mesin, lab komputer, studio desain, dan sarana praktik vokasi.',
+                'gambar' => 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1600&auto=format&fit=crop',
+            ],
+        ];
+
+        return view('public.pages.struktur', [
+            'sekolah' => $this->getSekolahData(),
+            'struktur' => $struktur,
+            'diagrams' => $diagrams,
+        ]);
     }
 
     // 2. PROGRAM KEAHLIAN / JURUSAN

@@ -16,10 +16,6 @@
             </ol>
         </nav>
         <div class="max-w-3xl">
-            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
-                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                <span>Penerimaan Peserta Didik Baru (PPDB) TA 2026/2027</span>
-            </div>
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
                 Bergabung Bersama SMK Negeri 2 Bandung
             </h1>

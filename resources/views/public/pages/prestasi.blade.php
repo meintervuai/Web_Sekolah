@@ -16,9 +16,6 @@
             </ol>
         </nav>
         <div class="max-w-2xl">
-            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/30 text-amber-300 text-xs font-semibold mb-3">
-                <span>🏆 Hall of Fame & Prestasi</span>
-            </div>
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
                 Jejak Prestasi Siswa
             </h1>

@@ -29,7 +29,7 @@
                 <!-- Badges -->
                 <div class="flex flex-wrap items-center gap-2 mb-4">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
-                        🏆 {{ $prestasi->juara ?? 'Juara' }}
+                         {{ $prestasi->juara ?? 'Juara' }}
                     </span>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                         Tingkat {{ $prestasi->tingkat ?? 'Nasional' }}

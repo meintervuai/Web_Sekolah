@@ -37,9 +37,6 @@
                                  alt="{{ $j->nama_jurusan }}" 
                                  class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
-                            <span class="absolute top-3 right-3 bg-blue-900/90 text-white font-extrabold text-xs px-2.5 py-1 rounded-md backdrop-blur-sm shadow">
-                                {{ $j->singkatan }}
-                            </span>
                             <div class="absolute bottom-3 left-4 right-4">
                                 <h2 class="font-heading font-bold text-lg text-white leading-tight">
                                     {{ $j->nama_jurusan }}

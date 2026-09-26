@@ -16,9 +16,6 @@
             </ol>
         </nav>
         <div class="max-w-2xl">
-            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-sky-300 text-xs font-semibold mb-3">
-                <span>📍 Pelayanan Terpadu & Humas</span>
-            </div>
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
                 Hubungi Kami
             </h1>
@@ -94,7 +91,7 @@
                         <!-- WhatsApp Hotline -->
                         <li class="flex items-start space-x-3.5">
                             <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.638A8.955 8.955 0 0 0 12.053 3c-4.968 0-9.013 4.045-9.015 9.017a8.98 8.98 0 0 0 1.374 4.815L3 21l4.303-1.129a9.014 9.014 0 0 0 4.748 1.325h.004c4.968 0 9.013-4.046 9.015-9.017a8.963 8.963 0 0 0-2.667-6.541zm-6.35 13.684h-.003a7.51 7.51 0 0 1-3.832-1.051l-.275-.163-2.85.748.76-2.778-.179-.284a7.485 7.485 0 0 1-1.147-3.978c.002-4.14 3.37-7.508 7.513-7.508a7.472 7.472 0 0 1 5.309 2.199 7.48 7.48 0 0 1 2.196 5.31c-.002 4.14-3.37 7.508-7.512 7.508zm4.12-5.625c-.225-.113-1.334-.658-1.541-.733-.207-.075-.357-.113-.508.113-.15.225-.583.733-.715.884-.131.15-.263.169-.489.056-.225-.113-.951-.35-1.812-1.118-.671-.598-1.124-1.338-1.256-1.564-.132-.226-.014-.348.099-.46.102-.101.226-.263.339-.395.113-.131.15-.225.226-.375.075-.15.038-.282-.019-.395-.056-.113-.508-1.224-.696-1.677-.183-.441-.369-.381-.508-.388l-.433-.008c-.15 0-.395.056-.602.282-.207.226-.79.771-.79 1.88 0 1.109.809 2.179.921 2.33.113.15 1.59 2.428 3.854 3.404.538.233.959.372 1.286.476.541.172 1.034.148 1.423.09.434-.065 1.334-.546 1.522-1.072.188-.527.188-.978.132-1.072-.057-.094-.207-.15-.433-.263z"/></svg>
                             </div>
                             <div>
                                 <span class="font-bold text-slate-900 block mb-0.5">Hotline Pelayanan Publik (WhatsApp)</span>
@@ -141,7 +138,7 @@
                         Silakan lengkapi formulir di bawah ini. Tim humas kami akan merespons pesan Anda dalam waktu 1x24 jam kerja.
                     </p>
 
-                    <form method="POST" action="{{ route('tenant.kontak.kirim', ['tenant' => app('tenant')->slug]) }}" class="space-y-5">
+                    <form method="POST" onsubmit="sendToWhatsApp(event)" class="space-y-5">
                         @csrf
 
                         <!-- Nama Lengkap -->
@@ -157,31 +154,17 @@
                             @enderror
                         </div>
 
-                        <!-- Email & No Telepon Grid -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="email_pengirim" class="block text-xs md:text-sm font-semibold text-slate-800 mb-1.5">
-                                    Alamat Email <span class="text-rose-500">*</span>
-                                </label>
-                                <input type="email" id="email_pengirim" name="email_pengirim" value="{{ old('email_pengirim') }}" required
-                                       placeholder="nama@email.com"
-                                       class="w-full px-4 py-2.5 bg-slate-50 border {{ $errors->has('email_pengirim') ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-200' }} rounded-xl text-xs md:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                                @error('email_pengirim')
-                                    <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="no_telepon" class="block text-xs md:text-sm font-semibold text-slate-800 mb-1.5">
-                                    Nomor WhatsApp / HP
-                                </label>
-                                <input type="text" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}"
-                                       placeholder="08123456789"
-                                       class="w-full px-4 py-2.5 bg-slate-50 border {{ $errors->has('no_telepon') ? 'border-rose-500' : 'border-slate-200' }} rounded-xl text-xs md:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                                @error('no_telepon')
-                                    <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <!-- Nomor Telepon / WhatsApp -->
+                        <div>
+                            <label for="no_telepon" class="block text-xs md:text-sm font-semibold text-slate-800 mb-1.5">
+                                Nomor WhatsApp / HP <span class="text-slate-400 font-normal">(Opsional)</span>
+                            </label>
+                            <input type="text" id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}"
+                                   placeholder="Contoh: 081234567890"
+                                   class="w-full px-4 py-2.5 bg-slate-50 border {{ $errors->has('no_telepon') ? 'border-rose-500' : 'border-slate-200' }} rounded-xl text-xs md:text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                            @error('no_telepon')
+                                <p class="text-rose-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Subjek Pesan -->
@@ -213,9 +196,9 @@
                         <!-- Submit Button -->
                         <div class="pt-2">
                             <button type="submit" 
-                                    class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs md:text-sm rounded-xl shadow-md hover:shadow-lg transition">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                <span>Kirim Pesan Sekarang</span>
+                                    class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs md:text-sm rounded-xl shadow-md hover:shadow-lg transition">
+                                <svg class="w-4 h-4 mr-2 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.638A8.955 8.955 0 0 0 12.053 3c-4.968 0-9.013 4.045-9.015 9.017a8.98 8.98 0 0 0 1.374 4.815L3 21l4.303-1.129a9.014 9.014 0 0 0 4.748 1.325h.004c4.968 0 9.013-4.046 9.015-9.017a8.963 8.963 0 0 0-2.667-6.541zm-6.35 13.684h-.003a7.51 7.51 0 0 1-3.832-1.051l-.275-.163-2.85.748.76-2.778-.179-.284a7.485 7.485 0 0 1-1.147-3.978c.002-4.14 3.37-7.508 7.513-7.508a7.472 7.472 0 0 1 5.309 2.199 7.48 7.48 0 0 1 2.196 5.31c-.002 4.14-3.37 7.508-7.512 7.508zm4.12-5.625c-.225-.113-1.334-.658-1.541-.733-.207-.075-.357-.113-.508.113-.15.225-.583.733-.715.884-.131.15-.263.169-.489.056-.225-.113-.951-.35-1.812-1.118-.671-.598-1.124-1.338-1.256-1.564-.132-.226-.014-.348.099-.46.102-.101.226-.263.339-.395.113-.131.15-.225.226-.375.075-.15.038-.282-.019-.395-.056-.113-.508-1.224-.696-1.677-.183-.441-.369-.381-.508-.388l-.433-.008c-.15 0-.395.056-.602.282-.207.226-.79.771-.79 1.88 0 1.109.809 2.179.921 2.33.113.15 1.59 2.428 3.854 3.404.538.233.959.372 1.286.476.541.172 1.034.148 1.423.09.434-.065 1.334-.546 1.522-1.072.188-.527.188-.978.132-1.072-.057-.094-.207-.15-.433-.263z"/></svg>
+                                <span>Kirim via WhatsApp</span>
                             </button>
                         </div>
                     </form>
@@ -225,4 +208,33 @@
         </div>
     </div>
 </section>
+
+@push('scripts')
+<script>
+function sendToWhatsApp(event) {
+    event.preventDefault();
+    
+    const nama = document.getElementById('nama_pengirim').value;
+    const telepon = document.getElementById('no_telepon').value;
+    const subjek = document.getElementById('subjek').value;
+    const pesan = document.getElementById('pesan').value;
+    
+    const waNumber = "62{{ ltrim($sekolah['whatsapp'] ?? '081222333444', '0') }}";
+    
+    const template = `*Halo, saya ingin menghubungi ${ '{{ $sekolah["nama"] ?? "Humas" }}' }*
+    
+*Nama Lengkap:* ${nama}
+*No. WhatsApp / HP:* ${telepon ? telepon : '-'}
+*Subjek/Kategori:* ${subjek}
+
+*Pesan:*
+${pesan}`;
+
+    const textEncoded = encodeURIComponent(template);
+    const waUrl = `https://wa.me/${waNumber}?text=${textEncoded}`;
+    
+    window.open(waUrl, '_blank');
+}
+</script>
+@endpush
 @endsection

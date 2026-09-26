@@ -84,6 +84,15 @@
                 box-shadow: 0 16px 28px -6px rgba(15, 23, 42, 0.12), 0 8px 12px -4px rgba(15, 23, 42, 0.06);
             }
         }
+        
+        /* Hide Scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
     @stack('styles')
 </head>
@@ -171,7 +180,19 @@
                 
                 $navMenus = $navMenus->reject(fn($menu) => str_contains(strtolower($menu->name), 'spmb'))
                     ->map(function($menu) {
-                        $menu->setRelation('children', $menu->children->reject(fn($child) => str_contains(strtolower($child->name), 'spmb')));
+                        $menu->setRelation('children', $menu->children->reject(fn($child) => 
+                            str_contains(strtolower($child->name), 'spmb') ||
+                            strtolower(trim($child->name)) === 'profil lengkap' ||
+                            strtolower(trim($child->name)) === 'semua program keahlian'
+                        ));
+                        
+                        // Override URL if it's the parent of Profil or Jurusan
+                        if (strtolower(trim($menu->name)) === 'profil sekolah' || strtolower(trim($menu->name)) === 'profil') {
+                            $menu->url = '/profil';
+                        } elseif (strtolower(trim($menu->name)) === 'program keahlian') {
+                            $menu->url = '/program-keahlian';
+                        }
+                        
                         return $menu;
                     });
                 $currentPath = trim(request()->path(), '/');
@@ -200,10 +221,10 @@
                         </a>
                     @else
                         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button @class(['flex items-center px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none', 'bg-slate-900 text-white shadow-sm hover:bg-slate-800' => $menuIsActive, 'text-slate-700 hover:text-blue-900 hover:bg-slate-100' => !$menuIsActive])>
+                            <a href="{{ $menuUrl }}" @class(['flex items-center px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none', 'bg-slate-900 text-white shadow-sm hover:bg-slate-800' => $menuIsActive, 'text-slate-700 hover:text-blue-900 hover:bg-slate-100' => !$menuIsActive])>
                                 <span>{{ $menu->name }}</span>
                                 <svg class="w-4 h-4 ml-1 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                            </button>
+                            </a>
                             <div x-show="open"
                                  x-transition:enter="transition ease-out duration-180"
                                  x-transition:enter-start="opacity-0 translate-y-2"
@@ -305,11 +326,14 @@
                         </a>
                     @else
                         <div x-data="{ expanded: false }" class="rounded-xl overflow-hidden border border-slate-100">
-                            <button @click="expanded = !expanded" 
-                                    class="w-full flex justify-between items-center px-3.5 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition">
-                                <span>{{ $menu->name }}</span>
-                                <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                            </button>
+                            <div class="w-full flex justify-between items-center text-slate-800 hover:bg-slate-50 transition">
+                                <a href="{{ $menuUrl }}" @click="mobileNav = false" class="flex-1 px-3.5 py-2.5 text-sm font-semibold">
+                                    {{ $menu->name }}
+                                </a>
+                                <button @click="expanded = !expanded" class="p-2.5">
+                                    <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </div>
                             <div x-show="expanded" x-transition.opacity class="bg-slate-50 px-3 py-1 space-y-1 border-t border-slate-100">
                                 @foreach($menu->children as $child)
                                     @php
@@ -444,6 +468,31 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating WhatsApp Button with Tooltip -->
+    <div class="fixed bottom-6 right-6 z-50 flex items-center group">
+        <!-- Floating Tooltip Box -->
+        <div class="mr-3 bg-white text-slate-800 py-2.5 px-4 rounded-2xl shadow-xl border border-slate-200/90 hidden sm:flex flex-col items-start transition-all duration-300 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 pointer-events-none whitespace-nowrap relative">
+            <span class="text-xs text-slate-500 font-medium leading-tight">Ada pertanyaan?</span>
+            <span class="text-xs sm:text-sm font-extrabold text-emerald-600 leading-tight flex items-center gap-1">
+                Silakan hubungi kami via WA &rarr;
+            </span>
+            <!-- Tooltip Arrow pointing to WhatsApp button -->
+            <div class="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 bg-white border-t border-r border-slate-200/90 rotate-45"></div>
+        </div>
+
+        <!-- Official WhatsApp Round Button -->
+        <a href="https://wa.me/62{{ ltrim($sekolah['whatsapp'] ?? '081222333444', '0') }}?text=Halo%20Admin%2C%20saya%20ingin%20bertanya%20informasi%20mengenai%20sekolah." 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full shadow-2xl hover:shadow-green-500/40 flex items-center justify-center transition-all duration-300 transform hover:scale-110 shrink-0"
+           aria-label="Hubungi kami melalui WhatsApp"
+           title="Hubungi kami via WhatsApp">
+            <svg class="w-8 h-8 fill-white shrink-0" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M18.403 5.638A8.955 8.955 0 0 0 12.053 3c-4.968 0-9.013 4.045-9.015 9.017a8.98 8.98 0 0 0 1.374 4.815L3 21l4.303-1.129a9.014 9.014 0 0 0 4.748 1.325h.004c4.968 0 9.013-4.046 9.015-9.017a8.963 8.963 0 0 0-2.667-6.541zm-6.35 13.684h-.003a7.51 7.51 0 0 1-3.832-1.051l-.275-.163-2.85.748.76-2.778-.179-.284a7.485 7.485 0 0 1-1.147-3.978c.002-4.14 3.37-7.508 7.513-7.508a7.472 7.472 0 0 1 5.309 2.199 7.48 7.48 0 0 1 2.196 5.31c-.002 4.14-3.37 7.508-7.512 7.508zm4.12-5.625c-.225-.113-1.334-.658-1.541-.733-.207-.075-.357-.113-.508.113-.15.225-.583.733-.715.884-.131.15-.263.169-.489.056-.225-.113-.951-.35-1.812-1.118-.671-.598-1.124-1.338-1.256-1.564-.132-.226-.014-.348.099-.46.102-.101.226-.263.339-.395.113-.131.15-.225.226-.375.075-.15.038-.282-.019-.395-.056-.113-.508-1.224-.696-1.677-.183-.441-.369-.381-.508-.388l-.433-.008c-.15 0-.395.056-.602.282-.207.226-.79.771-.79 1.88 0 1.109.809 2.179.921 2.33.113.15 1.59 2.428 3.854 3.404.538.233.959.372 1.286.476.541.172 1.034.148 1.423.09.434-.065 1.334-.546 1.522-1.072.188-.527.188-.978.132-1.072-.057-.094-.207-.15-.433-.263z"/>
+            </svg>
+        </a>
+    </div>
 
     @stack('scripts')
 </body>

@@ -345,13 +345,13 @@
 <section class="section-py bg-slate-50" id="jurusan">
     <div class="container-custom">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-9">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6 sm:mb-9">
             <div>
                 <span class="text-blue-700 font-bold text-xs uppercase tracking-wider">Konsentrasi Keahlian</span>
                 <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 mt-1">7 Program Keahlian Resmi</h2>
                 <p class="text-xs sm:text-sm text-slate-600 mt-1">Kurikulum selaras dengan kebutuhan dunia usaha dan dunia kerja (DUDI)</p>
             </div>
-            <a href="{{ url(app('tenant')->slug . '/program-keahlian') }}" class="hidden md:inline-flex items-center text-sm font-bold text-blue-700 hover:text-blue-900">
+            <a href="{{ url(app('tenant')->slug . '/program-keahlian') }}" class="inline-flex items-center text-xs sm:text-sm font-bold text-blue-700 hover:text-blue-900 shrink-0">
                 Lihat Seluruh Detail Kurikulum &rarr;
             </a>
         </div>
@@ -368,9 +368,6 @@
                             <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}" 
                                  alt="{{ $j->nama_jurusan }}" 
                                  class="w-full h-full object-cover">
-                            <div class="absolute top-3 right-3 bg-blue-900/90 text-white font-extrabold text-xs px-2.5 py-1 rounded-md backdrop-blur-sm">
-                                {{ $j->singkatan }}
-                            </div>
                         </div>
                         <div class="p-5 flex-1 flex flex-col justify-between">
                             <div>
@@ -393,12 +390,6 @@
                 @endforeach
             </div>
         @endif
-
-        <div class="mt-8 text-center md:hidden">
-            <a href="{{ url(app('tenant')->slug . '/program-keahlian') }}" class="inline-flex items-center text-sm font-bold text-blue-700">
-                Lihat Seluruh Detail Kurikulum &rarr;
-            </a>
-        </div>
 
     </div>
 </section>

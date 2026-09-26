@@ -16,9 +16,6 @@
             </ol>
         </nav>
         <div class="max-w-2xl">
-            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-sky-300 text-xs font-semibold mb-3">
-                <span>⚡ Pengembangan Karakter & Softskills</span>
-            </div>
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
                 Ekstrakurikuler Sekolah
             </h1>
