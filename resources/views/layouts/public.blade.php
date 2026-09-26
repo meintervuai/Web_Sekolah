@@ -501,7 +501,13 @@
             <!-- Bottom Copyright -->
             <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 space-y-3 sm:space-y-0">
                 <p>&copy; {{ date('Y') }} {{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}. Seluruh hak cipta dilindungi undang-undang.</p>
-                <p class="text-slate-400">Platform Website Sekolah Terpadu</p>
+                <div class="flex items-center space-x-3 text-slate-400">
+                    <span>Platform Website Sekolah Terpadu</span>
+                    <span>&bull;</span>
+                    <a href="{{ url(app('tenant')->slug . '/admin/login') }}" class="text-slate-400 hover:text-blue-400 transition font-medium">
+                        Panel Admin
+                    </a>
+                </div>
             </div>
         </div>
     </footer>

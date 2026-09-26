@@ -3,6 +3,20 @@
 use App\Http\Controllers\Central\AuthController;
 use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
+use App\Http\Controllers\Tenant\Admin\AgendaController;
+use App\Http\Controllers\Tenant\Admin\BeritaController;
+use App\Http\Controllers\Tenant\Admin\EkstrakurikulerController;
+use App\Http\Controllers\Tenant\Admin\FasilitasController;
+use App\Http\Controllers\Tenant\Admin\GaleriController;
+use App\Http\Controllers\Tenant\Admin\GuruStafController;
+use App\Http\Controllers\Tenant\Admin\JurusanController;
+use App\Http\Controllers\Tenant\Admin\KontakController;
+use App\Http\Controllers\Tenant\Admin\PengaturanController;
+use App\Http\Controllers\Tenant\Admin\PengumumanController;
+use App\Http\Controllers\Tenant\Admin\PrestasiController;
+use App\Http\Controllers\Tenant\Admin\ProfilController;
+use App\Http\Controllers\Tenant\Admin\SliderController;
+use App\Http\Controllers\Tenant\Admin\SpmbController;
 use App\Http\Controllers\Tenant\Public\HomeController;
 use App\Http\Controllers\Tenant\Public\PageController;
 use App\Http\Middleware\TenantMiddleware;
@@ -129,5 +143,64 @@ Route::prefix('{tenant}')->middleware(TenantMiddleware::class)->group(function (
         Route::get('/berita', [PageController::class, 'berita'])->name('berita');
         Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
         Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+    });
+
+    // 15. Panel Admin Sekolah (CMS)
+    Route::prefix('admin')->name('tenant.admin.')->group(function () {
+        // Guest Admin Sekolah (Login)
+        Route::middleware('guest:tenant_admin')->group(function () {
+            Route::get('/login', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'showLogin'])->name('login');
+            Route::post('/login', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'login'])->name('login.submit');
+        });
+
+        // Terproteksi Admin Sekolah (Auth)
+        Route::middleware('auth:tenant_admin')->group(function () {
+            Route::post('/logout', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'logout'])->name('logout');
+            Route::get('/dashboard', [App\Http\Controllers\Tenant\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+            // 1. Navigasi Beranda: Slider Banner & Pengaturan Beranda
+            Route::resource('slider', SliderController::class)->except(['show']);
+            Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
+            Route::put('/pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
+
+            // 2. Navigasi Profil: Visi Misi, Sejarah, Sambutan Kepsek, & Bagan Struktur Organisasi
+            Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
+            Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+            Route::post('/profil/struktur', [ProfilController::class, 'storeStruktur'])->name('profil.struktur.store');
+            Route::delete('/profil/struktur/{id}', [ProfilController::class, 'destroyStruktur'])->name('profil.struktur.destroy');
+
+            // 3. Navigasi Program Keahlian: Jurusan & Kompetensi Keahlian
+            Route::resource('jurusan', JurusanController::class)->parameters(['jurusan' => 'jurusan'])->except(['show']);
+
+            // 4. Navigasi Informasi: Berita, Pengumuman, Agenda, & Galeri
+            Route::resource('berita', BeritaController::class)->parameters(['berita' => 'berita'])->except(['show']);
+            Route::resource('pengumuman', PengumumanController::class)->parameters(['pengumuman' => 'pengumuman'])->except(['show']);
+            Route::resource('agenda', AgendaController::class)->parameters(['agenda' => 'agenda'])->except(['show']);
+            Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri.index');
+            Route::post('/galeri/album', [GaleriController::class, 'storeAlbum'])->name('galeri.album.store');
+            Route::post('/galeri/item', [GaleriController::class, 'storeItem'])->name('galeri.item.store');
+            Route::delete('/galeri/album/{id}', [GaleriController::class, 'destroyAlbum'])->name('galeri.album.destroy');
+            Route::delete('/galeri/item/{id}', [GaleriController::class, 'destroyItem'])->name('galeri.item.destroy');
+
+            // 5. Navigasi Kesiswaan: Prestasi & Ekstrakurikuler
+            Route::resource('prestasi', PrestasiController::class)->parameters(['prestasi' => 'prestasi'])->except(['show']);
+            Route::resource('ekskul', EkstrakurikulerController::class)->parameters(['ekskul' => 'ekskul'])->except(['show']);
+
+            // 6. Navigasi Guru & Staf
+            Route::resource('guru', GuruStafController::class)->parameters(['guru' => 'guru'])->except(['show']);
+
+            // 7. Navigasi Fasilitas
+            Route::resource('fasilitas', FasilitasController::class)->parameters(['fasilitas' => 'fasilitas'])->except(['show']);
+
+            // 8. Navigasi SPMB 2026
+            Route::get('/spmb', [SpmbController::class, 'index'])->name('spmb.index');
+            Route::put('/spmb', [SpmbController::class, 'update'])->name('spmb.update');
+
+            // 9. Navigasi Kontak: Kontak, Jam Layanan, Medsos, & Inbox Pesan Masuk
+            Route::get('/kontak', [KontakController::class, 'index'])->name('kontak.index');
+            Route::put('/kontak', [KontakController::class, 'update'])->name('kontak.update');
+            Route::patch('/kontak/pesan/{id}/toggle', [KontakController::class, 'toggleDibaca'])->name('kontak.pesan.toggle');
+            Route::delete('/kontak/pesan/{id}', [KontakController::class, 'destroyPesan'])->name('kontak.pesan.destroy');
+        });
     });
 });

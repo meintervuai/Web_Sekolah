@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,12 +22,25 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('superadmin.login');
             }
 
+            // Jika dalam konteks tenant admin (baik via app('tenant') atau url pattern {tenant}/admin/*)
+            if (app()->bound('tenant')) {
+                return url(app('tenant')->slug.'/admin/login');
+            }
+
+            if ($request->segment(2) === 'admin') {
+                return url($request->segment(1).'/admin/login');
+            }
+
             return route('superadmin.login');
         });
 
         $middleware->redirectUsersTo(function (Request $request) {
             if (auth('superadmin')->check()) {
                 return route('superadmin.dashboard');
+            }
+
+            if (auth('tenant_admin')->check() && app()->bound('tenant')) {
+                return url(app('tenant')->slug.'/admin/dashboard');
             }
 
             return route('superadmin.dashboard');
@@ -35,27 +50,27 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
-        
-        $exceptions->render(function (\Illuminate\Database\QueryException $e, Request $request) {
-            \Illuminate\Support\Facades\Log::error('Database error: ' . $e->getMessage());
-            
+
+        $exceptions->render(function (QueryException $e, Request $request) {
+            Log::error('Database error: '.$e->getMessage());
+
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Layanan database sedang mengalami gangguan. Silakan coba beberapa saat lagi.'
+                    'message' => 'Layanan database sedang mengalami gangguan. Silakan coba beberapa saat lagi.',
                 ], 500);
             }
 
             return response()->view('errors.500', ['message' => 'Layanan database sedang mengalami gangguan. Silakan coba beberapa saat lagi.'], 500);
         });
 
-        $exceptions->render(function (\PDOException $e, Request $request) {
-            \Illuminate\Support\Facades\Log::error('PDO error: ' . $e->getMessage());
-            
+        $exceptions->render(function (PDOException $e, Request $request) {
+            Log::error('PDO error: '.$e->getMessage());
+
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Koneksi database gagal. Silakan coba beberapa saat lagi.'
+                    'message' => 'Koneksi database gagal. Silakan coba beberapa saat lagi.',
                 ], 500);
             }
 

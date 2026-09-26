@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Central\SuperAdmin;
+use App\Models\Tenant\Pengguna;
 use App\Models\User;
 
 return [
@@ -47,6 +48,10 @@ return [
             'driver' => 'session',
             'provider' => 'superadmins',
         ],
+        'tenant_admin' => [
+            'driver' => 'session',
+            'provider' => 'penggunas',
+        ],
     ],
 
     /*
@@ -74,6 +79,10 @@ return [
         'superadmins' => [
             'driver' => 'eloquent',
             'model' => SuperAdmin::class,
+        ],
+        'penggunas' => [
+            'driver' => 'eloquent',
+            'model' => Pengguna::class,
         ],
     ],
 
