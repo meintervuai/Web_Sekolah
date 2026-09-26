@@ -3,10 +3,11 @@
 use App\Http\Controllers\Central\AuthController;
 use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Tenant\Public\HomeController;
 use App\Http\Controllers\Tenant\Public\PageController;
+use App\Http\Middleware\TenantMiddleware;
+use App\Models\Central\Sekolah;
+use Illuminate\Support\Facades\Route;
 
 // Grup Rute Super Admin (Central)
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
@@ -36,29 +37,86 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
     });
 });
 
-// Rute Publik Utama (Landing Page SaaS)
+// Rute Publik Utama (Redirect otomatis ke tenant sekolah aktif)
 Route::get('/', function () {
-    return view('welcome'); // Create a welcome.blade.php for the SaaS landing page
+    $sekolah = Sekolah::where('status_aktif', true)->first();
+    if ($sekolah) {
+        return redirect('/'.$sekolah->slug);
+    }
+
+    return view('welcome');
 })->name('landing');
 
 // Rute Publik Tenant
-Route::prefix('{tenant}')->middleware(\App\Http\Middleware\TenantMiddleware::class)->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/ppdb', [PageController::class, 'ppdb'])->name('ppdb');
+Route::prefix('{tenant}')->middleware(TenantMiddleware::class)->group(function () {
+    // 1. Beranda
+    Route::get('/', [HomeController::class, 'index'])->name('tenant.home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+    // 2. Profil Sekolah
+    Route::get('/profil', [PageController::class, 'profil'])->name('tenant.profil');
+    Route::get('/profil/sejarah', [PageController::class, 'sejarah'])->name('tenant.profil.sejarah');
+    Route::get('/profil/visi-misi', [PageController::class, 'visiMisi'])->name('tenant.profil.visi-misi');
+    Route::get('/profil/struktur', [PageController::class, 'struktur'])->name('tenant.profil.struktur');
+
+    // 3. Program Keahlian / Jurusan
+    Route::get('/program-keahlian', [PageController::class, 'programKeahlian'])->name('tenant.program-keahlian');
+    Route::get('/program-keahlian/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('tenant.program-keahlian.detail');
+
+    // 4. Berita
+    Route::get('/berita', [PageController::class, 'berita'])->name('tenant.berita');
+    Route::get('/berita/{slug}', [PageController::class, 'detailBerita'])->name('tenant.berita.detail');
+
+    // 5. Agenda
+    Route::get('/agenda', [PageController::class, 'agenda'])->name('tenant.agenda');
+    Route::get('/agenda/{slug}', [PageController::class, 'detailAgenda'])->name('tenant.agenda.detail');
+
+    // 6. Pengumuman
+    Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('tenant.pengumuman');
+    Route::get('/pengumuman/{slug}', [PageController::class, 'detailPengumuman'])->name('tenant.pengumuman.detail');
+
+    // 7. Prestasi
+    Route::get('/prestasi', [PageController::class, 'prestasi'])->name('tenant.prestasi');
+    Route::get('/prestasi/{slug}', [PageController::class, 'detailPrestasi'])->name('tenant.prestasi.detail');
+
+    // 8. Kegiatan
+    Route::get('/kegiatan', [PageController::class, 'kegiatan'])->name('tenant.kegiatan');
+
+    // 9. Ekstrakurikuler
+    Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('tenant.ekstrakurikuler');
+    Route::get('/ekstrakurikuler/{slug}', [PageController::class, 'detailEkstrakurikuler'])->name('tenant.ekstrakurikuler.detail');
+
+    // 10. Guru & Staf
+    Route::get('/guru-staf', [PageController::class, 'guruStaf'])->name('tenant.guru-staf');
+
+    // 11. Fasilitas
+    Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('tenant.fasilitas');
+
+    // 12. Galeri
+    Route::get('/galeri', [PageController::class, 'galeri'])->name('tenant.galeri');
+
+    // 13. SPMB / PPDB
+    Route::get('/spmb', [PageController::class, 'spmb'])->name('tenant.spmb');
+    Route::get('/ppdb', [PageController::class, 'spmb'])->name('ppdb');
+
+    // 14. Kontak
+    Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak');
+    Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim');
+
+    // Backward Compatibility Sub-prefix Aliases
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah');
         Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi');
         Route::get('/struktur', [PageController::class, 'struktur'])->name('struktur');
         Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
-        Route::get('/guru', [PageController::class, 'guru'])->name('guru');
+        Route::get('/guru', [PageController::class, 'guruStaf'])->name('guru');
     });
 
     Route::prefix('akademik')->name('akademik.')->group(function () {
-        Route::get('/jurusan', [PageController::class, 'jurusan'])->name('jurusan');
-        Route::get('/jurusan/{slug}', [PageController::class, 'detailJurusan'])->name('jurusan.detail');
+        Route::get('/jurusan', [PageController::class, 'programKeahlian'])->name('jurusan');
+        Route::get('/jurusan/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('jurusan.detail');
         Route::get('/kurikulum', [PageController::class, 'kurikulum'])->name('kurikulum');
-        Route::get('/kalender', [PageController::class, 'kalender'])->name('kalender');
+        Route::get('/kalender', [PageController::class, 'agenda'])->name('kalender');
     });
 
     Route::prefix('kesiswaan')->name('kesiswaan.')->group(function () {

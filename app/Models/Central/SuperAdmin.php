@@ -11,6 +11,13 @@ class SuperAdmin extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Database connection untuk model central.
+     *
+     * @var string
+     */
+    protected $connection = 'mysql';
+
+    /**
      * Nama tabel di database.
      *
      * @var string

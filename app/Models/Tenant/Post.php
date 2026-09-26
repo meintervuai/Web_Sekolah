@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    protected $connection = 'tenant';
+
     protected $table = 'artikel';
 
     protected $fillable = [
@@ -26,4 +28,14 @@ class Post extends Model
         'is_pengumuman' => 'boolean',
         'tgl_publikasi' => 'datetime',
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriArtikel::class, 'kategori_id');
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status_publikasi', 'published')->where('tgl_publikasi', '<=', now());
+    }
 }

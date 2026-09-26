@@ -61,9 +61,11 @@ class SuperAdminSeeder extends Seeder
                 'tgl_berakhir' => now()->addMonths(11),
                 'domain' => 'smkn2bdg.test',
                 'data' => [
-                    'telepon' => '022-99887766',
-                    'email' => 'admin@smkn2bdg.sch.id',
-                    'alamat' => 'Jl. Cihampelas No. 45, Bandung',
+                    'telepon' => '(022) 7234285',
+                    'email' => 'humas@smkn2bandung.sch.id',
+                    'alamat' => 'Jl. Ciliwung No. 4, Cihapit, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40114',
+                    'npsn' => '20219146',
+                    'akreditasi' => 'A',
                 ],
             ],
             [

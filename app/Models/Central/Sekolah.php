@@ -12,6 +12,13 @@ class Sekolah extends Model
     use HasFactory, HasUuids;
 
     /**
+     * Database connection untuk model central.
+     *
+     * @var string
+     */
+    protected $connection = 'mysql';
+
+    /**
      * Nama tabel di database.
      *
      * @var string

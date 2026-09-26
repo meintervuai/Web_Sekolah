@@ -1,40 +1,84 @@
 @extends('layouts.public')
-@section('title', 'Ekstrakurikuler')
+
+@section('title', 'Ekstrakurikuler - ' . $sekolah['nama'])
+@section('meta_description', 'Kembangkan minat, bakat, kepemimpinan, dan kreativitas melalui 8 kegiatan ekstrakurikuler unggulan di ' . $sekolah['nama'])
 
 @section('content')
-<div class="py-6 md:py-16 bg-slate-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-6 md:mb-16">
-            <h1 class="text-xl md:text-4xl font-extrabold text-slate-900">Ekstrakurikuler</h1>
-            <p class="mt-2 md:mt-4 text-xs md:text-xl text-slate-600 max-w-2xl mx-auto">Kembangkan bakat dan minatmu di luar jam akademik bersama {{ $sekolah['nama'] ?? 'Sekolah' }}</p>
+<!-- Header & Breadcrumb -->
+<section class="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white py-12 lg:py-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="container-custom relative z-10">
+        <nav aria-label="Breadcrumb" class="mb-4">
+            <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><span class="text-slate-500">/</span></li>
+                <li class="text-sky-300 font-medium">Ekstrakurikuler</li>
+            </ol>
+        </nav>
+        <div class="max-w-2xl">
+            <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-sky-300 text-xs font-semibold mb-3">
+                <span>⚡ Pengembangan Karakter & Softskills</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+                Ekstrakurikuler Sekolah
+            </h1>
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                Wadah penyaluran bakat, pembentukan disiplin, inovasi teknologi, serta prestasi non-akademik siswa-siswi {{ $sekolah['nama'] }}.
+            </p>
         </div>
-        
-        <div class="flex overflow-x-auto pb-6 -mx-4 px-4 snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+    </div>
+</section>
+
+<!-- Ekstrakurikuler Grid -->
+<section class="section-py bg-slate-50">
+    <div class="container-custom">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @forelse($ekstrakurikuler as $ekskul)
-                <div class="flex-none w-52 md:w-auto snap-center mr-4 md:mr-0 h-full">
-                    <div class="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full cursor-pointer relative">
-                    <div class="aspect-video w-full bg-slate-200 relative overflow-hidden">
-                        <img src="{{ $ekskul->foto ?? 'https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop' }}" alt="{{ $ekskul->nama_ekstrakurikuler }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-in-out">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
-                        <div class="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-6 md:right-6">
-                            <h3 class="font-heading font-bold text-base md:text-2xl text-white leading-tight mb-1 md:mb-2">{{ $ekskul->nama_ekstrakurikuler }}</h3>
-                        </div>
+            <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col h-full group">
+                <!-- Cover Image -->
+                <div class="aspect-4/3 w-full overflow-hidden bg-slate-100 relative">
+                    <img src="{{ $ekskul->gambar ?? 'https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=600&auto=format&fit=crop' }}" 
+                         alt="{{ $ekskul->nama_ekskul }}" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <span class="absolute bottom-3 left-3 text-white text-xs font-semibold">
+                        {{ $ekskul->jadwal ?? 'Jadwal Rutin' }}
+                    </span>
+                </div>
+
+                <div class="p-5 flex-1 flex flex-col">
+                    <h2 class="text-base font-bold text-slate-900 group-hover:text-blue-600 transition font-heading mb-2">
+                        <a href="{{ url(app('tenant')->slug . '/ekstrakurikuler/' . $ekskul->slug) }}">
+                            {{ $ekskul->nama_ekskul }}
+                        </a>
+                    </h2>
+
+                    <p class="text-xs text-slate-600 line-clamp-3 mb-4 leading-relaxed">
+                        {{ $ekskul->deskripsi }}
+                    </p>
+
+                    @if($ekskul->pembina)
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 mb-4 text-[11px] text-slate-600 truncate">
+                        Pembina: <strong class="text-slate-800">{{ $ekskul->pembina }}</strong>
                     </div>
-                    <div class="p-3 md:p-8 flex flex-col flex-grow bg-white relative">
-                        <p class="text-slate-600 mb-3 md:mb-6 flex-grow text-xs md:text-base leading-relaxed">{{ $ekskul->deskripsi ?? 'Kegiatan ekstrakurikuler untuk mengembangkan kreativitas dan keterampilan siswa.' }}</p>
-                        @if($ekskul->hari_jadwal)
-                        <div class="mt-auto pt-3 md:pt-4 border-t border-slate-100 flex items-center text-[10px] md:text-sm text-slate-500 font-medium">
-                            <svg class="w-3.5 h-3.5 md:w-5 md:h-5 mr-1 md:mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            {{ $ekskul->hari_jadwal }} {{ $ekskul->waktu_jadwal ? '('.$ekskul->waktu_jadwal.')' : '' }}
-                        </div>
-                        @endif
-                    </div>
+                    @endif
+
+                    <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs text-slate-400">SMKN 2 Bandung</span>
+                        <a href="{{ url(app('tenant')->slug . '/ekstrakurikuler/' . $ekskul->slug) }}" 
+                           class="inline-flex items-center text-xs font-bold text-blue-600 group-hover:text-blue-700 transition">
+                            <span>Detail Ekskul</span>
+                            <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
                     </div>
                 </div>
+            </div>
             @empty
-            <div class="col-span-full py-12 text-slate-500 text-center">Belum ada data ekstrakurikuler.</div>
+            <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200 p-8">
+                <p class="text-sm text-slate-500">Belum ada data ekstrakurikuler.</p>
+            </div>
             @endforelse
         </div>
     </div>
-</div>
+</section>
 @endsection

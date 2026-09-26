@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jurusan extends Model
 {
+    protected $connection = 'tenant';
+
     protected $table = 'jurusan';
 
     protected $fillable = [

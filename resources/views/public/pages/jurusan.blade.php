@@ -1,48 +1,68 @@
 @extends('layouts.public')
+
 @section('title', 'Program Keahlian')
+@section('meta_description', 'Daftar 7 program keahlian unggulan di SMK Negeri 2 Bandung dengan kurikulum berstandar industri.')
 
 @section('content')
-<div class="py-6 md:py-16 bg-slate-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-6 md:mb-16">
-            <h1 class="text-xl md:text-4xl font-extrabold text-slate-900">Program Keahlian</h1>
-            <p class="mt-2 md:mt-4 text-xs md:text-xl text-slate-600 max-w-2xl mx-auto">Pilihan jurusan terbaik untuk masa depan gemilang di {{ $sekolah['nama'] ?? 'Sekolah' }}</p>
-        </div>
-        
-        <div class="flex overflow-x-auto pb-6 -mx-4 px-4 snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-16">
-            @forelse($jurusan as $j)
-                <div class="flex-none w-52 md:w-auto snap-center mr-4 md:mr-0 h-full">
-                    <a href="{{ route('akademik.jurusan.detail', $j->slug) }}" class="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full cursor-pointer relative block">
-                    <div class="aspect-video w-full bg-slate-200 relative overflow-hidden">
-                        <img src="{{ $j->foto_utama ?? 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop' }}" alt="{{ $j->nama_jurusan }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-in-out">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
-                        <div class="absolute top-2 right-2 w-8 h-8 md:top-4 md:right-4 md:w-12 md:h-12 bg-white/20 backdrop-blur-md rounded-lg md:rounded-2xl flex items-center justify-center text-sm md:text-2xl shadow-lg border border-white/30 text-white transform group-hover:rotate-12 transition-transform">
-                            {{ $j->ikon_atau_foto ?? '💻' }}
-                        </div>
-                        <div class="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-6 md:right-6">
-                            <h3 class="font-heading font-bold text-base md:text-2xl text-white leading-tight mb-1 md:mb-2">{{ $j->nama_jurusan }}</h3>
-                            @if($j->singkatan)
-                            <span class="inline-block px-1.5 py-0.5 md:px-3 md:py-1 bg-white/20 backdrop-blur-sm text-white rounded-md font-bold text-[10px] md:text-sm">{{ $j->singkatan }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="p-3 md:p-8 flex flex-col flex-grow bg-white relative">
-                        <div class="absolute -top-4 right-4 md:-top-6 md:right-8 w-8 h-8 md:w-12 md:h-12 rounded-full theme-bg text-white flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-300 ease-out">
-                            <svg class="w-3.5 h-3.5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </div>
-                        <p class="text-slate-600 mb-3 md:mb-6 flex-grow line-clamp-3 text-xs md:text-lg leading-relaxed">{{ $j->deskripsi_singkat ?? 'Program keahlian yang mendidik siswa menjadi tenaga profesional dan siap menghadapi dunia industri modern.' }}</p>
-                        <span class="inline-flex items-center font-bold theme-text uppercase tracking-wider text-[10px] md:text-sm group-hover:theme-text-dark transition-colors mt-auto">
-                            Pelajari Selengkapnya
-                        </span>
-                    </div>
-                    </a>
-                </div>
-            @empty
-            <div class="col-span-full py-12 text-slate-500 text-center">Belum ada data jurusan.</div>
-            @endforelse
-        </div>
+<!-- Page Header -->
+<div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white py-14 border-b border-slate-800">
+    <div class="container-custom">
+        <nav class="flex items-center space-x-2 text-xs text-blue-200 mb-3" aria-label="Breadcrumb">
+            <a href="{{ url(app('tenant')->slug) }}" class="hover:text-white">Beranda</a>
+            <span>/</span>
+            <span class="text-white font-semibold">Program Keahlian</span>
+        </nav>
+        <h1 class="font-heading font-extrabold text-3xl sm:text-4xl text-white">Program Keahlian Unggulan</h1>
+        <p class="text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
+            SMK Negeri 2 Bandung menyelenggarakan 7 konsentrasi keahlian di bidang teknologi dan rekayasa dengan fasilitas modern dan kemitraan puluhan industri terkemuka.
+        </p>
+    </div>
+</div>
 
-        <!-- Content removed, moving to detail page -->
+<div class="section-py bg-slate-50">
+    <div class="container-custom">
+        
+        @if($jurusan->isEmpty())
+            <div class="p-12 text-center bg-white rounded-2xl border border-slate-200 text-slate-500">
+                <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <p class="font-bold text-base text-slate-700">Belum Ada Program Keahlian</p>
+                <p class="text-xs text-slate-500 mt-1">Data program keahlian sedang dalam proses pemutakhiran.</p>
+            </div>
+        @else
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach($jurusan as $j)
+                    <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover-card flex flex-col justify-between h-full">
+                        <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+                            <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}" 
+                                 alt="{{ $j->nama_jurusan }}" 
+                                 class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                            <span class="absolute top-3 right-3 bg-blue-900/90 text-white font-extrabold text-xs px-2.5 py-1 rounded-md backdrop-blur-sm shadow">
+                                {{ $j->singkatan }}
+                            </span>
+                            <div class="absolute bottom-3 left-4 right-4">
+                                <h2 class="font-heading font-bold text-lg text-white leading-tight">
+                                    {{ $j->nama_jurusan }}
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <p class="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed">
+                                {{ $j->deskripsi_singkat }}
+                            </p>
+                            <div class="pt-5 mt-4 border-t border-slate-100">
+                                <a href="{{ url(app('tenant')->slug . '/program-keahlian/' . $j->slug) }}" 
+                                   class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs btn-radius flex items-center justify-center transition shadow-sm">
+                                    <span>Pelajari Kompetensi & Prospek</span>
+                                    <svg class="w-3.5 h-3.5 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
     </div>
 </div>
 @endsection
