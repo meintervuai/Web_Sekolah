@@ -46,6 +46,12 @@ class HomeController extends Controller
             'logo' => PengaturanUmum::ambil('logo', ''),
             'warna_tema' => PengaturanUmum::ambil('warna_tema', '#1E3A8A'),
             'warna_aksen' => PengaturanUmum::ambil('warna_aksen', '#0284C7'),
+            // Media Sosial Resmi
+            'instagram' => PengaturanUmum::ambil('instagram', 'https://instagram.com/smkn2bandung'),
+            'facebook' => PengaturanUmum::ambil('facebook', 'https://facebook.com/smkn2bandung'),
+            'twitter' => PengaturanUmum::ambil('twitter', 'https://x.com/smkn2bandung'),
+            'youtube' => PengaturanUmum::ambil('youtube', 'https://youtube.com/@smkn2bandung'),
+            'tiktok' => PengaturanUmum::ambil('tiktok', 'https://tiktok.com/@smkn2bandung'),
             // Statistik Resmi
             'stat_guru' => PengaturanUmum::ambil('stat_guru', '98'),
             'stat_guru_label' => PengaturanUmum::ambil('stat_guru_label', 'Guru & Tenaga Kependidikan'),

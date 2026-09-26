@@ -45,6 +45,12 @@ class PageController extends Controller
             'nip_kepsek' => PengaturanUmum::ambil('nip_kepsek', '19680512 199303 1 004'),
             'foto_kepsek' => PengaturanUmum::ambil('foto_kepsek', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'),
             'sambutan_kepsek' => PengaturanUmum::ambil('sambutan_kepsek', ''),
+            // Media Sosial Resmi
+            'instagram' => PengaturanUmum::ambil('instagram', 'https://instagram.com/smkn2bandung'),
+            'facebook' => PengaturanUmum::ambil('facebook', 'https://facebook.com/smkn2bandung'),
+            'twitter' => PengaturanUmum::ambil('twitter', 'https://x.com/smkn2bandung'),
+            'youtube' => PengaturanUmum::ambil('youtube', 'https://youtube.com/@smkn2bandung'),
+            'tiktok' => PengaturanUmum::ambil('tiktok', 'https://tiktok.com/@smkn2bandung'),
             // Statistik
             'stat_guru' => PengaturanUmum::ambil('stat_guru', '98'),
             'stat_guru_label' => PengaturanUmum::ambil('stat_guru_label', 'Guru & Tenaga Kependidikan'),
