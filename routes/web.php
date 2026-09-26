@@ -44,17 +44,19 @@ Route::get('/', function () {
 // Rute Publik Tenant
 Route::prefix('{tenant}')->middleware(\App\Http\Middleware\TenantMiddleware::class)->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/ppdb', [PageController::class, 'ppdb'])->name('ppdb');
 
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah');
         Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi');
-        Route::get('/struktur-organisasi', [PageController::class, 'struktur'])->name('struktur');
+        Route::get('/struktur', [PageController::class, 'struktur'])->name('struktur');
         Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
         Route::get('/guru', [PageController::class, 'guru'])->name('guru');
     });
 
     Route::prefix('akademik')->name('akademik.')->group(function () {
         Route::get('/jurusan', [PageController::class, 'jurusan'])->name('jurusan');
+        Route::get('/jurusan/{slug}', [PageController::class, 'detailJurusan'])->name('jurusan.detail');
         Route::get('/kurikulum', [PageController::class, 'kurikulum'])->name('kurikulum');
         Route::get('/kalender', [PageController::class, 'kalender'])->name('kalender');
     });
@@ -68,7 +70,6 @@ Route::prefix('{tenant}')->middleware(\App\Http\Middleware\TenantMiddleware::cla
     Route::prefix('informasi')->name('informasi.')->group(function () {
         Route::get('/berita', [PageController::class, 'berita'])->name('berita');
         Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
-        Route::get('/agenda', [PageController::class, 'agenda'])->name('agenda');
         Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
     });
 });

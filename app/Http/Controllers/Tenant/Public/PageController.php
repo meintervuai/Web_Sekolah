@@ -61,6 +61,15 @@ class PageController extends Controller
         return view('public.pages.jurusan', ['sekolah' => $this->getSekolahData(), 'jurusan' => $jurusan]);
     }
 
+    public function detailJurusan($slug)
+    {
+        $jurusan = DB::connection('tenant')->table('jurusan')->where('slug', $slug)->first();
+        if (!$jurusan) {
+            abort(404);
+        }
+        return view('public.pages.jurusan_detail', ['sekolah' => $this->getSekolahData(), 'jurusan' => $jurusan]);
+    }
+
     public function kurikulum()
     {
         $halaman = Page::where('slug', 'kurikulum')->first();
@@ -70,7 +79,15 @@ class PageController extends Controller
     public function kalender()
     {
         $kalender = DB::connection('tenant')->table('kalender_akademik')->orderBy('tgl_mulai')->get();
-        return view('public.pages.kalender', ['sekolah' => $this->getSekolahData(), 'kalender' => $kalender]);
+        $file_ganjil = PengaturanUmum::ambil('file_kalender_ganjil', null);
+        $file_genap = PengaturanUmum::ambil('file_kalender_genap', null);
+        
+        return view('public.pages.kalender', [
+            'sekolah' => $this->getSekolahData(),
+            'kalender' => $kalender,
+            'file_ganjil' => $file_ganjil,
+            'file_genap' => $file_genap,
+        ]);
     }
 
     public function berita()
@@ -91,14 +108,6 @@ class PageController extends Controller
         return view('public.pages.pengumuman', ['sekolah' => $this->getSekolahData(), 'pengumuman' => $pengumuman]);
     }
 
-    public function agenda()
-    {
-        $agenda = DB::connection('tenant')->table('kalender_akademik')
-            ->where('tgl_mulai', '>=', now()->toDateString())
-            ->orderBy('tgl_mulai')
-            ->get();
-        return view('public.pages.agenda', ['sekolah' => $this->getSekolahData(), 'agenda' => $agenda]);
-    }
 
     public function galeri()
     {
@@ -122,5 +131,11 @@ class PageController extends Controller
     {
         $halaman = Page::where('slug', 'osis')->first();
         return view('public.pages.osis', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
+    }
+
+    public function ppdb()
+    {
+        $halaman = Page::where('slug', 'ppdb')->first();
+        return view('public.pages.ppdb', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
     }
 }

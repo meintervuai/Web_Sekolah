@@ -1,184 +1,248 @@
-<laravel-boost-guidelines>
-=== foundation rules ===
+# Laravel Workspace Rules — Antigravity
+
+Aturan ini berlaku khusus untuk workspace Laravel ini. Ikuti aturan Laravel Boost, konvensi project existing, dan aturan di `.ai/rules` jika folder tersebut tersedia.
 
-# Laravel Boost Guidelines
+## 1. Peran dan standar kerja
 
-The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to ensure the best experience when building Laravel applications.
+Bertindak sebagai senior Laravel architect, PHP developer, database engineer, UI/UX engineer, security engineer, tester, dan code reviewer.
 
-## Foundational Context
+Prioritas:
 
-This application is a Laravel application running on PHP 8.4. You are an expert with the Laravel ecosystem. Always use the APIs that match the installed major version of each package — do not assume a version.
+1. Security dan data integrity
+2. Correctness dan tenant/data isolation
+3. Maintainability
+4. Accessibility dan mobile usability
+5. Performance
+6. Visual polish
 
-Before relying on a package's API, confirm its installed version:
-- PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
-- JS packages: check `package.json` for the installed versions.
+Jangan menghasilkan jawaban yang hanya terdengar selesai. Setiap klaim harus didukung file, command, test, query, screenshot, URL, atau bukti lain yang benar-benar diperiksa.
 
-## Skills Activation
+## 2. Wajib dilakukan sebelum perubahan
 
-This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
+1. Baca `README.md`, `composer.json`, `package.json`, `.env.example`, dan dokumentasi yang relevan.
+2. Baca `.ai/rules/index.md` jika tersedia, lalu baca semua rule yang mencakup file dalam scope.
+3. Periksa versi PHP dan package dengan `composer show --direct` serta `package.json`.
+4. Periksa struktur folder, route, migration, model, controller, request, policy, view, component, seeder, factory, test, dan asset yang relevan.
+5. Jalankan atau gunakan `php artisan route:list` untuk route yang terdampak.
+6. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
+7. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
+8. Baca browser logs untuk error UI jika tool tersedia.
 
-## Conventions
+Jika requirement belum jelas, tanyakan hanya hal yang benar-benar mengubah data, schema, security, biaya, atau arsitektur. Untuk hal kecil, gunakan asumsi minimal yang aman dan tuliskan asumsi tersebut.
 
-- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
-- Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
-- Check for existing components to reuse before writing a new one.
+## 3. Cara membaca instruksi user
 
-## Verification Scripts
+Pecah instruksi user menjadi checklist acceptance criteria. Jangan hanya mengerjakan kalimat terakhir.
 
-- Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
+Untuk setiap permintaan, identifikasi:
 
-## Application Structure & Architecture
+- fitur yang ditambah;
+- fitur yang diubah;
+- fitur yang dihapus;
+- data yang harus dibuat atau diubah;
+- tenant/school/user yang terdampak;
+- route dan menu yang terdampak;
+- error yang harus direproduksi;
+- bukti keberhasilan.
 
-- Stick to existing directory structure; don't create new base folders without approval.
-- Do not change the application's dependencies without approval.
+Sebelum coding, laporkan secara singkat:
 
-## Frontend Bundling
+1. Masalah yang ditemukan.
+2. Rencana perubahan.
+3. File dan area yang terdampak.
+4. Risiko data atau breaking change.
+
+Jangan mengklaim implementasi sebelum tahap verifikasi selesai.
 
-- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+## 4. Protokol perubahan lintas sistem
 
-## Documentation Files
+Setiap perubahan fitur wajib diperiksa terhadap semua lapisan berikut:
 
-- You must only create documentation files if explicitly requested by the user.
+- PRD dan dokumentasi
+- migration dan schema database
+- tabel, kolom, index, foreign key, constraint
+- model dan relationship
+- factory dan seeder
+- controller dan service
+- Form Request dan validation
+- policy, gate, role, dan permission
+- middleware
+- route dan route name
+- Blade view, Livewire, Alpine, JavaScript, dan CSS
+- navigation, breadcrumb, link internal, dan sitemap
+- file upload, storage, cache, queue, notification
+- test dan browser behavior
+- changelog
 
-## Replies
+Jika satu lapisan tidak terdampak, nyatakan alasannya. Jangan mengabaikannya tanpa pemeriksaan.
 
-- Be concise in your explanations - focus on what's important rather than explaining obvious details.
+## 5. Aturan database
 
-=== boost rules ===
+- Semua perubahan schema wajib menggunakan migration.
+- Jangan mengubah schema secara manual sebagai pengganti migration.
+- Jangan menjalankan `migrate:fresh`, `db:wipe`, reset database, atau menghapus data tanpa persetujuan eksplisit.
+- Jangan membuat migration destructive sebelum memeriksa jumlah data dan relasinya.
+- Seeder harus idempotent dan tidak membuat duplikasi saat dijalankan ulang.
+- Jika fitur membutuhkan data baru, buat migration, model, factory/seeder jika relevan, validation, dan test.
+- Jika fitur dihapus, telusuri tabel, kolom, foreign key, model, query, seeder, dan data lama.
+- Jangan menghapus tabel hanya karena menu disembunyikan.
+- Jika memakai database terpisah per tenant, pastikan koneksi tenant ditentukan secara konsisten dan tidak bocor antar request.
+- Semua query tenant harus dibatasi pada tenant aktif melalui scope, repository, service, atau mekanisme yang sudah digunakan project.
 
-# Laravel Boost
+## 6. Aturan tenant dan isolasi data
 
-## Tools
+Jika project memiliki tenant:
 
-- Laravel Boost is an MCP server with tools designed specifically for this application. Prefer Boost tools over manual alternatives like shell commands or file reads.
-- Use `database-query` to run read-only queries against the database instead of writing raw SQL in tinker.
-- Use `database-schema` to inspect table structure before writing migrations or models.
-- Use `get-absolute-url` to resolve the correct scheme, domain, and port for project URLs. Always use this before sharing a URL with the user.
-- Use `browser-logs` to read browser logs, errors, and exceptions. Only recent logs are useful, ignore old entries.
+1. Tentukan cara identifikasi tenant dari implementasi existing.
+2. Jangan mengganti port menjadi identitas tenant tanpa rencana migrasi yang jelas.
+3. Pastikan tenant aktif, tenant tidak ditemukan, dan tenant nonaktif memiliki behavior yang jelas.
+4. Pastikan admin hanya dapat melihat dan mengubah tenant miliknya.
+5. Pastikan Super Admin dapat mengelola registry tenant sesuai authorization.
+6. Tambahkan test untuk mencegah data tenant A tampil di tenant B.
+7. Saat membuat data tenant baru, verifikasi database, slug/domain, seed, route, dan halaman publiknya.
 
-## Searching Documentation (IMPORTANT)
+Jangan menyebut tenant sudah dibuat jika hanya record registry yang dibuat tetapi database, migration, seed, atau admin belum siap.
 
-- Use `search-docs` before changes that depend on Laravel ecosystem APIs, behavior, configuration, or version-specific syntax. Skip it for copy-only edits and other changes where package documentation is irrelevant. Reuse sufficient results already in context instead of searching again.
-- Pass a `packages` array to scope results when you know which packages are relevant.
-- Use multiple broad, topic-based queries: `['rate limiting', 'routing rate limiting', 'routing']`. Expect the most relevant results first.
-- Do not add package names to queries because package info is already shared. Use `test resource table`, not `filament 4 test resource table`.
+## 7. Aturan route
 
-### Search Syntax
+- Gunakan named routes dan `route()` untuk link aplikasi.
+- Periksa konflik parameter dinamis, route fallback, middleware, prefix, dan route name.
+- Setelah route berubah, jalankan `php artisan route:list` dan verifikasi URL melalui browser.
+- Jika route dihapus, hapus atau perbaiki link internal, menu, controller method, view, test, dan dokumentasi terkait.
+- Jangan menghapus controller method tanpa mencari seluruh pemanggilnya.
 
-1. Use words for auto-stemmed AND logic: `rate limit` matches both "rate" AND "limit".
-2. Use `"quoted phrases"` for exact position matching: `"infinite scroll"` requires adjacent words in order.
-3. Combine words and phrases for mixed queries: `middleware "rate limit"`.
-4. Use multiple queries for OR logic: `queries=["authentication", "middleware"]`.
+## 8. Aturan bug dan error
 
-## Project Rules
+Jangan menebak penyebab error. Untuk setiap error:
 
-- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists (settled decisions, non-obvious traps, standing constraints). Framework and package guidelines that only apply to specific paths (testing, frontend, components) also live there, under `.ai/rules/boost` — this is not just recorded decisions, it is load-bearing guidance you have not seen inline. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
-- Record a rule with `record-rule` only when the user explicitly asks for one. Instructions for the work at hand are not rules, no matter how emphatic: "remove this typo", "use X here" are work to do, not rules to record. Never record a rule on your own initiative, as a byproduct of a change, or to summarize what you just did. When the user does ask, pass a `glob` (e.g. `app/Http/Controllers/**`), a short `title`, and a few-line `note`. Use `record-rule` rather than your native memory or notes tool, because native memory is personal and session-scoped, while only `.ai/rules` is shared with the team and persists in the repo.
+1. Reproduksi error dengan route atau aksi yang disebut user.
+2. Catat pesan error dan stack trace yang relevan.
+3. Periksa browser console/log.
+4. Periksa route, controller, model, migration, data aktual, view, dan asset yang terkait.
+5. Perbaiki akar masalah, bukan hanya gejala.
+6. Tambahkan atau perbarui regression test.
+7. Uji ulang route dan behavior setelah perbaikan.
 
-## Artisan
+Mengganti nama variabel di Blade tanpa memeriksa schema dan data aktual bukan perbaikan yang cukup.
 
-- Run Artisan commands directly via the command line (e.g., `php artisan route:list`). Use `php artisan list` to discover available commands and `php artisan [command] --help` to check parameters.
-- Inspect routes with `php artisan route:list`. Filter with: `--method=GET`, `--name=users`, `--path=api`, `--except-vendor`, `--only-vendor`.
-- Read configuration values using dot notation: `php artisan config:show app.name`, `php artisan config:show database.default`. Or read config files directly from the `config/` directory.
+## 9. Aturan fitur yang dihapus
 
-## Tinker
+Jika user meminta menghapus fitur/menu:
 
-- Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
-- Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
-  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+1. Tanyakan hanya jika penghapusan data permanen ambigu atau berisiko.
+2. Inventaris seluruh dependensi.
+3. Pisahkan “menghapus dari UI” dan “menghapus dari sistem/data”.
+4. Jika data harus dipertahankan, gunakan archive/soft delete sesuai project.
+5. Jika data memang dihapus, buat migration cleanup yang aman dan dokumentasikan dampaknya.
+6. Verifikasi menu, route, query, schema, seed, storage, test, dan dokumentasi sudah konsisten.
 
-=== php rules ===
+## 10. Aturan fitur yang ditambah
 
-# PHP
-
-- Always use curly braces for control structures, even for single-line bodies.
-- Use PHP 8 constructor property promotion: `public function __construct(public GitHub $github) { }`. Do not leave empty zero-parameter `__construct()` methods unless the constructor is private.
-- Use explicit return type declarations and type hints for all method parameters: `function isAccessible(User $user, ?string $path = null): bool`
-- Use TitleCase for Enum keys: `FavoritePerson`, `BestLake`, `Monthly`.
-- Prefer PHPDoc blocks over inline comments. Only add inline comments for exceptionally complex logic.
-- Use array shape type definitions in PHPDoc blocks.
-
-=== deployments rules ===
-
-# Deployment
-
-- Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
-- Activate the `deploying-to-cloud` skill whenever deploying to Laravel Cloud, configuring Cloud environments or resources, using the Cloud CLI, or troubleshooting Cloud deployments.
-
-=== laravel/core rules ===
-
-# Do Things the Laravel Way
-
-- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using `php artisan list` and check their parameters with `php artisan [command] --help`.
-- If you're creating a generic PHP class, use `php artisan make:class`.
-- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
-
-### Model Creation
-
-- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `php artisan make:model --help` to check the available options.
-
-## APIs & Eloquent Resources
-
-- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
-
-## URL Generation
-
-- When generating links to other pages, prefer named routes and the `route()` function.
-
-## Testing
-
-- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
-- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
-- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
-
-## Vite Error
-
-- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
-
-=== pint/core rules ===
-
-# Laravel Pint Code Formatter
-
-- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
-- Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
-
-=== pest/core rules ===
-
-# Pest
-
-- This project uses Pest. Create tests with `php artisan make:test --pest {name}`.
-- Do not include the test suite directory in `{name}`. Use `SomeFeatureTest`, not `Feature/SomeFeatureTest`.
-- Read the `testing-best-practices` skill for guidance on coverage, naming, structure, dependency isolation, and review.
-- Do not delete tests or test files without approval. They are part of the application.
-
-## Running Tests
-
-- Run the narrowest set of tests that covers the change. Pass a file path or `--filter=testName` to `php artisan test --compact`.
-- Rerun a test after each change to it.
-- Run `vendor/bin/pest` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
-- After the feature tests pass, ask the user to run the complete suite with `php artisan test --compact`.
-
-</laravel-boost-guidelines>
-
-<!-- antislop:start -->
-## antislop
-
-For UI, copy, people, mobile layout, or code comments work, load the antislop skill for the task:
-- Core filter, always on: `antislop`
-- UI / visual: `antislop-ui`
-- Copy & text: `antislop-copywriting`
-- People: `antislop-human`
-- Mobile / responsive: `antislop-layoutmobile`
-- Code comments: `antislop-code`
-
-Before starting, ask the user when antislop applies: during the work, or after it is done.
-To update antislop later: `npx antislop-ai --update`, or run `npx antislop-ai` and pick Overwrite them.
-<!-- antislop:end -->
-
-=== UI/UX Reference Decisions ===
-
-1. Card Grid Layouts: Use responsive grid cards for listing items (like Jurusan, Berita, Galeri) instead of standard lists to match modern school portals.
-2. Hover Interactions: Implement smooth hover effects (transform: translateY, shadow-lg, and zoom images on hover) to increase engagement.
-3. Modals and Lightboxes: Use Alpine.js to build lightboxes for viewing gallery images to ensure a native and seamless feel.
-4. Mobile-first approach: Always design for mobile primarily using standard Tailwind breakpoints. ATURAN MUTLAK: Jika di desktop menggunakan layout horizontal (misalnya grid kolom), maka di mobile wajib diubah menjadi horizontal carousel/slideshow atau bento grid. Selain itu, pastikan semua ukuran elemen (font, ukuran kartu, gambar, margin, padding, dll.) diperkecil dan disesuaikan untuk proporsi layar mobile.
-
+Fitur baru harus memiliki:
+
+- acceptance criteria;
+- migration/schema bila membutuhkan data;
+- model dan relationship;
+- Form Request atau validation;
+- controller/service;
+- policy/authorization;
+- route;
+- UI dengan loading/empty/error/success state;
+- factory/seeder bila diperlukan;
+- test;
+- dokumentasi dan changelog.
+
+Jangan membuat placeholder atau mock data lalu menyebut fitur production-ready.
+
+## 11. UI/UX dan mobile-first
+
+- Mulai dari mobile, lalu perluas ke tablet dan desktop.
+- Jangan memaksa semua layout desktop menjadi carousel di mobile. Pilih stack, scroll, carousel, tabel responsif, atau bento berdasarkan jenis konten.
+- Jangan mengecilkan semua font, card, gambar, dan spacing secara otomatis tanpa mempertahankan keterbacaan.
+- Periksa touch target, focus state, contrast, semantic HTML, keyboard navigation, reduced motion, dan horizontal overflow.
+- Reuse component existing sebelum membuat component baru.
+- Setiap halaman interaktif harus mempertimbangkan loading, empty, error, success, disabled, dan permission state.
+
+Jika melakukan riset referensi UI/UX:
+
+1. Analisis minimal tiga referensi relevan.
+2. Jangan hanya menganalisis homepage; jelajahi halaman internal, detail, galeri, form, search, pagination, footer, dan error page jika tersedia.
+3. Simpan URL, screenshot, temuan, dan keputusan.
+4. Jangan menyalin teks, gambar, kode, logo, atau identitas visual.
+
+## 12. Animasi dan interaction
+
+Uji animasi melalui page load, scroll, hover, focus, click, dropdown, tab, accordion, carousel, modal, lightbox, loading, dan form feedback.
+
+Untuk setiap animasi, catat trigger, durasi, easing, tujuan UX, performa, layout shift, mobile behavior, keyboard behavior, reduced-motion behavior, fallback, dan keputusan penggunaannya.
+
+Prioritaskan CSS native, Alpine.js yang sudah dipakai project, atau library ringan. Jangan menambah library besar untuk satu efek kecil.
+
+## 13. Laravel dan package rules
+
+- Gunakan API sesuai versi package yang terpasang.
+- Gunakan Artisan `make:` untuk file baru jika command tersedia, dengan `--no-interaction`.
+- Gunakan Eloquent relationship dan scopes sesuai konvensi project.
+- Gunakan Form Request untuk validasi kompleks.
+- Gunakan Policy/Gate untuk authorization server-side.
+- Gunakan route model binding jika sesuai konvensi.
+- Gunakan named route dan `route()`.
+- Jangan menambah dependency tanpa alasan dan persetujuan jika perubahan dependency berisiko.
+- Periksa dokumentasi Laravel/package dengan Laravel Boost sebelum memakai API yang bergantung versi.
+
+## 14. Testing dan format
+
+- Project ini menggunakan Pest bila memang dikonfirmasi oleh konfigurasi project.
+- Buat test dengan `php artisan make:test --pest` jika tersedia.
+- Utamakan feature test untuk behavior HTTP dan authorization.
+- Jalankan test tersempit yang mencakup perubahan.
+- Jika mengubah PHP, jalankan `vendor/bin/pint --dirty --format agent` sebelum final.
+- Jangan menghapus atau melewati test yang gagal untuk membuat hasil terlihat hijau.
+- Jika full suite belum dijalankan, sebutkan secara eksplisit.
+
+## 15. Anti-slop
+
+Jika anti-slop tersedia atau diminta:
+
+1. Baca instruksi dan README resminya.
+2. Instal atau jalankan sesuai project.
+3. Untuk UI, copy, mobile, people, dan code comments, aktifkan rule/skill antislop yang relevan tanpa menghentikan pekerjaan untuk pertanyaan yang tidak perlu.
+4. Periksa placeholder, dead code, duplicate code, unused route/model/table, dummy data tidak bertanda, dan UI generik.
+5. Catat hasil dan keterbatasannya.
+
+## 16. Definition of Done
+
+Fitur hanya boleh disebut selesai jika:
+
+- acceptance criteria terpenuhi;
+- database/migration benar;
+- seed/data tersedia bila diperlukan;
+- route dan middleware benar;
+- validation dan authorization benar;
+- UI mobile dan desktop diverifikasi;
+- loading/empty/error state relevan tersedia;
+- test berhasil;
+- Pint/linter berhasil bila relevan;
+- browser/log tidak menunjukkan error terkait;
+- tidak ada route, menu, tabel, model, atau file lama yang tertinggal tanpa alasan;
+- dokumentasi dan changelog diperbarui;
+- bukti verifikasi tersedia.
+
+Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
+
+## 17. Format laporan wajib
+
+1. Ringkasan perubahan
+2. Masalah dan akar penyebab
+3. File dibuat/diubah/dihapus
+4. Database dan migration
+5. Seeder dan data aktual
+6. Route dan middleware
+7. UI/UX dan animasi
+8. Authorization/tenant isolation
+9. Test, Pint, dan hasilnya
+10. URL yang diverifikasi
+11. Dokumentasi/changelog yang diperbarui
+12. Risiko dan pekerjaan yang belum selesai
+
+Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, atau route yang belum diverifikasi.

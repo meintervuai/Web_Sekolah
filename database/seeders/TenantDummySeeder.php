@@ -332,9 +332,9 @@ class TenantDummySeeder extends Seeder
         // Program Keahlian sub-menu
         $menuProgramKeahlianId = $tenantDb->table('menus')->insertGetId(['name' => 'Program Keahlian', 'url' => '#', 'parent_id' => $menuAkademikId, 'type' => 'dropdown', 'urutan' => 1, 'created_at' => now(), 'updated_at' => now()]);
         $tenantDb->table('menus')->insert([
-            ['name' => 'Teknik Komputer dan Jaringan', 'url' => '/akademik/jurusan#teknik-komputer-dan-jaringan', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Rekayasa Perangkat Lunak', 'url' => '/akademik/jurusan#rekayasa-perangkat-lunak', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Desain Komunikasi Visual', 'url' => '/akademik/jurusan#desain-komunikasi-visual', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Teknik Komputer dan Jaringan', 'url' => '/akademik/jurusan/teknik-komputer-dan-jaringan', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Rekayasa Perangkat Lunak', 'url' => '/akademik/jurusan/rekayasa-perangkat-lunak', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Desain Komunikasi Visual', 'url' => '/akademik/jurusan/desain-komunikasi-visual', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
         
         $tenantDb->table('menus')->insert([
@@ -346,8 +346,7 @@ class TenantDummySeeder extends Seeder
         $tenantDb->table('menus')->insert([
             ['name' => 'Berita & Artikel', 'url' => '/informasi/berita', 'parent_id' => $menuInformasiId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Pengumuman', 'url' => '/informasi/pengumuman', 'parent_id' => $menuInformasiId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Agenda Kegiatan', 'url' => '/informasi/agenda', 'parent_id' => $menuInformasiId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Galeri', 'url' => '/informasi/galeri', 'parent_id' => $menuInformasiId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Galeri', 'url' => '/informasi/galeri', 'parent_id' => $menuInformasiId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
         
         $menuKesiswaanId = $tenantDb->table('menus')->insertGetId(['name' => 'Kesiswaan', 'url' => '#', 'type' => 'dropdown', 'urutan' => 5, 'created_at' => now(), 'updated_at' => now()]);

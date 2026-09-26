@@ -14,7 +14,7 @@
                 <div class="flex-none w-52 md:w-auto snap-center mr-4 md:mr-0 h-full">
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow border border-slate-100 flex flex-col group h-full">
                     <div class="aspect-video w-full relative overflow-hidden bg-slate-100">
-                        <img src="{{ $p->foto ?? 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop' }}" alt="{{ $p->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="{{ $p->foto ?? 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop' }}" alt="{{ $p->nama_prestasi }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @if($p->tingkat)
                         <div class="absolute top-2 right-2 md:top-4 md:right-4 px-1.5 py-0.5 md:px-3 md:py-1 bg-yellow-500 text-white font-bold text-[9px] md:text-xs rounded-full shadow-lg">
                             Tingkat {{ $p->tingkat }}
@@ -22,8 +22,8 @@
                         @endif
                     </div>
                     <div class="p-3 md:p-6 flex flex-col flex-grow">
-                        <div class="text-[10px] md:text-sm text-indigo-600 font-bold mb-1 md:mb-2 uppercase tracking-wide">{{ $p->kategori ?? 'Akademik' }}</div>
-                        <h3 class="text-base md:text-xl font-bold text-slate-900 mb-2 md:mb-3 leading-snug">{{ $p->judul }}</h3>
+                        <div class="text-[10px] md:text-sm text-indigo-600 font-bold mb-1 md:mb-2 uppercase tracking-wide">Prestasi</div>
+                        <h3 class="text-base md:text-xl font-bold text-slate-900 mb-2 md:mb-3 leading-snug">{{ $p->nama_prestasi }}</h3>
                         <div class="text-slate-600 text-xs md:text-sm mb-3 line-clamp-3 flex-grow">{{ $p->deskripsi }}</div>
                         <div class="mt-auto pt-3 md:pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] md:text-sm text-slate-500">
                             <span class="flex items-center">

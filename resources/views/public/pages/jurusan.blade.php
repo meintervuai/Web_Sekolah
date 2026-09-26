@@ -9,10 +9,10 @@
             <p class="mt-2 md:mt-4 text-xs md:text-xl text-slate-600 max-w-2xl mx-auto">Pilihan jurusan terbaik untuk masa depan gemilang di {{ $sekolah['nama'] ?? 'Sekolah' }}</p>
         </div>
         
-        <div class="flex overflow-x-auto pb-6 -mx-4 px-4 snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+        <div class="flex overflow-x-auto pb-6 -mx-4 px-4 snap-x snap-mandatory hide-scrollbar md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-10 md:overflow-visible md:pb-0 md:mx-0 md:px-0 mb-16">
             @forelse($jurusan as $j)
                 <div class="flex-none w-52 md:w-auto snap-center mr-4 md:mr-0 h-full">
-                    <div class="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full cursor-pointer relative">
+                    <a href="{{ route('akademik.jurusan.detail', $j->slug) }}" class="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col h-full cursor-pointer relative block">
                     <div class="aspect-video w-full bg-slate-200 relative overflow-hidden">
                         <img src="{{ $j->foto_utama ?? 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop' }}" alt="{{ $j->nama_jurusan }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-in-out">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
@@ -31,16 +31,18 @@
                             <svg class="w-3.5 h-3.5 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                         <p class="text-slate-600 mb-3 md:mb-6 flex-grow line-clamp-3 text-xs md:text-lg leading-relaxed">{{ $j->deskripsi_singkat ?? 'Program keahlian yang mendidik siswa menjadi tenaga profesional dan siap menghadapi dunia industri modern.' }}</p>
-                        <a href="{{ url(app('tenant')->slug . '/akademik/jurusan#' . ($j->slug ?? '')) }}" class="inline-flex items-center font-bold theme-text uppercase tracking-wider text-[10px] md:text-sm group-hover:theme-text-dark transition-colors mt-auto">
-                            Pelajari Kurikulum
-                        </a>
+                        <span class="inline-flex items-center font-bold theme-text uppercase tracking-wider text-[10px] md:text-sm group-hover:theme-text-dark transition-colors mt-auto">
+                            Pelajari Selengkapnya
+                        </span>
                     </div>
-                    </div>
+                    </a>
                 </div>
             @empty
             <div class="col-span-full py-12 text-slate-500 text-center">Belum ada data jurusan.</div>
             @endforelse
         </div>
+
+        <!-- Content removed, moving to detail page -->
     </div>
 </div>
 @endsection

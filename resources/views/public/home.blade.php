@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section / Slider -->
-<div class="relative w-full h-[90vh] min-h-[600px] xl:min-h-[700px] overflow-hidden group" x-data="{ currentSlide: 0, slides: {{ count($slider) > 0 ? count($slider) : 1 }} }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % slides }, 6000)">
+<div class="relative w-full h-[60vh] min-h-[400px] md:h-[80vh] md:min-h-[600px] xl:min-h-[700px] overflow-hidden group" x-data="{ currentSlide: 0, slides: {{ count($slider) > 0 ? count($slider) : 1 }} }" x-init="setInterval(() => { currentSlide = (currentSlide + 1) % slides }, 6000)">
     
     @if(count($slider) > 0)
         @foreach($slider as $index => $slide)
@@ -353,36 +353,38 @@
     </div>
 </section>
 
-<!-- Call to Action PPDB Premium -->
-<section class="relative py-16 md:py-32 theme-bg overflow-hidden mt-8 md:mt-10">
-    <div class="absolute inset-0">
-        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop" alt="Background PPDB" class="w-full h-full object-cover opacity-20">
-        <div class="absolute inset-0 bg-black/60 mix-blend-multiply"></div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-    </div>
-    
-    <!-- Floating geometric shapes -->
-    <div class="absolute top-10 left-4 md:left-10 w-20 md:w-32 h-20 md:h-32 border-4 border-white/10 rounded-full animate-spin-slow"></div>
-    <div class="absolute bottom-10 right-10 md:right-20 w-32 md:w-48 h-32 md:h-48 border-4 border-white/10 rounded-xl transform rotate-45"></div>
+<!-- Galeri Foto -->
+<section class="py-16 md:py-24 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-3xl md:text-5xl font-bold text-slate-800 mb-4">Galeri Kami</h2>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Koleksi momen terbaik dan kegiatan di {{ $sekolah['nama'] }}</p>
+        </div>
 
-    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-        <div class="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 md:px-6 md:py-2 rounded-full text-white font-bold tracking-widest uppercase mb-6 md:mb-8 border border-white/30 shadow-xl text-xs md:text-base">
-            Tahun Ajaran 2026/2027
+        @if(isset($galeri) && count($galeri) > 0)
+        <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-6 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-3 gap-4 md:gap-6">
+            @foreach($galeri as $item)
+            <div class="flex-none w-72 md:w-auto snap-center shrink-0 group relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 aspect-[4/3] bg-slate-100">
+                <img src="{{ $item->file_media_atau_link ?? 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=600&auto=format&fit=crop' }}" alt="{{ $item->judul_item }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">{{ $item->judul_item }}</h3>
+                </div>
+            </div>
+            @endforeach
         </div>
-        <h2 class="text-3xl md:text-5xl lg:text-7xl font-heading font-extrabold text-white mb-6 md:mb-8 drop-shadow-2xl">Penerimaan Peserta Didik Baru (PPDB)</h2>
-        <p class="text-base md:text-2xl text-slate-200 mb-8 md:mb-12 max-w-3xl mx-auto font-light">
-            Segera bergabung bersama kami. Wujudkan potensi terbaikmu dan persiapkan diri menghadapi tantangan global di masa depan.
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
-            <a href="{{ url(app('tenant')->slug . '/ppdb') }}" class="inline-flex items-center justify-center px-6 py-3 md:px-10 md:py-5 border border-transparent text-base md:text-xl font-extrabold rounded-2xl theme-text bg-white hover:bg-slate-50 shadow-2xl transition-all transform hover:-translate-y-2 hover:scale-105">
-                Daftar Sekarang
-                <svg class="w-5 h-5 md:w-6 md:h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-            </a>
-            <a href="{{ url(app('tenant')->slug . '/brosur') }}" class="inline-flex items-center justify-center px-6 py-3 md:px-10 md:py-5 border-2 border-white/80 text-base md:text-xl font-bold rounded-2xl text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all">
-                <svg class="w-5 h-5 md:w-6 md:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Unduh Brosur
+        
+        <div class="mt-12 text-center">
+            <a href="{{ url(app('tenant')->slug . '/galeri') }}" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                Lihat Semua Galeri
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </a>
         </div>
+        @else
+        <div class="text-center py-12 bg-slate-50 rounded-2xl border border-slate-100">
+            <p class="text-slate-500">Belum ada foto di galeri.</p>
+        </div>
+        @endif
     </div>
 </section>
 @endsection

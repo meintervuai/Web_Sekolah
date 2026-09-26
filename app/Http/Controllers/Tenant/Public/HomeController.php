@@ -68,12 +68,18 @@ class HomeController extends Controller
                     ->orderBy('urutan')
                     ->get();
 
+        $galeri = DB::connection('tenant')->table('galeri_item')
+                    ->orderBy('created_at', 'desc')
+                    ->take(6)
+                    ->get();
+
         return view('public.home', [
             'sekolah' => $sekolahData,
             'slider' => $slider,
             'jurusan' => $jurusan,
             'berita' => $berita,
-            'menus' => $menus
+            'menus' => $menus,
+            'galeri' => $galeri
         ]);
     }
 }
