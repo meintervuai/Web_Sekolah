@@ -11,6 +11,7 @@ use App\Http\Controllers\Tenant\Admin\GaleriController;
 use App\Http\Controllers\Tenant\Admin\GuruStafController;
 use App\Http\Controllers\Tenant\Admin\JurusanController;
 use App\Http\Controllers\Tenant\Admin\KontakController;
+use App\Http\Controllers\Tenant\Admin\MediaController;
 use App\Http\Controllers\Tenant\Admin\PengaturanController;
 use App\Http\Controllers\Tenant\Admin\PengumumanController;
 use App\Http\Controllers\Tenant\Admin\PrestasiController;
@@ -241,6 +242,13 @@ Route::prefix('{tenant}')
                 Route::put('/kontak', [KontakController::class, 'update'])->name('kontak.update');
                 Route::patch('/kontak/pesan/{id}/toggle', [KontakController::class, 'toggleDibaca'])->name('kontak.pesan.toggle');
                 Route::delete('/kontak/pesan/{id}', [KontakController::class, 'destroyPesan'])->name('kontak.pesan.destroy');
+
+                // 10. Pengelola Media & Berkas (Crop Gambar, Rename, Upload, Galeri File)
+                Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+                Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+                Route::post('/media/rename', [MediaController::class, 'rename'])->name('media.rename');
+                Route::post('/media/crop', [MediaController::class, 'crop'])->name('media.crop');
+                Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
             });
         });
     });

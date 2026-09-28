@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Tenant\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\GaleriAlbum;
 use App\Models\Tenant\GaleriItem;
+use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -40,7 +42,7 @@ class GaleriController extends Controller
         ]);
 
         if ($request->hasFile('cover_album_file')) {
-            $validated['cover_album'] = \App\Services\ImageService::uploadAndConvertToWebp($request->file('cover_album_file'), 'galeri', 1200);
+            $validated['cover_album'] = ImageService::uploadAndConvertToWebp($request->file('cover_album_file'), 'galeri', 1200);
         }
 
         if (empty($validated['cover_album'])) {
@@ -67,15 +69,23 @@ class GaleriController extends Controller
             'album_id' => ['required', 'exists:tenant.galeri_album,id'],
             'judul_item' => ['required', 'string', 'max:200'],
             'file_media_atau_link' => ['nullable', 'string', 'max:500'],
-            'file_media_atau_link_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
+            'file_media_atau_link_file' => ['nullable', 'file', 'mimes:jpeg,jpg,png,webp,mp4,webm,mov', 'max:30720'],
         ]);
 
         if ($request->hasFile('file_media_atau_link_file')) {
-            $validated['file_media_atau_link'] = \App\Services\ImageService::uploadAndConvertToWebp($request->file('file_media_atau_link_file'), 'galeri-foto', 1600);
+            $file = $request->file('file_media_atau_link_file');
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (in_array($ext, ['mp4', 'webm', 'mov'])) {
+                $filename = 'galeri-video-'.time().'-'.Str::random(5).'.'.$ext;
+                $path = $file->storeAs('uploads/galeri-video', $filename, 'public');
+                $validated['file_media_atau_link'] = Storage::url($path);
+            } else {
+                $validated['file_media_atau_link'] = ImageService::uploadAndConvertToWebp($file, 'galeri-foto', 1600);
+            }
         }
 
         if (empty($validated['file_media_atau_link'])) {
-            return back()->withErrors(['file_media_atau_link' => 'Harap upload file foto dokumentasi atau masukkan URL tautan foto.']);
+            return back()->withErrors(['file_media_atau_link' => 'Harap upload file foto/video dokumentasi atau masukkan tautan URL media (YouTube / file).']);
         }
 
         unset($validated['file_media_atau_link_file']);
@@ -83,7 +93,7 @@ class GaleriController extends Controller
         GaleriItem::create($validated);
 
         return redirect()->route('tenant.admin.galeri.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Foto/media dokumentasi berhasil ditambahkan ke album.');
+            ->with('sukses', 'Item foto/video dokumentasi berhasil ditambahkan ke album.');
     }
 
     /**

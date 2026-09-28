@@ -9,6 +9,7 @@ use App\Models\Tenant\PengaturanUmum;
 use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class PengaturanController extends Controller
@@ -62,12 +63,25 @@ class PengaturanController extends Controller
             'stat_mitra' => ['nullable', 'string', 'max:10'],
             'stat_mitra_label' => ['nullable', 'string', 'max:100'],
             'stat_sumber_label' => ['nullable', 'string', 'max:200'],
+            // Video Profil Sekolah (Link YouTube/Embed atau Upload Berkas Video)
+            'video_profil' => ['nullable', 'string', 'max:500'],
+            'video_profil_file' => ['nullable', 'mimes:mp4,webm,ogg', 'max:25600'],
+            'video_profil_judul' => ['nullable', 'string', 'max:200'],
+            'video_profil_deskripsi' => ['nullable', 'string', 'max:500'],
         ]);
 
         if ($request->hasFile('logo_file')) {
             $validated['logo'] = ImageService::uploadAndConvertToWebp($request->file('logo_file'), 'logo', 600);
         }
         unset($validated['logo_file']);
+
+        if ($request->hasFile('video_profil_file')) {
+            $videoFile = $request->file('video_profil_file');
+            $filename = 'video-profil-'.time().'.'.$videoFile->getClientOriginalExtension();
+            $path = $videoFile->storeAs('uploads/video', $filename, 'public');
+            $validated['video_profil'] = Storage::url($path);
+        }
+        unset($validated['video_profil_file']);
 
         // Sinkronisasi nama sekolah dan jenjang ke entitas tenant pusat
         $tenant->update([

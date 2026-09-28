@@ -65,6 +65,10 @@ class PageController extends Controller
             'stat_mitra' => PengaturanUmum::ambil('stat_mitra', '85'),
             'stat_mitra_label' => PengaturanUmum::ambil('stat_mitra_label', 'Mitra Industri (DUDI)'),
             'stat_sumber_label' => PengaturanUmum::ambil('stat_sumber_label', 'Dapodik Kemendikbudristek TA 2025/2026'),
+            // Video Profil Sekolah (Upload file atau link YouTube)
+            'video_profil' => PengaturanUmum::ambil('video_profil', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
+            'video_profil_judul' => PengaturanUmum::ambil('video_profil_judul', 'Profil & Kilas Pembelajaran Vokasi'),
+            'video_profil_deskripsi' => PengaturanUmum::ambil('video_profil_deskripsi', 'Saksikan tayangan visual fasilitas modern, lingkungan belajar TEFA, dan aktivitas siswa vokasi unggulan kami.'),
         ];
     }
 

@@ -20,8 +20,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="h-full text-slate-800" x-data="{ sidebarOpen: false }">
-    <div class="min-h-full flex flex-col lg:flex-row">
+<<body class="h-full overflow-hidden text-slate-800" x-data="{ sidebarOpen: false }">
+    <div class="h-screen w-full flex overflow-hidden">
         
         <!-- Mobile Sidebar Backdrop -->
         <div 
@@ -32,7 +32,7 @@
             x-transition:leave="transition-opacity ease-linear duration-200"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            @click="sidebarOpen = false"
+            @click="sidebarOpen = false" 
             class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs lg:hidden"
             style="display: none;"
             aria-hidden="true"
@@ -41,10 +41,10 @@
         <!-- Sidebar Navigation -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-200 flex flex-col transition-transform duration-200 ease-in-out lg:static lg:inset-auto lg:z-auto"
+            class="fixed inset-y-0 left-0 z-50 w-72 h-full bg-slate-900 text-slate-200 flex flex-col shrink-0 transition-transform duration-200 ease-in-out lg:static lg:inset-auto lg:z-auto"
         >
             <!-- Logo Header -->
-            <div class="h-20 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-950/60">
+            <div class="h-20 shrink-0 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-950/60">
                 <a href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-blue-600 transition-colors shrink-0">
                         <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24">
@@ -70,7 +70,7 @@
             </div>
 
             <!-- Navigation Links -->
-            <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto overscroll-contain">
                 <!-- Dashboard -->
                 <a 
                     href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" 
@@ -248,18 +248,18 @@
                     <span>Informasi SPMB / PPDB</span>
                 </a>
 
-                <!-- 9. Navigasi: Kontak & Layanan -->
+                <!-- Media & File Manager -->
                 <div class="pt-3 px-3 pb-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center justify-between">
-                    <span>9. Kontak & Layanan</span>
+                    <span>10. Media & Dokumen</span>
                 </div>
                 <a 
-                    href="{{ route('tenant.admin.kontak.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('tenant.admin.kontak.*') ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
+                    href="{{ route('tenant.admin.media.index', ['tenant' => app('tenant')->slug]) }}" 
+                    class="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-colors {{ request()->routeIs('tenant.admin.media.*') ? 'bg-blue-700 text-white shadow-xs' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
                 >
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    <span>Kontak, Medsos & Pesan</span>
+                    <span>Media & Manajemen Berkas</span>
                 </a>
 
                 <div class="pt-4 px-3 pb-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">

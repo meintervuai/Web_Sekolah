@@ -24,9 +24,9 @@ Jangan menghasilkan jawaban yang hanya terdengar selesai. Setiap klaim harus did
 3. Periksa versi PHP dan package dengan `composer show --direct` serta `package.json`.
 4. Periksa struktur folder, route, migration, model, controller, request, policy, view, component, seeder, factory, test, dan asset yang relevan.
 5. Jalankan atau gunakan `php artisan route:list` untuk route yang terdampak.
-6. **Pengecekan fungsi via MCP Postman**: Lakukan pengecekan fungsi, route endpoint, dan API flow dengan **MCP Postman** (`postman-mcp-server`) sebelum dan sesudah perubahan logic.
-7. **Riset UI/UX via MCP Mobbin**: Jika diminta membuat atau memperbaiki UI/UX, wajib membuka **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) untuk meriset referensi desain aplikasi nyata berstandar industri.
-8. **Audit Anti-Slop via MCP Chrome DevTools**: Wajib memeriksa tampilan dan console log halaman aktif menggunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`) untuk memastikan antarmuka berfungsi mulus dan bebas dari tampilan AI slop (tidak boleh terlihat buatan AI).
+6. **Pengecekan fungsi via MCP Postman**: Digunakan secara on-demand ketika user menginstruksikan untuk mengecek endpoint atau API flow dengan **MCP Postman** (`postman-mcp-server`).
+7. **Riset UI/UX via MCP Mobbin**: Digunakan secara on-demand ketika user menginstruksikan untuk meriset referensi desain via **MCP Mobbin** (`mobbin`).
+8. **Pemeriksaan via MCP Chrome DevTools**: Digunakan secara on-demand ketika user menginstruksikan untuk memeriksa tampilan atau console log via **MCP Chrome DevTools** (`chrome-devtools-mcp`).
 9. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
 10. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
 11. Baca browser logs untuk error UI jika tool tersedia.
@@ -119,13 +119,13 @@ Jangan menyebut tenant sudah dibuat jika hanya record registry yang dibuat tetap
 Jangan menebak penyebab error. Untuk setiap error:
 
 1. Reproduksi error dengan route atau aksi yang disebut user.
-2. Lakukan pengecekan fungsi dan reproduksi request/response menggunakan **MCP Postman** (`postman-mcp-server`).
+2. Lakukan pengecekan fungsi dan reproduksi request/response (gunakan **MCP Postman** jika diinstruksikan user).
 3. Catat pesan error dan stack trace yang relevan.
-4. Periksa browser console/log dan network traffic menggunakan **MCP Chrome DevTools** (`list_console_messages`, `list_network_requests`).
+4. Periksa browser console/log dan network traffic (gunakan **MCP Chrome DevTools** jika diinstruksikan user).
 5. Periksa route, controller, model, migration, data aktual, view, dan asset yang terkait.
 6. Perbaiki akar masalah, bukan hanya gejala.
-7. Tambahkan atau perbarui regression test (Pest & Postman collection jika relevan).
-8. Uji ulang route dan behavior setelah perbaikan menggunakan Postman serta verifikasi visual di browser melalui Chrome DevTools.
+7. Tambahkan atau perbarui regression test (Pest).
+8. Uji ulang route dan behavior setelah perbaikan menggunakan test Pest; gunakan Postman dan Chrome DevTools jika diinstruksikan oleh user.
 
 Mengganti nama variabel di Blade tanpa memeriksa schema dan data aktual bukan perbaikan yang cukup.
 
@@ -167,23 +167,11 @@ Jangan membuat placeholder atau mock data lalu menyebut fitur production-ready.
 - Reuse component existing sebelum membuat component baru.
 - Setiap halaman interaktif harus mempertimbangkan loading, empty, error, success, disabled, dan permission state.
 
-### Riset referensi UI/UX dengan MCP Mobbin
-Setiap kali diminta membuat UI/UX baru atau memperbaiki UI/UX existing:
-1. **Wajib membuka MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) untuk meriset referensi desain dari aplikasi/produk digital dunia nyata kelas dunia (dashboard CMS, form pendaftaran, navigasi institusi, card bento, tabel data, filter, mobile navigation drawer).
-2. Analisis minimal tiga referensi relevan dari Mobbin.
-3. Jangan hanya menganalisis homepage; jelajahi halaman internal, detail, galeri, form, search, pagination, footer, modal dialog, dan error state.
-4. Simpan screen/flow Mobbin yang dirujuk, temuan UX, dan keputusan penerapannya pada project.
-5. Dilarang mendesain dari asumsi kosong, template generik, atau pola klise buatan AI.
-6. Jangan menyalin teks, gambar, kode, logo, atau identitas visual berhak cipta.
+### Riset referensi UI/UX dengan MCP Mobbin (On-Demand / Saat Diminta User)
+Gunakan **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) hanya ketika user secara spesifik meminta untuk meriset referensi desain dari aplikasi/produk digital dunia nyata.
 
-### Verifikasi visual dengan MCP Chrome DevTools
-Setiap kali UI/UX dibuat atau diperbaiki:
-1. **Wajib membuka dan memeriksa halaman aktif dengan MCP Chrome DevTools** (`chrome-devtools-mcp`):
-   - Ambil tangkapan layar (`take_screenshot`) untuk memvalidasi hasil render aktual.
-   - Uji responsivitas pada resolusi mobile (375px - 414px), tablet (768px), dan desktop (1280px+) menggunakan `resize_page` atau `emulate`.
-   - Pastikan tidak ada horizontal overflow atau elemen yang terpotong.
-   - Periksa computed CSS (`get_css_styles`) dan evaluasi script interaktif (`evaluate_script`).
-   - Pastikan konsol browser bersih dari error (`list_console_messages`).
+### Verifikasi visual dengan MCP Chrome DevTools (On-Demand / Saat Diminta User)
+Gunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`: `take_screenshot`, `resize_page`, `list_console_messages`, `evaluate_script`) hanya ketika user menginstruksikan untuk memeriksa tampilan visual, responsivitas browser, atau console log aktif.
 
 ## 12. Animasi dan interaction
 
@@ -211,7 +199,7 @@ Prioritaskan CSS native, Alpine.js yang sudah dipakai project, atau library ring
 - Buat test dengan `php artisan make:test --pest` jika tersedia.
 - Utamakan feature test untuk behavior HTTP dan authorization.
 - Jalankan test tersempit yang mencakup perubahan.
-- **Pengecekan fungsi via MCP Postman**: Lakukan pengecekan fungsi, endpoint API, dan request flow menggunakan **MCP Postman** (`postman-mcp-server`) untuk memvalidasi status HTTP, response payload, headers, cookies, dan validasi form secara presisi.
+- **Pengecekan fungsi via MCP Postman**: Digunakan secara on-demand ketika user menginstruksikan untuk memvalidasi endpoint/flow via Postman. Verifikasi rutin fungsionalitas dan regresi diutamakan menggunakan test suite Pest.
 - Jika mengubah PHP, jalankan `vendor/bin/pint --dirty --format agent` sebelum final (atau format berkas terkait).
 - Jangan menghapus atau melewati test yang gagal untuk membuat hasil terlihat hijau.
 - Jika full suite belum dijalankan, sebutkan secara eksplisit.
@@ -232,10 +220,9 @@ Antarmuka dan konten **TIDAK BOLEH TERLIHAT SEPERTI BUATAN AI (TIDAK BOLEH AI SL
    - Gunakan bahasa Indonesia yang natural, lugas, resmi, dan relevan dengan dunia pendidikan kejuruan/sekolah.
 3. **Dilarang Placeholder Dummy Tanpa Konteks**:
    - Dilarang menyisakan teks `Lorem Ipsum`, tautan kosong (`href="#"`), dead code, atau placeholder yang tidak diisi data nyata sekolah.
-4. **Wajib Audit Anti-Slop dengan MCP Chrome DevTools**:
-   - Buka halaman dan periksa tampilan aktualnya secara berkala dengan **MCP Chrome DevTools** (`take_screenshot`).
-   - Evaluasi visual: apakah antarmuka masih terkesan buatan AI? Jika ya, rombak styling agar terlihat seperti produk profesional hasil karya desainer manusia top-tier.
-   - Jalankan audit aksesibilitas/kontras dan pastikan konsol browser bebas dari warning/error (`list_console_messages`).
+4. **Verifikasi Bebas AI Slop**:
+   - Selalu terapkan standar visual rapi dan human-crafted pada kode Blade/CSS/JS.
+   - Inspeksi tangkapan layar langsung via **MCP Chrome DevTools** (`take_screenshot`, `list_console_messages`) dijalankan saat user menginstruksikan untuk mengecek tampilan.
 
 ## 16. Definition of Done
 
@@ -246,16 +233,15 @@ Fitur hanya boleh disebut selesai jika:
 - seed/data tersedia bila diperlukan;
 - route dan middleware benar;
 - validation dan authorization benar;
-- pengecekan fungsi telah diverifikasi dengan **MCP Postman** dan test Pest berhasil;
-- riset referensi UI/UX telah dilakukan via **MCP Mobbin** (untuk pekerjaan UI/UX);
-- antarmuka telah diverifikasi bebas AI slop (tidak boleh terlihat buatan AI) dan diverifikasi tampilannya via **MCP Chrome DevTools** (`take_screenshot`, screenshot bukti visual tersedia, console bersih);
+- test Pest berhasil (serta verifikasi MCP Postman jika diinstruksikan user);
+- riset referensi UI/UX via MCP Mobbin telah dilakukan jika diminta user;
+- antarmuka terbukti bebas AI slop (serta verifikasi MCP Chrome DevTools jika diinstruksikan user);
 - UI mobile dan desktop diverifikasi tanpa horizontal overflow;
 - loading/empty/error state relevan tersedia;
 - Pint/linter berhasil bila relevan;
 - browser/log tidak menunjukkan error terkait;
 - tidak ada route, menu, tabel, model, atau file lama yang tertinggal tanpa alasan;
-- dokumentasi dan changelog diperbarui;
-- bukti verifikasi tersedia (request/response Postman, referensi Mobbin, tangkapan layar DevTools).
+- dokumentasi dan changelog diperbarui.
 
 Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 
@@ -267,9 +253,9 @@ Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 4. Database dan migration
 5. Seeder dan data aktual
 6. Route dan middleware
-7. Pengecekan fungsi via MCP Postman
-8. Riset referensi UI/UX via MCP Mobbin (jika terkait UI)
-9. Audit Anti-Slop & verifikasi visual via MCP Chrome DevTools
+7. Pengecekan fungsi via MCP Postman (jika diinstruksikan user)
+8. Riset referensi UI/UX via MCP Mobbin (jika diminta user)
+9. Audit Anti-Slop & verifikasi visual via MCP Chrome DevTools (jika diinstruksikan user)
 10. UI/UX, tata letak mobile, dan animasi
 11. Authorization/tenant isolation
 12. Test, Pint, dan hasilnya
@@ -277,4 +263,4 @@ Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 14. Dokumentasi/changelog yang diperbarui
 15. Risiko dan pekerjaan yang belum selesai
 
-Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, fungsi belum dicek dengan Postman, referensi Mobbin belum diriset, atau visual belum diverifikasi bebas AI slop dengan Chrome DevTools.
+Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, atau instruksi pengecekan dari user yang belum dijalankan.

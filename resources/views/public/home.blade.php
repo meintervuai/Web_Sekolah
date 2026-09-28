@@ -262,6 +262,56 @@
 @endif
 
 <!-- ==========================================
+     3. VIDEO PROFIL RESMI SEKOLAH
+=========================================== -->
+@if(!empty($sekolahData['video_profil']))
+<section class="section-py bg-slate-900 text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    <div class="container-custom relative z-10">
+        <div class="max-w-4xl mx-auto text-center mb-8">
+            <span class="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 font-bold text-xs uppercase tracking-wider border border-blue-400/30">
+                Dokumentasi Audio Visual
+            </span>
+            <h2 class="font-heading font-extrabold text-2xl sm:text-3xl text-white mt-2">
+                {{ $sekolahData['video_profil_judul'] ?? 'Video Profil Resmi Sekolah' }}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-2 max-w-2xl mx-auto leading-relaxed">
+                {{ $sekolahData['video_profil_deskripsi'] ?? 'Saksikan tayangan lingkungan belajar, sarana praktik industri, dan kreativitas siswa kami.' }}
+            </p>
+        </div>
+
+        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-black aspect-video relative">
+            @php
+                $videoUrl = $sekolahData['video_profil'];
+                $isYouTube = Str::contains($videoUrl, ['youtube.com', 'youtu.be']);
+                $ytEmbed = '';
+                if ($isYouTube) {
+                    if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
+                        $ytEmbed = 'https://www.youtube.com/embed/' . $match[1] . '?rel=0';
+                    }
+                }
+            @endphp
+
+            @if($ytEmbed)
+                <iframe 
+                    src="{{ $ytEmbed }}" 
+                    title="{{ $sekolahData['video_profil_judul'] ?? 'Video Profil' }}" 
+                    class="w-full h-full border-0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                ></iframe>
+            @else
+                <video controls class="w-full h-full object-cover">
+                    <source src="{{ $videoUrl }}" type="video/mp4">
+                    Browser Anda tidak mendukung pemutar video HTML5.
+                </video>
+            @endif
+        </div>
+    </div>
+</section>
+@endif
+
+<!-- ==========================================
      4. STATISTIK COUNTER RESMI (Viewport Animated)
 =========================================== -->
 <section class="section-py bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden"
