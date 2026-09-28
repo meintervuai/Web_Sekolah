@@ -12,7 +12,7 @@
     $previewId = 'prev_' . \Illuminate\Support\Str::random(8);
 @endphp
 
-<div class="space-y-2.5 bg-slate-50/70 p-4 rounded-xl border border-slate-200/90" x-data="{ mode: 'file', preview: '{{ $value }}' }">
+<div class="space-y-2.5 bg-slate-50/70 p-4 rounded-xl border border-slate-200/90" x-data="{ mode: '{{ !empty($value) ? 'url' : 'file' }}', preview: '{{ $value }}', urlValue: '{{ $value }}' }">
     <div class="flex items-center justify-between">
         <label class="block text-xs font-bold text-slate-800">
             {{ $label }}
@@ -27,6 +27,9 @@
             </button>
         </div>
     </div>
+
+    <!-- Hidden Input untuk menjaga nilai yang sedang aktif/tersimpan -->
+    <input type="hidden" name="{{ $name }}" :value="urlValue">
 
     <!-- Opsi 1: Upload File Gambar dengan Auto Compress WebP -->
     <div x-show="mode === 'file'" class="space-y-2">
@@ -48,11 +51,9 @@
     <div x-show="mode === 'url'" class="space-y-1">
         <input 
             type="text" 
-            name="{{ $name }}" 
             id="{{ $urlId }}" 
-            :disabled="mode === 'file'"
-            value="{{ $value }}" 
-            @input="preview = $event.target.value"
+            x-model="urlValue"
+            @input="preview = urlValue"
             placeholder="https://..." 
             class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition"
         >

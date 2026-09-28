@@ -72,6 +72,12 @@ class PengaturanController extends Controller
 
         if ($request->hasFile('logo_file')) {
             $validated['logo'] = ImageService::uploadAndConvertToWebp($request->file('logo_file'), 'logo', 600);
+        } elseif (empty($validated['logo'])) {
+            // Jika tidak upload file baru dan input URL kosong, pertahankan logo yang sudah ada sebelumnya
+            $existingLogo = PengaturanUmum::ambil('logo') ?: ($tenant->data['logo'] ?? null);
+            if (!empty($existingLogo)) {
+                $validated['logo'] = $existingLogo;
+            }
         }
         unset($validated['logo_file']);
 
@@ -80,6 +86,11 @@ class PengaturanController extends Controller
             $filename = 'video-profil-'.time().'.'.$videoFile->getClientOriginalExtension();
             $path = $videoFile->storeAs('uploads/video', $filename, 'public');
             $validated['video_profil'] = Storage::url($path);
+        } elseif (empty($validated['video_profil'])) {
+            $existingVideo = PengaturanUmum::ambil('video_profil');
+            if (!empty($existingVideo)) {
+                $validated['video_profil'] = $existingVideo;
+            }
         }
         unset($validated['video_profil_file']);
 

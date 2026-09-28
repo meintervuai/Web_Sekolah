@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Hexagon / Shield Badge -->
+  <polygon points="120,8 215,45 215,160 120,232 25,160 25,45" fill="url(#shieldGrad)" stroke="url(#goldGrad)" stroke-width="6" stroke-linejoin="round" filter="url(#shadow)" />
+  
+  <!-- Inner Ring / Border Line -->
+  <polygon points="120,20 203,52 203,153 120,218 37,153 37,52" fill="none" stroke="#3B82F6" stroke-width="2" opacity="0.6" stroke-dasharray="4 2" />
+
+  <!-- Gear / Roda Gigi Teknik (Identitas SMK Kejuruan) -->
+  <g transform="translate(120, 115) scale(0.95)" fill="url(#goldGrad)">
+    <path d="M-10,-55 L10,-55 L12,-40 L25,-35 L38,-45 L50,-33 L40,-20 L45,-7 L60,-5 L60,15 L45,17 L40,30 L50,43 L38,55 L25,45 L12,50 L10,65 L-10,65 L-12,50 L-25,45 L-38,55 L-50,43 L-40,30 L-45,17 L-60,15 L-60,-5 L-45,-7 L-40,-20 L-50,-33 L-38,-45 L-25,-35 L-12,-40 Z" />
+    <circle cx="0" cy="0" r="34" fill="#0F172A" stroke="url(#goldGrad)" stroke-width="3" />
+  </g>
+
+  <!-- Sayap Sayap / Pendidikan Kiri & Kanan -->
+  <path d="M72,118 Q40,105 38,72 Q60,82 74,96 Z" fill="url(#wingGrad)" opacity="0.9" />
+  <path d="M74,126 Q46,120 44,98 Q64,104 76,112 Z" fill="url(#wingGrad)" opacity="0.8" />
+  <path d="M168,118 Q200,105 202,72 Q180,82 166,96 Z" fill="url(#wingGrad)" opacity="0.9" />
+  <path d="M166,126 Q194,120 196,98 Q176,104 164,112 Z" fill="url(#wingGrad)" opacity="0.8" />
+
+  <!-- Obor Pendidikan / Torch Api Keunggulan di Tengah -->
+  <!-- Gagang Obor -->
+  <path d="M114,142 L126,142 L123,165 L117,165 Z" fill="url(#goldGrad)" />
+  <path d="M110,138 L130,138 L127,144 L113,144 Z" fill="#F59E0B" />
+  <!-- Api Obor -->
+  <path d="M120,78 Q132,92 126,108 Q136,98 132,122 Q126,134 120,136 Q114,134 108,122 Q104,98 114,108 Q108,92 120,78 Z" fill="#EF4444" />
+  <path d="M120,92 Q128,102 124,115 Q129,110 126,125 Q123,132 120,133 Q117,132 114,125 Q111,110 116,115 Q112,102 120,92 Z" fill="url(#goldGrad)" />
+
+  <!-- Buku Terbuka di Bawah Obor (Pendidikan & Pengetahuan) -->
+  <path d="M120,152 Q100,144 82,148 L82,166 Q100,162 120,170 Q140,162 158,166 L158,148 Q140,144 120,152 Z" fill="#F8FAFC" stroke="#0F172A" stroke-width="1.5" />
+  <line x1="120" y1="152" x2="120" y2="170" stroke="#CBD5E1" stroke-width="2" />
+
+  <!-- Banner Pita Bawah Tulisan SMKN 2 BANDUNG -->
+  <path d="M48,188 L70,180 L170,180 L192,188 L184,204 L120,208 L56,204 Z" fill="#B91C1C" stroke="url(#goldGrad)" stroke-width="2" filter="url(#shadow)" />
+  <text x="120" y="198" fill="#FFFFFF" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="11" text-anchor="middle" letter-spacing="1">SMKN 2 BANDUNG</text>
+
+  <!-- Bintang Prestasi di Puncak Shield -->
+  <polygon points="120,28 123,37 132,37 125,43 127,52 120,46 113,52 115,43 108,37 117,37" fill="url(#goldGrad)" />
+</svg>

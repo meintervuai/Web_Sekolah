@@ -5,6 +5,11 @@ Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 ## [Phase 2: Redesign Publik Base Tailwind & Kalender Interaktif] - 2026-09-28
 
 ### Added
+- **Perombakan Estetika Beranda (Anti-AI Slop)**:
+  - Tipografi: Mengganti font heading menjadi `Plus Jakarta Sans` dan teks bacaan menjadi `Inter` untuk menghilangkan nuansa membulat ala template AI SaaS.
+  - Statistik Counter Dapodik: Menghilangkan latar gradien neon ungu-biru dan warna pelangi (kuning, hijau, ungu, cyan, rose) pada angka 0; diganti dengan angka monokromatik putih yang solid dan kartu berlatar `bg-slate-800/80` berbingkai halus.
+  - Desain Kartu & Tombol: Menghilangkan efek glow mengambang dan saturasi warna berlebih pada tombol dan kartu fitur; menerapkan palet warna institusional yang tenang (Navy, Slate, dan Neutral).
+  - Galeri Foto Beranda: Menghapus bagian galeri foto dari halaman beranda sesuai instruksi pengguna.
 - **Redesain Antarmuka Publik (Base Tailwind Theme)**:
   - Pembaruan `layouts/public.blade.php`: Header sticky modern, topbar informasi kontak, drawer mobile yang responsif dan dapat ditutup via tombol Escape, modal lightbox global tanpa overflow, footer korporat modern.
   - Pembaruan `home.blade.php`: Hero section dengan kontras WCAG AA, kartu fitur terstruktur, bento grid proporsional, integrasi sambutan kepala sekolah, statistik Dapodik teranimasi, serta integrasi agenda.
@@ -16,7 +21,7 @@ Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
   - Pembaruan `PageController@agenda`: Menyediakan variabel `$allAgenda` dan `$featuredAgenda` untuk mendukung interaktivitas widget kalender dan highlight hero.
 
 ### Compliance & Anti-Slop
-- Seluruh kode bebas dari AI slop (tanpa tanda baca em-dash `—`, tanpa gradien neon berlebih, tanpa link kosong `#`, serta touch target >= 44px).
+- Seluruh kode bebas dari AI slop (tanpa tanda baca em-dash `—`, tanpa gradien neon berlebih, tanpa angka pelangi, tanpa link kosong `#`, serta touch target >= 44px).
 - Verifikasi otomatis Pest: 33 tests passed (123 assertions, 100% green).
 
 ## [Phase 1: Implementasi Publik SMK Negeri 2 Bandung] - 2026-09-26

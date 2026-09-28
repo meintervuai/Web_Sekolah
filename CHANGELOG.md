@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Penghapusan Counter Dapodik & Integrasi Logo Resmi Sekolah**:
+  - Menghapus total section counter Dapodik ("SMK Negeri 2 Bandung dalam Angka") dari `home.blade.php`.
+  - Mengganti ikon huruf "S" pada Sidebar Admin (`layouts/tenant_admin.blade.php`) dan ikon SVG toga pada Header & Footer Publik (`layouts/public.blade.php`) dengan gambar logo sekolah resmi (`public/images/logo-smkn2.svg`).
+  - Memperbaiki sinkronisasi input form logo di `input-gambar.blade.php` dan `PengaturanController.php` agar logo tersimpan aman tanpa tertimpa string kosong.
+- **Perombakan Estetika Beranda (Anti-AI Slop)**:
+  - Mengganti font heading menjadi `Plus Jakarta Sans` dan body menjadi `Inter` untuk menghilangkan kesan template AI SaaS yang ramai.
+  - Merombak warna tombol dan kartu di seluruh beranda menjadi warna institusional terukur (Navy, Slate, dan Neutral) tanpa drop shadow mengambang yang berlebihan.
+  - Menghapus section galeri foto dari halaman beranda sesuai instruksi pengguna.
 - **Base Tailwind Public Design System**:
   - Implemented sleek modern public aesthetics referencing Base Tailwind across public interfaces (`layouts/public.blade.php`, `home.blade.php`, `kalender.blade.php`, `agenda.blade.php`, and subpages).
   - Modern sticky header with translucent backdrop-blur, subtle borders, high contrast active indicators, and dynamic CTA button.

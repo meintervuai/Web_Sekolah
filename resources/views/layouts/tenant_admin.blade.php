@@ -93,15 +93,9 @@
             <!-- TailDash Brand Header -->
             <div class="h-18 shrink-0 flex items-center justify-between px-6 border-b border-slate-100 bg-white">
                 <a href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
-                    @if(!empty($adminLogo))
-                        <div class="w-9 h-9 rounded-xl bg-slate-50 p-1 border border-slate-200 flex items-center justify-center shrink-0 group-hover:border-primary transition-colors overflow-hidden">
-                            <img src="{{ $adminLogo }}" alt="Logo {{ app('tenant')->nama_sekolah }}" class="w-full h-full object-contain">
-                        </div>
-                    @else
-                        <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
-                            {{ substr(app('tenant')->nama_sekolah ?? 'S', 0, 1) }}
-                        </div>
-                    @endif
+                    <div class="w-9 h-9 rounded-xl bg-slate-50 p-1 border border-slate-200 flex items-center justify-center shrink-0 group-hover:border-primary transition-colors overflow-hidden">
+                        <img src="{{ !empty($adminLogo) ? $adminLogo : asset('images/logo-smkn2.svg') }}" alt="Logo {{ app('tenant')->nama_sekolah }}" class="w-full h-full object-contain">
+                    </div>
                     <div class="overflow-hidden min-w-0">
                         <div class="font-bold text-slate-900 text-xs sm:text-sm leading-tight truncate group-hover:text-blue-600 transition-colors">{{ app('tenant')->nama_sekolah }}</div>
                         <div class="text-[10px] text-slate-400 font-semibold tracking-wide uppercase mt-0.5">Admin Management</div>

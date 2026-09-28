@@ -47,10 +47,14 @@ class ImageService
         $filename = Str::random(24) . '.webp';
         $destinationPath = storage_path("app/public/{$relativeDir}/{$filename}");
 
-        // Pastikan folder tujuan ada
-        if (!file_exists(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), 0755, true);
-        }
+        // Buat GD image source berdasarkan tipe file
+        $srcImage = match ($mime) {
+            'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($realPath),
+            'image/png' => @imagecreatefrompng($realPath),
+            'image/webp' => @imagecreatefromwebp($realPath),
+            'image/gif' => @imagecreatefromgif($realPath),
+            default => null,
+        };
 
         if ($srcImage && function_exists('imagewebp')) {
             $origWidth = imagesx($srcImage);
@@ -74,6 +78,11 @@ class ImageService
 
             // Resample / resize dengan kualitas tinggi
             imagecopyresampled($dstImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+
+            // Pastikan folder tujuan ada
+            if (!file_exists(dirname($destinationPath))) {
+                mkdir(dirname($destinationPath), 0755, true);
+            }
 
             // Simpan gambar sebagai WebP terkompresi
             imagewebp($dstImage, $destinationPath, $quality);

@@ -131,7 +131,10 @@ class HomeController extends Controller
             ->orderBy('urutan')
             ->get();
 
+        $sekolah = $sekolahData;
+
         return view('public.home', compact(
+            'sekolah',
             'sekolahData',
             'fiturList',
             'slider',
