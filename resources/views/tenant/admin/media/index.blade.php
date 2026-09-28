@@ -1,73 +1,73 @@
 @extends('layouts.tenant_admin')
 
 @section('title', 'Manajemen Media & Berkas')
-@section('header_title', 'Pengelola Media & Berkas')
+@section('header_title', 'Media & Berkas')
 
 @section('content')
 <div class="space-y-6" x-data="mediaManager()">
 
-    <!-- Stat Cards Overview -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+    <!-- Stat Cards Overview (TailDash Metric Cards) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-4">
+            <div class="w-11 h-11 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
             <div>
-                <div class="text-[11px] font-semibold text-slate-500">Total Berkas</div>
-                <div class="text-base font-bold text-slate-900">{{ $stats['total_files'] }} <span class="text-xs font-normal text-slate-400">({{ $stats['total_size'] }})</span></div>
+                <div class="text-xs font-semibold text-slate-400">Total Berkas</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5">{{ $stats['total_files'] }} <span class="text-xs font-medium text-slate-400">({{ $stats['total_size'] }})</span></div>
             </div>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-4">
+            <div class="w-11 h-11 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
             <div>
-                <div class="text-[11px] font-semibold text-slate-500">Gambar</div>
-                <div class="text-base font-bold text-slate-900">{{ $stats['images'] }} Berkas</div>
+                <div class="text-xs font-semibold text-slate-400">Foto & Gambar</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5">{{ $stats['images'] }} Berkas</div>
             </div>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-4">
+            <div class="w-11 h-11 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
             </div>
             <div>
-                <div class="text-[11px] font-semibold text-slate-500">Video</div>
-                <div class="text-base font-bold text-slate-900">{{ $stats['videos'] }} Berkas</div>
+                <div class="text-xs font-semibold text-slate-400">Video & Klip</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5">{{ $stats['videos'] }} Berkas</div>
             </div>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-2xs flex items-center gap-4">
+            <div class="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             </div>
             <div>
-                <div class="text-[11px] font-semibold text-slate-500">Dokumen</div>
-                <div class="text-base font-bold text-slate-900">{{ $stats['documents'] }} Berkas</div>
+                <div class="text-xs font-semibold text-slate-400">Dokumen PDF</div>
+                <div class="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5">{{ $stats['documents'] }} Berkas</div>
             </div>
         </div>
     </div>
 
-    <!-- Main Container -->
-    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
+    <!-- Main Container TailDash Card -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
         
-        <!-- Action Toolbar -->
-        <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <!-- Action Toolbar (TailDash Format) -->
+        <div class="p-5 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             
             <!-- Filter Pills & Search -->
             <div class="flex flex-wrap items-center gap-2.5">
                 <a href="{{ route('tenant.admin.media.index', ['tenant' => $tenant->slug]) }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $filterType === 'all' ? 'bg-blue-700 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                   class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $filterType === 'all' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     Semua ({{ $stats['total_files'] }})
                 </a>
                 <a href="{{ route('tenant.admin.media.index', ['tenant' => $tenant->slug, 'type' => 'image']) }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $filterType === 'image' ? 'bg-blue-700 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                   class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $filterType === 'image' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     Gambar ({{ $stats['images'] }})
                 </a>
                 <a href="{{ route('tenant.admin.media.index', ['tenant' => $tenant->slug, 'type' => 'video']) }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $filterType === 'video' ? 'bg-blue-700 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                   class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $filterType === 'video' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     Video ({{ $stats['videos'] }})
                 </a>
                 <a href="{{ route('tenant.admin.media.index', ['tenant' => $tenant->slug, 'type' => 'document']) }}" 
-                   class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {{ $filterType === 'document' ? 'bg-blue-700 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                   class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $filterType === 'document' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     Dokumen ({{ $stats['documents'] }})
                 </a>
 
@@ -77,24 +77,24 @@
                     <input type="hidden" name="type" value="{{ $filterType }}">
                     @endif
                     <input type="text" name="q" value="{{ $searchQuery }}" placeholder="Cari nama berkas..." 
-                           class="w-48 sm:w-56 pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-slate-900">
-                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                           class="w-48 sm:w-60 pl-9 pr-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-blue-600 text-slate-900 font-medium">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </form>
             </div>
 
             <!-- Right Controls: View Switcher (Grid/List) & Upload Button -->
             <div class="flex items-center gap-3">
                 <!-- Segmented Control List/Grid View -->
-                <div class="inline-flex rounded-lg bg-slate-200/80 p-0.5 text-xs">
+                <div class="inline-flex rounded-xl bg-slate-100 p-1 text-xs">
                     <button type="button" @click="viewMode = 'grid'" 
-                            :class="viewMode === 'grid' ? 'bg-white text-blue-700 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer">
+                            :class="viewMode === 'grid' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-500 hover:text-slate-900'"
+                            class="px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                         <span>Grid</span>
                     </button>
                     <button type="button" @click="viewMode = 'list'" 
-                            :class="viewMode === 'list' ? 'bg-white text-blue-700 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
-                            class="px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer">
+                            :class="viewMode === 'list' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'text-slate-500 hover:text-slate-900'"
+                            class="px-2.5 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                         <span>List</span>
                     </button>
@@ -102,7 +102,7 @@
 
                 <!-- Upload Modal Trigger Button -->
                 <button type="button" @click="uploadModalOpen = true" 
-                        class="px-3.5 py-1.5 rounded-xl bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                        class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     <span>Unggah Berkas</span>
                 </button>
@@ -119,64 +119,64 @@
         </div>
 
         <!-- CONTENT: GRID VIEW -->
-        <div x-show="viewMode === 'grid'" class="p-6">
+        <div x-show="viewMode === 'grid'" class="p-5">
             @if(count($filesData) > 0)
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5">
                 @foreach($filesData as $file)
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden group hover:border-blue-400 hover:shadow-sm transition flex flex-col justify-between">
+                <div class="bg-white rounded-lg border border-zinc-200/80 overflow-hidden group hover:border-zinc-400 hover:shadow-2xs transition flex flex-col justify-between">
                     <!-- Media Preview Area -->
-                    <div class="aspect-square bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                    <div class="aspect-square bg-zinc-50 relative overflow-hidden flex items-center justify-center border-b border-zinc-100">
                         @if($file['type'] === 'image')
                             <img src="{{ $file['url'] }}" alt="{{ $file['name'] }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         @elseif($file['type'] === 'video')
-                            <div class="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-slate-300">
-                                <svg class="w-10 h-10 text-indigo-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span class="text-[10px] font-bold uppercase text-slate-400">{{ $file['extension'] }}</span>
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-zinc-900 text-zinc-300">
+                                <svg class="w-8 h-8 text-zinc-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="text-[9px] font-bold uppercase text-zinc-400">{{ $file['extension'] }}</span>
                             </div>
                         @else
-                            <div class="w-full h-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
-                                <svg class="w-10 h-10 text-amber-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                <span class="text-[10px] font-bold uppercase">{{ $file['extension'] }}</span>
+                            <div class="w-full h-full flex flex-col items-center justify-center bg-zinc-50 text-zinc-400">
+                                <svg class="w-8 h-8 text-zinc-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <span class="text-[9px] font-bold uppercase">{{ $file['extension'] }}</span>
                             </div>
                         @endif
 
                         <!-- Hover Overlay Quick Buttons -->
-                        <div class="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2 backdrop-blur-2xs">
-                            <button type="button" @click="copyUrl('{{ $file['url'] }}')" title="Salin Tautan" class="p-1.5 rounded-lg bg-white/90 hover:bg-white text-slate-800 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                        <div class="absolute inset-0 bg-zinc-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2 backdrop-blur-2xs">
+                            <button type="button" @click="copyUrl('{{ $file['url'] }}')" title="Salin Tautan" class="p-1.5 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 cursor-pointer shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                             </button>
-                            <a href="{{ $file['url'] }}" target="_blank" title="Lihat Penuh" class="p-1.5 rounded-lg bg-white/90 hover:bg-white text-slate-800 cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <a href="{{ $file['url'] }}" target="_blank" title="Lihat Penuh" class="p-1.5 rounded-md bg-white text-zinc-800 hover:bg-zinc-100 cursor-pointer shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
                             @if($file['type'] === 'image')
-                            <button type="button" @click="openCropModal('{{ $file['path'] }}', '{{ $file['url'] }}')" title="Crop / Potong Gambar" class="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white cursor-pointer">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <button type="button" @click="openCropModal('{{ $file['path'] }}', '{{ $file['url'] }}')" title="Crop / Potong Gambar" class="p-1.5 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 cursor-pointer shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </button>
                             @endif
                         </div>
                     </div>
 
                     <!-- Meta Details -->
-                    <div class="p-2.5 space-y-1">
-                        <div class="text-[11px] font-bold text-slate-800 truncate" title="{{ $file['name'] }}">
+                    <div class="p-2.5 space-y-0.5">
+                        <div class="text-[11px] font-medium text-zinc-900 truncate" title="{{ $file['name'] }}">
                             {{ $file['name'] }}
                         </div>
-                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                        <div class="flex items-center justify-between text-[10px] text-zinc-400">
                             <span>{{ $file['size'] }}</span>
                             <span class="uppercase font-semibold">{{ $file['extension'] }}</span>
                         </div>
                     </div>
 
                     <!-- Action Bar Bottom -->
-                    <div class="px-2.5 py-1.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                        <button type="button" @click="openRenameModal('{{ $file['path'] }}', '{{ $file['name'] }}')" class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer">
+                    <div class="px-2.5 py-1.5 bg-zinc-50/70 border-t border-zinc-100 flex items-center justify-between text-[11px]">
+                        <button type="button" @click="openRenameModal('{{ $file['path'] }}', '{{ $file['name'] }}')" class="text-zinc-600 hover:text-zinc-900 font-medium cursor-pointer">
                             Ganti Nama
                         </button>
                         <form action="{{ route('tenant.admin.media.destroy', ['tenant' => $tenant->slug]) }}" method="POST" onsubmit="return confirm('Hapus berkas ini secara permanen?')">
                             @csrf
                             @method('DELETE')
                             <input type="hidden" name="path" value="{{ $file['path'] }}">
-                            <button type="submit" class="text-rose-500 hover:text-rose-700 cursor-pointer">
+                            <button type="submit" class="text-zinc-400 hover:text-rose-600 cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </form>
@@ -185,71 +185,70 @@
                 @endforeach
             </div>
             @else
-            <div class="p-12 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                <p class="text-xs text-slate-500">Tidak ada berkas yang sesuai dengan kriteria filter.</p>
+            <div class="p-10 text-center bg-zinc-50 rounded-lg border border-dashed border-zinc-200">
+                <p class="text-xs text-zinc-500">Tidak ada berkas yang sesuai dengan kriteria filter.</p>
             </div>
             @endif
         </div>
 
         <!-- CONTENT: LIST VIEW (TABLE) -->
-        <div x-show="viewMode === 'list'" class="p-6">
-            <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <div x-show="viewMode === 'list'" class="p-5">
+            <div class="overflow-x-auto rounded-lg border border-zinc-200/80">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-100/75 text-slate-600 uppercase font-bold text-[10px] border-b border-slate-200">
+                    <thead class="bg-zinc-50 text-zinc-500 uppercase font-semibold text-[10px] border-b border-zinc-200/80">
                         <tr>
-                            <th class="px-4 py-3">Pratinjau</th>
-                            <th class="px-4 py-3">Nama Berkas</th>
-                            <th class="px-4 py-3">Tipe</th>
-                            <th class="px-4 py-3">Ukuran</th>
-                            <th class="px-4 py-3">Terakhir Diubah</th>
-                            <th class="px-4 py-3 text-right">Aksi</th>
+                            <th class="px-3.5 py-2.5">Pratinjau</th>
+                            <th class="px-3.5 py-2.5">Nama Berkas</th>
+                            <th class="px-3.5 py-2.5">Tipe</th>
+                            <th class="px-3.5 py-2.5">Ukuran</th>
+                            <th class="px-3.5 py-2.5">Terakhir Diubah</th>
+                            <th class="px-3.5 py-2.5 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-zinc-100">
                         @forelse($filesData as $file)
-                        <tr class="hover:bg-slate-50/70 transition">
-                            <td class="px-4 py-2.5">
-                                <div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                        <tr class="hover:bg-zinc-50/70 transition">
+                            <td class="px-3.5 py-2">
+                                <div class="w-9 h-9 rounded-md bg-zinc-100 border border-zinc-200 overflow-hidden flex items-center justify-center shrink-0">
                                     @if($file['type'] === 'image')
                                         <img src="{{ $file['url'] }}" alt="{{ $file['name'] }}" class="w-full h-full object-cover">
                                     @elseif($file['type'] === 'video')
-                                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                        <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                     @else
-                                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-4 py-2.5 font-bold text-slate-800">
-                                <a href="{{ $file['url'] }}" target="_blank" class="hover:text-blue-700 transition">
+                            <td class="px-3.5 py-2 font-medium text-zinc-900">
+                                <a href="{{ $file['url'] }}" target="_blank" class="hover:underline">
                                     {{ $file['name'] }}
                                 </a>
                             </td>
-                            <td class="px-4 py-2.5">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase 
-                                      {{ $file['type'] === 'image' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($file['type'] === 'video' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-700 border border-amber-200') }}">
+                            <td class="px-3.5 py-2">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-medium uppercase bg-zinc-100 text-zinc-700 border border-zinc-200">
                                     {{ $file['extension'] }}
                                 </span>
                             </td>
-                            <td class="px-4 py-2.5 text-slate-500">{{ $file['size'] }}</td>
-                            <td class="px-4 py-2.5 text-slate-500">{{ $file['last_modified'] }}</td>
-                            <td class="px-4 py-2.5 text-right">
-                                <div class="inline-flex items-center gap-2">
-                                    <button type="button" @click="copyUrl('{{ $file['url'] }}')" class="p-1 rounded text-slate-500 hover:text-slate-800 cursor-pointer" title="Salin URL">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            <td class="px-3.5 py-2 text-zinc-500">{{ $file['size'] }}</td>
+                            <td class="px-3.5 py-2 text-zinc-500">{{ $file['last_modified'] }}</td>
+                            <td class="px-3.5 py-2 text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <button type="button" @click="copyUrl('{{ $file['url'] }}')" class="p-1 rounded text-zinc-400 hover:text-zinc-800 cursor-pointer" title="Salin URL">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
                                     </button>
                                     @if($file['type'] === 'image')
-                                    <button type="button" @click="openCropModal('{{ $file['path'] }}', '{{ $file['url'] }}')" class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer text-xs">
+                                    <button type="button" @click="openCropModal('{{ $file['path'] }}', '{{ $file['url'] }}')" class="text-zinc-600 hover:text-zinc-900 font-medium cursor-pointer text-xs">
                                         Crop
                                     </button>
                                     @endif
-                                    <button type="button" @click="openRenameModal('{{ $file['path'] }}', '{{ $file['name'] }}')" class="text-slate-600 hover:text-slate-900 font-semibold cursor-pointer text-xs">
+                                    <button type="button" @click="openRenameModal('{{ $file['path'] }}', '{{ $file['name'] }}')" class="text-zinc-600 hover:text-zinc-900 font-medium cursor-pointer text-xs">
                                         Ganti Nama
                                     </button>
                                     <form action="{{ route('tenant.admin.media.destroy', ['tenant' => $tenant->slug]) }}" method="POST" onsubmit="return confirm('Hapus berkas ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <input type="hidden" name="path" value="{{ $file['path'] }}">
-                                        <button type="submit" class="text-rose-600 hover:text-rose-800 font-semibold cursor-pointer text-xs">
+                                        <button type="submit" class="text-zinc-400 hover:text-rose-600 font-medium cursor-pointer text-xs">
                                             Hapus
                                         </button>
                                     </form>

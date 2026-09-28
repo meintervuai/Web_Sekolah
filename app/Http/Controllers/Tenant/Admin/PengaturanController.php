@@ -83,10 +83,16 @@ class PengaturanController extends Controller
         }
         unset($validated['video_profil_file']);
 
-        // Sinkronisasi nama sekolah dan jenjang ke entitas tenant pusat
+        // Sinkronisasi nama sekolah, jenjang, dan logo ke entitas tenant pusat
+        $tenantData = $tenant->data ?? [];
+        if (!empty($validated['logo'])) {
+            $tenantData['logo'] = $validated['logo'];
+        }
+
         $tenant->update([
             'nama_sekolah' => $validated['nama_sekolah'],
             'jenjang' => $validated['jenjang'],
+            'data' => $tenantData,
         ]);
 
         foreach ($validated as $kunci => $nilai) {

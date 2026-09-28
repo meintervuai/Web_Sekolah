@@ -20,22 +20,29 @@ class ImageService
     public static function uploadAndConvertToWebp(
         UploadedFile $file,
         string $folder = 'general',
-        int $maxWidth = 1600,
-        int $quality = 82
+        int|string|null $param3 = null,
+        int|null $param4 = null,
+        int|null $param5 = null
     ): string {
         $realPath = $file->getRealPath();
         $mime = $file->getMimeType();
 
-        // Buat GD image source berdasarkan tipe file
-        $srcImage = match ($mime) {
-            'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($realPath),
-            'image/png' => @imagecreatefrompng($realPath),
-            'image/webp' => @imagecreatefromwebp($realPath),
-            'image/gif' => @imagecreatefromgif($realPath),
-            default => null,
-        };
+        // Cek apakah parameter ke-3 adalah tenantSlug (string) atau maxWidth (int)
+        if (is_string($param3) && !is_numeric($param3)) {
+            $explicitTenantSlug = $param3;
+            $maxWidth = $param4 ?? 1600;
+            $quality = $param5 ?? 82;
+        } else {
+            $explicitTenantSlug = null;
+            $maxWidth = is_numeric($param3) ? (int)$param3 : 1600;
+            $quality = is_numeric($param4) ? (int)$param4 : 82;
+        }
 
-        $tenantSlug = app()->bound('tenant') && app('tenant') ? app('tenant')->slug : 'common';
+        // Tentukan slug tenant aktif
+        $tenantSlug = $explicitTenantSlug 
+            ?: (app()->bound('tenant') && app('tenant') ? app('tenant')->slug : 'common');
+
+        // Pastikan path selalu berada di bawah uploads/{tenantSlug}/ agar langsung terindeks di Media & Berkas Manager
         $relativeDir = "uploads/{$tenantSlug}/{$folder}";
         $filename = Str::random(24) . '.webp';
         $destinationPath = storage_path("app/public/{$relativeDir}/{$filename}");

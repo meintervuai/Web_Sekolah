@@ -17,13 +17,43 @@ Prioritas:
 
 Jangan menghasilkan jawaban yang hanya terdengar selesai. Setiap klaim harus didukung file, command, test, query, screenshot, URL, atau bukti lain yang benar-benar diperiksa.
 
-## 2. Wajib dilakukan sebelum perubahan
+## 2. Wajib baca dokumentasi sebelum mulai kerja
 
-1. Baca `README.md`, `composer.json`, `package.json`, `.env.example`, dan dokumentasi yang relevan.
+Setiap kali menerima perintah dari user, **WAJIB baca file-file dokumentasi berikut** sebelum menulis atau mengubah kode apa pun. Tidak ada pengecualian.
+
+### Langkah 1: Baca seluruh dokumentasi project
+
+Baca file-file berikut secara berurutan:
+
+| Prioritas | File | Isi |
+|-----------|------|-----|
+| 1 | `README.md` | Arsitektur umum, kredensial, struktur folder, cara instalasi |
+| 2 | `docs/01-PRD.md` | Product Requirements - fitur, scope, batasan bisnis |
+| 3 | `docs/02-ARCHITECTURE.md` | Arsitektur sistem, pola multi-tenant, service layer |
+| 4 | `docs/03-DATABASE.md` | Schema database central dan tenant, relasi antar tabel |
+| 5 | `docs/04-ROUTES-OR-API.md` | Daftar route, endpoint, middleware, parameter |
+| 6 | `docs/05-UI-UX.md` | Standar desain, komponen, palet warna, tipografi |
+| 7 | `docs/06-CHANGELOG.md` | Riwayat perubahan terakhir |
+| 8 | `docs/07-IMPLEMENTATION-CHECKLIST.md` | Status implementasi fitur |
+| 9 | `docs/RULES.md` | Aturan kerja tambahan |
+| 10 | `CHANGELOG.md` | Changelog root |
+| 11 | `doc/01-PRD.md` | PRD versi ringkas (bila berbeda dari docs/) |
+| 12 | `doc/02-ARCHITECTURE.md` | Arsitektur versi ringkas |
+| 13 | `doc/03-DATABASE.md` | Database versi ringkas |
+| 14 | `doc/04-CHANGELOG.md` | Changelog versi ringkas |
+
+Jika ada file yang tidak ditemukan, lewati dan lanjutkan. Jangan asumsikan isinya.
+
+### Langkah 2: Baca file teknis yang relevan
+
+1. Baca `composer.json`, `package.json`, `.env.example`.
 2. Baca `.ai/rules/index.md` jika tersedia, lalu baca semua rule yang mencakup file dalam scope.
 3. Periksa versi PHP dan package dengan `composer show --direct` serta `package.json`.
 4. Periksa struktur folder, route, migration, model, controller, request, policy, view, component, seeder, factory, test, dan asset yang relevan.
 5. Jalankan atau gunakan `php artisan route:list` untuk route yang terdampak.
+
+### Langkah 3: Tool on-demand (bila diinstruksikan user)
+
 6. **Pengecekan fungsi via MCP Postman**: Digunakan secara on-demand ketika user menginstruksikan untuk mengecek endpoint atau API flow dengan **MCP Postman** (`postman-mcp-server`).
 7. **Riset UI/UX via MCP Mobbin**: Digunakan secara on-demand ketika user menginstruksikan untuk meriset referensi desain via **MCP Mobbin** (`mobbin`).
 8. **Pemeriksaan via MCP Chrome DevTools**: Digunakan secara on-demand ketika user menginstruksikan untuk memeriksa tampilan atau console log via **MCP Chrome DevTools** (`chrome-devtools-mcp`).
@@ -78,6 +108,40 @@ Setiap perubahan fitur wajib diperiksa terhadap semua lapisan berikut:
 - changelog
 
 Jika satu lapisan tidak terdampak, nyatakan alasannya. Jangan mengabaikannya tanpa pemeriksaan.
+
+## 4A. Analisis dampak otomatis (Impact Analysis)
+
+Setiap kali ada perubahan atau perbaikan kode, **WAJIB jalankan analisis dampak** sebelum mengklaim selesai. Tujuannya adalah menemukan dan memperbaiki semua area yang terdampak secara otomatis, bukan hanya area yang diminta user.
+
+### Dimensi dampak yang wajib diperiksa:
+
+| Dimensi | Yang diperiksa | Contoh dampak |
+|---------|---------------|---------------|
+| **Alur bisnis** | Apakah flow pengguna (admin/publik) masih berjalan benar? | Mengubah field `jurusan` bisa merusak form pendaftaran SPMB yang mereferensi jurusan |
+| **Database/Schema** | Apakah migration, model, seeder, factory konsisten? | Menambah kolom baru di migration tapi lupa update `$fillable` di model |
+| **Struktur file** | Apakah view, component, partial, asset yang terkait masih benar? | Menghapus Blade component tapi masih dipanggil di view lain |
+| **Route/API** | Apakah route, controller method, middleware, named route masih sinkron? | Mengubah nama route tapi lupa update `route()` di Blade dan redirect di controller |
+| **Relasi data** | Apakah foreign key, relationship, cascade, scope masih benar? | Mengubah primary key tabel tapi foreign key di tabel lain masih merujuk yang lama |
+| **Validasi** | Apakah Form Request, inline validation masih sesuai? | Menambah field wajib di form tapi lupa tambah rule di FormRequest |
+| **Authorization** | Apakah policy, gate, middleware auth masih konsisten? | Menambah fitur baru tapi lupa buat policy-nya |
+| **UI/Frontend** | Apakah tampilan, navigation, breadcrumb, link internal masih benar? | Menghapus halaman tapi link di sidebar/menu masih mengarah ke sana |
+| **Test** | Apakah test yang ada masih pass? Perlu test baru? | Mengubah response controller tapi assertion di test masih cek response lama |
+| **Seeder/Data** | Apakah seeder masih menghasilkan data yang valid? | Menambah kolom NOT NULL tapi seeder tidak mengisi kolom tersebut |
+
+### Prosedur analisis dampak:
+
+1. **Identifikasi perubahan primer**: Apa file/fungsi/tabel yang langsung diubah?
+2. **Trace dependensi ke atas**: Siapa yang memanggil/menggunakan file/fungsi/tabel ini?
+3. **Trace dependensi ke bawah**: File/fungsi/tabel apa yang dipanggil oleh yang diubah?
+4. **Trace dependensi lateral**: Apakah ada file lain yang menggunakan konstanta, enum, config, atau konvensi yang sama?
+5. **Perbaiki semua area terdampak**: Jangan hanya melaporkan dampak, langsung perbaiki.
+6. **Verifikasi perbaikan**: Jalankan test, periksa route, periksa view setelah semua perbaikan.
+
+### Aturan wajib:
+
+- **Jangan perbaiki hanya yang diminta user**. Jika user minta ubah field di model, periksa dan perbaiki juga: migration, seeder, controller, form request, view, test, dan dokumentasi yang mereferensi field tersebut.
+- **Jangan tinggalkan dead code**. Jika sebuah method/view/route tidak lagi digunakan setelah perubahan, hapus atau tandai deprecated.
+- **Jangan abaikan test yang gagal**. Jika perubahan menyebabkan test lain gagal, perbaiki test atau kode hingga semua pass.
 
 ## 5. Aturan database
 
@@ -167,11 +231,39 @@ Jangan membuat placeholder atau mock data lalu menyebut fitur production-ready.
 - Reuse component existing sebelum membuat component baru.
 - Setiap halaman interaktif harus mempertimbangkan loading, empty, error, success, disabled, dan permission state.
 
+### Wajib gunakan Tailgrids sebagai sumber komponen UI
+
+Semua komponen UI/UX **WAJIB** diambil dari Tailgrids agar konsisten dan selaras di seluruh halaman admin maupun publik.
+
+**Setup awal project** (jika belum diinisialisasi):
+```bash
+npx @tailgrids/cli@latest init
+```
+
+**Menambah komponen baru**:
+```bash
+npx @tailgrids/cli@latest add <component-id>
+```
+
+Contoh penggunaan:
+```bash
+npx @tailgrids/cli@latest add button dialog table card navbar sidebar
+```
+
+**Aturan wajib Tailgrids:**
+
+1. **Jangan membuat komponen UI dari nol** jika komponen tersebut tersedia di Tailgrids. Gunakan `npx @tailgrids/cli@latest add <component>` terlebih dahulu, lalu sesuaikan dengan kebutuhan project.
+2. **Jaga konsistensi visual** - semua button, card, table, form, modal, dropdown, sidebar, navbar, alert, badge, breadcrumb, pagination, dan tab harus mengikuti pola Tailgrids.
+3. **Boleh menyesuaikan** warna, ukuran, spacing, dan konten dari komponen Tailgrids agar sesuai dengan design system project (palet warna sekolah, tipografi, dll). Tapi **jangan mengubah struktur HTML dan class pattern** yang menjadi fondasi Tailgrids.
+4. **Jika membutuhkan komponen yang tidak ada di Tailgrids**, buat komponen baru dengan mengikuti konvensi class dan spacing yang sama dengan komponen Tailgrids yang sudah dipakai.
+5. **Sebelum mengubah tampilan halaman**, periksa komponen Tailgrids yang sudah terpasang di project untuk memastikan reuse, bukan duplikasi.
+
 ### Riset referensi UI/UX dengan MCP Mobbin (On-Demand / Saat Diminta User)
 Gunakan **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) hanya ketika user secara spesifik meminta untuk meriset referensi desain dari aplikasi/produk digital dunia nyata.
 
 ### Verifikasi visual dengan MCP Chrome DevTools (On-Demand / Saat Diminta User)
 Gunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`: `take_screenshot`, `resize_page`, `list_console_messages`, `evaluate_script`) hanya ketika user menginstruksikan untuk memeriksa tampilan visual, responsivitas browser, atau console log aktif.
+
 
 ## 12. Animasi dan interaction
 
@@ -224,7 +316,38 @@ Antarmuka dan konten **TIDAK BOLEH TERLIHAT SEPERTI BUATAN AI (TIDAK BOLEH AI SL
    - Selalu terapkan standar visual rapi dan human-crafted pada kode Blade/CSS/JS.
    - Inspeksi tangkapan layar langsung via **MCP Chrome DevTools** (`take_screenshot`, `list_console_messages`) dijalankan saat user menginstruksikan untuk mengecek tampilan.
 
-## 16. Definition of Done
+## 16. Sinkronisasi dokumentasi wajib (Post-Change Documentation Sync)
+
+Setelah setiap perubahan atau perbaikan selesai, **WAJIB perbarui semua file dokumentasi `.md` yang terdampak**. Ini bukan opsional.
+
+### File yang wajib diperiksa dan diperbarui:
+
+| File | Kapan harus diperbarui |
+|------|------------------------|
+| `README.md` | Jika ada perubahan struktur folder, kredensial, cara instalasi, URL, fitur baru/hapus |
+| `docs/01-PRD.md` | Jika ada perubahan scope fitur, requirement bisnis, batasan sistem |
+| `docs/02-ARCHITECTURE.md` | Jika ada perubahan arsitektur, service, middleware, pola multi-tenant |
+| `docs/03-DATABASE.md` | Jika ada perubahan migration, tabel, kolom, relasi, index |
+| `docs/04-ROUTES-OR-API.md` | Jika ada perubahan route, endpoint, middleware, parameter, nama route |
+| `docs/05-UI-UX.md` | Jika ada perubahan desain, komponen, layout, animasi |
+| `docs/06-CHANGELOG.md` | **Selalu** - setiap perubahan wajib dicatat di sini |
+| `docs/07-IMPLEMENTATION-CHECKLIST.md` | Jika ada fitur yang selesai, ditambah, atau berubah statusnya |
+| `docs/RULES.md` | Jika ada perubahan aturan kerja |
+| `CHANGELOG.md` | **Selalu** - ringkasan perubahan |
+| `doc/01-PRD.md` | Sinkronkan dengan `docs/01-PRD.md` jika keduanya aktif |
+| `doc/02-ARCHITECTURE.md` | Sinkronkan dengan `docs/02-ARCHITECTURE.md` jika keduanya aktif |
+| `doc/03-DATABASE.md` | Sinkronkan dengan `docs/03-DATABASE.md` jika keduanya aktif |
+| `doc/04-CHANGELOG.md` | Sinkronkan dengan `docs/06-CHANGELOG.md` jika keduanya aktif |
+
+### Aturan sinkronisasi:
+
+1. **Jangan menunggu user meminta update dokumentasi.** Lakukan otomatis setiap kali ada perubahan.
+2. **Jangan menulis "TODO: update docs" atau placeholder.** Langsung isi dengan konten yang benar.
+3. **Changelog harus spesifik.** Tulis file yang diubah, alasannya, dan dampaknya. Bukan hanya "updated UI".
+4. **Jika ada duplikasi antara `doc/` dan `docs/`**, pastikan kedua versi konsisten. Jika tidak yakin mana yang primer, gunakan `docs/` sebagai sumber kebenaran.
+5. **Jika perubahan kecil dan tidak berdampak ke dokumentasi mana pun**, tetap tambahkan entry di `CHANGELOG.md` dan `docs/06-CHANGELOG.md`.
+
+## 17. Definition of Done
 
 Fitur hanya boleh disebut selesai jika:
 
@@ -241,11 +364,13 @@ Fitur hanya boleh disebut selesai jika:
 - Pint/linter berhasil bila relevan;
 - browser/log tidak menunjukkan error terkait;
 - tidak ada route, menu, tabel, model, atau file lama yang tertinggal tanpa alasan;
+- **semua file dokumentasi `.md` yang terdampak sudah diperbarui** (lihat section 16);
+- **analisis dampak lintas sistem sudah dijalankan** (lihat section 4A);
 - dokumentasi dan changelog diperbarui.
 
 Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 
-## 17. Format laporan wajib
+## 18. Format laporan wajib
 
 1. Ringkasan perubahan
 2. Masalah dan akar penyebab
@@ -260,7 +385,8 @@ Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 11. Authorization/tenant isolation
 12. Test, Pint, dan hasilnya
 13. URL yang diverifikasi
-14. Dokumentasi/changelog yang diperbarui
-15. Risiko dan pekerjaan yang belum selesai
+14. **Analisis dampak**: daftar area yang diperiksa dan tindakan yang diambil per dimensi (lihat section 4A)
+15. **Dokumentasi yang diperbarui**: daftar file `.md` yang di-update dan ringkasan perubahannya
+16. Risiko dan pekerjaan yang belum selesai
 
-Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, atau instruksi pengecekan dari user yang belum dijalankan.
+Jangan mengatakan "semua sudah selesai" jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, dokumentasi yang belum diperbarui, atau instruksi pengecekan dari user yang belum dijalankan.
