@@ -45,3 +45,13 @@
 - **Counter Statistik:** Terpicu saat masuk viewport (menggunakan IntersectionObserver), berdurasi 800–1.200ms, hanya berjalan sekali.
 - **Navigasi Mobile:** Drawer menu dengan penutup tombol Esc dan transisi mulus tanpa pergeseran layout.
 - **Empty States:** Ditampilkan secara eksplisit dengan ikon dan teks informatif jika belum ada data.
+
+## 5. Implementasi Desain Base Tailwind & Kalender Agenda 3-Kolom
+- **Base Tailwind Core Language:**
+  - Header: Sticky navbar dengan translucent blur (`bg-white/95 backdrop-blur-md`), topbar identitas sekolah, CTA button dengan gradient halus dan shadow terukur.
+  - Section Headings: Judul display tebal dengan aksen gradient halus atau subtitle kontras tinggi, bebas dari badge klise AI yang mengulang teks judul.
+  - Footer: Struktur 4-kolom yang rapi, tautan terverifikasi tanpa link kosong (`#`), copyright resmi, dan tombol WhatsApp mengambang.
+- **Kalender & Agenda Kegiatan (3-Column Layout):**
+  - Kolom Kiri (Desktop 4 kolom): Widget Kalender Interaktif berbasis Alpine.js dengan pemilih bulan/tahun, penanda titik tanggal ber-agenda, filter tanggal satu-klik, serta pills kategori agenda.
+  - Kolom Kanan (Desktop 8 kolom): Daftar agenda dalam kartu horizontal (thumbnail gambar rasio 16:10 / 4:3 di kiri, badge tanggal, jam pelaksanaan, lokasi, status pendaftaran, deskripsi, dan tombol aksi ke rincian).
+  - Bagian Atas: Hero section kontras tinggi dengan kartu featured agenda highlight.

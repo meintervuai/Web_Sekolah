@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Base Tailwind Public Design System**:
+  - Implemented sleek modern public aesthetics referencing Base Tailwind across public interfaces (`layouts/public.blade.php`, `home.blade.php`, `kalender.blade.php`, `agenda.blade.php`, and subpages).
+  - Modern sticky header with translucent backdrop-blur, subtle borders, high contrast active indicators, and dynamic CTA button.
+  - Interactive 3-column Agenda & Calendar page (`public/pages/agenda.blade.php`) matching the requested reference:
+    - Left column: interactive Alpine.js calendar navigator (month/year picker, date selection with active events dots indicator, quick category filter pills, academic calendar banner).
+    - Right column: featured events hero cards and horizontal event cards with thumbnail cover, date badges, real-time client-side search, and status tags.
+  - Redesigned `kalender.blade.php` academic calendar page with PDF/image viewer cards and modern timeline lists.
+  - Passing `allAgenda` and `featuredAgenda` in `PageController@agenda` to support calendar interactivity.
 - Added slug field generation in `TenantController@store` when registering a new tenant.
 - Added `slug` property for `Sekolah` tests.
 - Implemented modern UI/UX grid card layout on the public `jurusan` page.

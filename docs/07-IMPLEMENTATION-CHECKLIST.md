@@ -94,6 +94,19 @@
 
 ### Tahap 5: QA, Testing, & Anti-Slop Validation (Selesai)
 - [x] Pest Feature Test `TenantPublicPagesTest`: 15 skenario pengujian (14 canonical pages + form kontak insert DB + feature flag 404 test) -> **15/15 PASSED (55 assertions)**.
-- [x] Full Test Suite: **24/24 PASSED (82 assertions)**.
+- [x] Full Test Suite: **33/33 PASSED (123 assertions, 100% Green)**.
 - [x] Formatter Laravel Pint: Berhasil dijalankan di seluruh file (`vendor/bin/pint --dirty`).
 - [x] Anti-slop audit: Tidak ada placeholder atau data generik, seluruh data bersumber dari identitas dan Dapodik riil SMK Negeri 2 Bandung.
+
+---
+
+### Tahap 6: Redesain Publik Base Tailwind & Kalender Interaktif (Selesai)
+- [x] Integrasi estetika Base Tailwind pada `layouts/public.blade.php`: Header sticky modern, topbar informasi kontak, drawer mobile, modal lightbox.
+- [x] Pembaruan halaman publik (`home.blade.php`, `kalender.blade.php`, `spmb.blade.php`, `kontak.blade.php`, dll.) dengan grid cards, section titles terpusat, dan kontras WCAG AA.
+- [x] Perombakan `agenda.blade.php` mengadopsi 3-kolom referensi Events:
+  - [x] Sidebar kalender interaktif (Alpine.js navigator bulan/tahun, penanda titik event per tanggal, pemilihan tanggal aktif).
+  - [x] Kategori agenda pills di sidebar.
+  - [x] Kartu agenda horizontal di kolom kanan (gambar cover kiri, badge tanggal, jam, lokasi, status, dan rincian aksi).
+  - [x] Hero section highlight agenda unggulan.
+- [x] Update controller `PageController@agenda` menyuplai `$allAgenda` & `$featuredAgenda`.
+- [x] Pest automated tests pass (33 tests, 123 assertions).

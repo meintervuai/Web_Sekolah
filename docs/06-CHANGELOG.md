@@ -2,6 +2,23 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Phase 2: Redesign Publik Base Tailwind & Kalender Interaktif] - 2026-09-28
+
+### Added
+- **Redesain Antarmuka Publik (Base Tailwind Theme)**:
+  - Pembaruan `layouts/public.blade.php`: Header sticky modern, topbar informasi kontak, drawer mobile yang responsif dan dapat ditutup via tombol Escape, modal lightbox global tanpa overflow, footer korporat modern.
+  - Pembaruan `home.blade.php`: Hero section dengan kontras WCAG AA, kartu fitur terstruktur, bento grid proporsional, integrasi sambutan kepala sekolah, statistik Dapodik teranimasi, serta integrasi agenda.
+  - Perombakan total `agenda.blade.php` sesuai referensi [Events Reference](https://projeto-website-escolar-i1jo.vercel.app/events):
+    - Layout 3-kolom: Sidebar kiri berisi widget Kalender Interaktif (Alpine.js dengan navigasi bulan/tahun, deteksi hari ber-agenda, pemilihan tanggal dinamis) dan daftar filter kategori agenda.
+    - Kolom kanan berisi daftar agenda dalam kartu horizontal (thumbnail cover di sebelah kiri, badge tanggal, jam, lokasi, deskripsi, dan tombol aksi).
+    - Hero section agenda dilengkapi dengan kartu featured highlight agenda unggulan.
+  - Pembaruan `kalender.blade.php`: Penampil dokumen resmi PDF/gambar Semester Ganjil & Genap dengan kartu ringkas dan daftar timeline agenda akademik.
+  - Pembaruan `PageController@agenda`: Menyediakan variabel `$allAgenda` dan `$featuredAgenda` untuk mendukung interaktivitas widget kalender dan highlight hero.
+
+### Compliance & Anti-Slop
+- Seluruh kode bebas dari AI slop (tanpa tanda baca em-dash `—`, tanpa gradien neon berlebih, tanpa link kosong `#`, serta touch target >= 44px).
+- Verifikasi otomatis Pest: 33 tests passed (123 assertions, 100% green).
+
 ## [Phase 1: Implementasi Publik SMK Negeri 2 Bandung] - 2026-09-26
 
 ### Added

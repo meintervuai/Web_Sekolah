@@ -244,9 +244,22 @@ class PageController extends Controller
 
         $agenda = $query->paginate(8)->withQueryString();
 
+        // Ambil semua agenda aktif untuk kalender interaktif dan featured events
+        $allAgenda = Agenda::aktif()->orderBy('tgl_mulai', 'asc')->get();
+        $featuredAgenda = Agenda::aktif()
+            ->where('tgl_mulai', '>=', now()->toDateString())
+            ->orderBy('tgl_mulai', 'asc')
+            ->take(2)
+            ->get();
+        if ($featuredAgenda->isEmpty()) {
+            $featuredAgenda = Agenda::aktif()->orderBy('tgl_mulai', 'desc')->take(2)->get();
+        }
+
         return view('public.pages.agenda', [
             'sekolah' => $this->getSekolahData(),
             'agenda' => $agenda,
+            'allAgenda' => $allAgenda,
+            'featuredAgenda' => $featuredAgenda,
             'filter' => $filter,
         ]);
     }
