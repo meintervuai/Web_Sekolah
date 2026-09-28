@@ -2,6 +2,35 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased] - 2026-09-28
+
+### Changed
+- **Skema Warna Header, Footer, & Navigasi ke Biru Institusional**:
+  - Header top bar: latar belakang `theme-bg` (biru tua) mengganti `bg-slate-900`, teks ikon `text-blue-100/200`.
+  - Navigasi desktop & mobile drawer: warna aktif `bg-blue-900` mengganti `bg-slate-900`, hover link `text-blue-300`.
+  - Footer: latar belakang `theme-bg`, teks `text-blue-100/200/300`, ikon sosial `bg-blue-800`.
+  - Akreditasi di header & footer: `text-emerald-400` diganti `text-white` sesuai permintaan pengguna.
+- **Container Lebih Lebar**: max-width `container-custom` diperluas dari 1200px ke 1440px untuk tampilan desktop yang lebih lega.
+- **Hero Banner Full Width**: banner hero beranda diubah full-width (edge-to-edge) dengan menghilangkan border-radius, shadow, dan border. Tinggi dinaikkan dari `h-44/64/80` ke `h-64/96/[450px]`.
+- **Warna Hero Carousel**: overlay gradient dan semi-transparent diganti ke palet biru yang konsisten.
+
+## [Phase 4: Penyelarasan Rules & Direct Workflow] - 2026-09-28
+
+### Added
+- **Penyederhanaan Rules & Efisiensi Alur Kerja**:
+  - Menghilangkan bagian checklist audit dan analisis dampak teoritis dari [AGENTS.md](file:///d:/databaru/Magang/website_sekolah/AGENTS.md) dan [docs/RULES.md](file:///d:/databaru/Magang/website_sekolah/docs/RULES.md).
+  - Menegaskan prinsip: **Wajib membaca file .md di awal**, **eksekusi langsung tanpa bertele-tele**, **database wajib 100% berelasi (FK & model)**, dan **wajib sinkronisasi dokumen .md di akhir**.
+
+## [Phase 3: Media Video Slider Banner Hero & Banner Beranda Terpadu] - 2026-09-28
+
+### Added
+- **Dukungan Video pada Menu Admin Slider Banner Hero**:
+  - Menambahkan kolom `video` pada tabel `slider_beranda` dengan migrasi tenant.
+  - Memperbarui formulir Tambah (`create.blade.php`) dan Edit (`edit.blade.php`) pada menu admin **Slider Banner Hero** agar pengelola sekolah dapat mengunggah file video (MP4/WebM hingga 50MB) atau memasukkan tautan CDN video.
+  - Menambahkan validasi dan penyimpanan file video pada `SliderController.php`.
+  - Menambahkan indikator status badge `Video` pada daftar tabel dan kartu grid `index.blade.php`.
+  - Menghubungkan pemutaran otomatis video pada slider carousel utama beranda (`home.blade.php`) dengan transisi ke slide berikutnya saat video selesai diputar.
+
 ## [Phase 2: Redesign Publik Base Tailwind & Kalender Interaktif] - 2026-09-28
 
 ### Added

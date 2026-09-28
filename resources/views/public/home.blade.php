@@ -13,7 +13,7 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
      1. HERO CAROUSEL SECTION (Clean, Kontras Tinggi, Elegan)
 =========================================== -->
 @if($fiturList['beranda'] ?? true)
-<section class="relative w-full bg-slate-900 overflow-hidden"
+<section class="relative w-full theme-bg-dark overflow-hidden"
   x-data="{
       current: 0,
       total: {{ count($slider) }},
@@ -70,14 +70,27 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
       class="absolute inset-0 w-full h-full"
       style="display: none;">
 
-      <!-- Background Image -->
+      <!-- Background Media (Video atau Gambar) -->
+      @if(!empty($item->video))
+      <video src="{{ $item->video }}"
+        class="w-full h-full object-cover object-center"
+        autoplay
+        muted
+        playsinline
+        @if(count($slider) > 1)
+          @ended="next()"
+        @else
+          loop
+        @endif></video>
+      @elseif(!empty($item->gambar))
       <img src="{{ $item->gambar }}"
         alt="{{ $item->judul ?? 'SMK Negeri 2 Bandung' }}"
         class="w-full h-full object-cover object-center"
         loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+      @endif
 
       <!-- Clean High-Contrast Overlay -->
-      <div class="absolute inset-0 bg-slate-900/80"></div>
+      <div class="absolute inset-0 bg-blue-950/85"></div>
 
       <!-- Slide Content -->
       <div class="absolute inset-0 flex items-center">
@@ -151,6 +164,209 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
     @endforeach
   </div>
   @endif
+</section>
+@endif
+
+<!-- ==========================================
+     BANNER HERO BERANDA (Tepat di Atas Sambutan Kepala Sekolah)
+=========================================== -->
+@php
+$hasHeroBannerImg = !empty($sekolahData['hero_banner']);
+$hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
+@endphp
+
+@if($hasHeroBannerImg || $hasHeroBannerVid)
+<section class="w-full theme-bg-dark border-b border-slate-200 relative overflow-hidden"
+  x-data="{
+    hasImage: {{ $hasHeroBannerImg ? 'true' : 'false' }},
+    hasVideo: {{ $hasHeroBannerVid ? 'true' : 'false' }},
+    // Mode: 'video' atau 'image'
+    currentMode: '{{ $hasHeroBannerVid ? 'video' : 'image' }}',
+    isMuted: true,
+    videoEnded: false,
+    imageTimer: null,
+    
+    init() {
+      // Skenario 1: Hanya Gambar -> Slideshow gambar
+      // Skenario 2: Hanya Video -> Looping video
+      // Skenario 3: Ada Keduanya -> Putar video sampai selesai (ended), lalu ganti ke gambar
+      if (this.hasVideo) {
+        this.playVideo();
+      }
+    },
+    
+    playVideo() {
+      this.$nextTick(() => {
+        const vid = this.$refs.heroVideo;
+        if (vid) {
+          vid.currentTime = 0;
+          vid.play().catch(e => console.log('Autoplay deferred:', e));
+        }
+      });
+    },
+
+    handleVideoEnded() {
+      if (this.hasImage) {
+        // Jika ada keduanya: setelah video selesai diputar, beralih ke gambar
+        this.videoEnded = true;
+        this.currentMode = 'image';
+      } else {
+        // Jika hanya video: looping pemutaran
+        const vid = this.$refs.heroVideo;
+        if (vid) {
+          vid.currentTime = 0;
+          vid.play();
+        }
+      }
+    },
+
+    toggleMute() {
+      const vid = this.$refs.heroVideo;
+      if (vid) {
+        this.isMuted = !this.isMuted;
+        vid.muted = this.isMuted;
+      }
+    },
+
+    replayVideo() {
+      this.currentMode = 'video';
+      this.videoEnded = false;
+      this.playVideo();
+    },
+
+    switchToImage() {
+      this.currentMode = 'image';
+    }
+  }">
+
+  <div class="relative w-full h-72 sm:h-96 lg:h-[480px] bg-slate-950/90 overflow-hidden group">
+    
+    <!-- 1. Video Player Container -->
+    @if($hasHeroBannerVid)
+    <div x-show="currentMode === 'video'"
+         x-transition:enter="transition ease-out duration-700"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-500"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="absolute inset-0 w-full h-full">
+      
+      <video x-ref="heroVideo"
+             src="{{ $sekolahData['hero_banner_video'] }}"
+             class="w-full h-full object-cover object-center"
+             autoplay
+             muted
+             playsinline
+             @ended="handleVideoEnded()"
+             {{ !$hasHeroBannerImg ? 'loop' : '' }}>
+        Browser Anda tidak mendukung tag video HTML5.
+      </video>
+    </div>
+    @endif
+
+    <!-- 2. Image Container (Slideshow / Cover) -->
+    @if($hasHeroBannerImg)
+    <div x-show="currentMode === 'image'"
+         x-transition:enter="transition ease-out duration-700"
+         x-transition:enter-start="opacity-0 scale-102"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-500"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="absolute inset-0 w-full h-full"
+         style="{{ $hasHeroBannerVid ? 'display: none;' : '' }}">
+      
+      <img src="{{ $sekolahData['hero_banner'] }}"
+           alt="Banner Hero {{ $sekolahData['nama'] }}"
+           class="w-full h-full object-cover object-center transform transition duration-700 group-hover:scale-[1.01]"
+           loading="lazy">
+    </div>
+    @endif
+
+    <!-- Overlay Gradien Elegan & Kontras Tinggi -->
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent pointer-events-none"></div>
+
+    <!-- Teks Overlay Judul & Tagline -->
+    <div class="absolute inset-0 flex items-end pointer-events-none">
+      <div class="container-custom p-6 sm:p-8 text-white space-y-2.5 w-full pointer-events-auto">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center px-3 py-1 rounded-md bg-blue-600/90 text-white text-xs font-bold tracking-wide uppercase shadow-2xs">
+            Sekolah Pusat Keunggulan
+          </span>
+          @if($hasHeroBannerVid && $hasHeroBannerImg)
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-900/60 backdrop-blur-xs text-[11px] font-semibold text-blue-100 border border-white/10">
+            <template x-if="currentMode === 'video'">
+              <span class="flex items-center gap-1 text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                Memutar Video
+              </span>
+            </template>
+            <template x-if="currentMode === 'image'">
+              <span class="flex items-center gap-1 text-blue-300">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Banner Foto
+              </span>
+            </template>
+          </span>
+          @endif
+        </div>
+
+        <h2 class="font-heading font-bold text-xl sm:text-2xl lg:text-3xl text-white drop-shadow-xs leading-tight">
+          {{ $sekolahData['nama'] }}
+        </h2>
+        
+        <p class="text-xs sm:text-sm text-slate-200 line-clamp-1 sm:line-clamp-2 max-w-2xl font-normal">
+          {{ $sekolahData['slogan'] }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Kontrol Interaktif (Audio & Switcher Video/Gambar) -->
+    <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
+      @if($hasHeroBannerVid)
+      <!-- Tombol Audio Mute/Unmute -->
+      <button type="button"
+              @click="toggleMute()"
+              x-show="currentMode === 'video'"
+              class="px-3 py-1.5 rounded-lg bg-blue-950/80 hover:bg-blue-950 border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+        <template x-if="isMuted">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+            <span>Unmute</span>
+          </span>
+        </template>
+        <template x-if="!isMuted">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <span>Suara Aktif</span>
+          </span>
+        </template>
+      </button>
+
+      <!-- Tombol Putar Ulang Video bila sudah berganti ke Gambar -->
+      @if($hasHeroBannerImg)
+      <button type="button"
+              @click="replayVideo()"
+              x-show="currentMode === 'image'"
+              class="px-3 py-1.5 rounded-lg bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Putar Video</span>
+      </button>
+
+      <!-- Tombol Langsung Lihat Gambar bila sedang di Video -->
+      <button type="button"
+              @click="switchToImage()"
+              x-show="currentMode === 'video'"
+              class="px-3 py-1.5 rounded-lg bg-blue-950/80 hover:bg-blue-950 border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span>Lihat Gambar</span>
+      </button>
+      @endif
+      @endif
+    </div>
+
+  </div>
 </section>
 @endif
 

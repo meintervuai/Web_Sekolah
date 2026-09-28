@@ -35,4 +35,50 @@ class Pengguna extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relasi artikel/post yang ditulis pengguna.
+     */
+    public function artikels()
+    {
+        return $this->hasMany(Post::class, 'pengguna_id');
+    }
+
+    /**
+     * Relasi agenda kegiatan yang dibuat pengguna.
+     */
+    public function agendas()
+    {
+        return $this->hasMany(Agenda::class, 'pengguna_id');
+    }
+
+    public function unduhans()
+    {
+        return $this->hasMany(Unduhan::class, 'pengguna_id');
+    }
+
+    public function sliderBerandas()
+    {
+        return $this->hasMany(SliderBeranda::class, 'pengguna_id');
+    }
+
+    public function halamanStatis()
+    {
+        return $this->hasMany(HalamanStatis::class, 'pengguna_id');
+    }
+
+    public function kalenderAkademiks()
+    {
+        return $this->hasMany(KalenderAkademik::class, 'pengguna_id');
+    }
+
+    public function pesanMasuks()
+    {
+        return $this->hasMany(PesanMasuk::class, 'petugas_id');
+    }
+
+    public function sosialMedias()
+    {
+        return $this->hasMany(SosialMedia::class, 'pengguna_id');
+    }
 }

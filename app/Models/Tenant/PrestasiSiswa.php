@@ -19,9 +19,15 @@ class PrestasiSiswa extends Model
         'tahun',
         'foto',
         'deskripsi',
+        'jurusan_id',
     ];
 
     protected $casts = [
         'tanggal' => 'date',
     ];
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id');
+    }
 }

@@ -13,7 +13,13 @@ class PengaturanUmum extends Model
     protected $fillable = [
         'kunci',
         'nilai',
+        'pengguna_id',
     ];
+
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
 
     /**
      * Helper to get single setting value.

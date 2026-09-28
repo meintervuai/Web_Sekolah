@@ -18,7 +18,7 @@
 
 ## 2. Tipografi & Warna
 - **Font Utama:** `Inter` (sans-serif) untuk body dan teks UI.
-- **Font Display / Heading:** `Outfit` (sans-serif) untuk judul (`h1` s.d `h6`).
+- **Font Display / Heading:** `Plus Jakarta Sans` (sans-serif) untuk judul (`h1` s.d `h6`) yang tegas dan profesional tanpa kesan AI slop.
 - **Skala Tipografi:**
   - H1: Desktop 48–56px, Tablet 40–44px, Mobile 32–36px (`font-bold tracking-tight`).
   - H2: Desktop 32–40px, Tablet 28–32px, Mobile 26–30px.
@@ -31,8 +31,9 @@
 - **Border Radius:**
   - Card & Container: 16px (`rounded-2xl`).
   - Button & Form Input: 10px (`rounded-xl` / `rounded-[10px]`).
-- **Rasio Aspek Gambar:**
-  - Hero Slider: Rasio 16:6 desktop (tinggi 480–560px), tablet 380px, mobile 360px atau 4:3.
+- **Rasio Aspek Media & Banner:**
+  - Hero Slider Carousel: Rasio 16:9 desktop (tinggi 420–540px), mobile 380px, mendukung media Gambar atau Video MP4/WebM (`autoplay`, `muted`, `playsinline`, auto-next slide on ended).
+  - Banner Hero Beranda (atas Sambutan Kepsek): Tinggi responsif 288–480px, mendukung mode Gambar, Video Looping, atau Keduanya (video diputar sampai tamat baru berganti ke gambar) dengan kontrol mute/unmute audio.
   - Berita / Pengumuman / Agenda: Rasio 16:9 thumbnail cover.
   - Fasilitas & Program Keahlian: Rasio 4:3.
   - Staff / Guru Avatar: Rasio 1:1 bulat/persegi minimal 160x160px desktop, 112x112px mobile.

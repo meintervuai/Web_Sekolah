@@ -34,79 +34,37 @@
   
 *Dokumen ini merupakan intisari aturan kerja untuk Antigravity AI IDE dalam mengembangkan proyek website sekolah.*
 
-## 5. PEMERIKSAAN SILANG SEBELUM SELESAI
-Sebelum menyatakan tugas selesai, lakukan pemeriksaan silang:
-1. Apakah semua keputusan UI/UX sudah masuk ke ruler?
-2. Apakah semua keputusan animasi sudah masuk ke ruler?
-3. Apakah semua hasil analisis sudah masuk ke file Markdown yang tepat?
-4. Apakah halaman yang direkomendasikan memiliki route?
-5. Apakah route memiliki sumber data?
-6. Apakah sumber data memiliki tabel atau model?
-7. Apakah komponen UI sudah memiliki responsive behavior?
-8. Apakah fitur tenant sudah diterapkan pada route, query, authorization, dan database?
-9. Apakah perubahan sudah dicatat di CHANGELOG.md?
-10. Apakah traceability matrix sudah diperbarui?
+## 5. KEWAJIBAN RELASI DATABASE (100% BERELASI)
+- Seluruh tabel aplikasi (Central maupun Tenant) **wajib 100% memiliki relasi Foreign Key (FK)** yang formal.
+- Setiap relasi tabel wajib tercermin pada model Eloquent (`belongsTo`, `hasMany`) di `App\Models\Tenant` atau `App\Models\Central`.
+- Tidak boleh membuat tabel bisnis yang berdiri sendiri tanpa relasi ke data induk (`sekolah`, `pengguna`, `jurusan`, dll).
+- Dilarang membuat migration destruktif tanpa memeriksa dampak data.
 
-Jika salah satu jawaban adalah "belum", jangan menyatakan pekerjaan selesai. Laporkan bagian yang masih belum diterapkan.
-
-## 6. ATURAN ANALISIS UI/UX & ANIMASI
-- **Tujuan Referensi**: Gunakan referensi web (seperti web sekolah lain) hanya untuk belajar UI/UX, bukan untuk menyalin desain, kode, teks, aset, atau identitas visual.
-- **Cakupan Analisis**: Jangan hanya homepage. Analisis halaman internal (profil, visi misi, galeri, formulir, berita, dropdown, dsb).
-- **Prosedur Pengambilan Data**: Gunakan browser dev tools untuk melihat viewport, responsive behavior, animasi, loading state, dan struktur di Desktop, Tablet, dan Mobile.
-- **Dokumentasi Screenshot**: Simpan screenshot per device di dalam direktori `work/ui-ux-research/{website}/{device}/`.
-- **Hasil Dokumen**: Wajib menyusun dokumen `UI-UX-REFERENCE-ANALYSIS.md`, `UI-UX-DESIGN-DIRECTION.md`, `UI-UX-PAGE-INVENTORY.md`, dan `UI-UX-ANIMATION-ANALYSIS.md`.
-- **Aturan Audit Animasi**: Animasi harus diuji secara interaktif (scroll, hover, klik), bukan dari statis screenshot. Kategorikan animasi menjadi *essential*, *helpful*, atau *decorative*, dan hindari animasi dekoratif berlebih atau yang memberatkan mobile.
-- **Mobile-First Mutlak**: Desain dan animasi harus mengutamakan performa dan *experience* layar mobile, bukan sekadar desktop yang di-scale down.
-
-## 7. WAJIB BACA DOKUMENTASI SEBELUM KERJA
-Setiap kali menerima perintah, **WAJIB baca semua file `.md` dokumentasi project** sebelum menulis kode apa pun:
+## 6. WAJIB BACA DOKUMENTASI DI AWAL
+Setiap kali menerima perintah, **WAJIB membaca file-file dokumentasi `.md` project** sebelum menulis kode apa pun:
 
 1. `README.md` - arsitektur umum, kredensial, struktur folder
 2. `docs/01-PRD.md` - fitur, scope, batasan bisnis
 3. `docs/02-ARCHITECTURE.md` - arsitektur sistem, pola multi-tenant
-4. `docs/03-DATABASE.md` - schema database, relasi antar tabel
+4. `docs/03-DATABASE.md` - schema database, relasi antar tabel (ERD)
 5. `docs/04-ROUTES-OR-API.md` - daftar route, endpoint, middleware
-6. `docs/05-UI-UX.md` - standar desain, komponen, palet warna
+6. `docs/05-UI-UX.md` - standar desain, komponen, palet warna, tipografi
 7. `docs/06-CHANGELOG.md` - riwayat perubahan terakhir
 8. `docs/07-IMPLEMENTATION-CHECKLIST.md` - status implementasi fitur
 9. `docs/RULES.md` - aturan kerja ini
 10. `CHANGELOG.md` - changelog root
-11. Semua file di `doc/` - versi ringkas dokumentasi
 
-Tidak ada pengecualian. Ini memastikan setiap perubahan mempertimbangkan konteks penuh project.
+Semua file `.md` saling terikat sebagai sumber kebenaran proyek.
 
-## 8. ANALISIS DAMPAK OTOMATIS (IMPACT ANALYSIS)
-Setiap perubahan kode **WAJIB disertai analisis dampak** ke semua dimensi:
-
-| Dimensi | Pertanyaan kunci |
-|---------|-----------------|
-| Alur bisnis | Apakah flow user masih berjalan benar? |
-| Database/Schema | Apakah migration, model, seeder konsisten? |
-| Struktur file | Apakah view, component, asset terkait masih benar? |
-| Route/API | Apakah route, controller, middleware sinkron? |
-| Relasi data | Apakah foreign key, relationship, cascade benar? |
-| Validasi | Apakah Form Request masih sesuai? |
-| Authorization | Apakah policy, gate masih konsisten? |
-| UI/Frontend | Apakah navigation, breadcrumb, link masih benar? |
-| Test | Apakah test yang ada masih pass? |
-| Seeder/Data | Apakah seeder menghasilkan data valid? |
-
-Prosedur: identifikasi perubahan primer, trace dependensi ke atas/bawah/lateral, perbaiki semua area terdampak, verifikasi perbaikan.
-
-**Jangan perbaiki hanya yang diminta user.** Jika user minta ubah field di model, periksa dan perbaiki juga: migration, seeder, controller, form request, view, test, dan dokumentasi.
-
-## 9. SINKRONISASI DOKUMENTASI WAJIB
-Setelah setiap perubahan selesai, **WAJIB perbarui semua file `.md` yang terdampak**:
+## 7. SINKRONISASI DOKUMENTASI DI AKHIR PEKERJAAN
+Setelah setiap perubahan selesai, **WAJIB langsung perbarui file-file `.md` yang terdampak** tanpa menunggu instruksi tambahan:
 
 - `docs/06-CHANGELOG.md` dan `CHANGELOG.md` - **SELALU** diperbarui
+- `docs/03-DATABASE.md` - perbarui jika ada perubahan skema, kolom, atau relasi FK
+- `docs/07-IMPLEMENTATION-CHECKLIST.md` - centang fitur yang telah selesai
 - `docs/01-PRD.md` - jika scope fitur berubah
-- `docs/02-ARCHITECTURE.md` - jika arsitektur berubah
-- `docs/03-DATABASE.md` - jika schema berubah
-- `docs/04-ROUTES-OR-API.md` - jika route berubah
-- `docs/05-UI-UX.md` - jika desain berubah
-- `docs/07-IMPLEMENTATION-CHECKLIST.md` - jika status fitur berubah
+- `docs/04-ROUTES-OR-API.md` - jika ada perubahan rute
+- `docs/05-UI-UX.md` - jika ada perubahan standar visual/komponen
 - `README.md` - jika struktur folder, URL, atau fitur berubah
-- Semua file di `doc/` - disinkronkan dengan versi `docs/`
 
-Jangan menunggu user meminta update. Lakukan otomatis.
 

@@ -5,6 +5,7 @@ namespace App\Models\Central;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sekolah extends Model
@@ -46,6 +47,7 @@ class Sekolah extends Model
      */
     protected $fillable = [
         'id',
+        'super_admin_id',
         'nama_sekolah',
         'slug',
         'jenjang',
@@ -66,6 +68,14 @@ class Sekolah extends Model
             'tgl_berakhir' => 'date',
             'data' => 'array',
         ];
+    }
+
+    /**
+     * Relasi ke Super Admin pengelola.
+     */
+    public function superAdmin(): BelongsTo
+    {
+        return $this->belongsTo(SuperAdmin::class, 'super_admin_id');
     }
 
     /**

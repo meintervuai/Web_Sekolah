@@ -153,6 +153,65 @@
                         <label class="block text-xs font-bold text-slate-800 mb-1.5">Deskripsi Profil Singkat</label>
                         <textarea name="deskripsi" rows="3" placeholder="Tuliskan gambaran umum profil sekolah yang ringkas dan informatif..." class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition leading-relaxed">{{ old('deskripsi', $pengaturanRaw['deskripsi'] ?? '') }}</textarea>
                     </div>
+
+                    <div class="md:col-span-2 pt-2 border-t border-slate-100 space-y-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
+                                Media Hero Banner Beranda (Tepat di Atas Sambutan Kepala Sekolah)
+                            </h4>
+                            <p class="text-xs text-slate-500 font-medium">
+                                Anda dapat mengunggah <strong>Gambar</strong>, <strong>Video</strong>, atau <strong>Keduanya</strong>.
+                                <br>
+                                <span class="text-slate-600 font-semibold">• Jika gambar saja:</span> Slideshow gambar.
+                                <br>
+                                <span class="text-slate-600 font-semibold">• Jika video saja:</span> Video berputar berulang terus menerus (looping).
+                                <br>
+                                <span class="text-slate-600 font-semibold">• Jika ada keduanya:</span> Video diputar terlebih dahulu sampai selesai, lalu berpindah menampilkan gambar banner.
+                            </p>
+                        </div>
+
+                        <!-- 1. Gambar Hero Banner -->
+                        <x-admin.input-gambar 
+                            name="hero_banner" 
+                            value="{{ old('hero_banner', $pengaturanRaw['hero_banner'] ?? '') }}" 
+                            label="1. Gambar Banner Hero (Landscape)" 
+                            recommended="Format JPG, PNG, atau WebP. Maks 3MB. Resolusi ideal 1600x600px atau 1920x800px." 
+                        />
+
+                        <!-- 2. Video Hero Banner -->
+                        <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/90 space-y-3">
+                            <label class="block text-xs font-bold text-slate-800">
+                                2. Video Banner Hero (MP4 / WebM / Link Video)
+                            </label>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Upload Berkas Video (Maks 25MB)</label>
+                                    <input type="file" name="hero_banner_video_file" accept="video/mp4,video/webm" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-white border border-slate-200 rounded-xl transition">
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <div class="h-px bg-slate-200 flex-1"></div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ATAU INPUT URL VIDEO</span>
+                                    <div class="h-px bg-slate-200 flex-1"></div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">URL Video Langsung (MP4 / WebM / CDN)</label>
+                                    <input type="url" name="hero_banner_video" value="{{ old('hero_banner_video', $pengaturanRaw['hero_banner_video'] ?? '') }}" placeholder="https://domain.com/video-sekolah.mp4" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
+                                </div>
+
+                                @if(!empty($pengaturanRaw['hero_banner_video']))
+                                <div class="pt-2 border-t border-slate-200">
+                                    <div class="text-[11px] font-bold text-slate-700 mb-1">Video Banner Aktif:</div>
+                                    <div class="text-xs font-mono text-slate-700 bg-white p-2 rounded-lg border border-slate-200 truncate">
+                                        {{ $pengaturanRaw['hero_banner_video'] }}
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

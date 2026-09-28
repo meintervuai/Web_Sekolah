@@ -14,15 +14,22 @@ class SliderBeranda extends Model
         'judul',
         'subjudul',
         'gambar',
+        'video',
         'link_tombol',
         'teks_tombol',
         'urutan',
+        'pengguna_id',
         'is_aktif',
     ];
 
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
 
     public function scopeAktif($query)
     {

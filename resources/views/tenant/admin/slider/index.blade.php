@@ -53,12 +53,33 @@
                             <tr class="hover:bg-slate-50/60 transition">
                                 <td class="py-3.5 px-6 text-center font-mono text-xs font-bold text-slate-500">{{ $slider->urutan }}</td>
                                 <td class="py-3.5 px-5">
-                                    <div class="w-24 h-14 rounded-lg bg-slate-100 overflow-hidden border border-slate-200">
-                                        <img src="{{ $slider->gambar }}" alt="{{ $slider->judul }}" class="w-full h-full object-cover">
+                                    <div class="w-24 h-14 rounded-lg bg-slate-900 overflow-hidden border border-slate-200 relative group">
+                                        @if($slider->gambar)
+                                            <img src="{{ $slider->gambar }}" alt="{{ $slider->judul }}" class="w-full h-full object-cover">
+                                        @elseif($slider->video)
+                                            <div class="w-full h-full flex items-center justify-center bg-slate-950 text-white">
+                                                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                            </div>
+                                        @endif
+
+                                        @if($slider->video)
+                                            <div class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-blue-600/90 text-white text-[9px] font-bold uppercase tracking-wider flex items-center gap-0.5">
+                                                <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                                                Video
+                                            </div>
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="py-3.5 px-5 max-w-xs sm:max-w-md">
-                                    <div class="font-bold text-slate-900 text-xs sm:text-sm">{{ $slider->judul ?? '(Tanpa Judul)' }}</div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-bold text-slate-900 text-xs sm:text-sm">{{ $slider->judul ?? '(Tanpa Judul)' }}</div>
+                                        @if($slider->video)
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                                <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                                                Video
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-slate-500 text-xs font-medium line-clamp-1 mt-0.5">{{ $slider->subjudul ?? '-' }}</p>
                                 </td>
                                 <td class="py-3.5 px-5">
@@ -99,11 +120,26 @@
                     @foreach($sliders as $slider)
                         <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden flex flex-col justify-between hover:shadow-xs transition shadow-2xs">
                             <div>
-                                <div class="aspect-16/9 bg-slate-100 overflow-hidden relative border-b border-slate-100">
-                                    <img src="{{ $slider->gambar }}" alt="{{ $slider->judul }}" class="w-full h-full object-cover">
+                                <div class="aspect-16/9 bg-slate-900 overflow-hidden relative border-b border-slate-100">
+                                    @if($slider->gambar)
+                                        <img src="{{ $slider->gambar }}" alt="{{ $slider->judul }}" class="w-full h-full object-cover">
+                                    @elseif($slider->video)
+                                        <div class="w-full h-full flex items-center justify-center bg-slate-950 text-white">
+                                            <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                        </div>
+                                    @endif
+                                    
                                     <div class="absolute top-3 left-3 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-slate-900/80 text-white backdrop-blur-xs">
                                         #{{ $slider->urutan }}
                                     </div>
+
+                                    @if($slider->video)
+                                        <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-blue-600 text-white text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                                            Media Video
+                                        </div>
+                                    @endif
+
                                     <div class="absolute top-3 right-3">
                                         @if($slider->is_aktif)
                                             <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-xs">Aktif</span>

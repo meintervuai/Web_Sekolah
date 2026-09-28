@@ -3,6 +3,7 @@
 namespace App\Models\Central;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -55,5 +56,13 @@ class SuperAdmin extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi sekolah yang dikelola/dibuat super admin.
+     */
+    public function sekolahs(): HasMany
+    {
+        return $this->hasMany(Sekolah::class, 'super_admin_id');
     }
 }

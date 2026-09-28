@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Tenant\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\SliderBeranda;
+use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class SliderController extends Controller
@@ -35,6 +38,9 @@ class SliderController extends Controller
     /**
      * Simpan slider banner baru.
      */
+    /**
+     * Simpan slider banner baru.
+     */
     public function store(Request $request): RedirectResponse
     {
         $tenant = app('tenant');
@@ -43,7 +49,9 @@ class SliderController extends Controller
             'judul' => ['nullable', 'string', 'max:200'],
             'subjudul' => ['nullable', 'string', 'max:255'],
             'gambar' => ['nullable', 'string', 'max:500'],
-            'gambar_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'gambar_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
+            'video' => ['nullable', 'string', 'max:500'],
+            'video_file' => ['nullable', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime', 'max:51200'],
             'link_tombol' => ['nullable', 'string', 'max:255'],
             'teks_tombol' => ['nullable', 'string', 'max:50'],
             'urutan' => ['required', 'integer'],
@@ -51,20 +59,28 @@ class SliderController extends Controller
         ]);
 
         if ($request->hasFile('gambar_file')) {
-            $validated['gambar'] = \App\Services\ImageService::uploadAndConvertToWebp($request->file('gambar_file'), 'slider', 1600);
+            $validated['gambar'] = ImageService::uploadAndConvertToWebp($request->file('gambar_file'), 'slider', 1600);
         }
 
-        if (empty($validated['gambar'])) {
-            return back()->withErrors(['gambar' => 'Harap upload gambar banner atau masukkan URL gambar valid.'])->withInput();
+        if ($request->hasFile('video_file')) {
+            $videoFile = $request->file('video_file');
+            $vidFilename = 'slider-video-'.time().'-'.Str::random(6).'.'.$videoFile->getClientOriginalExtension();
+            $vidPath = $videoFile->storeAs('uploads/video', $vidFilename, 'public');
+            $validated['video'] = Storage::url($vidPath);
         }
 
-        unset($validated['gambar_file']);
+        // Setidaknya harus ada salah satu media: gambar atau video
+        if (empty($validated['gambar']) && empty($validated['video'])) {
+            return back()->withErrors(['gambar' => 'Harap upload gambar atau video untuk slider banner hero ini.'])->withInput();
+        }
+
+        unset($validated['gambar_file'], $validated['video_file']);
         $validated['is_aktif'] = $request->boolean('is_aktif', true);
 
         SliderBeranda::create($validated);
 
         return redirect()->route('tenant.admin.slider.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Slider banner beranda berhasil ditambahkan.');
+            ->with('sukses', 'Slider banner hero beranda berhasil ditambahkan.');
     }
 
     /**
@@ -88,7 +104,9 @@ class SliderController extends Controller
             'judul' => ['nullable', 'string', 'max:200'],
             'subjudul' => ['nullable', 'string', 'max:255'],
             'gambar' => ['nullable', 'string', 'max:500'],
-            'gambar_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'gambar_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
+            'video' => ['nullable', 'string', 'max:500'],
+            'video_file' => ['nullable', 'mimetypes:video/mp4,video/webm,video/ogg,video/quicktime', 'max:51200'],
             'link_tombol' => ['nullable', 'string', 'max:255'],
             'teks_tombol' => ['nullable', 'string', 'max:50'],
             'urutan' => ['required', 'integer'],
@@ -96,20 +114,34 @@ class SliderController extends Controller
         ]);
 
         if ($request->hasFile('gambar_file')) {
-            $validated['gambar'] = \App\Services\ImageService::uploadAndConvertToWebp($request->file('gambar_file'), 'slider', 1600);
+            $validated['gambar'] = ImageService::uploadAndConvertToWebp($request->file('gambar_file'), 'slider', 1600);
         }
 
         if (empty($validated['gambar'])) {
             $validated['gambar'] = $slider->gambar;
         }
 
-        unset($validated['gambar_file']);
+        if ($request->hasFile('video_file')) {
+            $videoFile = $request->file('video_file');
+            $vidFilename = 'slider-video-'.time().'-'.Str::random(6).'.'.$videoFile->getClientOriginalExtension();
+            $vidPath = $videoFile->storeAs('uploads/video', $vidFilename, 'public');
+            $validated['video'] = Storage::url($vidPath);
+        } elseif (! array_key_exists('video', $validated) || $validated['video'] === null) {
+            $validated['video'] = $slider->video;
+        }
+
+        // Jika user sengaja mengosongkan gambar namun tidak ada video, cegah
+        if (empty($validated['gambar']) && empty($validated['video'])) {
+            return back()->withErrors(['gambar' => 'Banner hero harus memiliki setidaknya gambar atau video.'])->withInput();
+        }
+
+        unset($validated['gambar_file'], $validated['video_file']);
         $validated['is_aktif'] = $request->boolean('is_aktif');
 
         $slider->update($validated);
 
         return redirect()->route('tenant.admin.slider.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Slider banner beranda berhasil diperbarui.');
+            ->with('sukses', 'Slider banner hero beranda berhasil diperbarui.');
     }
 
     /**

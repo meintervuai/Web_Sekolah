@@ -7,6 +7,10 @@ use App\Models\Central\DomainSekolah;
 use App\Models\Central\Sekolah;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -82,6 +86,7 @@ class TenantController extends Controller
 
         $sekolah = Sekolah::create([
             'id' => (string) Str::uuid(),
+            'super_admin_id' => auth('superadmin')->id() ?? auth()->id(),
             'nama_sekolah' => $validated['nama_sekolah'],
             'slug' => Str::slug($validated['nama_sekolah']),
             'jenjang' => $validated['jenjang'],
@@ -104,24 +109,24 @@ class TenantController extends Controller
         $dbName = 'tenant_'.$slug_db;
 
         try {
-            \Illuminate\Support\Facades\DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            \Illuminate\Support\Facades\Config::set('database.connections.tenant.database', $dbName);
-            \Illuminate\Support\Facades\DB::purge('tenant');
-            \Illuminate\Support\Facades\DB::reconnect('tenant');
+            DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            Config::set('database.connections.tenant.database', $dbName);
+            DB::purge('tenant');
+            DB::reconnect('tenant');
 
-            \Illuminate\Support\Facades\Artisan::call('migrate', [
+            Artisan::call('migrate', [
                 '--database' => 'tenant',
                 '--path' => 'database/migrations/tenant',
                 '--force' => true,
             ]);
 
-            \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            Artisan::call('db:seed', [
                 '--database' => 'tenant',
                 '--class' => 'Database\\Seeders\\TenantDummySeeder',
                 '--force' => true,
             ]);
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning("Gagal membuat/migrasi database tenant {$dbName}: ".$e->getMessage());
+            Log::warning("Gagal membuat/migrasi database tenant {$dbName}: ".$e->getMessage());
         }
 
         return redirect()->route('superadmin.tenants.index')

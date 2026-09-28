@@ -16,10 +16,16 @@ class PesanMasuk extends Model
         'no_telepon',
         'subjek',
         'pesan',
+        'petugas_id',
         'is_dibaca',
     ];
 
     protected $casts = [
         'is_dibaca' => 'boolean',
     ];
+
+    public function petugas()
+    {
+        return $this->belongsTo(Pengguna::class, 'petugas_id');
+    }
 }

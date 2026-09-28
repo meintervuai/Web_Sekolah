@@ -44,6 +44,8 @@ class HomeController extends Controller
             'nip_kepsek' => PengaturanUmum::ambil('nip_kepsek', '19680512 199303 1 004'),
             'foto_kepsek' => PengaturanUmum::ambil('foto_kepsek', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'),
             'logo' => PengaturanUmum::ambil('logo', ''),
+            'hero_banner' => PengaturanUmum::ambil('hero_banner', ''),
+            'hero_banner_video' => PengaturanUmum::ambil('hero_banner_video', ''),
             'warna_tema' => PengaturanUmum::ambil('warna_tema', '#1E3A8A'),
             'warna_aksen' => PengaturanUmum::ambil('warna_aksen', '#0284C7'),
             // Media Sosial Resmi

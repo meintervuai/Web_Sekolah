@@ -44,6 +44,10 @@ class PengaturanController extends Controller
             'jenjang' => ['required', 'string', 'max:20'],
             'logo' => ['nullable', 'string', 'max:500'],
             'logo_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'hero_banner' => ['nullable', 'string', 'max:500'],
+            'hero_banner_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
+            'hero_banner_video' => ['nullable', 'string', 'max:500'],
+            'hero_banner_video_file' => ['nullable', 'mimes:mp4,webm,ogg', 'max:25600'],
             'slogan' => ['nullable', 'string', 'max:255'],
             'npsn' => ['nullable', 'string', 'max:30'],
             'akreditasi' => ['nullable', 'string', 'max:50'],
@@ -75,11 +79,34 @@ class PengaturanController extends Controller
         } elseif (empty($validated['logo'])) {
             // Jika tidak upload file baru dan input URL kosong, pertahankan logo yang sudah ada sebelumnya
             $existingLogo = PengaturanUmum::ambil('logo') ?: ($tenant->data['logo'] ?? null);
-            if (!empty($existingLogo)) {
+            if (! empty($existingLogo)) {
                 $validated['logo'] = $existingLogo;
             }
         }
         unset($validated['logo_file']);
+
+        if ($request->hasFile('hero_banner_file')) {
+            $validated['hero_banner'] = ImageService::uploadAndConvertToWebp($request->file('hero_banner_file'), 'hero_banner', 1600);
+        } elseif (empty($validated['hero_banner'])) {
+            $existingBanner = PengaturanUmum::ambil('hero_banner');
+            if (! empty($existingBanner)) {
+                $validated['hero_banner'] = $existingBanner;
+            }
+        }
+        unset($validated['hero_banner_file']);
+
+        if ($request->hasFile('hero_banner_video_file')) {
+            $bannerVidFile = $request->file('hero_banner_video_file');
+            $vidFilename = 'hero-banner-video-'.time().'.'.$bannerVidFile->getClientOriginalExtension();
+            $vidPath = $bannerVidFile->storeAs('uploads/video', $vidFilename, 'public');
+            $validated['hero_banner_video'] = Storage::url($vidPath);
+        } elseif (empty($validated['hero_banner_video'])) {
+            $existingBannerVid = PengaturanUmum::ambil('hero_banner_video');
+            if (! empty($existingBannerVid)) {
+                $validated['hero_banner_video'] = $existingBannerVid;
+            }
+        }
+        unset($validated['hero_banner_video_file']);
 
         if ($request->hasFile('video_profil_file')) {
             $videoFile = $request->file('video_profil_file');
@@ -88,7 +115,7 @@ class PengaturanController extends Controller
             $validated['video_profil'] = Storage::url($path);
         } elseif (empty($validated['video_profil'])) {
             $existingVideo = PengaturanUmum::ambil('video_profil');
-            if (!empty($existingVideo)) {
+            if (! empty($existingVideo)) {
                 $validated['video_profil'] = $existingVideo;
             }
         }
@@ -96,7 +123,7 @@ class PengaturanController extends Controller
 
         // Sinkronisasi nama sekolah, jenjang, dan logo ke entitas tenant pusat
         $tenantData = $tenant->data ?? [];
-        if (!empty($validated['logo'])) {
+        if (! empty($validated['logo'])) {
             $tenantData['logo'] = $validated['logo'];
         }
 

@@ -18,12 +18,18 @@ class Ekstrakurikuler extends Model
         'hari_jadwal',
         'waktu_jadwal',
         'pembina',
+        'guru_id',
         'is_aktif',
     ];
 
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    public function guruPembina()
+    {
+        return $this->belongsTo(GuruStaf::class, 'guru_id');
+    }
 
     public function scopeAktif($query)
     {

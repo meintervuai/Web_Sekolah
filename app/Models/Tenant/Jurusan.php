@@ -18,10 +18,26 @@ class Jurusan extends Model
         'deskripsi_lengkap',
         'ikon_atau_foto',
         'urutan',
+        'guru_id',
         'is_aktif',
     ];
 
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    public function kepalaProgram()
+    {
+        return $this->belongsTo(GuruStaf::class, 'guru_id');
+    }
+
+    public function pendaftar()
+    {
+        return $this->hasMany(PendaftarPpdb::class, 'pilihan_jurusan_id');
+    }
+
+    public function prestasi()
+    {
+        return $this->hasMany(PrestasiSiswa::class, 'jurusan_id');
+    }
 }

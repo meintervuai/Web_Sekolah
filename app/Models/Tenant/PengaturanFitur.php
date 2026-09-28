@@ -13,12 +13,18 @@ class PengaturanFitur extends Model
     protected $fillable = [
         'kode_fitur',
         'nama_fitur',
+        'pengguna_id',
         'is_aktif',
     ];
 
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
 
     /**
      * Memeriksa apakah fitur tertentu aktif untuk tenant saat ini.

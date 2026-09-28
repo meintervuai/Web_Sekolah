@@ -63,98 +63,32 @@ Jika ada file yang tidak ditemukan, lewati dan lanjutkan. Jangan asumsikan isiny
 
 Jika requirement belum jelas, tanyakan hanya hal yang benar-benar mengubah data, schema, security, biaya, atau arsitektur. Untuk hal kecil, gunakan asumsi minimal yang aman dan tuliskan asumsi tersebut.
 
-## 3. Cara membaca instruksi user
+## 3. Alur Kerja Langsung (Direct Workflow)
 
-Pecah instruksi user menjadi checklist acceptance criteria. Jangan hanya mengerjakan kalimat terakhir.
+Bekerja secara efisien, presisi, dan langsung mengeksekusi kebutuhan user tanpa analisis formal atau pelaporan birokratis yang bertele-tele:
 
-Untuk setiap permintaan, identifikasi:
+1. **Baca Dokumen di Awal**: Pahami konteks dari tabel dokumentasi pada Bagian 2 sebelum mulai menulis atau mengubah kode.
+2. **Eksekusi Solutif**: Tulis kode bersih, aman, modular, dan langsung memperbaiki akar masalah.
+3. **Jaga Relasi Database (100% Berelasi)**: Semua data aplikasi wajib memiliki constraint relasi yang jelas (FK) dan model Eloquent yang sinkron.
+4. **Perbarui Dokumen di Akhir**: Setelah eksekusi selesai, perbarui file dokumentasi `.md` yang relevan agar selalu sinkron dan terikat.
 
-- fitur yang ditambah;
-- fitur yang diubah;
-- fitur yang dihapus;
-- data yang harus dibuat atau diubah;
-- tenant/school/user yang terdampak;
-- route dan menu yang terdampak;
-- error yang harus direproduksi;
-- bukti keberhasilan.
+## 4. Aturan Wajib Relasi Database
 
-Sebelum coding, laporkan secara singkat:
+- **Semua tabel aplikasi WAJIB 100% berelasi** melalui Foreign Key (FK) constraint yang sah di database (kecuali tabel internal framework seperti `migrations`, `sessions`, `jobs`, `cache`).
+- **Skema & Migration**: Perubahan skema tabel selalu menggunakan migration resmi. Tidak boleh ada tabel bisnis yang berdiri tanpa relasi atau kolom FK mengambang tanpa indeks.
+- **Model Eloquent**: Setiap relasi database wajib memiliki method relasi dua arah (`belongsTo`, `hasMany`, `hasOne`) pada model Eloquent terkait di namespace `App\Models\Tenant` atau `App\Models\Central`.
+- **Integritas Data**: Gunakan constraint `onDelete` yang tepat (`cascade`, `set null`, atau `restrict`) agar tidak meninggalkan data yatim (*orphan records*).
+- **Isolasi Tenant**: Koneksi tenant harus konsisten (`protected $connection = 'tenant';`) dan tidak boleh bocor antar tenant.
 
-1. Masalah yang ditemukan.
-2. Rencana perubahan.
-3. File dan area yang terdampak.
-4. Risiko data atau breaking change.
+## 5. Sinkronisasi Dokumen di Akhir Pekerjaan
 
-Jangan mengklaim implementasi sebelum tahap verifikasi selesai.
+File dokumentasi `.md` saling terikat sebagai sumber kebenaran proyek. Setiap kali ada perubahan kode atau fitur, langsung perbarui file yang relevan:
 
-## 4. Protokol perubahan lintas sistem
-
-Setiap perubahan fitur wajib diperiksa terhadap semua lapisan berikut:
-
-- PRD dan dokumentasi
-- migration dan schema database
-- tabel, kolom, index, foreign key, constraint
-- model dan relationship
-- factory dan seeder
-- controller dan service
-- Form Request dan validation
-- policy, gate, role, dan permission
-- middleware
-- route dan route name
-- Blade view, Livewire, Alpine, JavaScript, dan CSS
-- navigation, breadcrumb, link internal, dan sitemap
-- file upload, storage, cache, queue, notification
-- test dan browser behavior
-- changelog
-
-Jika satu lapisan tidak terdampak, nyatakan alasannya. Jangan mengabaikannya tanpa pemeriksaan.
-
-## 4A. Analisis dampak otomatis (Impact Analysis)
-
-Setiap kali ada perubahan atau perbaikan kode, **WAJIB jalankan analisis dampak** sebelum mengklaim selesai. Tujuannya adalah menemukan dan memperbaiki semua area yang terdampak secara otomatis, bukan hanya area yang diminta user.
-
-### Dimensi dampak yang wajib diperiksa:
-
-| Dimensi | Yang diperiksa | Contoh dampak |
-|---------|---------------|---------------|
-| **Alur bisnis** | Apakah flow pengguna (admin/publik) masih berjalan benar? | Mengubah field `jurusan` bisa merusak form pendaftaran SPMB yang mereferensi jurusan |
-| **Database/Schema** | Apakah migration, model, seeder, factory konsisten? | Menambah kolom baru di migration tapi lupa update `$fillable` di model |
-| **Struktur file** | Apakah view, component, partial, asset yang terkait masih benar? | Menghapus Blade component tapi masih dipanggil di view lain |
-| **Route/API** | Apakah route, controller method, middleware, named route masih sinkron? | Mengubah nama route tapi lupa update `route()` di Blade dan redirect di controller |
-| **Relasi data** | Apakah foreign key, relationship, cascade, scope masih benar? | Mengubah primary key tabel tapi foreign key di tabel lain masih merujuk yang lama |
-| **Validasi** | Apakah Form Request, inline validation masih sesuai? | Menambah field wajib di form tapi lupa tambah rule di FormRequest |
-| **Authorization** | Apakah policy, gate, middleware auth masih konsisten? | Menambah fitur baru tapi lupa buat policy-nya |
-| **UI/Frontend** | Apakah tampilan, navigation, breadcrumb, link internal masih benar? | Menghapus halaman tapi link di sidebar/menu masih mengarah ke sana |
-| **Test** | Apakah test yang ada masih pass? Perlu test baru? | Mengubah response controller tapi assertion di test masih cek response lama |
-| **Seeder/Data** | Apakah seeder masih menghasilkan data yang valid? | Menambah kolom NOT NULL tapi seeder tidak mengisi kolom tersebut |
-
-### Prosedur analisis dampak:
-
-1. **Identifikasi perubahan primer**: Apa file/fungsi/tabel yang langsung diubah?
-2. **Trace dependensi ke atas**: Siapa yang memanggil/menggunakan file/fungsi/tabel ini?
-3. **Trace dependensi ke bawah**: File/fungsi/tabel apa yang dipanggil oleh yang diubah?
-4. **Trace dependensi lateral**: Apakah ada file lain yang menggunakan konstanta, enum, config, atau konvensi yang sama?
-5. **Perbaiki semua area terdampak**: Jangan hanya melaporkan dampak, langsung perbaiki.
-6. **Verifikasi perbaikan**: Jalankan test, periksa route, periksa view setelah semua perbaikan.
-
-### Aturan wajib:
-
-- **Jangan perbaiki hanya yang diminta user**. Jika user minta ubah field di model, periksa dan perbaiki juga: migration, seeder, controller, form request, view, test, dan dokumentasi yang mereferensi field tersebut.
-- **Jangan tinggalkan dead code**. Jika sebuah method/view/route tidak lagi digunakan setelah perubahan, hapus atau tandai deprecated.
-- **Jangan abaikan test yang gagal**. Jika perubahan menyebabkan test lain gagal, perbaiki test atau kode hingga semua pass.
-
-## 5. Aturan database
-
-- Semua perubahan schema wajib menggunakan migration.
-- Jangan mengubah schema secara manual sebagai pengganti migration.
-- Jangan menjalankan `migrate:fresh`, `db:wipe`, reset database, atau menghapus data tanpa persetujuan eksplisit.
-- Jangan membuat migration destructive sebelum memeriksa jumlah data dan relasinya.
-- Seeder harus idempotent dan tidak membuat duplikasi saat dijalankan ulang.
-- Jika fitur membutuhkan data baru, buat migration, model, factory/seeder jika relevan, validation, dan test.
-- Jika fitur dihapus, telusuri tabel, kolom, foreign key, model, query, seeder, dan data lama.
-- Jangan menghapus tabel hanya karena menu disembunyikan.
-- Jika memakai database terpisah per tenant, pastikan koneksi tenant ditentukan secara konsisten dan tidak bocor antar request.
-- Semua query tenant harus dibatasi pada tenant aktif melalui scope, repository, service, atau mekanisme yang sudah digunakan project.
+- `CHANGELOG.md` & `docs/06-CHANGELOG.md`: Catat setiap perubahan fitur atau perbaikan.
+- `docs/03-DATABASE.md`: Perbarui ERD Mermaid, daftar kolom, atau relasi FK jika ada migrasi baru.
+- `docs/01-PRD.md` & `docs/07-IMPLEMENTATION-CHECKLIST.md`: Centang atau sesuaikan scope fitur yang telah selesai.
+- `docs/04-ROUTES-OR-API.md`: Perbarui jika ada penambahan rute publik/admin baru.
+- `docs/05-UI-UX.md`: Perbarui jika ada perubahan standar komponen, palet warna, atau tipografi.
 
 ## 6. Aturan tenant dan isolasi data
 
@@ -365,28 +299,14 @@ Fitur hanya boleh disebut selesai jika:
 - browser/log tidak menunjukkan error terkait;
 - tidak ada route, menu, tabel, model, atau file lama yang tertinggal tanpa alasan;
 - **semua file dokumentasi `.md` yang terdampak sudah diperbarui** (lihat section 16);
-- **analisis dampak lintas sistem sudah dijalankan** (lihat section 4A);
+- database dan relasi antar-tabel konsisten 100%;
 - dokumentasi dan changelog diperbarui.
 
 Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 
-## 18. Format laporan wajib
+## 18. Format Laporan Sederhana & Lugas
 
-1. Ringkasan perubahan
-2. Masalah dan akar penyebab
-3. File dibuat/diubah/dihapus
-4. Database dan migration
-5. Seeder dan data aktual
-6. Route dan middleware
-7. Pengecekan fungsi via MCP Postman (jika diinstruksikan user)
-8. Riset referensi UI/UX via MCP Mobbin (jika diminta user)
-9. Audit Anti-Slop & verifikasi visual via MCP Chrome DevTools (jika diinstruksikan user)
-10. UI/UX, tata letak mobile, dan animasi
-11. Authorization/tenant isolation
-12. Test, Pint, dan hasilnya
-13. URL yang diverifikasi
-14. **Analisis dampak**: daftar area yang diperiksa dan tindakan yang diambil per dimensi (lihat section 4A)
-15. **Dokumentasi yang diperbarui**: daftar file `.md` yang di-update dan ringkasan perubahannya
-16. Risiko dan pekerjaan yang belum selesai
-
-Jangan mengatakan "semua sudah selesai" jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, dokumentasi yang belum diperbarui, atau instruksi pengecekan dari user yang belum dijalankan.
+1. **Ringkasan Perubahan**: Apa yang telah diselesaikan.
+2. **File & Database**: File yang diubah/dibuat serta status relasi database/migrasi.
+3. **Hasil Verifikasi / Test**: Status pengujian (Pest, URL, tampilan UI).
+4. **Dokumentasi yang Diperbarui**: File `.md` yang disinkronkan.

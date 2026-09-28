@@ -15,5 +15,11 @@ class StrukturOrganisasi extends Model
         'jabatan',
         'foto',
         'urutan',
+        'guru_id',
     ];
+
+    public function guru()
+    {
+        return $this->belongsTo(GuruStaf::class, 'guru_id');
+    }
 }

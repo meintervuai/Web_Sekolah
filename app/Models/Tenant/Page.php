@@ -15,5 +15,11 @@ class Page extends Model
         'slug',
         'isi_konten',
         'gambar_banner',
+        'pengguna_id',
     ];
+
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
 }

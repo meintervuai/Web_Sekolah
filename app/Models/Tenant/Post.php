@@ -34,6 +34,11 @@ class Post extends Model
         return $this->belongsTo(KategoriArtikel::class, 'kategori_id');
     }
 
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status_publikasi', 'published')->where('tgl_publikasi', '<=', now());

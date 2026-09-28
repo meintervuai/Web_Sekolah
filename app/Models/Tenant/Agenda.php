@@ -23,8 +23,14 @@ class Agenda extends Model
         'penyelenggara',
         'gambar_sampul',
         'link_pendaftaran',
+        'pengguna_id',
         'is_aktif',
     ];
+
+    public function pengguna()
+    {
+        return $this->belongsTo(Pengguna::class, 'pengguna_id');
+    }
 
     protected $casts = [
         'tgl_mulai' => 'date',

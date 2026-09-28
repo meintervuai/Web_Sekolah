@@ -49,6 +49,7 @@ class SuperAdminSeeder extends Seeder
                 ['nama_sekolah' => $item['nama_sekolah']],
                 [
                     'id' => (string) Str::uuid(),
+                    'super_admin_id' => $superAdmin->id,
                     'slug' => $item['slug'],
                     'jenjang' => $item['jenjang'],
                     'status_aktif' => $item['status_aktif'],
