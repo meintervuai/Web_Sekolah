@@ -1,11 +1,25 @@
 <?php
 
+use App\Http\Middleware\TenantMiddleware;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
+use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,6 +28,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->priority([
+            HandlePrecognitiveRequests::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            PreventRequestForgery::class,
+            TenantMiddleware::class,
+            AuthenticatesRequests::class,
+            Authenticate::class,
+            ThrottleRequests::class,
+            ThrottleRequestsWithRedis::class,
+            AuthenticatesSessions::class,
+            SubstituteBindings::class,
+            Authorize::class,
+        ]);
+
         $middleware->web(append: [
             // \App\Http\Middleware\TenantMiddleware::class,
         ]);
@@ -39,7 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('superadmin.dashboard');
             }
 
-            if (auth('tenant_admin')->check() && app()->bound('tenant')) {
+            if (app()->bound('tenant') && auth('tenant_admin')->check()) {
                 return url(app('tenant')->slug.'/admin/dashboard');
             }
 
@@ -52,7 +83,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->render(function (QueryException $e, Request $request) {
-            Log::error('Database error: '.$e->getMessage());
+            Log::error('Database error: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine()."\n".$e->getTraceAsString());
 
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([
@@ -65,7 +96,7 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (PDOException $e, Request $request) {
-            Log::error('PDO error: '.$e->getMessage());
+            Log::error('PDO error: '.$e->getMessage().' in '.$e->getFile().':'.$e->getLine()."\n".$e->getTraceAsString());
 
             if ($request->expectsJson() || $request->is('api/*')) {
                 return response()->json([

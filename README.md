@@ -1,58 +1,215 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website Sekolah Multi-Tenant & CMS Sekolah
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform web sekolah terpadu dengan arsitektur multi-tenant (database per tenant) berbasis Laravel 13. Sistem ini memisahkan kontrol pengelolaan platform (Super Admin), pengelolaan konten sekolah (Admin CMS), dan portal publik informasi sekolah yang responsif dan berstandar aksesibilitas WCAG AA.
 
-## About Laravel
+Implementasi rujukan resmi saat ini menggunakan data lengkap **SMK Negeri 2 Bandung**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 1. Spesifikasi Teknologi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend**: PHP 8.4, Laravel Framework 13
+- **Database**: MySQL 8.x (Multi-Database Isolation)
+- **Frontend**: Blade Templating, Tailwind CSS, Alpine.js, Vite
+- **Testing**: Pest PHP 5
+- **Code Linter**: Laravel Pint
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 2. Arsitektur Multi-Tenant
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Sistem menggunakan pola arsitektur **Single Codebase, Database Per Tenant**:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+1. **Database Central (`website_sekolah_central`)**:
+   - Menyimpan registri platform, akun Super Admin, data tenant (`sekolah`), pemetaan domain (`domain_sekolah`), dan queue/session pusat.
+2. **Database Tenant (`tenant_{slug}`)**:
+   - Menyimpan seluruh data operasional sekolah: pengguna/staf, pengaturan umum, fitur aktif, menu, slider, profil, jurusan, berita, agenda, pengumuman, prestasi, kegiatan, ekskul, fasilitas, galeri, kalender akademik, SPMB, dan kontak masuk.
 
-## Agentic Development
+Contoh database tenant aktif: `tenant_smk_negeri_2_bandung`.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
+## 3. Prasyarat Sistem
+
+Pastikan perangkat lokal telah terpasang:
+- PHP >= 8.3 dengan ekstensi PDO MySQL, cURL, MBString, OpenSSL, dan GD/Imagick
+- Composer >= 2.x
+- Node.js >= 20.x dan npm
+- MySQL Server (misal via Herd, Laragon, XAMPP, atau Docker)
+
+---
+
+## 4. Panduan Instalasi Lokal
+
+### Langkah 1: Klon Repositori dan Masuk ke Direktori
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cd website_sekolah
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Langkah 2: Pasang Dependensi PHP dan Node.js
+```bash
+composer install
+npm install
+```
 
-## Contributing
+### Langkah 3: Konfigurasi Environment
+Salin berkas `.env.example` menjadi `.env`:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Sesuaikan kredensial koneksi database MySQL pada berkas `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=website_sekolah_central
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+### Langkah 4: Buat Database Central di MySQL
+Jalankan perintah SQL atau via client MySQL (HeidiSQL, phpMyAdmin, DBeaver):
+```sql
+CREATE DATABASE IF NOT EXISTS website_sekolah_central CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah 5: Jalankan Migrasi & Seeder Central
+Jalankan migrasi tabel pusat dan daftarkan tenant sekolah awal:
+```bash
+php artisan migrate --force
+php artisan db:seed --class=SuperAdminSeeder --force
+```
 
-## Security Vulnerabilities
+### Langkah 6: Jalankan Migrasi & Seeder Database Tenant
+Perintah ini akan membuat database `tenant_smk_negeri_2_bandung`, menjalankan migrasi tabel tenant, dan mengisi data rujukan lengkap:
+```bash
+php artisan tenants:migrate --refresh --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Langkah 7: Kompilasi Asset Frontend
+```bash
+npm run build
+```
 
-## License
+Untuk mode pengembangan aktif:
+```bash
+npm run dev
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Langkah 8: Jalankan Server Lokal
+```bash
+php artisan serve
+```
+Aplikasi dapat diakses melalui peramban di `http://localhost:8000`.
+
+---
+
+## 5. Kredensial dan Akses Sistem
+
+### A. Super Administrator (Central Platform)
+- **URL Akses**: `http://localhost:8000/superadmin` atau `http://localhost:8000/superadmin/login`
+- **Email**: `superadmin@admin.com`
+- **Password**: `password123`
+- **Tugas**: Manajemen pendaftaran sekolah (tenant), aktivasi/suspend, dan pemetaan domain.
+
+### B. Admin Sekolah (Tenant CMS)
+- **URL Akses Global**: `http://localhost:8000/admin` (otomatis diarahkan ke panel admin sekolah aktif)
+- **URL Langsung Sekolah**: `http://localhost:8000/smk-negeri-2-bandung/admin/login`
+- **Akun Pengembang**:
+  - Email: `admin@smkn2bdg.test`
+  - Password: `password`
+- **Akun Resmi**:
+  - Email: `admin@smkn2bandung.sch.id`
+  - Password: `password123`
+- **Akun Operator**:
+  - Email: `operator@smkn2bandung.sch.id`
+  - Password: `password123`
+- **Tugas**: Pengelolaan modul beranda, profil sekolah, 7 program keahlian, berita, agenda, pengumuman, prestasi, ekskul, fasilitas, galeri, SPMB, dan pesan kontak masuk.
+
+### C. Portal Direktori & Publik Sekolah
+- **URL Utama Direktori Multi-Sekolah**: `http://localhost:8000/` (Daftar direktori seluruh sekolah terdaftar dengan tautan langsung ke website dan CMS masing-masing)
+- **Portal Publik Sekolah (SMKN 2 Bandung)**:
+  - Beranda: `/smk-negeri-2-bandung`
+  - Profil: `/smk-negeri-2-bandung/profil` (Sejarah, Visi-Misi, Struktur Organisasi)
+  - Program Keahlian: `/smk-negeri-2-bandung/program-keahlian` (+ 7 sub-detail kompetensi keahlian)
+  - Berita: `/smk-negeri-2-bandung/berita` (+ detail berita)
+  - Agenda: `/smk-negeri-2-bandung/agenda` (+ detail agenda)
+  - Pengumuman: `/smk-negeri-2-bandung/pengumuman` (+ detail pengumuman)
+  - Prestasi Siswa: `/smk-negeri-2-bandung/prestasi` (+ detail prestasi)
+  - Kegiatan: `/smk-negeri-2-bandung/kegiatan`
+  - Ekstrakurikuler: `/smk-negeri-2-bandung/ekstrakurikuler` (+ detail ekskul)
+  - Guru & Tenaga Kependidikan: `/smk-negeri-2-bandung/guru-staf`
+  - Fasilitas & Sarpras: `/smk-negeri-2-bandung/fasilitas`
+  - Galeri Dokumentasi: `/smk-negeri-2-bandung/galeri`
+  - SPMB / PPDB: `/smk-negeri-2-bandung/spmb`
+  - Kontak & Lokasi: `/smk-negeri-2-bandung/kontak`
+
+---
+
+## 6. Pengujian dan Kualitas Kode
+
+### Menjalankan Test Otomatis
+Project ini dilengkapi 32 pengujian integrasi (Feature Tests) menggunakan Pest PHP:
+```bash
+php artisan test
+```
+
+Cakupan pengujian meliputi:
+- Autentikasi dan otorisasi Super Admin (`Tests\Feature\SuperAdminAuthTest`)
+- Autentikasi dan otorisasi Admin Tenant (`Tests\Feature\TenantAdminTest`)
+- Portal direktori utama dan ketersediaan seluruh 14 halaman publik tenant (`Tests\Feature\TenantPublicPagesTest`)
+
+### Menjalankan Linter Kode
+Pastikan format kode mengikuti standar Laravel Pint:
+```bash
+vendor/bin/pint
+```
+
+---
+
+## 7. Struktur Direktori Utama
+
+```
+website_sekolah/
+├── app/
+│   ├── Console/Commands/       # Command Artisan (MigrateTenants)
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Central/        # Auth & Tenant Manajemen Super Admin
+│   │   │   └── Tenant/
+│   │   │       ├── Admin/      # CMS Panel Admin Sekolah
+│   │   │       └── Public/     # Halaman Publik Sekolah
+│   │   └── Middleware/         # TenantMiddleware (Database Switching)
+│   ├── Models/
+│   │   ├── Central/            # SuperAdmin, Sekolah, DomainSekolah
+│   │   └── Tenant/             # Artikel, Jurusan, GuruStaf, dll.
+│   └── Providers/
+├── database/
+│   ├── migrations/
+│   │   ├── central/            # Migrasi database central
+│   │   └── tenant/             # Migrasi database per tenant
+│   └── seeders/
+│       ├── SuperAdminSeeder.php
+│       └── TenantSmkn2BandungSeeder.php
+├── docs/                       # Dokumentasi arsitektur, PRD, dan UI/UX
+├── resources/
+│   ├── css/
+│   ├── js/
+│   └── views/
+│       ├── central/            # Tampilan Super Admin
+│       ├── tenant/admin/       # Tampilan Panel CMS Sekolah
+│       └── public/             # Tampilan Portal Publik Sekolah
+├── routes/
+│   ├── console.php
+│   └── web.php                 # Rute Super Admin, Tenant Admin, & Publik
+└── tests/
+    └── Feature/                # Pengujian Pest PHP
+```
+
+---
+
+## 8. Lisensi
+
+Hak cipta dilindungi undang-undang. Dikembangkan untuk implementasi Sistem Manajemen Sekolah Terintegrasi.

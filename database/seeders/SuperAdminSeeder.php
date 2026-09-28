@@ -25,40 +25,14 @@ class SuperAdminSeeder extends Seeder
             ]
         );
 
-        // 2. Data Awal Sekolah (Tenants)
+        // 2. Data Awal Sekolah (1 Tenant Utama: SMK Negeri 2 Bandung)
         $schools = [
-            [
-                'nama_sekolah' => 'SD Negeri 01 Pagi Jakarta',
-                'slug' => 'sd-negeri-01-pagi-jakarta',
-                'jenjang' => 'SD',
-                'status_aktif' => true,
-                'tgl_berakhir' => now()->addYear(),
-                'domain' => 'sdn01pagi.test',
-                'data' => [
-                    'telepon' => '021-12345678',
-                    'email' => 'info@sdn01pagi.sch.id',
-                    'alamat' => 'Jl. Pendidikan No. 1, Jakarta Pusat',
-                ],
-            ],
-            [
-                'nama_sekolah' => 'SMP Negeri 1 Surabaya',
-                'slug' => 'smp-negeri-1-surabaya',
-                'jenjang' => 'SMP',
-                'status_aktif' => true,
-                'tgl_berakhir' => now()->addMonths(8),
-                'domain' => 'smpn1sby.test',
-                'data' => [
-                    'telepon' => '031-87654321',
-                    'email' => 'kontak@smpn1sby.sch.id',
-                    'alamat' => 'Jl. Pemuda No. 10, Surabaya',
-                ],
-            ],
             [
                 'nama_sekolah' => 'SMK Negeri 2 Bandung',
                 'slug' => 'smk-negeri-2-bandung',
                 'jenjang' => 'SMK',
                 'status_aktif' => true,
-                'tgl_berakhir' => now()->addMonths(11),
+                'tgl_berakhir' => now()->addYears(5),
                 'domain' => 'smkn2bdg.test',
                 'data' => [
                     'telepon' => '(022) 7234285',
@@ -66,19 +40,6 @@ class SuperAdminSeeder extends Seeder
                     'alamat' => 'Jl. Ciliwung No. 4, Cihapit, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40114',
                     'npsn' => '20219146',
                     'akreditasi' => 'A',
-                ],
-            ],
-            [
-                'nama_sekolah' => 'SMA Nusantara Harapan',
-                'slug' => 'sma-nusantara-harapan',
-                'jenjang' => 'SMA',
-                'status_aktif' => false,
-                'tgl_berakhir' => now()->subDays(5),
-                'domain' => 'smanusantara.test',
-                'data' => [
-                    'telepon' => '021-55443322',
-                    'email' => 'tu@smanusantara.sch.id',
-                    'alamat' => 'Jl. Merdeka Barat No. 8, Tangerang',
                 ],
             ],
         ];

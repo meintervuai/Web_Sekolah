@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class TenantSmkn2BandungSeeder extends Seeder
 {
@@ -11,6 +12,44 @@ class TenantSmkn2BandungSeeder extends Seeder
     {
         $tenantDb = DB::connection('tenant');
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // 0. Akun Pengguna (Admin & Operator Sekolah)
+        $tenantDb->table('pengguna')->truncate();
+        $tenantDb->table('pengguna')->insert([
+            [
+                'id' => 1,
+                'nama' => 'Administrator SMKN 2 Bandung',
+                'email' => 'admin@smkn2bdg.test',
+                'password' => Hash::make('password'),
+                'peran' => 'admin',
+                'foto_profil' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
+                'status_aktif' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 2,
+                'nama' => 'Administrator Resmi SMKN 2 Bandung',
+                'email' => 'admin@smkn2bandung.sch.id',
+                'password' => Hash::make('password123'),
+                'peran' => 'admin',
+                'foto_profil' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
+                'status_aktif' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'nama' => 'Staf Tata Usaha & Operator',
+                'email' => 'operator@smkn2bandung.sch.id',
+                'password' => Hash::make('password123'),
+                'peran' => 'operator',
+                'foto_profil' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop',
+                'status_aktif' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
 
         // 1. Pengaturan Umum (Identitas Resmi SMK Negeri 2 Bandung)
         $tenantDb->table('pengaturan_umum')->truncate();

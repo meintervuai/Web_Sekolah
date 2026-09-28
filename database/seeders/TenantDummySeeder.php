@@ -13,6 +13,22 @@ class TenantDummySeeder extends Seeder
         $tenantDb = DB::connection('tenant');
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=0;');
 
+        // 0. Akun Pengguna Admin
+        $tenantDb->table('pengguna')->truncate();
+        $tenantDb->table('pengguna')->insert([
+            [
+                'id' => 1,
+                'nama' => 'Administrator Sekolah',
+                'email' => 'admin@admin.com',
+                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'peran' => 'admin',
+                'foto_profil' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
+                'status_aktif' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
         // Halaman Statis
         $tenantDb->table('halaman_statis')->truncate();
         $halaman_statis = [

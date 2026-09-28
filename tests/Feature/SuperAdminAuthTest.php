@@ -8,6 +8,12 @@ use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
+test('guest diarahkan ke halaman login saat mengakses root superadmin', function () {
+    $response = $this->get('/superadmin');
+
+    $response->assertRedirect(route('superadmin.login'));
+});
+
 test('guest diarahkan ke halaman login saat mengakses dashboard superadmin', function () {
     $response = $this->get(route('superadmin.dashboard'));
 

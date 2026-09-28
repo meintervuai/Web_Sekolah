@@ -29,9 +29,16 @@ beforeEach(function () {
     );
 });
 
-test('0. root url redirect otomatis ke tenant sekolah aktif', function () {
+test('0. root url menampilkan portal direktori sekolah dan tidak redirect otomatis', function () {
     $response = $this->get('/');
-    $response->assertRedirect('/'.$this->tenantSlug);
+    $response->assertStatus(200);
+    $response->assertSee('Portal Sekolah');
+    $response->assertSee('SMK Negeri 2 Bandung');
+});
+
+test('0b. shortcut admin mengarahkan ke tenant admin login', function () {
+    $response = $this->get('/admin');
+    $response->assertRedirect('/'.$this->tenantSlug.'/admin/login');
 });
 
 test('1. beranda sekolah dapat diakses dan menampilkan identitas smkn 2 bandung', function () {

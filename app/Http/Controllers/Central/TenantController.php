@@ -99,8 +99,33 @@ class TenantController extends Controller
             'domain' => strtolower(trim($validated['domain'])),
         ]);
 
+        // Otomatis buat database tenant dan jalankan migrasi
+        $slug_db = str_replace('-', '_', $sekolah->slug);
+        $dbName = 'tenant_'.$slug_db;
+
+        try {
+            \Illuminate\Support\Facades\DB::connection('mysql')->statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            \Illuminate\Support\Facades\Config::set('database.connections.tenant.database', $dbName);
+            \Illuminate\Support\Facades\DB::purge('tenant');
+            \Illuminate\Support\Facades\DB::reconnect('tenant');
+
+            \Illuminate\Support\Facades\Artisan::call('migrate', [
+                '--database' => 'tenant',
+                '--path' => 'database/migrations/tenant',
+                '--force' => true,
+            ]);
+
+            \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                '--database' => 'tenant',
+                '--class' => 'Database\\Seeders\\TenantDummySeeder',
+                '--force' => true,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Gagal membuat/migrasi database tenant {$dbName}: ".$e->getMessage());
+        }
+
         return redirect()->route('superadmin.tenants.index')
-            ->with('sukses', "Tenant sekolah '{$sekolah->nama_sekolah}' berhasil didaftarkan.");
+            ->with('sukses', "Tenant sekolah '{$sekolah->nama_sekolah}' dan database '{$dbName}' berhasil didaftarkan dan diinisialisasi.");
     }
 
     /**

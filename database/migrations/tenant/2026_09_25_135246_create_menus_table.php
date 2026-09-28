@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('url')->nullable();
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->integer('urutan')->default(0);
-            $table->boolean('is_aktif')->default(true);
-            $table->string('type')->default('link'); // 'link', 'dropdown'
-            $table->timestamps();
+        if (! Schema::connection('tenant')->hasTable('menus')) {
+            Schema::connection('tenant')->create('menus', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('url')->nullable();
+                $table->unsignedBigInteger('parent_id')->nullable();
+                $table->integer('urutan')->default(0);
+                $table->boolean('is_aktif')->default(true);
+                $table->string('type')->default('link'); // 'link', 'dropdown'
+                $table->timestamps();
 
-            $table->foreign('parent_id')->references('id')->on('menus')->onDelete('cascade');
-        });
+                $table->foreign('parent_id')->references('id')->on('menus')->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::connection('tenant')->dropIfExists('menus');
     }
 };

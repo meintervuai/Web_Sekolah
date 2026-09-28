@@ -51,8 +51,8 @@ class PageController extends Controller
             'twitter' => PengaturanUmum::ambil('twitter', 'https://x.com/smkn2bandung'),
             'youtube' => PengaturanUmum::ambil('youtube', 'https://youtube.com/@smkn2bandung'),
             'tiktok' => PengaturanUmum::ambil('tiktok', 'https://tiktok.com/@smkn2bandung'),
-            // Statistik
-            'stat_guru' => PengaturanUmum::ambil('stat_guru', '98'),
+            // Statistik (Sinkron langsung dengan DB jika belum diset manual)
+            'stat_guru' => PengaturanUmum::ambil('stat_guru', (string) GuruStaf::count()),
             'stat_guru_label' => PengaturanUmum::ambil('stat_guru_label', 'Guru & Tenaga Kependidikan'),
             'stat_siswa' => PengaturanUmum::ambil('stat_siswa', '1972'),
             'stat_siswa_label' => PengaturanUmum::ambil('stat_siswa_label', 'Siswa Aktif'),
@@ -60,7 +60,7 @@ class PageController extends Controller
             'stat_rombel_label' => PengaturanUmum::ambil('stat_rombel_label', 'Rombongan Belajar'),
             'stat_kelas' => PengaturanUmum::ambil('stat_kelas', '41'),
             'stat_kelas_label' => PengaturanUmum::ambil('stat_kelas_label', 'Ruang Kelas'),
-            'stat_jurusan' => PengaturanUmum::ambil('stat_jurusan', '7'),
+            'stat_jurusan' => PengaturanUmum::ambil('stat_jurusan', (string) Jurusan::where('is_aktif', true)->count()),
             'stat_jurusan_label' => PengaturanUmum::ambil('stat_jurusan_label', 'Program Keahlian'),
             'stat_mitra' => PengaturanUmum::ambil('stat_mitra', '85'),
             'stat_mitra_label' => PengaturanUmum::ambil('stat_mitra_label', 'Mitra Industri (DUDI)'),
@@ -109,8 +109,9 @@ class PageController extends Controller
         $this->checkFitur('profil');
         $struktur = StrukturOrganisasi::orderBy('urutan')->get();
 
-        // Diagram bagan struktur organisasi (mendukung 1 atau beberapa gambar)
-        $diagrams = [
+        // Diagram bagan struktur organisasi (mendukung 1 atau beberapa gambar dinamis)
+        $diagramsRaw = PengaturanUmum::ambil('struktur_diagrams', null);
+        $diagrams = $diagramsRaw ? json_decode($diagramsRaw, true) : [
             [
                 'judul' => 'Bagan Struktur Utama Manajemen Sekolah',
                 'deskripsi' => 'Alur garis komando dan koordinasi Kepala Sekolah, Komite, Tim Penjaminan Mutu, Wakil Kepala Sekolah, dan Koordinator Tata Usaha.',

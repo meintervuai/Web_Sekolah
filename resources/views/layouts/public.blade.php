@@ -119,6 +119,10 @@
         </div>
     @endif
 
+    @php
+        $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandung';
+    @endphp
+
     <!-- Top Bar -->
     <header class="bg-slate-900 text-slate-300 text-xs py-2 hidden md:block border-b border-slate-800">
         <div class="container-custom flex justify-between items-center">
@@ -141,7 +145,7 @@
                 <span class="text-slate-600">|</span>
                 <span class="text-slate-400">Akreditasi: <strong class="text-emerald-400">{{ $sekolah['akreditasi'] ?? 'A' }}</strong></span>
                 <span class="text-slate-600">|</span>
-                <a href="{{ url(app('tenant')->slug . '/kontak') }}" class="hover:text-blue-400 transition">Bantuan & Lokasi</a>
+                <a href="{{ url($tenantSlug . '/kontak') }}" class="hover:text-blue-400 transition">Bantuan & Lokasi</a>
             </div>
         </div>
     </header>
@@ -154,7 +158,7 @@
         <div class="container-custom flex justify-between items-center">
             
             <!-- Logo & School Brand -->
-            <a href="{{ url(app('tenant')->slug) }}" class="flex items-center space-x-3.5 group">
+            <a href="{{ url($tenantSlug) }}" class="flex items-center space-x-3.5 group">
                 <div class="w-11 h-11 bg-gradient-to-br from-blue-900 to-indigo-700 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-200">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
                 </div>
@@ -170,13 +174,13 @@
 
             <!-- Desktop Menu Items -->
             @php
-                $navMenus = $menus ?? \App\Models\Tenant\Menu::whereNull('parent_id')
+                $navMenus = $menus ?? (app()->bound('tenant') ? \App\Models\Tenant\Menu::whereNull('parent_id')
                     ->where('is_aktif', true)
                     ->with(['children' => function ($query) {
                         $query->where('is_aktif', true)->orderBy('urutan');
                     }])
                     ->orderBy('urutan')
-                    ->get();
+                    ->get() : collect());
                 
                 $navMenus = $navMenus->reject(fn($menu) => str_contains(strtolower($menu->name), 'spmb'))
                     ->map(function($menu) {
@@ -196,7 +200,6 @@
                         return $menu;
                     });
                 $currentPath = trim(request()->path(), '/');
-                $tenantSlug = trim(app('tenant')->slug, '/');
                 $relativePath = trim(\Illuminate\Support\Str::after($currentPath, $tenantSlug), '/');
                 $isPathActive = function ($path) use ($relativePath) {
                     $path = trim($path, '/');
@@ -210,7 +213,7 @@
                 @foreach($navMenus as $menu)
                     @php
                         $path = ltrim($menu->url, '/');
-                        $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($path ? '/' . $path : ''));
+                        $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path ? '/' . $path : ''));
                         $menuIsActive = $isPathActive($path) || $menu->children->contains(fn ($child) => $isPathActive($child->url));
                     @endphp
 
@@ -238,7 +241,7 @@
                                     @foreach($menu->children as $child)
                                         @php
                                             $childPath = ltrim($child->url, '/');
-                                            $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($childPath ? '/' . $childPath : ''));
+                                            $childUrl = $child->url === '#' ? '#' : url($tenantSlug . ($childPath ? '/' . $childPath : ''));
                                         @endphp
                                         <a href="{{ $childUrl }}" @class(['block px-4 py-2.5 text-sm font-medium transition-colors', 'bg-slate-100 text-slate-950 font-bold' => $isPathActive($childPath), 'text-slate-700 hover:bg-blue-50 hover:text-blue-900' => !$isPathActive($childPath)])>
                                             {{ $child->name }}
@@ -251,7 +254,7 @@
                 @endforeach
 
                 <!-- CTA SPMB -->
-                <a href="{{ url(app('tenant')->slug . '/spmb') }}" 
+                <a href="{{ url($tenantSlug . '/spmb') }}" 
                    class="ml-3 inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white text-sm font-bold btn-radius shadow-md shadow-blue-900/20 transition-all hover:shadow-lg">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     SPMB 2026
@@ -260,7 +263,7 @@
 
             <!-- Mobile Hamburger Button -->
             <div class="lg:hidden flex items-center space-x-2">
-                <a href="{{ url(app('tenant')->slug . '/spmb') }}" @class(['px-3 py-1.5 text-xs font-bold btn-radius transition-colors', 'bg-slate-900 text-white' => $isPathActive('spmb'), 'bg-blue-700 text-white hover:bg-blue-800' => !$isPathActive('spmb')])>
+                <a href="{{ url($tenantSlug . '/spmb') }}" @class(['px-3 py-1.5 text-xs font-bold btn-radius transition-colors', 'bg-slate-900 text-white' => $isPathActive('spmb'), 'bg-blue-700 text-white hover:bg-blue-800' => !$isPathActive('spmb')])>
                     SPMB 2026
                 </a>
                 <button @click="mobileNav = true" 
@@ -316,7 +319,7 @@
                 @foreach($navMenus as $menu)
                     @php
                         $path = ltrim($menu->url, '/');
-                        $menuUrl = $menu->url === '#' ? '#' : url(app('tenant')->slug . ($path ? '/' . $path : ''));
+                        $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path ? '/' . $path : ''));
                     @endphp
                     @if($menu->children->isEmpty())
                         <a href="{{ $menuUrl }}" 
@@ -338,7 +341,7 @@
                                 @foreach($menu->children as $child)
                                     @php
                                         $childPath = ltrim($child->url, '/');
-                                        $childUrl = $child->url === '#' ? '#' : url(app('tenant')->slug . ($childPath ? '/' . $childPath : ''));
+                                        $childUrl = $child->url === '#' ? '#' : url($tenantSlug . ($childPath ? '/' . $childPath : ''));
                                     @endphp
                                     <a href="{{ $childUrl }}" 
                                        @click="mobileNav = false"
@@ -354,7 +357,7 @@
 
             <!-- Drawer Footer CTA -->
             <div class="p-5 border-t border-slate-100 bg-slate-50">
-                <a href="{{ url(app('tenant')->slug . '/spmb') }}" 
+                <a href="{{ url($tenantSlug . '/spmb') }}" 
                    @click="mobileNav = false"
                    class="w-full py-3 bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm btn-radius flex items-center justify-center shadow-md">
                     Daftar SPMB Online 2026
@@ -415,32 +418,32 @@
                         <div class="flex items-center flex-wrap gap-2.5">
                             <!-- Instagram -->
                             <a href="{{ $sekolah['instagram'] ?? 'https://instagram.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
-                               title="Instagram">
+                                class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
+                                title="Instagram">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                             </a>
                             <!-- TikTok -->
                             <a href="{{ $sekolah['tiktok'] ?? 'https://tiktok.com/@smkn2bandung' }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
-                               title="TikTok">
+                                class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
+                                title="TikTok">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .591.045.87.134V9.42a6.35 6.35 0 0 0-.87-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.84 1.55v-3.5a4.85 4.85 0 0 1-1.07-.11z"/></svg>
                             </a>
                             <!-- YouTube -->
                             <a href="{{ $sekolah['youtube'] ?? 'https://youtube.com/@smkn2bandung' }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
-                               title="YouTube">
+                                class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
+                                title="YouTube">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                             </a>
                             <!-- Facebook -->
                             <a href="{{ $sekolah['facebook'] ?? 'https://facebook.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
-                               title="Facebook">
+                                class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
+                                title="Facebook">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                             </a>
                             <!-- X (Twitter) -->
                             <a href="{{ $sekolah['twitter'] ?? 'https://x.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
-                               title="X (Twitter)">
+                                class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group" 
+                                title="X (Twitter)">
                                 <svg class="w-3.5 h-3.5 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </a>
                         </div>
@@ -451,12 +454,12 @@
                 <div>
                     <h3 class="font-heading font-bold text-white text-base mb-4 tracking-wide uppercase">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-blue-400 transition">Profil & Sejarah</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian') }}" class="hover:text-blue-400 transition">7 Program Keahlian</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/berita') }}" class="hover:text-blue-400 transition">Berita & Informasi</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/agenda') }}" class="hover:text-blue-400 transition">Agenda & Kegiatan</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/prestasi') }}" class="hover:text-blue-400 transition">Prestasi Siswa</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/spmb') }}" class="hover:text-blue-400 transition">Penerimaan Siswa (SPMB)</a></li>
+                        <li><a href="{{ url($tenantSlug . '/profil') }}" class="hover:text-blue-400 transition">Profil & Sejarah</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian') }}" class="hover:text-blue-400 transition">7 Program Keahlian</a></li>
+                        <li><a href="{{ url($tenantSlug . '/berita') }}" class="hover:text-blue-400 transition">Berita & Informasi</a></li>
+                        <li><a href="{{ url($tenantSlug . '/agenda') }}" class="hover:text-blue-400 transition">Agenda & Kegiatan</a></li>
+                        <li><a href="{{ url($tenantSlug . '/prestasi') }}" class="hover:text-blue-400 transition">Prestasi Siswa</a></li>
+                        <li><a href="{{ url($tenantSlug . '/spmb') }}" class="hover:text-blue-400 transition">Penerimaan Siswa (SPMB)</a></li>
                     </ul>
                 </div>
 
@@ -464,12 +467,12 @@
                 <div>
                     <h3 class="font-heading font-bold text-white text-base mb-4 tracking-wide uppercase">Program Unggulan</h3>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian/teknik-mesin') }}" class="hover:text-white transition">Teknik Mesin (TM)</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian/pengembangan-perangkat-lunak-dan-gim') }}" class="hover:text-white transition">PPLG (Software & Game)</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian/teknik-jaringan-komputer-dan-telekomunikasi') }}" class="hover:text-white transition">TJKT (Jaringan Komputer)</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian/desain-komunikasi-visual') }}" class="hover:text-white transition">Desain Komunikasi Visual</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/program-keahlian/animasi') }}" class="hover:text-white transition">Animasi 2D/3D</a></li>
-                        <li><a href="{{ url(app('tenant')->slug . '/fasilitas') }}" class="hover:text-white transition">Fasilitas Bengkel & Lab</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/teknik-mesin') }}" class="hover:text-white transition">Teknik Mesin (TM)</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/pengembangan-perangkat-lunak-dan-gim') }}" class="hover:text-white transition">PPLG (Software & Game)</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/teknik-jaringan-komputer-dan-telekomunikasi') }}" class="hover:text-white transition">TJKT (Jaringan Komputer)</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/desain-komunikasi-visual') }}" class="hover:text-white transition">Desain Komunikasi Visual</a></li>
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/animasi') }}" class="hover:text-white transition">Animasi 2D/3D</a></li>
+                        <li><a href="{{ url($tenantSlug . '/fasilitas') }}" class="hover:text-white transition">Fasilitas Bengkel & Lab</a></li>
                     </ul>
                 </div>
 
@@ -490,7 +493,7 @@
                             <span>{{ $sekolah['email'] ?? 'humas@smkn2bandung.sch.id' }}</span>
                         </li>
                         <li class="pt-2">
-                            <a href="{{ url(app('tenant')->slug . '/kontak') }}" class="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-blue-300">
+                            <a href="{{ url($tenantSlug . '/kontak') }}" class="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-blue-300">
                                 Buka Formulir Hubungi Kami &rarr;
                             </a>
                         </li>
@@ -504,7 +507,7 @@
                 <div class="flex items-center space-x-3 text-slate-400">
                     <span>Platform Website Sekolah Terpadu</span>
                     <span>&bull;</span>
-                    <a href="{{ url(app('tenant')->slug . '/admin/login') }}" class="text-slate-400 hover:text-blue-400 transition font-medium">
+                    <a href="{{ url($tenantSlug . '/admin/login') }}" class="text-slate-400 hover:text-blue-400 transition font-medium">
                         Panel Admin
                     </a>
                 </div>
