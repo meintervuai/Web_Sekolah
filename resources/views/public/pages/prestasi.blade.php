@@ -33,12 +33,12 @@
             <div class="flex flex-wrap items-center gap-2 text-xs">
                 <!-- Tingkat Filter Pills -->
                 <a href="{{ url(app('tenant')->slug . '/prestasi' . (request('tahun') ? '?tahun=' . request('tahun') : '')) }}" 
-                   class="px-3.5 py-1.5 rounded-full font-medium transition {{ !request('tingkat') ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                   class="px-3.5 py-1.5 rounded-full font-medium transition {{ !request('tingkat') ? 'theme-btn-primary shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     Semua Tingkat
                 </a>
                 @foreach($daftarTingkat as $t)
                 <a href="{{ url(app('tenant')->slug . '/prestasi?tingkat=' . $t . (request('tahun') ? '&tahun=' . request('tahun') : '')) }}" 
-                   class="px-3.5 py-1.5 rounded-full font-medium transition {{ request('tingkat') === $t ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
+                   class="px-3.5 py-1.5 rounded-full font-medium transition {{ request('tingkat') === $t ? 'theme-btn-primary shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }}">
                     Tingkat {{ $t }}
                 </a>
                 @endforeach

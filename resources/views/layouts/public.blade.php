@@ -7,125 +7,27 @@
     <title>@yield('title', 'Beranda') - {{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}</title>
     <meta name="description" content="@yield('meta_description', $sekolah['deskripsi'] ?? 'Website resmi SMK Negeri 2 Bandung - Sekolah Menengah Kejuruan di Kota Bandung.')">
 
-    <!-- Vite for Tailwind CSS & Alpine.js -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Vite: Tailwind CSS, Public Theme CSS, Alpine.js -->
+    @vite(['resources/css/app.css', 'resources/css/public.css', 'resources/js/app.js'])
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
+    {{-- CSS Variables Dinamis dari Database Tenant --}}
     <style>
         :root {
-            --theme-color: {{ $sekolah['warna_tema'] ?? '#1E3A8A' }};
-            --theme-color-dark: color-mix(in srgb, var(--theme-color) 80%, black);
+            --theme-color:       {{ $sekolah['warna_tema']         ?? '#1E3A8A' }};
+            --theme-color-dark:  color-mix(in srgb, var(--theme-color) 80%, black);
             --theme-color-light: color-mix(in srgb, var(--theme-color) 15%, white);
             --theme-color-transparent: color-mix(in srgb, var(--theme-color) 20%, transparent);
-            --theme-accent: {{ $sekolah['warna_aksen'] ?? '#0284C7' }};
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        .font-heading {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.02em;
-        }
-
-        .container-custom {
-            max-width: 1440px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        @media (min-width: 640px) {
-            .container-custom {
-                padding-left: 32px;
-                padding-right: 32px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .container-custom {
-                padding-left: 40px;
-                padding-right: 40px;
-            }
-        }
-
-        .section-py {
-            padding-top: 48px;
-            padding-bottom: 48px;
-        }
-
-        @media (min-width: 640px) {
-            .section-py {
-                padding-top: 64px;
-                padding-bottom: 64px;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .section-py {
-                padding-top: 88px;
-                padding-bottom: 88px;
-            }
-        }
-
-        .card-radius {
-            border-radius: 16px;
-        }
-
-        .btn-radius {
-            border-radius: 10px;
-        }
-
-        .theme-bg {
-            background-color: var(--theme-color);
-        }
-
-        .theme-bg-dark {
-            background-color: var(--theme-color-dark);
-        }
-
-        .theme-text {
-            color: var(--theme-color);
-        }
-
-        .theme-border {
-            border-color: var(--theme-color);
-        }
-
-        /* Card Hover Behavior */
-        .hover-card {
-            transition: transform 200ms ease, box-shadow 200ms ease;
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-            .hover-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 16px 28px -6px rgba(15, 23, 42, 0.12), 0 8px 12px -4px rgba(15, 23, 42, 0.06);
-            }
-        }
-
-        /* Hide Scrollbar but keep functionality */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            /* IE and Edge */
-            scrollbar-width: none;
-            /* Firefox */
+            --theme-accent:      {{ $sekolah['warna_aksen']        ?? '#0284C7' }};
+            --theme-text:        {{ $sekolah['warna_teks']         ?? '#0F172A' }};
+            --theme-card-bg:     {{ $sekolah['warna_kartu']        ?? '#FFFFFF' }};
+            --theme-btn-bg:      {{ $sekolah['warna_tombol']       ?? '#1D4ED8' }};
+            --theme-btn-text:    {{ $sekolah['warna_tombol_teks']  ?? '#FFFFFF' }};
+            --theme-header-bg:   {{ $sekolah['warna_header']       ?? '#1E3A8A' }};
         }
     </style>
     @stack('styles')
@@ -300,7 +202,7 @@
 
                 <!-- CTA SPMB -->
                 <a href="{{ url($tenantSlug . '/spmb') }}"
-                    class="ml-3 inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white text-sm font-bold btn-radius shadow-md shadow-blue-900/20 transition-all hover:shadow-lg">
+                    class="ml-3 inline-flex items-center px-4 py-2 theme-btn-primary text-sm font-bold btn-radius shadow-md transition-all hover:shadow-lg">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
@@ -310,7 +212,7 @@
 
             <!-- Mobile Hamburger Button -->
             <div class="lg:hidden flex items-center space-x-2">
-                <a href="{{ url($tenantSlug . '/spmb') }}" @class(['px-3 py-1.5 text-xs font-bold btn-radius transition-colors', 'bg-blue-900 text-white'=> $isPathActive('spmb'), 'bg-blue-700 text-white hover:bg-blue-800' => !$isPathActive('spmb')])>
+                <a href="{{ url($tenantSlug . '/spmb') }}" class="px-3 py-1.5 text-xs font-bold btn-radius theme-btn-primary shadow-xs">
                     SPMB 2026
                 </a>
                 <button @click="mobileNav = true"

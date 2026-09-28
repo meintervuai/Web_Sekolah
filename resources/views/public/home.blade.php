@@ -90,7 +90,7 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
       @endif
 
       <!-- Clean High-Contrast Overlay -->
-      <div class="absolute inset-0 bg-blue-950/85"></div>
+      <div class="absolute inset-0" style="background-color: color-mix(in srgb, var(--theme-color) 85%, black);"></div>
 
       <!-- Slide Content -->
       <div class="absolute inset-0 flex items-center">
@@ -118,7 +118,7 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
               $btnUrl = str_starts_with($item->link_tombol, 'http') ? $item->link_tombol : url(app('tenant')->slug . ($btnPath ? '/' . $btnPath : ''));
               @endphp
               <a href="{{ $btnUrl }}"
-                class="inline-flex items-center px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-sm rounded-lg transition-colors shadow-sm">
+                class="inline-flex items-center px-6 py-3 theme-btn-primary font-semibold text-sm rounded-lg transition-colors shadow-sm">
                 {{ $item->teks_tombol ?? 'Pelajari Selengkapnya' }}
                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -140,14 +140,14 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
   <!-- Navigation Arrows -->
   @if(count($slider) > 1)
   <button @click="prev()"
-    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900/60 hover:bg-slate-900 border border-white/20 text-white flex items-center justify-center transition focus:outline-none"
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-theme-color/60 hover:bg-theme-color border border-white/20 text-white flex items-center justify-center transition focus:outline-none"
     aria-label="Slide Sebelumnya">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
     </svg>
   </button>
   <button @click="next()"
-    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-slate-900/60 hover:bg-slate-900 border border-white/20 text-white flex items-center justify-center transition focus:outline-none"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-theme-color/60 hover:bg-theme-color border border-white/20 text-white flex items-center justify-center transition focus:outline-none"
     aria-label="Slide Selanjutnya">
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -158,7 +158,8 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
   <div class="absolute bottom-5 left-0 right-0 z-20 flex justify-center space-x-2">
     @foreach($slider as $index => $item)
     <button @click="current = {{ $index }}"
-      :class="current === {{ $index }} ? 'w-8 bg-blue-500' : 'w-2.5 bg-white/40 hover:bg-white/70'"
+      :class="current === {{ $index }} ? 'w-8' : 'w-2.5 bg-white/40 hover:bg-white/70'"
+      :style="current === {{ $index }} ? 'background-color: var(--theme-accent);' : ''"
       class="h-2 rounded-full transition-all duration-300 focus:outline-none"
       aria-label="Pindah ke slide {{ $index + 1 }}"></button>
     @endforeach
@@ -239,7 +240,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
     }
   }">
 
-  <div class="relative w-full h-72 sm:h-96 lg:h-[480px] bg-slate-950/90 overflow-hidden group">
+  <div class="relative w-full h-72 sm:h-96 lg:h-[480px] theme-bg-dark overflow-hidden group">
     
     <!-- 1. Video Player Container -->
     @if($hasHeroBannerVid)
@@ -285,17 +286,19 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
     @endif
 
     <!-- Overlay Gradien Elegan & Kontras Tinggi -->
-    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-900/40 to-transparent pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-theme-color/90 via-theme-color/40 to-transparent pointer-events-none"></div>
 
     <!-- Teks Overlay Judul & Tagline -->
     <div class="absolute inset-0 flex items-end pointer-events-none">
       <div class="container-custom p-6 sm:p-8 text-white space-y-2.5 w-full pointer-events-auto">
         <div class="flex items-center gap-2">
-          <span class="inline-flex items-center px-3 py-1 rounded-md bg-blue-600/90 text-white text-xs font-bold tracking-wide uppercase shadow-2xs">
+          <span class="inline-flex items-center px-3 py-1 rounded-md text-white text-xs font-bold tracking-wide uppercase shadow-2xs"
+                style="background-color: var(--theme-accent);">
             Sekolah Pusat Keunggulan
           </span>
           @if($hasHeroBannerVid && $hasHeroBannerImg)
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-blue-900/60 backdrop-blur-xs text-[11px] font-semibold text-blue-100 border border-white/10">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md backdrop-blur-xs text-[11px] font-semibold text-white border border-white/20"
+                style="background-color: color-mix(in srgb, var(--theme-color) 70%, transparent);">
             <template x-if="currentMode === 'video'">
               <span class="flex items-center gap-1 text-emerald-400">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -303,7 +306,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
               </span>
             </template>
             <template x-if="currentMode === 'image'">
-              <span class="flex items-center gap-1 text-blue-300">
+              <span class="flex items-center gap-1 text-white">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 Banner Foto
               </span>
@@ -329,7 +332,8 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       <button type="button"
               @click="toggleMute()"
               x-show="currentMode === 'video'"
-              class="px-3 py-1.5 rounded-lg bg-blue-950/80 hover:bg-blue-950 border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+              style="background-color: color-mix(in srgb, var(--theme-color) 85%, black);"
+              class="px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer hover:brightness-110">
         <template x-if="isMuted">
           <span class="flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
@@ -338,7 +342,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
         </template>
         <template x-if="!isMuted">
           <span class="flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
             <span>Suara Aktif</span>
           </span>
         </template>
@@ -349,7 +353,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       <button type="button"
               @click="replayVideo()"
               x-show="currentMode === 'image'"
-              class="px-3 py-1.5 rounded-lg bg-blue-600/90 hover:bg-blue-600 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+              class="px-3 py-1.5 rounded-lg theme-btn-primary text-xs font-semibold shadow-xs transition flex items-center gap-1.5 cursor-pointer">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Putar Video</span>
       </button>
@@ -358,7 +362,8 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       <button type="button"
               @click="switchToImage()"
               x-show="currentMode === 'video'"
-              class="px-3 py-1.5 rounded-lg bg-blue-950/80 hover:bg-blue-950 border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+              style="background-color: color-mix(in srgb, var(--theme-color) 85%, black);"
+              class="px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-semibold backdrop-blur-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer hover:brightness-110">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         <span>Lihat Gambar</span>
       </button>
@@ -384,24 +389,24 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           <img src="{{ $sekolahData['foto_kepsek'] }}"
             alt="{{ $sekolahData['kepsek'] }}"
             class="w-full h-80 sm:h-96 object-cover object-top">
-          <div class="p-5 bg-slate-900 text-white">
+          <div class="p-5 theme-bg-dark text-white">
             <h3 class="font-heading font-bold text-base sm:text-lg text-white leading-tight">{{ $sekolahData['kepsek'] }}</h3>
-            <p class="text-xs text-slate-300 font-medium mt-0.5">Kepala SMK Negeri 2 Bandung</p>
-            <p class="text-[11px] text-slate-400 mt-1">NIP. {{ $sekolahData['nip_kepsek'] }}</p>
+            <p class="text-xs text-white/90 font-medium mt-0.5">Kepala SMK Negeri 2 Bandung</p>
+            <p class="text-[11px] text-white/80 mt-1">NIP. {{ $sekolahData['nip_kepsek'] }}</p>
           </div>
         </div>
       </div>
 
       <!-- Right: Teks Sambutan -->
       <div class="lg:col-span-7 space-y-4">
-        <div class="inline-flex items-center text-slate-600 font-semibold text-xs uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-md">
+        <div class="inline-flex items-center theme-accent-text font-semibold text-xs uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-md">
           <span>Sambutan Kepala Sekolah</span>
         </div>
         <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900 leading-tight">
           Mewujudkan Pendidikan Vokasi yang Unggul, Adaptif, dan Berkarakter
         </h2>
-        <div class="text-slate-600 text-sm sm:text-base leading-relaxed space-y-3">
-          <p class="italic text-slate-800 font-medium border-l-4 border-blue-700 pl-4 py-1">
+        <div class="theme-accent-text text-sm sm:text-base leading-relaxed space-y-3">
+          <p class="italic text-slate-800 font-medium border-l-4 pl-4 py-1" style="border-left-color: var(--theme-color);">
             "{{ $sekolahData['sambutan'] }}"
           </p>
           <p>
@@ -410,7 +415,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
         </div>
         <div class="pt-2 flex flex-wrap gap-3">
           <a href="{{ url(app('tenant')->slug . '/profil') }}"
-            class="inline-flex items-center px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-lg transition-colors">
+            class="inline-flex items-center px-5 py-2.5 theme-btn-primary font-semibold text-sm rounded-lg transition-colors shadow-xs">
             Profil Lengkap
             <svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -503,7 +508,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
     @else
     <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
       @foreach($jurusan as $j)
-      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-xl overflow-hidden shadow-xs hover-card border border-slate-200 flex flex-col h-full">
+      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl overflow-hidden shadow-xs hover-card border border-slate-200 flex flex-col h-full">
         <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
           <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}"
             alt="{{ $j->nama_jurusan }}"
@@ -564,20 +569,20 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
         @else
         <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
           @foreach($berita as $post)
-          <article class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col h-full">
+          <article class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col h-full">
             <div class="relative h-40 w-full overflow-hidden bg-slate-100">
               <img src="{{ $post->gambar_sampul ?? 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800' }}"
                 alt="{{ $post->judul }}"
                 class="w-full h-full object-cover">
               @if($post->kategori)
-              <span class="absolute top-2.5 left-2.5 bg-slate-900/90 text-white text-[11px] font-semibold px-2 py-0.5 rounded">
+              <span class="absolute top-2.5 left-2.5 bg-theme-color/90 text-white text-[11px] font-semibold px-2 py-0.5 rounded">
                 {{ $post->kategori->nama_kategori }}
               </span>
               @endif
             </div>
             <div class="p-4 flex-1 flex flex-col justify-between">
               <div>
-                <p class="text-[11px] text-slate-500 font-medium">
+                <p class="text-[11px] text-white/90 font-medium">
                   {{ $post->tgl_publikasi ? $post->tgl_publikasi->translatedFormat('d M Y') : date('d M Y') }}
                 </p>
                 <h3 class="font-heading font-bold text-sm text-slate-900 mt-1 line-clamp-2 leading-snug">
@@ -650,15 +655,15 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
      7. AGENDA KEGIATAN MENDATANG
 =========================================== -->
 @if($fiturList['agenda'] ?? true)
-<section class="section-py bg-slate-50 border-b border-slate-200">
+<section class="section-py theme-accent-text border-b border-slate-200">
   <div class="container-custom">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8">
       <div>
-        <span class="text-blue-700 font-semibold text-xs uppercase tracking-wider">Agenda Kegiatan</span>
+        <span class="theme-accent-text font-semibold text-xs uppercase tracking-wider">Agenda Kegiatan</span>
         <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900 mt-1">Jadwal & Agenda Sekolah</h2>
-        <p class="text-xs sm:text-sm text-slate-600">Aktivitas resmi dan agenda akademik mendatang</p>
+        <p class="text-xs sm:text-sm theme-accent-text">Aktivitas resmi dan agenda akademik mendatang</p>
       </div>
-      <a href="{{ url(app('tenant')->slug . '/agenda') }}" class="hidden md:inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-800">
+      <a href="{{ url(app('tenant')->slug . '/agenda') }}" class="hidden md:inline-flex items-center text-sm font-semibold theme-accent-text hover:text-blue-700">
         Lihat Kalender Lengkap &rarr;
       </a>
     </div>
@@ -670,7 +675,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
     @else
     <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
       @foreach($agenda as $item)
-      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover-card flex flex-col justify-between h-full">
+      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl border border-slate-200 p-5 shadow-xs hover-card flex flex-col justify-between h-full">
         <div>
           <div class="flex items-start space-x-3 mb-3">
             <!-- Date Badge: Clean Navy -->
@@ -738,10 +743,10 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 
     <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
       @foreach($prestasi as $pres)
-      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col justify-between h-full">
+      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col justify-between h-full">
         <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
           <img src="{{ $pres->foto }}" alt="{{ $pres->nama_prestasi }}" class="w-full h-full object-cover">
-          <span class="absolute top-3 left-3 bg-slate-900/90 text-white font-semibold text-[10px] px-2.5 py-0.5 rounded">
+          <span class="absolute top-3 left-3 bg-theme-color/90 text-white font-semibold text-[10px] px-2.5 py-0.5 rounded">
             Tingkat {{ $pres->tingkat ?? 'Nasional' }}
           </span>
           <span class="absolute top-3 right-3 bg-white/90 text-slate-800 font-semibold text-[10px] px-2 py-0.5 rounded border border-slate-200">
@@ -775,21 +780,23 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
      9. CTA SPMB BANNER (Solid Navy Resmi, Tanpa Gradien Ungu)
 =========================================== -->
 @if($fiturList['spmb'] ?? true)
-<section class="section-py bg-blue-900 text-white border-b border-blue-950">
+<section class="section-py theme-bg text-white border-b border-blue-950">
   <div class="container-custom">
     <div class="max-w-3xl mx-auto text-center space-y-4">
-      <span class="inline-block px-3 py-1 rounded-md bg-white/10 text-blue-200 font-semibold text-xs uppercase tracking-wider border border-white/20">
+      <span class="inline-block px-3 py-1 rounded-md bg-white/10 theme-accent-text font-semibold text-xs uppercase tracking-wider border border-white/20">
         Penerimaan Peserta Didik Baru
       </span>
       <h2 class="font-heading font-bold text-2xl sm:text-4xl text-white leading-tight">
         Bergabunglah Bersama SMK Negeri 2 Bandung Tahun Ajaran 2026/2027
       </h2>
-      <p class="text-xs sm:text-base text-blue-100 max-w-xl mx-auto leading-relaxed">
+      <p class="text-xs sm:text-base theme-accent-text max-w-xl mx-auto leading-relaxed">
         Raih kompetensi vokasi terbaik dengan pengakuan sertifikasi industri nasional dan internasional. Dapatkan informasi syarat, jalur, dan alur pendaftaran resmi.
       </p>
       <div class="pt-3 flex flex-wrap justify-center gap-3">
         <a href="{{ url(app('tenant')->slug . '/spmb') }}"
-          class="px-6 py-3 bg-white text-blue-900 hover:bg-slate-100 font-semibold text-sm rounded-lg shadow-sm transition-colors">
+          style="color: var(--theme-color);"
+          class="px-6 py-3 bg-white hover:bg-slate-100 font-semibold text-sm rounded-lg shadow-sm transition-colors">
+          class="px-6 py-3 bg-white hover:bg-slate-100 font-bold text-sm rounded-lg shadow-sm transition-colors">
           Informasi & Syarat SPMB
         </a>
         <a href="{{ url(app('tenant')->slug . '/kontak') }}"
@@ -810,9 +817,9 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
   <div class="container-custom">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
       <div class="lg:col-span-5 space-y-4">
-        <span class="text-blue-700 font-semibold text-xs uppercase tracking-wider">Lokasi Kampus</span>
+        <span class="theme-accent-text font-semibold text-xs uppercase tracking-wider">Lokasi Kampus</span>
         <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900">Kunjungi SMK Negeri 2 Bandung</h2>
-        <p class="text-sm text-slate-600 leading-relaxed">
+        <p class="text-sm theme-accent-text leading-relaxed">
           Terletak strategis di kawasan Bandung Wetan, mudah diakses melalui transportasi umum dan kendaraan pribadi.
         </p>
         <div class="space-y-2 text-sm text-slate-700">
@@ -834,7 +841,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           </p>
         </div>
         <div class="pt-2">
-          <a href="{{ url(app('tenant')->slug . '/kontak') }}" class="inline-flex items-center px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-lg transition-colors">
+          <a href="{{ url(app('tenant')->slug . '/kontak') }}" class="inline-flex items-center px-5 py-2.5 bg-theme-color hover:bg-theme-color/90 text-white font-semibold text-sm rounded-lg transition-colors">
             Kirim Pesan / Pengaduan &rarr;
           </a>
         </div>

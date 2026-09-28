@@ -27,7 +27,7 @@
 
         <div class="max-w-4xl mx-auto text-center">
             <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold mb-4 font-heading tracking-tight leading-tight">
-                Agenda & <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-300">Kegiatan Sekolah</span>
+                Agenda & <span style="color: var(--theme-accent);">Kegiatan Sekolah</span>
             </h1>
             <p class="text-slate-300 text-sm sm:text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
                 Jadwal lengkap asesmen akademik, sertifikasi kompetensi industri, pameran inovasi TEFA, dan agenda kesiswaan {{ $sekolah['nama'] }}.
@@ -277,18 +277,20 @@
                         <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
 
-                    <!-- Server Filter Tabs -->
                     <div class="flex items-center space-x-1 text-xs shrink-0">
                         <a href="{{ url(app('tenant')->slug . '/agenda?filter=mendatang') }}" 
-                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'mendatang' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'mendatang' ? 'theme-btn-primary shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}"
+                           @if($filter === 'mendatang') style="background-color: var(--theme-btn-bg); color: var(--theme-btn-text);" @endif>
                             Mendatang
                         </a>
                         <a href="{{ url(app('tenant')->slug . '/agenda?filter=lampau') }}" 
-                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'lampau' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'lampau' ? 'theme-btn-primary shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}"
+                           @if($filter === 'lampau') style="background-color: var(--theme-btn-bg); color: var(--theme-btn-text);" @endif>
                             Selesai
                         </a>
                         <a href="{{ url(app('tenant')->slug . '/agenda?filter=semua') }}" 
-                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'semua' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                           class="px-3 py-1.5 rounded-lg font-medium transition {{ $filter === 'semua' ? 'theme-btn-primary shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}"
+                           @if($filter === 'semua') style="background-color: var(--theme-btn-bg); color: var(--theme-btn-text);" @endif>
                             Semua
                         </a>
                     </div>

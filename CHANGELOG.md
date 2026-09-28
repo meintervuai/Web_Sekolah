@@ -4,7 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **Penerapan Tema Warna ke Seluruh Halaman Publik (Full Theme Coverage)**:
+  - Menambahkan CSS override komprehensif di `resources/views/layouts/public.blade.php` untuk semua kelas warna hardcoded yang belum tertangkap tema: `amber-*`, `indigo-*`, `orange-*`, `bg-blue-950/*`, `section.bg-slate-900`.
+  - Mengganti overlay hero carousel `bg-blue-950/85` di `home.blade.php` dengan inline style `color-mix(in srgb, var(--theme-color) 85%, black)`.
+  - Mengganti dots indikator carousel dari `:class="'bg-blue-500'"` ke `:style="'background-color: var(--theme-accent)'"`.
+  - Mengganti tombol amber `bg-amber-400` di `jurusan_detail.blade.php` dengan class `theme-btn-primary`.
+  - Mengganti filter pills `bg-slate-900` di `agenda.blade.php` dengan class `theme-btn-primary` + inline style CSS var.
+  - Menambahkan override untuk teks amber di dalam card dark (`bg-blue-900`) agar tetap terbaca sebagai putih.
+  - Semua 26+ halaman publik kini mengikuti tema warna yang dipilih admin (termasuk amber badge, indigo pill, orange accent).
+
 ### Added
+
+- **Pengaturan Tema & Warna Mandiri (7 Preset + Custom Hex + Live Preview)**:
+  - Tab navigasi admin **"Tema & Warna"** di `tenant/admin/pengaturan/index.blade.php`.
+  - 7 Pilihan Preset Terverifikasi: *Biru Navy Klasik*, *Hijau Zamrud Edukasi*, *Merah Marun Prestisius*, *Ungu Dinamis Kreatif*, *Abu Gelap Elegan*, *Emas Oranye Enerjik*, dan *Teal Bahari Futuristik*.
+  - Opsi *Custom Warna* dengan kontrol hex dan color picker untuk warna teks konten, kartu, tombol, teks tombol, bar header, dan aksen.
+  - Simulasi *Live Preview* interaktif di panel admin yang langsung berubah sesuai warna yang dipilih.
+  - Penyimpanan permanen ke database tenant (`pengaturan_umum`) melalui `PengaturanController.php`.
+  - Refactoring CSS variabel `:root` dan utility classes (`theme-btn-primary`, `theme-card`, `theme-header`) di `resources/views/layouts/public.blade.php` dan `home.blade.php`.
 - **Penyelarasan Rules & Alur Kerja Workspace (Streamlined Execution)**:
   - Menghilangkan beban birokrasi checklist audit dan analisis dampak teoritis dari [AGENTS.md](file:///d:/databaru/Magang/website_sekolah/AGENTS.md) dan [docs/RULES.md](file:///d:/databaru/Magang/website_sekolah/docs/RULES.md).
   - Menetapkan alur kerja ringkas dan terikat: **Wajib membaca dokumen .md di awal**, **eksekusi langsung tanpa bertele-tele**, **database wajib 100% berelasi (FK & model)**, dan **wajib sinkronisasi dokumen .md di akhir**.

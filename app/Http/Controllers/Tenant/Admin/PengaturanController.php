@@ -53,6 +53,15 @@ class PengaturanController extends Controller
             'akreditasi' => ['nullable', 'string', 'max:50'],
             'tahun_berdiri' => ['nullable', 'string', 'max:10'],
             'deskripsi' => ['nullable', 'string'],
+            // Pengaturan Tema & Palet Warna Mandiri
+            'skema_tema' => ['nullable', 'string', 'max:50'],
+            'warna_tema' => ['nullable', 'string', 'max:25'],
+            'warna_aksen' => ['nullable', 'string', 'max:25'],
+            'warna_teks' => ['nullable', 'string', 'max:25'],
+            'warna_kartu' => ['nullable', 'string', 'max:25'],
+            'warna_tombol' => ['nullable', 'string', 'max:25'],
+            'warna_tombol_teks' => ['nullable', 'string', 'max:25'],
+            'warna_header' => ['nullable', 'string', 'max:25'],
             // Statistik Sekolah
             'stat_guru' => ['nullable', 'string', 'max:10'],
             'stat_guru_label' => ['nullable', 'string', 'max:100'],

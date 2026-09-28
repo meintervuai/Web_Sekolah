@@ -4,8 +4,7 @@
 @section('meta_description', 'Profil lengkap, sejarah, visi misi, dan struktur organisasi SMK Negeri 2 Bandung.')
 
 @section('content')
-<!-- Page Header -->
-<div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white py-14 border-b border-slate-800">
+<div class="bg-gradient-to-r from-theme-color via-theme-accent to-theme-color text-white py-14 border-b border-slate-800">
     <div class="container-custom">
         <nav class="flex items-center space-x-2 text-xs text-blue-200 mb-3" aria-label="Breadcrumb">
             <a href="{{ url(app('tenant')->slug) }}" class="hover:text-white">Beranda</a>
@@ -27,7 +26,7 @@
             <div class="lg:col-span-8 space-y-10">
                 
                 <!-- Identitas Singkat -->
-                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Identitas Satuan Pendidikan
                     </h2>
@@ -49,7 +48,7 @@
 
                 <!-- Sejarah -->
                 @if($sejarah)
-                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="sejarah">
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="sejarah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Sejarah Singkat
                     </h2>
@@ -61,7 +60,7 @@
 
                 <!-- Visi & Misi -->
                 @if($visiMisi)
-                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="visi-misi">
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="visi-misi">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Visi, Misi & Tujuan
                     </h2>
@@ -72,7 +71,7 @@
                 @endif
 
                 <!-- Struktur Organisasi Pimpinan -->
-                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="struktur">
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="struktur">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-6 pb-2 border-b border-slate-100">
                         Struktur Pimpinan Sekolah
                     </h2>
@@ -94,7 +93,7 @@
             <!-- Right Sidebar (4 cols) -->
             <div class="lg:col-span-4 space-y-6">
                 <!-- Kepala Sekolah Card -->
-                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm text-center">
+                <div class="theme-card rounded-2xl p-6 border border-slate-200 shadow-sm text-center">
                     <img src="{{ $sekolah['foto_kepsek'] }}" 
                          alt="{{ $sekolah['nama_kepsek'] }}" 
                          class="w-32 h-32 rounded-full mx-auto object-cover object-top shadow-lg border-4 border-blue-50">
@@ -107,7 +106,7 @@
                 </div>
 
                 <!-- Navigation Widget -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                <div class="theme-card rounded-2xl p-5 border border-slate-200 shadow-sm">
                     <h4 class="font-heading font-bold text-sm text-slate-900 uppercase tracking-wider mb-3">Daftar Menu Profil</h4>
                     <ul class="space-y-1.5 text-sm">
                         <li><a href="#sejarah" class="block px-3 py-2 rounded-lg text-slate-700 hover:bg-blue-50 hover:text-blue-900 font-medium">Sejarah Sekolah</a></li>

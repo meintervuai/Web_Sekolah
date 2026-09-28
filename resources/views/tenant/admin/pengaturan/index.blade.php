@@ -54,17 +54,120 @@
     </div>
 
     <!-- Formulir Pengaturan dengan Tab-Tab Modern -->
-    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden" x-data="{ activeTab: 'identitas' }">
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden" 
+         x-data="{ 
+             activeTab: 'identitas',
+             selectedTheme: '{{ old('skema_tema', $pengaturanRaw['skema_tema'] ?? 'navy_classic') }}',
+             warnaTema: '{{ old('warna_tema', $pengaturanRaw['warna_tema'] ?? '#1E3A8A') }}',
+             warnaAksen: '{{ old('warna_aksen', $pengaturanRaw['warna_aksen'] ?? '#0284C7') }}',
+             warnaTeks: '{{ old('warna_teks', $pengaturanRaw['warna_teks'] ?? '#0F172A') }}',
+             warnaKartu: '{{ old('warna_kartu', $pengaturanRaw['warna_kartu'] ?? '#FFFFFF') }}',
+             warnaTombol: '{{ old('warna_tombol', $pengaturanRaw['warna_tombol'] ?? '#1D4ED8') }}',
+             warnaTombolTeks: '{{ old('warna_tombol_teks', $pengaturanRaw['warna_tombol_teks'] ?? '#FFFFFF') }}',
+             warnaHeader: '{{ old('warna_header', $pengaturanRaw['warna_header'] ?? '#1E3A8A') }}',
+             presets: {
+                 navy_classic: {
+                     nama: 'Biru Navy Klasik',
+                     deskripsi: 'Wibawa, formal, standar institusi pendidikan negeri',
+                     tema: '#1E3A8A',
+                     aksen: '#0284C7',
+                     teks: '#0F172A',
+                     kartu: '#FFFFFF',
+                     tombol: '#1D4ED8',
+                     tombol_teks: '#FFFFFF',
+                     header: '#1E3A8A'
+                 },
+                 emerald_nature: {
+                     nama: 'Hijau Zamrud Edukasi',
+                     deskripsi: 'Segar, bernuansa alam, islami & ramah lingkungan',
+                     tema: '#065F46',
+                     aksen: '#10B981',
+                     teks: '#064E3B',
+                     kartu: '#FFFFFF',
+                     tombol: '#059669',
+                     tombol_teks: '#FFFFFF',
+                     header: '#065F46'
+                 },
+                 maroon_prestige: {
+                     nama: 'Merah Marun Prestisius',
+                     deskripsi: 'Elegan, berani, bergengsi & berkarakter kuat',
+                     tema: '#881337',
+                     aksen: '#F43F5E',
+                     teks: '#4C0519',
+                     kartu: '#FFFFFF',
+                     tombol: '#BE123C',
+                     tombol_teks: '#FFFFFF',
+                     header: '#881337'
+                 },
+                 royal_purple: {
+                     nama: 'Ungu Dinamis Kreatif',
+                     deskripsi: 'Modern, teknologi, seni & kreativitas vokasi',
+                     tema: '#581C87',
+                     aksen: '#A855F7',
+                     teks: '#3B0764',
+                     kartu: '#FFFFFF',
+                     tombol: '#7E22CE',
+                     tombol_teks: '#FFFFFF',
+                     header: '#581C87'
+                 },
+                 slate_dark: {
+                     nama: 'Abu Gelap Elegan',
+                     deskripsi: 'Minimalis modern, fokus industri & arsitektur',
+                     tema: '#0F172A',
+                     aksen: '#38BDF8',
+                     teks: '#0F172A',
+                     kartu: '#FFFFFF',
+                     tombol: '#1E293B',
+                     tombol_teks: '#FFFFFF',
+                     header: '#0F172A'
+                 },
+                 amber_sunset: {
+                     nama: 'Emas Oranye Enerjik',
+                     deskripsi: 'Hangat, antusias, kewirausahaan & inovasi',
+                     tema: '#78350F',
+                     aksen: '#F59E0B',
+                     teks: '#451A03',
+                     kartu: '#FFFFFF',
+                     tombol: '#D97706',
+                     tombol_teks: '#FFFFFF',
+                     header: '#78350F'
+                 },
+                 teal_modern: {
+                     nama: 'Teal Bahari Futuristik',
+                     deskripsi: 'Keseimbangan profesional, teknologi & kemajuan sains',
+                     tema: '#134E4A',
+                     aksen: '#14B8A6',
+                     teks: '#042F2E',
+                     kartu: '#FFFFFF',
+                     tombol: '#0D9488',
+                     tombol_teks: '#FFFFFF',
+                     header: '#134E4A'
+                 }
+             },
+             applyPreset(key) {
+                 this.selectedTheme = key;
+                 if (this.presets[key]) {
+                     const p = this.presets[key];
+                     this.warnaTema = p.tema;
+                     this.warnaAksen = p.aksen;
+                     this.warnaTeks = p.teks;
+                     this.warnaKartu = p.kartu;
+                     this.warnaTombol = p.tombol;
+                     this.warnaTombolTeks = p.tombol_teks;
+                     this.warnaHeader = p.header;
+                 }
+             }
+         }">
         
         <!-- Header & Navigasi Tab -->
-        <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-                <h3 class="text-base font-bold text-slate-900">Identitas, Statistik & Video Profil</h3>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Kelola identitas resmi, akreditasi, statistik, dan video profil sekolah terpadu.</p>
+                <h3 class="text-base font-bold text-slate-900">Pengaturan Identitas & Tampilan Sekolah</h3>
+                <p class="text-xs text-slate-500 mt-1 font-medium">Kelola identitas resmi, palet tema warna mandiri, statistik, dan video profil portal.</p>
             </div>
 
             <!-- Segmented Tab Navigation -->
-            <div class="inline-flex p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600 shrink-0 border border-slate-200/80">
+            <div class="inline-flex flex-wrap p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600 shrink-0 border border-slate-200/80">
                 <button 
                     type="button" 
                     @click="activeTab = 'identitas'" 
@@ -73,6 +176,15 @@
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     <span>Identitas & Logo</span>
+                </button>
+                <button 
+                    type="button" 
+                    @click="activeTab = 'tema'" 
+                    :class="activeTab === 'tema' ? 'bg-white text-blue-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'" 
+                    class="px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4c2 0 3-1 3-3a5 5 0 0110 0c0 2.2-1.8 4-4 4h-2a2 2 0 00-2 2v1a2 2 0 01-2 2h-3z"/><circle cx="9" cy="8.5" r="1.5"/><circle cx="15" cy="8.5" r="1.5"/></svg>
+                    <span>Tema & Warna</span>
                 </button>
                 <button 
                     type="button" 
@@ -213,6 +325,230 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Tab Tema & Warna Mandiri (7 Presets + Custom Color Pickers + Live Preview) -->
+            <div x-show="activeTab === 'tema'" x-cloak class="space-y-6">
+                <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            Pengaturan Tema & Palet Warna Mandiri
+                        </h4>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">Pilih salah satu dari 7 preset tema warna terverifikasi atau atur warna sendiri (Custom Hex).</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-500">Skema Terpilih:</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 capitalize" x-text="selectedTheme === 'custom' ? 'Custom Warna' : (presets[selectedTheme] ? presets[selectedTheme].nama : selectedTheme)"></span>
+                    </div>
+                </div>
+
+                <!-- Input Hidden untuk Menyimpan Skema Tema -->
+                <input type="hidden" name="skema_tema" :value="selectedTheme">
+
+                <!-- 7 Preset Tema Warna Kartu Interaktif -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-800 mb-2.5">
+                        Pilih Dari 7 Preset Warna Sekolah Terverifikasi:
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <template x-for="(preset, key) in presets" :key="key">
+                            <div 
+                                @click="applyPreset(key)" 
+                                :class="selectedTheme === key ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-slate-200/90 hover:border-slate-300 bg-white'"
+                                class="p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between group shadow-2xs"
+                            >
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.tema"></span>
+                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.aksen"></span>
+                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.tombol"></span>
+                                        </div>
+                                        <template x-if="selectedTheme === key">
+                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">Aktif</span>
+                                        </template>
+                                    </div>
+                                    <h5 class="text-xs font-bold text-slate-900" x-text="preset.nama"></h5>
+                                    <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed" x-text="preset.deskripsi"></p>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                                    <span class="font-mono text-slate-500" x-text="preset.tema"></span>
+                                    <span class="text-blue-600 font-bold group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Pilihan Custom Warna Card -->
+                        <div 
+                            @click="selectedTheme = 'custom'" 
+                            :class="selectedTheme === 'custom' ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-slate-200/90 hover:border-slate-300 bg-white'"
+                            class="p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between group shadow-2xs"
+                        >
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-500 via-amber-500 to-indigo-500 border border-black/10 shadow-2xs"></span>
+                                    </div>
+                                    <template x-if="selectedTheme === 'custom'">
+                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">Aktif</span>
+                                    </template>
+                                </div>
+                                <h5 class="text-xs font-bold text-slate-900">Custom Warna Mandiri</h5>
+                                <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">Atur kode warna hex secara bebas menggunakan color picker di bawah.</p>
+                            </div>
+                            <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-slate-500">Bebas Custom</span>
+                                <span class="text-blue-600 font-bold group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Color Picker & Hex Code -->
+                <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-5">
+                    <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                        <div>
+                            <h5 class="text-xs font-bold text-slate-900">Rincian Variabel Warna</h5>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Ubah nilai warna di bawah jika ingin memodifikasi elemen tertentu atau membuat tema khusus.</p>
+                        </div>
+                        <button 
+                            type="button" 
+                            @click="selectedTheme = 'custom'" 
+                            class="text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
+                        >
+                            Aktifkan Mode Custom
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        
+                        <!-- 1. Warna Teks Utama -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Teks Utama Konten
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Warna default body text portal.</p>
+                            <div class="flex items-center gap-2">
+                                <input type="color" x-model="warnaTeks" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                <input type="text" name="warna_teks" x-model="warnaTeks" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
+                            </div>
+                        </div>
+
+                        <!-- 2. Warna Kartu (Card Background) -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Background Kartu (Card)
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Warna kartu artikel, agenda, & jurusan.</p>
+                            <div class="flex items-center gap-2">
+                                <input type="color" x-model="warnaKartu" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                <input type="text" name="warna_kartu" x-model="warnaKartu" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
+                            </div>
+                        </div>
+
+                        <!-- 3. Warna Tombol Utama (Button BG) -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Tombol Utama (Button BG)
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Warna latar tombol aksi & CTA utama.</p>
+                            <div class="flex items-center gap-2">
+                                <input type="color" x-model="warnaTombol" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                <input type="text" name="warna_tombol" x-model="warnaTombol" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
+                            </div>
+                        </div>
+
+                        <!-- 4. Warna Teks Tombol (Button Text) -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Teks Tombol (Button Text)
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Warna label teks di dalam tombol.</p>
+                            <div class="flex items-center gap-2">
+                                <input type="color" x-model="warnaTombolTeks" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                <input type="text" name="warna_tombol_teks" x-model="warnaTombolTeks" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
+                            </div>
+                        </div>
+
+                        <!-- 5. Warna Header Bar (Top Bar) -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Bar Header (Top Bar)
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Warna strip pengumuman/kontak teratas.</p>
+                            <div class="flex items-center gap-2">
+                                <input type="color" x-model="warnaHeader" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                <input type="text" name="warna_header" x-model="warnaHeader" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
+                            </div>
+                        </div>
+
+                        <!-- 6. Warna Tema Utama & Aksen -->
+                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+                            <label class="block text-xs font-bold text-slate-800 mb-1">
+                                Warna Tema Pokok & Aksen
+                            </label>
+                            <p class="text-[11px] text-slate-400 mb-2.5">Identitas primer dan aksen badge.</p>
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-1.5 flex-1">
+                                    <input type="color" x-model="warnaTema" @input="selectedTheme = 'custom'" class="w-8 h-8 rounded-md border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                    <input type="text" name="warna_tema" x-model="warnaTema" @input="selectedTheme = 'custom'" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono font-bold text-slate-800 uppercase">
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-1">
+                                    <input type="color" x-model="warnaAksen" @input="selectedTheme = 'custom'" class="w-8 h-8 rounded-md border border-slate-200 p-0.5 cursor-pointer bg-white">
+                                    <input type="text" name="warna_aksen" x-model="warnaAksen" @input="selectedTheme = 'custom'" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono font-bold text-slate-800 uppercase">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Pratinjau Interaktif Real-Time (Live Preview Box) -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-800 mb-2">
+                        Pratinjau Interaktif Komponen (Live Preview Sesuai Pilihan):
+                    </label>
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm bg-slate-100">
+                        <!-- Top Bar Mockup -->
+                        <div class="px-4 py-2 text-white flex items-center justify-between text-xs transition-colors duration-300" :style="'background-color:' + warnaHeader">
+                            <div class="flex items-center gap-3">
+                                <span>(022) 7234285</span>
+                                <span>|</span>
+                                <span>humas@sekolah.sch.id</span>
+                            </div>
+                            <span class="font-bold">NPSN: 20219146 | Akreditasi A</span>
+                        </div>
+
+                        <!-- Card & Button Mockup Body -->
+                        <div class="p-6 bg-slate-50">
+                            <div class="max-w-md mx-auto rounded-2xl border border-slate-200/80 p-5 shadow-sm transition-colors duration-300" :style="'background-color:' + warnaKartu">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded text-white" :style="'background-color:' + warnaAksen">Contoh Badge Aksen</span>
+                                    <span class="text-[11px] text-slate-400">28 September 2026</span>
+                                </div>
+                                <h4 class="text-base font-bold transition-colors duration-300 mb-2" :style="'color:' + warnaTeks">
+                                    Judul Kartu Berita / Agenda Sekolah
+                                </h4>
+                                <p class="text-xs transition-colors duration-300 mb-4 line-clamp-2 leading-relaxed" :style="'color:' + warnaTeks + '; opacity: 0.8;'">
+                                    Ini adalah simulasi tampilan warna teks konten, kartu komponen, serta tombol interaktif yang diatur dari tema sekolah.
+                                </p>
+                                <div class="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+                                    <button 
+                                        type="button" 
+                                        class="px-4 py-2 rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
+                                        :style="'background-color:' + warnaTombol + '; color:' + warnaTombolTeks"
+                                    >
+                                        <span>Tombol Aksi Utama</span>
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                    </button>
+                                    <span class="text-xs font-semibold" :style="'color:' + warnaTema">Link Tautan Tema</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Tab 2: Statistik Beranda -->

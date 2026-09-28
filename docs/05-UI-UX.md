@@ -23,8 +23,24 @@
   - H1: Desktop 48–56px, Tablet 40–44px, Mobile 32–36px (`font-bold tracking-tight`).
   - H2: Desktop 32–40px, Tablet 28–32px, Mobile 26–30px.
   - Body: 16–18px dengan line-height 1.6 (`leading-relaxed`).
-- **Warna & CSS Variables:**
-  - `--theme-color`: Warna identitas sekolah (default: `#1E3A8A` atau `#0284C7` / `#2563EB`).
+- **Sistem Tema Warna Dinamis & CSS Variables:**
+  - Konfigurasi warna disimpan di database tenant (`pengaturan_umum`) dan diinjeksi via `:root` di `layouts/public.blade.php`:
+    - `--theme-color`: Warna identitas sekolah (default: `#1E3A8A`).
+    - `--theme-accent`: Warna aksen badge/sorotan (default: `#0284C7`).
+    - `--theme-text`: Warna teks isi konten utama (default: `#0F172A`).
+    - `--theme-card-bg`: Warna latar kartu komponen (default: `#FFFFFF`).
+    - `--theme-btn-bg`: Warna latar tombol aksi primer (default: `#1D4ED8`).
+    - `--theme-btn-text`: Warna teks label di dalam tombol (default: `#FFFFFF`).
+    - `--theme-header-bg`: Warna latar bar header pengumuman teratas (default: `#1E3A8A`).
+  - **7 Preset Tema Warna Siap Pakai:**
+    1. *Biru Navy Klasik* (`navy_classic`): `#1E3A8A` / `#0284C7` / `#1D4ED8` (Formal & wibawa).
+    2. *Hijau Zamrud Edukasi* (`emerald_nature`): `#065F46` / `#10B981` / `#059669` (Islami & alami).
+    3. *Merah Marun Prestisius* (`maroon_prestige`): `#881337` / `#F43F5E` / `#BE123C` (Bergengsi).
+    4. *Ungu Dinamis Kreatif* (`royal_purple`): `#581C87` / `#A855F7` / `#7E22CE` (Kreatif & vokasi).
+    5. *Abu Gelap Elegan* (`slate_dark`): `#0F172A` / `#38BDF8` / `#1E293B` (Minimalis modern).
+    6. *Emas Oranye Enerjik* (`amber_sunset`): `#78350F` / `#F59E0B` / `#D97706` (Inovatif & wirausaha).
+    7. *Teal Bahari Futuristik* (`teal_modern`): `#134E4A` / `#14B8A6` / `#0D9488` (Bahari & teknologi).
+  - **Custom Hex & Live Preview:** Admin dapat mengatur warna masing-masing komponen secara independen dengan Color Picker di panel admin dengan pratinjau langsung (Live Preview).
   - Kontras teks memenuhi standar **WCAG AA** (minimal 4.5:1 untuk normal text).
 
 ## 3. Komponen Card & Media Ratios

@@ -2,6 +2,26 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Phase 5: Pengaturan Tema Warna Mandiri & 7 Preset Tema] - 2026-09-28
+
+### Added
+- **Pengaturan Tema Warna Mandiri pada Panel Admin (`PengaturanController` & `tenant/admin/pengaturan/index.blade.php`)**:
+  - Tab navigasi baru **"Tema & Warna"** pada menu Identitas & Tampilan Sekolah.
+  - **7 Preset Tema Warna Sekolah Terverifikasi**:
+    1. *Biru Navy Klasik* (`navy_classic`): Institusi formal & wibawa (`#1E3A8A`, aksen `#0284C7`, tombol `#1D4ED8`).
+    2. *Hijau Zamrud Edukasi* (`emerald_nature`): Bernuansa alam, islami & ramah lingkungan (`#065F46`, aksen `#10B981`, tombol `#059669`).
+    3. *Merah Marun Prestisius* (`maroon_prestige`): Berani, bergengsi & berkarakter kuat (`#881337`, aksen `#F43F5E`, tombol `#BE123C`).
+    4. *Ungu Dinamis Kreatif* (`royal_purple`): Modern, seni, teknologi & kreativitas vokasi (`#581C87`, aksen `#A855F7`, tombol `#7E22CE`).
+    5. *Abu Gelap Elegan* (`slate_dark`): Minimalis modern berorientasi industri (`#0F172A`, aksen `#38BDF8`, tombol `#1E293B`).
+    6. *Emas Oranye Enerjik* (`amber_sunset`): Hangat, inovatif & kewirausahaan (`#78350F`, aksen `#F59E0B`, tombol `#D97706`).
+    7. *Teal Bahari Futuristik* (`teal_modern`): Profesional, teknologi & sains kelautan/vokasi (`#134E4A`, aksen `#14B8A6`, tombol `#0D9488`).
+  - **Custom Color Pickers**: Dukungan pemilihan kode Hex bebas untuk Warna Tema Utama (`warna_tema`), Warna Aksen (`warna_aksen`), Warna Teks Konten (`warna_teks`), Warna Kartu (`warna_kartu`), Warna Tombol (`warna_tombol`), Warna Teks Tombol (`warna_tombol_teks`), dan Warna Header Bar (`warna_header`).
+  - **Pratinjau Interaktif Real-Time (Live Preview)**: Komponen simulasi interaktif di panel admin yang langsung merespons setiap perubahan warna kartu, teks, tombol, badge aksen, dan header.
+  - **Penyimpanan Permanen ke Database**: Seluruh konfigurasi warna tersimpan di database tenant tabel `pengaturan_umum` dan diakses terpadu oleh controller publik.
+- **Refactoring CSS Variabel Dinamis & Komponen Publik (`layouts/public.blade.php` & `home.blade.php`)**:
+  - Penambahan CSS variables `:root` (`--theme-color`, `--theme-accent`, `--theme-text`, `--theme-card-bg`, `--theme-btn-bg`, `--theme-btn-text`, `--theme-header-bg`).
+  - Penggantian warna statis/hardcoded Tailwind dengan kelas utilitas tema (`theme-btn-primary`, `theme-card`, `theme-header`).
+
 ## [Unreleased] - 2026-09-28
 
 ### Changed
