@@ -14,7 +14,7 @@ use Illuminate\View\View;
 class PengaturanController extends Controller
 {
     /**
-     * Tampilkan formulir pengaturan identitas, kontak, medsos, dan tema sekolah.
+     * Tampilkan formulir pengaturan identitas pokok dan statistik sekolah.
      */
     public function index(): View
     {
@@ -31,7 +31,7 @@ class PengaturanController extends Controller
     }
 
     /**
-     * Simpan perubahan pengaturan umum sekolah.
+     * Simpan perubahan pengaturan identitas pokok dan statistik sekolah.
      */
     public function update(Request $request): RedirectResponse
     {
@@ -48,26 +48,7 @@ class PengaturanController extends Controller
             'akreditasi' => ['nullable', 'string', 'max:50'],
             'tahun_berdiri' => ['nullable', 'string', 'max:10'],
             'deskripsi' => ['nullable', 'string'],
-            // Kontak & Layanan
-            'alamat' => ['nullable', 'string'],
-            'no_telepon' => ['nullable', 'string', 'max:50'],
-            'email_sekolah' => ['nullable', 'email', 'max:150'],
-            'whatsapp' => ['nullable', 'string', 'max:50'],
-            'jam_layanan' => ['nullable', 'string', 'max:150'],
-            'peta_embed' => ['nullable', 'string'],
-            // Kepala Sekolah
-            'nama_kepsek' => ['nullable', 'string', 'max:150'],
-            'nip_kepsek' => ['nullable', 'string', 'max:100'],
-            'foto_kepsek' => ['nullable', 'string', 'max:500'],
-            'foto_kepsek_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
-            'sambutan_kepsek' => ['nullable', 'string'],
-            // Media Sosial Resmi
-            'instagram' => ['nullable', 'string', 'max:255'],
-            'tiktok' => ['nullable', 'string', 'max:255'],
-            'youtube' => ['nullable', 'string', 'max:255'],
-            'facebook' => ['nullable', 'string', 'max:255'],
-            'twitter' => ['nullable', 'string', 'max:255'],
-            // Statistik
+            // Statistik Sekolah
             'stat_guru' => ['nullable', 'string', 'max:10'],
             'stat_guru_label' => ['nullable', 'string', 'max:100'],
             'stat_siswa' => ['nullable', 'string', 'max:10'],
@@ -81,9 +62,6 @@ class PengaturanController extends Controller
             'stat_mitra' => ['nullable', 'string', 'max:10'],
             'stat_mitra_label' => ['nullable', 'string', 'max:100'],
             'stat_sumber_label' => ['nullable', 'string', 'max:200'],
-            // Tampilan & Tema
-            'warna_tema' => ['nullable', 'string', 'max:30'],
-            'warna_aksen' => ['nullable', 'string', 'max:30'],
         ]);
 
         if ($request->hasFile('logo_file')) {
@@ -91,16 +69,17 @@ class PengaturanController extends Controller
         }
         unset($validated['logo_file']);
 
-        if ($request->hasFile('foto_kepsek_file')) {
-            $validated['foto_kepsek'] = ImageService::uploadAndConvertToWebp($request->file('foto_kepsek_file'), 'kepsek', 600);
-        }
-        unset($validated['foto_kepsek_file']);
+        // Sinkronisasi nama sekolah dan jenjang ke entitas tenant pusat
+        $tenant->update([
+            'nama_sekolah' => $validated['nama_sekolah'],
+            'jenjang' => $validated['jenjang'],
+        ]);
 
         foreach ($validated as $kunci => $nilai) {
             PengaturanUmum::simpan($kunci, $nilai);
         }
 
         return redirect()->route('tenant.admin.pengaturan.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Pengaturan informasi sekolah dan logo berhasil diperbarui.');
+            ->with('sukses', 'Identitas pokok sekolah dan statistik beranda berhasil disimpan.');
     }
 }

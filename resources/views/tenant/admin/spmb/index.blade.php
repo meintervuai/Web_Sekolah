@@ -7,15 +7,9 @@
 <div class="max-w-4xl space-y-6">
 
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-                <h3 class="text-base font-bold text-slate-900">Petunjuk Teknis & Informasi SPMB</h3>
-                <p class="text-xs text-slate-500 mt-0.5">Kelola jalur pendaftaran, persyaratan umum, tautan portal dinas, dan pengumuman penerimaan murid baru.</p>
-            </div>
-            <a href="{{ url($tenant->slug . '/spmb') }}" target="_blank" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition inline-flex items-center gap-1.5 self-start sm:self-auto">
-                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                Lihat di Publik
-            </a>
+        <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+            <h3 class="text-base font-bold text-slate-900">Petunjuk Teknis & Informasi SPMB</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola jalur pendaftaran, persyaratan umum, tautan portal dinas, dan pengumuman penerimaan murid baru.</p>
         </div>
 
         <form action="{{ route('tenant.admin.spmb.update', ['tenant' => $tenant->slug]) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-6">

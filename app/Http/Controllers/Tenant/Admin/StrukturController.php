@@ -13,16 +13,16 @@ use Illuminate\View\View;
 class StrukturController extends Controller
 {
     /**
-     * Tampilkan halaman pengelolaan struktur organisasi sekolah (Bagan Diagram & Jajaran Pejabat).
+     * Ambil daftar diagram struktur (dengan data default jika belum dikonfigurasi).
      */
-    public function index(): View
+    private function getDiagramsList(): array
     {
-        $tenant = app('tenant');
-        $struktur = StrukturOrganisasi::orderBy('urutan')->get();
-
-        // Ambil diagram bagan dari pengaturan umum
         $diagramsRaw = PengaturanUmum::ambil('struktur_diagrams', null);
-        $diagrams = $diagramsRaw ? json_decode($diagramsRaw, true) : [
+        if ($diagramsRaw !== null) {
+            return json_decode($diagramsRaw, true) ?: [];
+        }
+
+        return [
             [
                 'judul' => 'Bagan Struktur Utama Manajemen Sekolah',
                 'deskripsi' => 'Alur garis komando dan koordinasi Kepala Sekolah, Komite, Tim Penjaminan Mutu, Wakil Kepala Sekolah, dan Koordinator Tata Usaha.',
@@ -39,6 +39,16 @@ class StrukturController extends Controller
                 'gambar' => 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1600&auto=format&fit=crop',
             ],
         ];
+    }
+
+    /**
+     * Tampilkan halaman pengelolaan struktur organisasi sekolah (Bagan Diagram & Jajaran Pejabat).
+     */
+    public function index(): View
+    {
+        $tenant = app('tenant');
+        $struktur = StrukturOrganisasi::orderBy('urutan')->get();
+        $diagrams = $this->getDiagramsList();
 
         return view('tenant.admin.struktur.index', compact('tenant', 'struktur', 'diagrams'));
     }
@@ -67,6 +77,33 @@ class StrukturController extends Controller
 
         return redirect()->route('tenant.admin.struktur.index', ['tenant' => $tenant->slug])
             ->with('sukses', 'Anggota struktur organisasi berhasil ditambahkan.');
+    }
+
+    /**
+     * Perbarui data anggota struktural.
+     */
+    public function updateAnggota(Request $request, int $id): RedirectResponse
+    {
+        $tenant = app('tenant');
+        $item = StrukturOrganisasi::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama_lengkap' => ['required', 'string', 'max:150'],
+            'jabatan' => ['required', 'string', 'max:150'],
+            'foto' => ['nullable', 'string', 'max:500'],
+            'foto_file' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'urutan' => ['required', 'integer'],
+        ]);
+
+        if ($request->hasFile('foto_file')) {
+            $validated['foto'] = ImageService::uploadAndConvertToWebp($request->file('foto_file'), 'struktur', 600);
+        }
+        unset($validated['foto_file']);
+
+        $item->update($validated);
+
+        return redirect()->route('tenant.admin.struktur.index', ['tenant' => $tenant->slug])
+            ->with('sukses', 'Data anggota struktur organisasi berhasil diperbarui.');
     }
 
     /**
@@ -106,8 +143,7 @@ class StrukturController extends Controller
             return back()->with('error', 'Silakan unggah berkas gambar bagan atau masukkan tautan URL gambar.');
         }
 
-        $diagramsRaw = PengaturanUmum::ambil('struktur_diagrams', null);
-        $diagrams = $diagramsRaw ? json_decode($diagramsRaw, true) : [];
+        $diagrams = $this->getDiagramsList();
 
         $diagrams[] = [
             'judul' => $validated['judul'],
@@ -115,7 +151,7 @@ class StrukturController extends Controller
             'gambar' => $validated['gambar'],
         ];
 
-        PengaturanUmum::simpan('struktur_diagrams', json_encode($diagrams));
+        PengaturanUmum::simpan('struktur_diagrams', json_encode(array_values($diagrams)));
 
         return redirect()->route('tenant.admin.struktur.index', ['tenant' => $tenant->slug])
             ->with('sukses', 'Bagan diagram struktur organisasi berhasil ditambahkan.');
@@ -128,12 +164,11 @@ class StrukturController extends Controller
     {
         $tenant = app('tenant');
 
-        $diagramsRaw = PengaturanUmum::ambil('struktur_diagrams', null);
-        $diagrams = $diagramsRaw ? json_decode($diagramsRaw, true) : [];
+        $diagrams = $this->getDiagramsList();
 
         if (isset($diagrams[$index])) {
             array_splice($diagrams, $index, 1);
-            PengaturanUmum::simpan('struktur_diagrams', json_encode($diagrams));
+            PengaturanUmum::simpan('struktur_diagrams', json_encode(array_values($diagrams)));
         }
 
         return redirect()->route('tenant.admin.struktur.index', ['tenant' => $tenant->slug])

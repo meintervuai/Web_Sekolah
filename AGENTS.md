@@ -1,4 +1,4 @@
-# Laravel Workspace Rules — Antigravity
+# Laravel Workspace Rules: Antigravity
 
 Aturan ini berlaku khusus untuk workspace Laravel ini. Ikuti aturan Laravel Boost, konvensi project existing, dan aturan di `.ai/rules` jika folder tersebut tersedia.
 
@@ -24,9 +24,12 @@ Jangan menghasilkan jawaban yang hanya terdengar selesai. Setiap klaim harus did
 3. Periksa versi PHP dan package dengan `composer show --direct` serta `package.json`.
 4. Periksa struktur folder, route, migration, model, controller, request, policy, view, component, seeder, factory, test, dan asset yang relevan.
 5. Jalankan atau gunakan `php artisan route:list` untuk route yang terdampak.
-6. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
-7. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
-8. Baca browser logs untuk error UI jika tool tersedia.
+6. **Pengecekan fungsi via MCP Postman**: Lakukan pengecekan fungsi, route endpoint, dan API flow dengan **MCP Postman** (`postman-mcp-server`) sebelum dan sesudah perubahan logic.
+7. **Riset UI/UX via MCP Mobbin**: Jika diminta membuat atau memperbaiki UI/UX, wajib membuka **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) untuk meriset referensi desain aplikasi nyata berstandar industri.
+8. **Audit Anti-Slop via MCP Chrome DevTools**: Wajib memeriksa tampilan dan console log halaman aktif menggunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`) untuk memastikan antarmuka berfungsi mulus dan bebas dari tampilan AI slop (tidak boleh terlihat buatan AI).
+9. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
+10. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
+11. Baca browser logs untuk error UI jika tool tersedia.
 
 Jika requirement belum jelas, tanyakan hanya hal yang benar-benar mengubah data, schema, security, biaya, atau arsitektur. Untuk hal kecil, gunakan asumsi minimal yang aman dan tuliskan asumsi tersebut.
 
@@ -116,12 +119,13 @@ Jangan menyebut tenant sudah dibuat jika hanya record registry yang dibuat tetap
 Jangan menebak penyebab error. Untuk setiap error:
 
 1. Reproduksi error dengan route atau aksi yang disebut user.
-2. Catat pesan error dan stack trace yang relevan.
-3. Periksa browser console/log.
-4. Periksa route, controller, model, migration, data aktual, view, dan asset yang terkait.
-5. Perbaiki akar masalah, bukan hanya gejala.
-6. Tambahkan atau perbarui regression test.
-7. Uji ulang route dan behavior setelah perbaikan.
+2. Lakukan pengecekan fungsi dan reproduksi request/response menggunakan **MCP Postman** (`postman-mcp-server`).
+3. Catat pesan error dan stack trace yang relevan.
+4. Periksa browser console/log dan network traffic menggunakan **MCP Chrome DevTools** (`list_console_messages`, `list_network_requests`).
+5. Periksa route, controller, model, migration, data aktual, view, dan asset yang terkait.
+6. Perbaiki akar masalah, bukan hanya gejala.
+7. Tambahkan atau perbarui regression test (Pest & Postman collection jika relevan).
+8. Uji ulang route dan behavior setelah perbaikan menggunakan Postman serta verifikasi visual di browser melalui Chrome DevTools.
 
 Mengganti nama variabel di Blade tanpa memeriksa schema dan data aktual bukan perbaikan yang cukup.
 
@@ -163,12 +167,23 @@ Jangan membuat placeholder atau mock data lalu menyebut fitur production-ready.
 - Reuse component existing sebelum membuat component baru.
 - Setiap halaman interaktif harus mempertimbangkan loading, empty, error, success, disabled, dan permission state.
 
-Jika melakukan riset referensi UI/UX:
+### Riset referensi UI/UX dengan MCP Mobbin
+Setiap kali diminta membuat UI/UX baru atau memperbaiki UI/UX existing:
+1. **Wajib membuka MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) untuk meriset referensi desain dari aplikasi/produk digital dunia nyata kelas dunia (dashboard CMS, form pendaftaran, navigasi institusi, card bento, tabel data, filter, mobile navigation drawer).
+2. Analisis minimal tiga referensi relevan dari Mobbin.
+3. Jangan hanya menganalisis homepage; jelajahi halaman internal, detail, galeri, form, search, pagination, footer, modal dialog, dan error state.
+4. Simpan screen/flow Mobbin yang dirujuk, temuan UX, dan keputusan penerapannya pada project.
+5. Dilarang mendesain dari asumsi kosong, template generik, atau pola klise buatan AI.
+6. Jangan menyalin teks, gambar, kode, logo, atau identitas visual berhak cipta.
 
-1. Analisis minimal tiga referensi relevan.
-2. Jangan hanya menganalisis homepage; jelajahi halaman internal, detail, galeri, form, search, pagination, footer, dan error page jika tersedia.
-3. Simpan URL, screenshot, temuan, dan keputusan.
-4. Jangan menyalin teks, gambar, kode, logo, atau identitas visual.
+### Verifikasi visual dengan MCP Chrome DevTools
+Setiap kali UI/UX dibuat atau diperbaiki:
+1. **Wajib membuka dan memeriksa halaman aktif dengan MCP Chrome DevTools** (`chrome-devtools-mcp`):
+   - Ambil tangkapan layar (`take_screenshot`) untuk memvalidasi hasil render aktual.
+   - Uji responsivitas pada resolusi mobile (375px - 414px), tablet (768px), dan desktop (1280px+) menggunakan `resize_page` atau `emulate`.
+   - Pastikan tidak ada horizontal overflow atau elemen yang terpotong.
+   - Periksa computed CSS (`get_css_styles`) dan evaluasi script interaktif (`evaluate_script`).
+   - Pastikan konsol browser bersih dari error (`list_console_messages`).
 
 ## 12. Animasi dan interaction
 
@@ -196,19 +211,31 @@ Prioritaskan CSS native, Alpine.js yang sudah dipakai project, atau library ring
 - Buat test dengan `php artisan make:test --pest` jika tersedia.
 - Utamakan feature test untuk behavior HTTP dan authorization.
 - Jalankan test tersempit yang mencakup perubahan.
-- Jika mengubah PHP, jalankan `vendor/bin/pint --dirty --format agent` sebelum final.
+- **Pengecekan fungsi via MCP Postman**: Lakukan pengecekan fungsi, endpoint API, dan request flow menggunakan **MCP Postman** (`postman-mcp-server`) untuk memvalidasi status HTTP, response payload, headers, cookies, dan validasi form secara presisi.
+- Jika mengubah PHP, jalankan `vendor/bin/pint --dirty --format agent` sebelum final (atau format berkas terkait).
 - Jangan menghapus atau melewati test yang gagal untuk membuat hasil terlihat hijau.
 - Jika full suite belum dijalankan, sebutkan secara eksplisit.
 
-## 15. Anti-slop
+## 15. Anti-slop dan pencegahan tampilan buatan AI
 
-Jika anti-slop tersedia atau diminta:
+Antarmuka dan konten **TIDAK BOLEH TERLIHAT SEPERTI BUATAN AI (TIDAK BOLEH AI SLOP)**. Hasil pekerjaan harus terasa seperti produk digital nyata yang dirancang profesional untuk sekolah/institusi, bukan template AI generik.
 
-1. Baca instruksi dan README resminya.
-2. Instal atau jalankan sesuai project.
-3. Untuk UI, copy, mobile, people, dan code comments, aktifkan rule/skill antislop yang relevan tanpa menghentikan pekerjaan untuk pertanyaan yang tidak perlu.
-4. Periksa placeholder, dead code, duplicate code, unused route/model/table, dummy data tidak bertanda, dan UI generik.
-5. Catat hasil dan keterbatasannya.
+### Kriteria wajib bebas AI Slop:
+1. **Dilarang Visual Klise AI**:
+   - Dilarang membuat kartu melayang dengan gradien neon ungu-biru tipikal template AI.
+   - Dilarang membuat bayangan melayang (drop shadow) berlebihan yang tidak natural dan border tanpa hierarki informasi.
+   - Dilarang membuat tata letak hambar atau "flat bento" tanpa fungsi nyata.
+   - Gunakan palet warna institusional yang harmonis (navy, slate, emerald terukur), kontras WCAG AA, dan tipografi modern (Plus Jakarta Sans / Inter).
+2. **Dilarang Copywriting Klise AI**:
+   - Dilarang menggunakan kata-kata klise khas AI (misal: "delve", "leverage", "seamless", "testament", "tapestry", "embark", "beacon", "cutting-edge").
+   - Dilarang menggunakan tanda hubung em-dash `—` (gunakan strip biasa `-` atau pemisah pipa `|`).
+   - Gunakan bahasa Indonesia yang natural, lugas, resmi, dan relevan dengan dunia pendidikan kejuruan/sekolah.
+3. **Dilarang Placeholder Dummy Tanpa Konteks**:
+   - Dilarang menyisakan teks `Lorem Ipsum`, tautan kosong (`href="#"`), dead code, atau placeholder yang tidak diisi data nyata sekolah.
+4. **Wajib Audit Anti-Slop dengan MCP Chrome DevTools**:
+   - Buka halaman dan periksa tampilan aktualnya secara berkala dengan **MCP Chrome DevTools** (`take_screenshot`).
+   - Evaluasi visual: apakah antarmuka masih terkesan buatan AI? Jika ya, rombak styling agar terlihat seperti produk profesional hasil karya desainer manusia top-tier.
+   - Jalankan audit aksesibilitas/kontras dan pastikan konsol browser bebas dari warning/error (`list_console_messages`).
 
 ## 16. Definition of Done
 
@@ -219,14 +246,16 @@ Fitur hanya boleh disebut selesai jika:
 - seed/data tersedia bila diperlukan;
 - route dan middleware benar;
 - validation dan authorization benar;
-- UI mobile dan desktop diverifikasi;
+- pengecekan fungsi telah diverifikasi dengan **MCP Postman** dan test Pest berhasil;
+- riset referensi UI/UX telah dilakukan via **MCP Mobbin** (untuk pekerjaan UI/UX);
+- antarmuka telah diverifikasi bebas AI slop (tidak boleh terlihat buatan AI) dan diverifikasi tampilannya via **MCP Chrome DevTools** (`take_screenshot`, screenshot bukti visual tersedia, console bersih);
+- UI mobile dan desktop diverifikasi tanpa horizontal overflow;
 - loading/empty/error state relevan tersedia;
-- test berhasil;
 - Pint/linter berhasil bila relevan;
 - browser/log tidak menunjukkan error terkait;
 - tidak ada route, menu, tabel, model, atau file lama yang tertinggal tanpa alasan;
 - dokumentasi dan changelog diperbarui;
-- bukti verifikasi tersedia.
+- bukti verifikasi tersedia (request/response Postman, referensi Mobbin, tangkapan layar DevTools).
 
 Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 
@@ -238,11 +267,14 @@ Jika belum terbukti, gunakan status `Partial`, `Not verified`, atau `Blocked`.
 4. Database dan migration
 5. Seeder dan data aktual
 6. Route dan middleware
-7. UI/UX dan animasi
-8. Authorization/tenant isolation
-9. Test, Pint, dan hasilnya
-10. URL yang diverifikasi
-11. Dokumentasi/changelog yang diperbarui
-12. Risiko dan pekerjaan yang belum selesai
+7. Pengecekan fungsi via MCP Postman
+8. Riset referensi UI/UX via MCP Mobbin (jika terkait UI)
+9. Audit Anti-Slop & verifikasi visual via MCP Chrome DevTools
+10. UI/UX, tata letak mobile, dan animasi
+11. Authorization/tenant isolation
+12. Test, Pint, dan hasilnya
+13. URL yang diverifikasi
+14. Dokumentasi/changelog yang diperbarui
+15. Risiko dan pekerjaan yang belum selesai
 
-Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, atau route yang belum diverifikasi.
+Jangan mengatakan “semua sudah selesai” jika ada placeholder, asumsi yang belum dikonfirmasi, test yang belum dijalankan, data yang belum dibuat, fungsi belum dicek dengan Postman, referensi Mobbin belum diriset, atau visual belum diverifikasi bebas AI slop dengan Chrome DevTools.

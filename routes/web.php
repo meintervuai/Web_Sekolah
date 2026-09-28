@@ -17,6 +17,7 @@ use App\Http\Controllers\Tenant\Admin\PrestasiController;
 use App\Http\Controllers\Tenant\Admin\ProfilController;
 use App\Http\Controllers\Tenant\Admin\SliderController;
 use App\Http\Controllers\Tenant\Admin\SpmbController;
+use App\Http\Controllers\Tenant\Admin\StrukturController;
 use App\Http\Controllers\Tenant\Public\HomeController;
 use App\Http\Controllers\Tenant\Public\PageController;
 use App\Http\Middleware\TenantMiddleware;
@@ -192,11 +193,21 @@ Route::prefix('{tenant}')
                 Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
                 Route::put('/pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
-                // 2. Navigasi Profil: Visi Misi, Sejarah, Sambutan Kepsek, & Bagan Struktur Organisasi
+                // 2. Navigasi Profil: Visi Misi, Sejarah, & Sambutan Kepsek
                 Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
                 Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
-                Route::post('/profil/struktur', [ProfilController::class, 'storeStruktur'])->name('profil.struktur.store');
-                Route::delete('/profil/struktur/{id}', [ProfilController::class, 'destroyStruktur'])->name('profil.struktur.destroy');
+
+                // Navigasi Struktur Organisasi: Bagan Diagram & Pejabat Struktural
+                Route::get('/struktur', [StrukturController::class, 'index'])->name('struktur.index');
+                Route::post('/struktur/anggota', [StrukturController::class, 'storeAnggota'])->name('struktur.anggota.store');
+                Route::put('/struktur/anggota/{id}', [StrukturController::class, 'updateAnggota'])->name('struktur.anggota.update');
+                Route::delete('/struktur/anggota/{id}', [StrukturController::class, 'destroyAnggota'])->name('struktur.anggota.destroy');
+                Route::post('/struktur/diagram', [StrukturController::class, 'storeDiagram'])->name('struktur.diagram.store');
+                Route::delete('/struktur/diagram/{index}', [StrukturController::class, 'destroyDiagram'])->name('struktur.diagram.destroy');
+
+                // Alias kompatibilitas rute profil struktur
+                Route::post('/profil/struktur', [StrukturController::class, 'storeAnggota'])->name('profil.struktur.store');
+                Route::delete('/profil/struktur/{id}', [StrukturController::class, 'destroyAnggota'])->name('profil.struktur.destroy');
 
                 // 3. Navigasi Program Keahlian: Jurusan & Kompetensi Keahlian
                 Route::resource('jurusan', JurusanController::class)->parameters(['jurusan' => 'jurusan'])->except(['show']);

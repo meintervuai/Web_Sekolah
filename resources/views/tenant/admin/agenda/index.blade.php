@@ -12,11 +12,7 @@
                 <h3 class="text-base font-bold text-slate-900">Jadwal Kalender & Agenda Sekolah</h3>
                 <p class="text-xs text-slate-500 mt-0.5">Kelola agenda kegiatan akademik, lomba, pelatihan industri, dan rapat kedinasan.</p>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="{{ url($tenant->slug . '/agenda') }}" target="_blank" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-2xs transition inline-flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    Lihat di Publik
-                </a>
+            <div>
                 <a href="{{ route('tenant.admin.agenda.create', ['tenant' => $tenant->slug]) }}" class="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs shadow-md transition inline-flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah Agenda
