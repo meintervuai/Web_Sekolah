@@ -151,11 +151,26 @@
                 </div>
             </form>
 
-            <!-- Tabel Daftar Pejabat Struktural -->
-            <div class="space-y-4">
-                <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Daftar Pejabat Struktural Aktif</h4>
+            <!-- Tabel & Grid Daftar Pejabat Struktural -->
+            <div class="space-y-4" x-data="{ viewModePejabat: 'list' }">
+                <div class="flex items-center justify-between gap-3">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Daftar Pejabat Struktural Aktif</h4>
 
-                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <!-- View Mode Toggle -->
+                    <div class="inline-flex items-center p-1 bg-slate-200/80 rounded-xl">
+                        <button type="button" @click="viewModePejabat = 'list'" :class="viewModePejabat === 'list' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                            List
+                        </button>
+                        <button type="button" @click="viewModePejabat = 'grid'" :class="viewModePejabat === 'grid' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'" class="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            Grid
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mode List (Tabel) -->
+                <div x-show="viewModePejabat === 'list'" class="overflow-x-auto rounded-xl border border-slate-200">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-100/75 text-slate-600 uppercase font-bold text-[10px] border-b border-slate-200">
                             <tr>
@@ -217,6 +232,58 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mode Grid (Kartu) -->
+                <div x-show="viewModePejabat === 'grid'" x-cloak>
+                    @if($struktur->isEmpty())
+                        <div class="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 text-xs text-slate-400">
+                            Belum ada pejabat struktural yang ditambahkan.
+                        </div>
+                    @else
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            @foreach($struktur as $item)
+                                <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-col justify-between items-center text-center shadow-2xs hover:border-blue-300 transition group">
+                                    <div class="flex flex-col items-center space-y-2.5 w-full">
+                                        <div class="relative">
+                                            @if($item->foto)
+                                                <img src="{{ $item->foto }}" alt="{{ $item->nama_lengkap }}" class="w-16 h-16 rounded-full object-cover border-2 border-slate-100 shadow-xs">
+                                            @else
+                                                <div class="w-16 h-16 rounded-full bg-slate-100 border-2 border-slate-200 flex items-center justify-center text-slate-400 font-bold text-lg">
+                                                    {{ substr($item->nama_lengkap, 0, 1) }}
+                                                </div>
+                                            @endif
+                                            <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-700 text-white font-bold text-[10px] flex items-center justify-center">
+                                                {{ $item->urutan }}
+                                            </span>
+                                        </div>
+                                        <div class="w-full">
+                                            <h5 class="text-xs font-bold text-slate-900 line-clamp-1">{{ $item->nama_lengkap }}</h5>
+                                            <span class="inline-block mt-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-medium line-clamp-1 border border-slate-200">
+                                                {{ $item->jabatan }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="pt-3 mt-3 w-full border-t border-slate-100 flex items-center justify-center gap-3">
+                                        <button 
+                                            type="button"
+                                            @click="editItem = { id: {{ $item->id }}, nama_lengkap: '{{ addslashes($item->nama_lengkap) }}', jabatan: '{{ addslashes($item->jabatan) }}', urutan: {{ $item->urutan }}, foto: '{{ addslashes($item->foto ?? '') }}' }; editModalOpen = true;"
+                                            class="text-xs text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+                                        >
+                                            Ubah
+                                        </button>
+                                        <form action="{{ route('tenant.admin.struktur.anggota.destroy', ['tenant' => $tenant->slug, 'id' => $item->id]) }}" method="POST" onsubmit="return confirm('Hapus pejabat struktural ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-xs text-rose-600 hover:text-rose-800 font-semibold cursor-pointer">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -101,19 +101,34 @@
     </div>
 
     <!-- Inbox Pesan Masuk -->
-    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
-        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden" x-data="{ viewMode: 'list' }">
+        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h3 class="text-base font-bold text-slate-900">Inbox Pesan Pengunjung Website</h3>
                 <p class="text-xs text-slate-500 mt-0.5">Pesan, aspirasi, atau pertanyaan yang dikirim masyarakat melalui form formulir kontak publik.</p>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">Total: {{ $totalPesan }}</span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">Belum Dibaca: {{ $pesanBelumDibaca }}</span>
+            <div class="flex items-center gap-3">
+                <!-- View Mode Toggle -->
+                <div class="inline-flex items-center p-1 bg-slate-200/80 rounded-xl">
+                    <button type="button" @click="viewMode = 'list'" :class="viewMode === 'list' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        List
+                    </button>
+                    <button type="button" @click="viewMode = 'grid'" :class="viewMode === 'grid' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        Grid
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">Total: {{ $totalPesan }}</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700">Belum: {{ $pesanBelumDibaca }}</span>
+                </div>
             </div>
         </div>
 
-        <div class="p-6 overflow-x-auto">
+        <!-- Mode List (Tabel) -->
+        <div x-show="viewMode === 'list'" class="p-6 overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead class="bg-slate-100/75 text-slate-600 uppercase font-bold text-[10px]">
                     <tr>
@@ -176,6 +191,66 @@
             <div class="mt-4">
                 {{ $pesanList->links() }}
             </div>
+        </div>
+
+        <!-- Mode Grid (Kartu Pesan) -->
+        <div x-show="viewMode === 'grid'" x-cloak class="p-6">
+            @if($pesanList->isEmpty())
+                <div class="py-12 text-center text-slate-400 text-xs">
+                    Belum ada pesan masuk dari pengunjung.
+                </div>
+            @else
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    @foreach($pesanList as $pesan)
+                        <div class="bg-white rounded-xl border {{ !$pesan->is_dibaca ? 'border-amber-200 ring-1 ring-amber-100' : 'border-slate-200' }} p-4.5 flex flex-col justify-between hover:border-blue-300 transition shadow-2xs">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    @if(!$pesan->is_dibaca)
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Pesan Baru</span>
+                                    @else
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-500">Dibaca</span>
+                                    @endif
+                                    <span class="text-[10px] text-slate-400">{{ $pesan->created_at ? $pesan->created_at->diffForHumans() : '-' }}</span>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm line-clamp-1">{{ $pesan->subjek }}</h4>
+                                    <p class="text-xs text-slate-600 mt-1 line-clamp-3 leading-relaxed">{{ $pesan->pesan }}</p>
+                                </div>
+
+                                <div class="pt-2.5 border-t border-slate-100 text-[11px] space-y-0.5">
+                                    <div class="font-bold text-slate-800">{{ $pesan->nama_pengirim }}</div>
+                                    <div class="text-slate-400 truncate">{{ $pesan->email_pengirim }}</div>
+                                    @if($pesan->no_telepon)
+                                        <div class="text-blue-600 font-medium">WA: {{ $pesan->no_telepon }}</div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                                <form action="{{ route('tenant.admin.kontak.pesan.toggle', ['tenant' => $tenant->slug, 'id' => $pesan->id]) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="text-xs text-slate-600 hover:text-blue-700 font-semibold cursor-pointer">
+                                        {{ $pesan->is_dibaca ? 'Tandai Belum Dibaca' : 'Tandai Dibaca' }}
+                                    </button>
+                                </form>
+                                <form action="{{ route('tenant.admin.kontak.pesan.destroy', ['tenant' => $tenant->slug, 'id' => $pesan->id]) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pesan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-xs text-rose-600 hover:text-rose-700 font-semibold cursor-pointer">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="mt-4">
+                    {{ $pesanList->links() }}
+                </div>
+            @endif
         </div>
     </div>
 

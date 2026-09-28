@@ -15,13 +15,31 @@
         body {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
+        /* Sleek custom scrollbar for dark admin sidebar */
+        .admin-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .admin-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .admin-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        .admin-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .admin-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #334155 #0f172a;
+        }
     </style>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<<body class="h-full overflow-hidden text-slate-800" x-data="{ sidebarOpen: false }">
-    <div class="h-screen w-full flex overflow-hidden">
+<body class="min-h-full bg-slate-50 text-slate-800" x-data="{ sidebarOpen: false }">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         
         <!-- Mobile Sidebar Backdrop -->
         <div 
@@ -38,23 +56,32 @@
             aria-hidden="true"
         ></div>
 
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation (Sticky on desktop with its own independent scroll) -->
         <aside 
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-            class="fixed inset-y-0 left-0 z-50 w-72 h-full bg-slate-900 text-slate-200 flex flex-col shrink-0 transition-transform duration-200 ease-in-out lg:static lg:inset-auto lg:z-auto"
+            class="fixed inset-y-0 left-0 z-50 w-72 h-screen bg-slate-900 text-slate-200 flex flex-col shrink-0 transition-transform duration-200 ease-in-out lg:sticky lg:top-0 border-r border-slate-800"
         >
+            @php
+                $adminLogo = \App\Models\Tenant\PengaturanUmum::ambil('logo', app('tenant')->data['logo'] ?? '');
+            @endphp
             <!-- Logo Header -->
-            <div class="h-20 shrink-0 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-950/60">
-                <a href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:bg-blue-600 transition-colors shrink-0">
-                        <svg class="w-6 h-6 fill-none stroke-current" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
-                        </svg>
-                    </div>
-                    <div class="overflow-hidden">
-                        <div class="font-bold text-white text-sm leading-tight truncate">{{ app('tenant')->nama_sekolah }}</div>
-                        <div class="text-[11px] text-blue-400 font-medium">Panel Admin CMS</div>
+            <div class="h-20 shrink-0 flex items-center justify-between px-5 border-b border-slate-800/80 bg-slate-950/80">
+                <a href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
+                    @if(!empty($adminLogo))
+                        <div class="w-10 h-10 rounded-xl bg-white p-1 border border-slate-700/60 shadow-sm flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <img src="{{ $adminLogo }}" alt="Logo {{ app('tenant')->nama_sekolah }}" class="w-full h-full object-contain">
+                        </div>
+                    @else
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-700 to-indigo-700 flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                            <svg class="w-5 h-5 fill-none stroke-current" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="overflow-hidden min-w-0">
+                        <div class="font-bold text-white text-xs leading-tight truncate group-hover:text-blue-300 transition-colors">{{ app('tenant')->nama_sekolah }}</div>
+                        <div class="text-[10px] text-blue-400 font-semibold tracking-wide mt-0.5">Panel Admin CMS</div>
                     </div>
                 </a>
                 <button 
@@ -69,8 +96,8 @@
                 </button>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto overscroll-contain">
+            <!-- Navigation Links with ID for Persistent Scroll -->
+            <nav id="adminSidebarNav" class="flex-1 px-3.5 py-4 space-y-1 overflow-y-auto overscroll-contain admin-scrollbar">
                 <!-- Dashboard -->
                 <a 
                     href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" 
@@ -308,10 +335,10 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <div class="flex-1 flex flex-col min-w-0">
             
             <!-- Top Bar Header -->
-            <header class="h-16 bg-white border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+            <header class="h-16 bg-white border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-30 shadow-2xs">
                 <div class="flex items-center gap-3">
                     <button 
                         type="button" 
@@ -341,7 +368,7 @@
             </header>
 
             <!-- Page Content Body -->
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8">
                 <!-- Flash Alerts -->
                 @if (session('sukses'))
                     <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between">
@@ -371,5 +398,20 @@
     </div>
 
     @stack('scripts')
+    <script>
+        // Mempertahankan posisi scroll sidebar saat klik navigasi (agar tidak reset ke atas)
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarNav = document.getElementById('adminSidebarNav');
+            if (sidebarNav) {
+                const savedScroll = sessionStorage.getItem('admin_sidebar_scroll');
+                if (savedScroll !== null) {
+                    sidebarNav.scrollTop = parseInt(savedScroll, 10);
+                }
+                sidebarNav.addEventListener('scroll', function () {
+                    sessionStorage.setItem('admin_sidebar_scroll', sidebarNav.scrollTop);
+                }, { passive: true });
+            }
+        });
+    </script>
 </body>
 </html>

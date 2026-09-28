@@ -159,9 +159,15 @@
             
             <!-- Logo & School Brand -->
             <a href="{{ url($tenantSlug) }}" class="flex items-center space-x-3.5 group">
-                <div class="w-11 h-11 bg-gradient-to-br from-blue-900 to-indigo-700 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
-                </div>
+                @if(!empty($sekolah['logo']))
+                    <div class="w-11 h-11 rounded-xl p-1 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center overflow-hidden shrink-0 group-hover:scale-105 transition-transform duration-200">
+                        <img src="{{ $sekolah['logo'] }}" alt="{{ $sekolah['nama'] }}" class="w-full h-full object-contain">
+                    </div>
+                @else
+                    <div class="w-11 h-11 bg-gradient-to-br from-blue-900 to-indigo-700 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
+                    </div>
+                @endif
                 <div>
                     <h1 class="font-heading font-extrabold text-lg sm:text-xl text-slate-900 leading-tight group-hover:text-blue-900 transition-colors">
                         {{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}
@@ -396,9 +402,15 @@
                 <!-- Col 1: School Identity -->
                 <div class="space-y-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-lg">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
-                        </div>
+                        @if(!empty($sekolah['logo']))
+                            <div class="w-10 h-10 rounded-lg p-1 bg-white border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
+                                <img src="{{ $sekolah['logo'] }}" alt="{{ $sekolah['nama'] }}" class="w-full h-full object-contain">
+                            </div>
+                        @else
+                            <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-lg shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
+                            </div>
+                        @endif
                         <div>
                             <p class="font-heading font-bold text-lg text-white leading-tight">{{ $sekolah['nama'] ?? 'SMK Negeri 2 Bandung' }}</p>
                             <p class="text-xs text-blue-400 font-medium">Sekolah Menengah Kejuruan</p>

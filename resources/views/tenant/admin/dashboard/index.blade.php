@@ -6,32 +6,35 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Welcome Banner Card -->
-    <div class="rounded-2xl p-6 sm:p-8 bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-200 border border-blue-400/30 mb-3">
-                Status Sekolah Aktif
-            </span>
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight">
+    <!-- Welcome Banner Card (Human-crafted Institutional Solid Navy) -->
+    <div class="rounded-2xl p-6 sm:p-7 bg-slate-900 text-white border border-slate-800 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>Pusat Kendali CMS Aktif</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
                 Selamat Datang di Panel CMS {{ $tenant->nama_sekolah }}
             </h1>
-            <p class="text-sm text-blue-200 mt-1 max-w-2xl leading-relaxed">
+            <p class="text-xs sm:text-sm text-slate-400 mt-1.5 max-w-2xl leading-relaxed">
                 Kelola informasi publik sekolah, artikel berita, jurusan, fasilitas, serta data kontak secara terpusat dan langsung terhubung dengan database website publik.
             </p>
         </div>
-        <div class="shrink-0 flex flex-wrap gap-2.5">
+        <div class="shrink-0 flex flex-wrap gap-2.5 relative z-10">
             <a 
                 href="{{ route('tenant.admin.pengaturan.index', ['tenant' => $tenant->slug]) }}" 
-                class="px-4 py-2.5 rounded-xl bg-white text-blue-900 hover:bg-blue-50 font-bold text-xs shadow-xs transition"
+                class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs transition inline-flex items-center gap-1.5"
             >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 Edit Informasi Sekolah
             </a>
             <a 
                 href="{{ url($tenant->slug) }}" 
                 target="_blank" 
-                class="px-4 py-2.5 rounded-xl bg-blue-800/80 hover:bg-blue-800 text-white border border-blue-700/80 font-bold text-xs transition"
+                class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition inline-flex items-center gap-1.5"
             >
-                Buka Website Publik &rarr;
+                <span>Buka Website Publik</span>
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
         </div>
     </div>
