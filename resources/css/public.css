@@ -1188,6 +1188,29 @@ footer.theme-bg {
     --color-white: var(--fg-zona-efektif);
 }
 
+/* =============================================================
+   BRAND IDENTITY EXEMPTIONS (WHATSAPP FLOATING BUTTON)
+   Warna resmi WhatsApp tidak boleh ditimpa oleh variabel tema.
+   ============================================================= */
+.whatsapp-floating-btn {
+    background-color: #25D366 !important;
+    color: #FFFFFF !important;
+}
+.whatsapp-floating-btn:hover {
+    background-color: #20BA5A !important;
+}
+.whatsapp-floating-btn svg {
+    fill: #FFFFFF !important;
+}
+.whatsapp-tooltip-box {
+    background-color: #FFFFFF !important;
+    color: #1E293B !important;
+    border-color: rgba(226, 232, 240, 0.9) !important;
+}
+.whatsapp-tooltip-text {
+    color: #25D366 !important;
+}
+
 
 
 
