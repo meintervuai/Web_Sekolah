@@ -4,19 +4,27 @@
 @section('meta_description', 'Profil lengkap, sejarah, visi misi, dan struktur organisasi SMK Negeri 2 Bandung.')
 
 @section('content')
-<div class="bg-gradient-to-r from-theme-color via-theme-accent to-theme-color text-white py-14 border-b border-slate-800">
-    <div class="container-custom">
-        <nav class="flex items-center space-x-2 text-xs text-blue-200 mb-3" aria-label="Breadcrumb">
-            <a href="{{ url(app('tenant')->slug) }}" class="hover:text-white">Beranda</a>
-            <span>/</span>
-            <span class="text-white font-semibold">Profil Sekolah</span>
+<!-- Header & Breadcrumb -->
+<section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="container-custom relative z-10">
+        <nav aria-label="Breadcrumb" class="mb-4">
+            <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><span class="text-slate-500">/</span></li>
+                <li class="text-sky-300 font-medium">Profil</li>
+            </ol>
         </nav>
-        <h1 class="font-heading font-extrabold text-3xl sm:text-4xl text-white">Profil SMK Negeri 2 Bandung</h1>
-        <p class="text-slate-300 text-sm mt-2 max-w-2xl leading-relaxed">
-            Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.
-        </p>
+        <div class="max-w-2xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+                Profil {{ $sekolah['nama'] }}
+            </h1>
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.
+            </p>
+        </div>
     </div>
-</div>
+</section>
 
 <div class="section-py bg-slate-50">
     <div class="container-custom">

@@ -113,6 +113,10 @@ Keputusan kontras selalu **per permukaan**: kartu hijau tua tidak mengubah foote
 
 Kelas Tailwind warna lama (`text-slate-*`, `bg-blue-*`, `text-white`, dst.) dipetakan ulang ke variabel tema di blok `THEME COLOR OVERRIDES` + `--color-*`. Mapping itu warisan; **kode baru cukup pakai `.theme-*`**.
 
+> [!NOTE]
+> **Pengecualian Identitas Merek Pihak Ketiga**:
+> Aset atau tombol pihak ketiga seperti tombol mengambang resmi WhatsApp (`#25D366` / hover `#20ba5a`), YouTube (`#FF0000`), dan Google Maps sengaja dikecualikan dari manipulasi tema warna sekolah agar identitas resmi merek pihak ketiga tetap konsisten dan langsung dikenali pengunjung.
+
 ## 6. Resep cepat
 
 | Tugas | Yang dilakukan |

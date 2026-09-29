@@ -45,8 +45,8 @@ test('admin sekolah dapat login dan langsung diarahkan ke halaman pengaturan tem
     $this->assertAuthenticatedAs(Pengguna::first(), 'tenant_admin');
 });
 
-test('login admin dengan remember me menyetel cookie dan session lifetime 24 jam', function () {
-    expect(config('session.lifetime'))->toBe(1440);
+test('login admin dengan remember me menyetel cookie dan session lifetime 1 minggu', function () {
+    expect(config('session.lifetime'))->toBe(10080);
 
     $response = $this->post('/smk-negeri-2-bandung/admin/login', [
         'email' => 'admin@smkn2bdg.test',

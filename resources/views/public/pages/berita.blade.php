@@ -5,8 +5,8 @@
 
 @section('content')
 <!-- Header & Breadcrumb -->
-<section class="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white py-12 lg:py-16 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+<section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">

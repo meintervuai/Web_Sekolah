@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Pengecualian Resmi Identitas Merek Tombol Floating WhatsApp] - 2026-09-29
+
+### Added
+- **Pengecualian Resmi Identitas Merek Pihak Ketiga (WhatsApp)**:
+  - Memastikan tombol floating WhatsApp resmi pada [`resources/views/layouts/public.blade.php`](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php) tetap mempertahankan warna hijau identitas aslinya (`#25D366` dan hover `#20ba5a`).
+  - Memperbarui dokumentasi rule [`.ai/rules/publik-tema-kontras.md`](file:///d:/databaru/Magang/website_sekolah/.ai/rules/publik-tema-kontras.md) dan [`docs/08-CSS-ARSITEKTUR-TEMA.md`](file:///d:/databaru/Magang/website_sekolah/docs/08-CSS-ARSITEKTUR-TEMA.md) dengan klausul pengecualian identitas merek pihak ketiga (seperti WhatsApp, YouTube, Google Maps) agar warna khas brand tidak tertimpa tema sekolah.
+
+## [Perbaikan Durasi Sesi Login Admin 1 Minggu & Isolasi Koneksi Session Database] - 2026-09-29
+
+### Fixed
+- **Penyebab Sesi Cepat Logout (Root Cause)**:
+  - Pada [`TenantMiddleware`](file:///d:/databaru/Magang/website_sekolah/app/Http/Middleware/TenantMiddleware.php), pemanggilan `DB::setDefaultConnection('tenant')` sebelumnya mengubah koneksi default Laravel secara global. Akibatnya, saat middleware session berjalan menyimpan/membaca data sesi ke tabel `sessions`, query terlempar mencari tabel `sessions` di database tenant (yang memang tidak memiliki tabel sessions), sehingga driver session kehilangan state dan mereset sesi pengguna setelah beberapa menit.
+- **Perbaikan Isolasi Koneksi & Durasi Sesi**:
+  - Menghapus `DB::setDefaultConnection('tenant')` dari `TenantMiddleware` sehingga koneksi default framework tetap `mysql` (central), sementara model-model tenant tetap terisolasi 100% menggunakan `protected $connection = 'tenant'`.
+  - Mengunci konfigurasi `SESSION_CONNECTION=mysql` di [`config/session.php`](file:///d:/databaru/Magang/website_sekolah/config/session.php), [`.env`](file:///d:/databaru/Magang/website_sekolah/.env), dan [`.env.example`](file:///d:/databaru/Magang/website_sekolah/.env.example).
+  - Memperpanjang batas waktu sesi `SESSION_LIFETIME` menjadi **10080 menit (7 hari / 1 minggu)** agar admin tidak sering logout secara tiba-tiba saat bekerja.
+  - Memperbarui regression test pada [`TenantAdminTest.php`](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminTest.php) untuk memverifikasi session lifetime 1 minggu.
+
+### Verification
+- `vendor/bin/pest`: **63 test / 377 assertions PASSED** (100% hijau).
+
+
+## [Penyelarasan Hero Banner Seluruh Halaman Publik Mengikuti Standar Visi Misi & Tema] - 2026-09-29
+
+### Changed
+- **Penyelarasan Hero Banner Seluruh Halaman Publik (`resources/views/public/pages/*.blade.php`)**:
+  - Mengganti seluruh latar gradient hardcoded (`from-slate-900 via-blue-950 to-indigo-950` dan varian gradient lama) dengan kelas tema baku `theme-bg-dark` dan pola dot matrix radial `var(--theme-accent)`.
+  - Halaman yang diselaraskan:
+    - [profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php)
+    - [visi-misi.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/visi-misi.blade.php)
+    - [sejarah.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/sejarah.blade.php)
+    - [jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php)
+    - [jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php)
+    - [berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/berita.blade.php)
+    - [agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/agenda.blade.php)
+    - [agenda_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/agenda_detail.blade.php)
+    - [ekstrakurikuler.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/ekstrakurikuler.blade.php)
+    - [fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/fasilitas.blade.php)
+    - [galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/galeri.blade.php)
+    - [guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php)
+    - [kalender.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kalender.blade.php)
+    - [kegiatan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kegiatan.blade.php)
+    - [kontak.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kontak.blade.php)
+    - [kurikulum.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kurikulum.blade.php)
+    - [osis.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/osis.blade.php)
+    - [pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/pengumuman.blade.php)
+    - [prestasi.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/prestasi.blade.php)
+    - [spmb.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/spmb.blade.php)
+    - [struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php)
+  - Merapikan struktur navigasi breadcrumb menjadi format standar `<ol>` / `<li>` dengan pewarnaan yang seragam dan lolos auto-kontras tema (`text-slate-300`, hover `text-white`, active `text-sky-300 font-medium`).
+  - Menyelaraskan seluruh tautan hierarki breadcrumb (seperti rumpun `Beranda / Profil / [Nama Halaman]`, `Beranda / Akademik / Kurikulum`, `Beranda / Kesiswaan / OSIS & MPK`, dan `Beranda / Agenda / Kalender Akademik`).
+  - Seluruh halaman publik kini otomatis merespons perubahan tema warna sekolah (Emerald/Hijau, Navy, Maroon, dll.) tanpa teks yang tidak terbaca atau gradien yang tidak selaras.
+
+### Verification
+- `vendor/bin/pest`: **63 test / 377 assertions PASSED** (100% hijau).
+- `npm run build`: Berhasil mengompilasi aset CSS & JS.
+
 ## [Aturan Baru: Kontrak Tema & Auto-Kontras untuk Kode Publik] - 2026-09-29
 
 ### Added

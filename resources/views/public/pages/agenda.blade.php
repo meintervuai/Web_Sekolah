@@ -7,12 +7,12 @@
 <!-- ==========================================
      HERO SECTION (Base Tailwind + Events Reference)
 =========================================== -->
-<section class="relative py-16 md:py-24 bg-slate-900 text-white overflow-hidden">
+<section class="relative py-12 lg:py-16 theme-bg-dark text-white overflow-hidden">
     <!-- Subtle geometric background decoration -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/30 rounded-full blur-3xl"></div>
         <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-indigo-600/25 rounded-full blur-3xl"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px] opacity-15"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px] opacity-15"></div>
     </div>
 
     <div class="container-custom relative z-10">

@@ -61,8 +61,9 @@ Ambang yang dipakai (jangan diubah tanpa alasan WCAG):
 Layout kelas Tailwind (`grid`, `flex`, `py-*`, `rounded-*`, `text-lg`, `font-semibold`, `shadow-*`) bebas dipakai. Yang diatur hanya **warna**.
 
 ### 1.2 Dilarang
-1. **Warna literal di markup baru**: `text-white`, `text-slate-700`, `bg-white`, `bg-blue-900`, `#25D366`, `rgba(...)`, `color: #fff` di `style=""` atau `@section('styles')`.
+1. **Warna literal di markup baru**: `text-white`, `text-slate-700`, `bg-white`, `bg-blue-900`, `rgba(...)`, `color: #fff` di `style=""` atau `@section('styles')`.
    - Kelas berwarna lama masih ditoleransi karena sudah dipetakan ulang di `public.css` (`--color-*` override + Legacy Utility Mapping), tapi **kode baru wajib memakai `.theme-*`** supaya tidak menambah beban pemetaan.
+   - **Pengecualian Resmi (Brand Identity Aset Pihak Ketiga)**: Ikon / tombol resmi brand eksternal yang memiliki identitas warna baku (seperti tombol mengambang resmi **WhatsApp** `#25D366`, YouTube `#FF0000`, Google Maps, dll.) **DIKECUALIKAN** dari penimpaan tema sekolah dan wajib mempertahankan warna khas mereknya agar pengguna mudah mengenalinya.
 2. **`color: var(--theme-btn-text)` langsung** di komponen. `--theme-btn-text` adalah *usulan* admin, bukan hasil akhir. Yang dibaca komponen: `--theme-fg-tombol`, `--theme-fg-aksen`, `--theme-fg-badge`, `--theme-fg-header`, `--theme-fg-footer`, `--theme-fg-zona`, `--fg-zona-efektif`.
 3. **Menulis ulang `--theme-heading` / `--theme-text` / `--theme-text-muted` di dalam view** (inline style atau `@section('styles')`). Variabel ini dimiliki scope permukaan, bukan view.
 4. **Menambah file CSS baru** atau `<link>` stylesheet sendiri. Semua style publik masuk `resources/css/public.css`.
