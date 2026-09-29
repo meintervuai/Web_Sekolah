@@ -6,6 +6,7 @@ use App\Models\Central\DomainSekolah;
 use App\Models\Central\Sekolah;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -62,16 +63,16 @@ class TenantMiddleware
         $request->route()->forgetParameter('tenant');
 
         // Switch Database connection to the tenant's database
-        $tenantDbName = 'tenant_'.str_replace('-', '_', app('tenant')->slug);
+        $tenantDbName = 'tenant_' . str_replace('-', '_', app('tenant')->slug);
 
         // We will configure a dynamic database connection
-        \config(['database.connections.tenant' => array_merge(
-            \config('database.connections.mysql'),
+        config(['database.connections.tenant' => array_merge(
+            config('database.connections.mysql'),
             ['database' => $tenantDbName]
         )]);
 
-        \DB::purge('tenant');
-        \DB::reconnect('tenant');
+        DB::purge('tenant');
+        DB::reconnect('tenant');
 
         return $next($request);
     }

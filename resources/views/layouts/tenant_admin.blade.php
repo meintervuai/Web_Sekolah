@@ -221,12 +221,12 @@
     <!-- Floating Toast Notification (Pojok Kanan Bawah, Auto-dismiss 4s) -->
     <div 
         x-data="{
-            show: {{ (session('sukses') || session('error')) ? 'true' : 'false' }},
-            type: '{{ session('sukses') ? 'sukses' : (session('error') ? 'error' : '') }}',
-            message: '{{ addslashes(session('sukses') ?: session('error') ?: '') }}',
+            show: {{ (session('sukses') || session('error') || $errors->any()) ? 'true' : 'false' }},
+            type: '{{ session('sukses') ? 'sukses' : 'error' }}',
+            message: '{{ addslashes(session('sukses') ?: (session('error') ?: ($errors->first() ?: ''))) }}',
             init() {
                 if (this.show) {
-                    setTimeout(() => { this.show = false; }, 4000);
+                    setTimeout(() => { this.show = false; }, 5000);
                 }
             }
         }"

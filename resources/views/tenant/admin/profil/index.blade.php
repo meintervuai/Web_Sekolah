@@ -813,9 +813,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'profil', 'Profil Utama', !menuToggles['profil'])"
                                         :class="menuToggles['profil'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['profil'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['profil'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -838,9 +838,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'sejarah', 'Sejarah Sekolah', !menuToggles['sejarah'])"
                                         :class="menuToggles['sejarah'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['sejarah'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['sejarah'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -863,9 +863,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'visi_misi', 'Visi & Misi', !menuToggles['visi_misi'])"
                                         :class="menuToggles['visi_misi'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['visi_misi'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['visi_misi'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -888,9 +888,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'struktur_organisasi', 'Struktur Organisasi', !menuToggles['struktur_organisasi'])"
                                         :class="menuToggles['struktur_organisasi'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['struktur_organisasi'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['struktur_organisasi'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -913,9 +913,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'guru_staf', 'Guru & Staf', !menuToggles['guru_staf'])"
                                         :class="menuToggles['guru_staf'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['guru_staf'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['guru_staf'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -938,9 +938,9 @@
                                 <button type="button" 
                                         @click="askToggleConfirmation(null, 'fasilitas', 'Fasilitas Sekolah', !menuToggles['fasilitas'])"
                                         :class="menuToggles['fasilitas'] ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none">
-                                    <span :class="menuToggles['fasilitas'] ? 'translate-x-5' : 'translate-x-0'"
-                                          class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
+                                    <span :style="menuToggles['fasilitas'] ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
+                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
                                 </button>
                             </td>
                         </tr>
@@ -1407,16 +1407,28 @@
                         },
                         body: formData
                     });
-                    const result = await res.json();
+
+                    if (res.status === 413) {
+                        this.triggerToast('Ukuran berkas terlalu besar. Batas maksimal unggah di server adalah 64MB.');
+                        return;
+                    }
+
+                    let result = {};
+                    try {
+                        result = await res.json();
+                    } catch (err) {
+                        result = {};
+                    }
+
                     if (res.ok && result.sukses && result.data) {
                         await this.fetchMedia();
                         this.selectMediaItem(result.data);
                     } else {
-                        const errMsg = result.message || result.pesan || (result.errors ? Object.values(result.errors).flat().join('\n') : 'Gagal mengunggah berkas.');
-                        alert(errMsg);
+                        const errMsg = result.pesan || result.message || (result.errors ? Object.values(result.errors).flat().join(' ') : 'Gagal mengunggah berkas.');
+                        this.triggerToast(errMsg);
                     }
                 } catch (e) {
-                    alert('Terjadi kesalahan saat mengunggah berkas.');
+                    this.triggerToast('Terjadi gangguan jaringan atau server saat mengunggah berkas.');
                 } finally {
                     fileInput.value = '';
                     this.pickerLoading = false;

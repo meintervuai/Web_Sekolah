@@ -116,7 +116,7 @@ class MediaController extends Controller
                 ], 422);
             }
 
-            return back()->withErrors(['file' => $e->getMessage()]);
+            return back()->with('error', 'Gagal mengunggah berkas: ' . $e->getMessage())->withErrors(['file' => $e->getMessage()]);
         }
     }
 

@@ -19,12 +19,18 @@
         <p class="text-sm text-slate-600 mb-6 leading-relaxed">
             {{ $exception?->getMessage() ?: 'Alamat atau tautan yang Anda cari tidak tersedia di direktori sistem sekolah ini.' }}
         </p>
+        @php
+            $tenant = app()->bound('tenant') ? app('tenant') : null;
+            $homeUrl = $tenant ? url($tenant->slug) : url('/');
+            $adminLoginUrl = $tenant ? url($tenant->slug . '/admin/login') : url('/login');
+        @endphp
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="/" class="px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-md transition">
-                Kembali ke Beranda
-            </a>
-            <a href="/admin/login" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition">
-                Admin Sekolah
+            <button type="button" onclick="window.history.length > 1 ? window.history.back() : window.location.href='{{ $homeUrl }}'" class="px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Kembali ke Halaman Sebelumnya
+            </button>
+            <a href="{{ $homeUrl }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition flex items-center justify-center">
+                Beranda Sekolah
             </a>
         </div>
     </div>

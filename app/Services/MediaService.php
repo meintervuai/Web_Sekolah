@@ -18,6 +18,17 @@ class MediaService
     protected string $folderMedia = 'uploads/media';
 
     /**
+     * Dapatkan URL publik berkas dari disk storage.
+     */
+    protected function getStorageUrl(string $path): string
+    {
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk($this->disk);
+
+        return $disk->url($path);
+    }
+
+    /**
      * Proses unggah berkas lokal (Gambar -> WebP terkompresi, Video, Dokumen).
      */
     public function unggahBerkas(
@@ -46,8 +57,8 @@ class MediaService
 
         // 2. Kategori SVG / Ico (Simpan apa adanya)
         if (in_array($ekstensiAsli, ['svg', 'ico'])) {
-            $filename = Str::slug($namaAsli).'-'.time().'.'.$ekstensiAsli;
-            $path = $file->storeAs($this->folderMedia.'/gambar', $filename, $this->disk);
+            $filename = Str::slug($namaAsli) . '-' . time() . '.' . $ekstensiAsli;
+            $path = $file->storeAs($this->folderMedia . '/gambar', $filename, $this->disk);
 
             return Media::create([
                 'pengguna_id' => $penggunaId,
@@ -55,7 +66,7 @@ class MediaService
                 'nama_file_asli' => $file->getClientOriginalName(),
                 'nama_file_disimpan' => $filename,
                 'path' => $path,
-                'url' => Storage::disk($this->disk)->url($path),
+                'url' => $this->getStorageUrl($path),
                 'tipe_media' => 'gambar',
                 'mime_type' => $mime,
                 'ekstensi' => $ekstensiAsli,
@@ -69,8 +80,8 @@ class MediaService
 
         // 3. Kategori Video (MP4, WebM, OGG, dll)
         if (str_starts_with($mime, 'video/')) {
-            $filename = Str::slug($namaAsli).'-'.time().'.'.$ekstensiAsli;
-            $path = $file->storeAs($this->folderMedia.'/video', $filename, $this->disk);
+            $filename = Str::slug($namaAsli) . '-' . time() . '.' . $ekstensiAsli;
+            $path = $file->storeAs($this->folderMedia . '/video', $filename, $this->disk);
 
             return Media::create([
                 'pengguna_id' => $penggunaId,
@@ -78,7 +89,7 @@ class MediaService
                 'nama_file_asli' => $file->getClientOriginalName(),
                 'nama_file_disimpan' => $filename,
                 'path' => $path,
-                'url' => Storage::disk($this->disk)->url($path),
+                'url' => $this->getStorageUrl($path),
                 'tipe_media' => 'video',
                 'mime_type' => $mime,
                 'ekstensi' => $ekstensiAsli,
@@ -91,8 +102,8 @@ class MediaService
         }
 
         // 4. Kategori Dokumen (PDF, Word, Excel, dll)
-        $filename = Str::slug($namaAsli).'-'.time().'.'.$ekstensiAsli;
-        $path = $file->storeAs($this->folderMedia.'/dokumen', $filename, $this->disk);
+        $filename = Str::slug($namaAsli) . '-' . time() . '.' . $ekstensiAsli;
+        $path = $file->storeAs($this->folderMedia . '/dokumen', $filename, $this->disk);
 
         return Media::create([
             'pengguna_id' => $penggunaId,
@@ -100,7 +111,7 @@ class MediaService
             'nama_file_asli' => $file->getClientOriginalName(),
             'nama_file_disimpan' => $filename,
             'path' => $path,
-            'url' => Storage::disk($this->disk)->url($path),
+            'url' => $this->getStorageUrl($path),
             'tipe_media' => 'dokumen',
             'mime_type' => $mime,
             'ekstensi' => $ekstensiAsli,
@@ -139,7 +150,7 @@ class MediaService
         $contentType = $response->header('Content-Type') ?: '';
         $body = $response->body();
         $pathUrl = parse_url($url, PHP_URL_PATH) ?: '';
-        $namaAsli = pathinfo($pathUrl, PATHINFO_FILENAME) ?: 'impor-media-'.time();
+        $namaAsli = pathinfo($pathUrl, PATHINFO_FILENAME) ?: 'impor-media-' . time();
         $judul = $judulCustom ?: Str::headline(str_replace(['-', '_'], ' ', $namaAsli));
 
         // Jika konten adalah gambar -> Konversi ke WebP
@@ -157,12 +168,12 @@ class MediaService
 
         // Jika non-gambar (misal video mp4 direct URL)
         $ekstensi = pathinfo($pathUrl, PATHINFO_EXTENSION) ?: 'bin';
-        $filename = Str::slug($namaAsli).'-'.time().'.'.$ekstensi;
+        $filename = Str::slug($namaAsli) . '-' . time() . '.' . $ekstensi;
         $tipeMedia = str_starts_with($contentType, 'video/') ? 'video' : 'dokumen';
         $folder = $tipeMedia === 'video' ? 'video' : 'dokumen';
 
-        Storage::disk($this->disk)->put($this->folderMedia."/{$folder}/{$filename}", $body);
-        $path = $this->folderMedia."/{$folder}/{$filename}";
+        Storage::disk($this->disk)->put($this->folderMedia . "/{$folder}/{$filename}", $body);
+        $path = $this->folderMedia . "/{$folder}/{$filename}";
 
         return Media::create([
             'pengguna_id' => $penggunaId,
@@ -170,7 +181,7 @@ class MediaService
             'nama_file_asli' => basename($pathUrl) ?: $filename,
             'nama_file_disimpan' => $filename,
             'path' => $path,
-            'url' => Storage::disk($this->disk)->url($path),
+            'url' => $this->getStorageUrl($path),
             'tipe_media' => $tipeMedia,
             'mime_type' => $contentType ?: 'application/octet-stream',
             'ekstensi' => $ekstensi,
@@ -193,7 +204,7 @@ class MediaService
         ?string $altTeks = null
     ): Media {
         $youtubeId = $this->ekstrakYouTubeId($url);
-        $judul = $judulCustom ?: ('Video YouTube '.($youtubeId ?: 'Sekolah'));
+        $judul = $judulCustom ?: ('Video YouTube ' . ($youtubeId ?: 'Sekolah'));
 
         // Thumbnail resmi YouTube HQ
         $thumbnailUrl = $youtubeId ? "https://img.youtube.com/vi/{$youtubeId}/hqdefault.jpg" : '';
@@ -201,7 +212,7 @@ class MediaService
         return Media::create([
             'pengguna_id' => $penggunaId,
             'judul' => $judul,
-            'nama_file_asli' => 'YouTube: '.$youtubeId,
+            'nama_file_asli' => 'YouTube: ' . $youtubeId,
             'nama_file_disimpan' => $youtubeId,
             'path' => null,
             'url' => $url,
@@ -237,6 +248,14 @@ class MediaService
             throw new \InvalidArgumentException('Format gambar tidak valid atau rusak.');
         }
 
+        // Pastikan imageResource adalah truecolor (wajib untuk WebP dan palette PNG/GIF)
+        if (! imageistruecolor($imageResource)) {
+            imagepalettetotruecolor($imageResource);
+        }
+
+        imagealphablending($imageResource, true);
+        imagesavealpha($imageResource, true);
+
         // Pastikan orientasi truecolor & transparansi alpha
         $origWidth = imagesx($imageResource);
         $origHeight = imagesy($imageResource);
@@ -264,8 +283,8 @@ class MediaService
         }
 
         // Simpan sebagai WebP ke storage
-        $filename = Str::slug($namaAsli).'-'.time().'.webp';
-        $relativePath = $this->folderMedia.'/gambar/'.$filename;
+        $filename = Str::slug($namaAsli) . '-' . time() . '.webp';
+        $relativePath = $this->folderMedia . '/gambar/' . $filename;
         $fullStoragePath = Storage::disk($this->disk)->path($relativePath);
 
         // Pastikan direktori tersedia
@@ -283,10 +302,10 @@ class MediaService
         return Media::create([
             'pengguna_id' => $penggunaId,
             'judul' => $judul,
-            'nama_file_asli' => $namaAsli.'.webp',
+            'nama_file_asli' => $namaAsli . '.webp',
             'nama_file_disimpan' => $filename,
             'path' => $relativePath,
-            'url' => Storage::disk($this->disk)->url($relativePath),
+            'url' => $this->getStorageUrl($relativePath),
             'tipe_media' => 'gambar',
             'mime_type' => 'image/webp',
             'ekstensi' => 'webp',
@@ -322,8 +341,8 @@ class MediaService
             if (! $binary) {
                 throw new \RuntimeException('Gagal memuat sumber gambar untuk diedit.');
             }
-            $filename = Str::slug($media->judul ?: 'media').'-'.time().'.webp';
-            $relativePath = $this->folderMedia.'/gambar/'.$filename;
+            $filename = Str::slug($media->judul ?: 'media') . '-' . time() . '.webp';
+            $relativePath = $this->folderMedia . '/gambar/' . $filename;
             $fullStoragePath = Storage::disk($this->disk)->path($relativePath);
             $dir = dirname($fullStoragePath);
             if (! is_dir($dir)) {
@@ -333,11 +352,16 @@ class MediaService
             if (! $res) {
                 throw new \RuntimeException('Format gambar tidak valid.');
             }
+            if (! imageistruecolor($res)) {
+                imagepalettetotruecolor($res);
+            }
+            imagealphablending($res, true);
+            imagesavealpha($res, true);
             imagewebp($res, $fullStoragePath, 85);
             imagedestroy($res);
             $media->update([
                 'path' => $relativePath,
-                'url' => Storage::disk($this->disk)->url($relativePath),
+                'url' => $this->getStorageUrl($relativePath),
                 'nama_file_disimpan' => $filename,
                 'ekstensi' => 'webp',
             ]);
@@ -352,6 +376,12 @@ class MediaService
         if (! $imageResource) {
             throw new \RuntimeException('Gagal memuat gambar untuk proses edit.');
         }
+
+        if (! imageistruecolor($imageResource)) {
+            imagepalettetotruecolor($imageResource);
+        }
+        imagealphablending($imageResource, true);
+        imagesavealpha($imageResource, true);
 
         // 1. Rotasi jika ada
         if (in_array($rotateAngle, [90, 180, 270])) {
@@ -380,8 +410,8 @@ class MediaService
 
         // Simpan sebagai berkas WebP BARU (Non-Destruktif, jangan menimpa file master asli)
         $cleanBaseName = Str::slug(pathinfo($media->nama_file_disimpan ?: $media->judul, PATHINFO_FILENAME));
-        $newFilename = $cleanBaseName.'-crop-'.time().'.webp';
-        $newRelativePath = $this->folderMedia.'/gambar/'.$newFilename;
+        $newFilename = $cleanBaseName . '-crop-' . time() . '.webp';
+        $newRelativePath = $this->folderMedia . '/gambar/' . $newFilename;
         $newFullStoragePath = Storage::disk($this->disk)->path($newRelativePath);
 
         $dir = dirname($newFullStoragePath);
@@ -397,11 +427,11 @@ class MediaService
         // Buat record media baru untuk versi cropped teroptimasi
         return Media::create([
             'pengguna_id' => $media->pengguna_id,
-            'judul' => $media->judul.' (Versi Crop)',
+            'judul' => $media->judul . ' (Versi Crop)',
             'nama_file_asli' => $newFilename,
             'nama_file_disimpan' => $newFilename,
             'path' => $newRelativePath,
-            'url' => Storage::disk($this->disk)->url($newRelativePath),
+            'url' => $this->getStorageUrl($newRelativePath),
             'tipe_media' => 'gambar',
             'mime_type' => 'image/webp',
             'ekstensi' => 'webp',

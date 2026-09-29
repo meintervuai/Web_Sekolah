@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Penyempurnaan Header, Mode Tampilan Struktur & Repeater Bagan Diagram] - 2026-09-29
+## [Perbaikan Konversi Gambar Palette WebP & Tangkapan Notifikasi Toast Error Upload] - 2026-09-29
+
+### Fixed
+- **Konversi Palette / Indexed Image ke WebP ([MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php))**: Menambahkan konversi otomatis `imagepalettetotruecolor()` untuk mencegah error `imagewebp(): Palette image not supported by webp` pada berkas PNG 8-bit, GIF, dan gambar palet berindeks.
+- **Tangkapan Notifikasi Error Toast ([tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php))**: Memastikan notifikasi toast merah muncul saat ada error validasi atau eksepsi unggah.
+
+## [Perbaikan Navigasi Halaman Error & Konfigurasi Batas Unggah Media 64MB] - 2026-09-29
+
+### Fixed
+- **Halaman Error 500 & 404 ([500.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/errors/500.blade.php), [404.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/errors/404.blade.php))**: Tombol navigasi cerdas kembali ke halaman sebelumnya (`window.history.back()`) dengan fallback ke beranda tenant dan penghapusan tombol Super Admin.
+- **Konfigurasi Batas Unggah Media**: Menaikkan limit `upload_max_filesize` dan `post_max_size` PHP menjadi `64MB` serta menghapus alert blocking pada antarmuka.
+
+
 
 ### Changed
 - **Penyederhanaan Header Admin**: Menghapus card sub-header duplikat di dalam view `profil/index.blade.php` dan mengintegrasikan judul utama ke header navigasi layout (`@section('header_title', 'Pengaturan Profil & Konten Sekolah')`).

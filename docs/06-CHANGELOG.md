@@ -2,7 +2,26 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
-## [Penyempurnaan Header, Mode Tampilan Struktur & Repeater Bagan Diagram] - 2026-09-29
+## [Perbaikan Konversi Gambar Palette WebP & Tangkapan Notifikasi Toast Error Upload] - 2026-09-29
+
+### Fixed
+- **Konversi Palette / Indexed Image ke WebP ([MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php))**:
+  - Menambahkan pengecekan otomatis `imageistruecolor()` dan konversi `imagepalettetotruecolor()` sebelum memproses dan menyimpan berkas gambar ke format WebP.
+  - Memperbaiki kegagalan unggah dengan pesan error `imagewebp(): Palette image not supported by webp` pada berkas PNG 8-bit, GIF, dan gambar berpalet indexed.
+  - Mengamankan channel transparansi alpha pada seluruh alur proses resize, crop, dan kompresi WebP.
+- **Tangkapan Notifikasi Error Toast ([tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php), [MediaController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/MediaController.php))**:
+  - Memastikan toast alert merah muncul otomatis di antarmuka pengguna ketika terjadi error validasi berkas (`$errors->any()`) atau eksepsi kegagalan unggah server (`session('error')`).
+
+## [Perbaikan Navigasi Halaman Error & Konfigurasi Batas Unggah Media 64MB] - 2026-09-29
+
+### Fixed
+- **Halaman Error 500 & 404 ([500.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/errors/500.blade.php), [404.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/errors/404.blade.php))**:
+  - Mengganti tombol static menjadi tombol pintar **"Kembali ke Halaman Sebelumnya"** (`window.history.back()`) dengan fallback ke beranda sekolah tenant (`/{tenant}`).
+  - Menghapus tombol **Super Admin** dari halaman error tenant publik.
+- **Konfigurasi Direktori Temporer Unggah (`upload_tmp_dir`)**: Menetapkan folder dedicated `storage/tmp` pada `php.ini` untuk mengatasi error `PHP Request Startup: File upload error - unable to create a temporary file` akibat kendala izin folder AppData Temp Windows.
+- **Animasi Geser Halus Toggle Switch ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**: Menambahkan binding style `transform: translateX(20px)` saat aktif dan `translateX(0px)` saat nonaktif dengan `transition-transform duration-300 ease-in-out` agar bulatan sakelar meluncur mulus.
+
+
 
 ### Changed
 - **Penyederhanaan Header Admin**: Menghapus card sub-header duplikat di dalam view `profil/index.blade.php` dan mengintegrasikan judul utama ke header navigasi layout (`@section('header_title', 'Pengaturan Profil & Konten Sekolah')`).
