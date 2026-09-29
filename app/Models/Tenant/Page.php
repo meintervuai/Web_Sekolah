@@ -12,9 +12,11 @@ class Page extends Model
 
     protected $fillable = [
         'judul',
+        'subjudul',
         'slug',
         'isi_konten',
         'gambar_banner',
+        'pola_latar',
         'pengguna_id',
     ];
 

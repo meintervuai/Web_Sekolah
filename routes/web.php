@@ -5,6 +5,7 @@ use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
 use App\Http\Controllers\Tenant\Admin\MediaController;
 use App\Http\Controllers\Tenant\Admin\PengaturanController;
+use App\Http\Controllers\Tenant\Admin\ProfilController;
 use App\Http\Controllers\Tenant\Public\HomeController;
 use App\Http\Controllers\Tenant\Public\PageController;
 use App\Http\Middleware\TenantMiddleware;
@@ -173,11 +174,28 @@ Route::prefix('{tenant}')
 
             // Terproteksi Admin Sekolah (Auth)
             Route::middleware('auth:tenant_admin')->group(function () {
+                // Dashboard Redirect / Root Admin URL
+                Route::get('/', function () {
+                    return redirect()->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug]);
+                })->name('dashboard');
+
                 Route::post('/logout', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'logout'])->name('logout');
 
                 // Pengaturan Tampilan Sekolah (Tema & Warna)
                 Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
                 Route::put('/pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
+
+                // Pengaturan Profil Sekolah & Konten Halaman CMS
+                Route::prefix('profil')->name('profil.')->group(function () {
+                    Route::get('/', [ProfilController::class, 'index'])->name('index');
+                    Route::put('/identitas', [ProfilController::class, 'updateIdentitas'])->name('identitas.update');
+                    Route::put('/halaman/{slug}', [ProfilController::class, 'updateHalaman'])->name('halaman.update');
+                    Route::put('/struktur', [ProfilController::class, 'updateStruktur'])->name('struktur.update');
+                    Route::post('/pejabat', [ProfilController::class, 'storePejabat'])->name('pejabat.store');
+                    Route::put('/pejabat/{pejabat}', [ProfilController::class, 'updatePejabat'])->name('pejabat.update');
+                    Route::delete('/pejabat/{pejabat}', [ProfilController::class, 'destroyPejabat'])->name('pejabat.destroy');
+                    Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
+                });
 
                 // Manajemen Media & File Manager Induk
                 Route::prefix('media')->name('media.')->group(function () {

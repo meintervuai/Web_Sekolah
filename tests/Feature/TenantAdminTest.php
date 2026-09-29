@@ -100,7 +100,6 @@ test('seluruh route modul admin lama sudah dihapus dari sistem', function () {
     $removedRoutes = [
         '/smk-negeri-2-bandung/admin/dashboard',
         '/smk-negeri-2-bandung/admin/slider',
-        '/smk-negeri-2-bandung/admin/profil',
         '/smk-negeri-2-bandung/admin/struktur',
         '/smk-negeri-2-bandung/admin/jurusan',
         '/smk-negeri-2-bandung/admin/berita',

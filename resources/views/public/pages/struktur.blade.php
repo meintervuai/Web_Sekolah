@@ -5,8 +5,17 @@
 
 @section('content')
 <!-- Header & Breadcrumb -->
+@php
+    $polaStruktur = $halaman->pola_latar ?? 'dots';
+@endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if($polaStruktur === 'dots')
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @elseif($polaStruktur === 'grid')
+        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    @elseif($polaStruktur === 'mesh')
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
@@ -19,24 +28,29 @@
         </nav>
         <div class="max-w-2xl">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
-                Struktur Organisasi Sekolah
+                {{ $halaman->judul ?? 'Struktur Organisasi Sekolah' }}
             </h1>
             <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                Jajaran pimpinan, kepala program keahlian, dan koordinator tata kelola manajerial di {{ $sekolah['nama'] }}.
+                {{ $halaman->subjudul ?? ('Jajaran pimpinan, kepala program keahlian, dan koordinator tata kelola manajerial di ' . $sekolah['nama']) }}
             </p>
         </div>
     </div>
 </section>
 
 <!-- Content Section -->
+@php
+    $mode = $modeTampilan ?? 'semua';
+    $defaultTab = ($mode === 'diagram') ? 'diagram' : 'pejabat';
+@endphp
 <section class="section-py bg-slate-50" x-data="{ 
-    activeTab: 'pejabat', 
+    activeTab: '{{ $defaultTab }}', 
     activeDiagram: 0,
     diagrams: {{ Js::from($diagrams ?? []) }}
 }">
     <div class="container-custom">
 
-        <!-- Mode Switcher Tabs -->
+        @if($mode === 'semua')
+        <!-- Mode Switcher Tabs (Hanya Tampil Jika Mode Admin Mengizinkan Keduanya) -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200">
             <div>
                 <h2 class="font-heading font-bold text-lg text-slate-900">Pilihan Tampilan Struktur</h2>
@@ -47,20 +61,22 @@
                 <button type="button"
                         @click="activeTab = 'pejabat'"
                         :class="activeTab === 'pejabat' ? 'bg-white text-blue-900 shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                        class="px-4 py-2 rounded-xl text-xs md:text-sm transition-all flex items-center gap-2">
+                        class="px-4 py-2 rounded-xl text-xs md:text-sm transition-all flex items-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     Jajaran Pejabat
                 </button>
                 <button type="button"
                         @click="activeTab = 'diagram'"
                         :class="activeTab === 'diagram' ? 'bg-white text-blue-900 shadow-sm font-bold' : 'text-slate-600 hover:text-slate-900 font-medium'"
-                        class="px-4 py-2 rounded-xl text-xs md:text-sm transition-all flex items-center gap-2">
+                        class="px-4 py-2 rounded-xl text-xs md:text-sm transition-all flex items-center gap-2 cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     Bagan Diagram Struktur
                 </button>
             </div>
         </div>
+        @endif
 
+        @if($mode === 'semua' || $mode === 'pejabat')
         <!-- TAB 1: JAJARAN PEJABAT & PIMPINAN (GRID FOTO) -->
         <div x-show="activeTab === 'pejabat'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -91,6 +107,7 @@
             </div>
         </div>
 
+        @if($mode === 'semua' || $mode === 'diagram')
         <!-- TAB 2: BAGAN DIAGRAM STRUKTUR (1 ATAU BEBERAPA GAMBAR) -->
         <div x-show="activeTab === 'diagram'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" style="display: none;">
             <template x-if="diagrams.length > 0">
@@ -105,7 +122,7 @@
                             <div class="flex items-center gap-2 shrink-0">
                                 <button type="button"
                                         @click="lightboxOpen = true; lightboxSrc = diagrams[activeDiagram].gambar; lightboxCaption = diagrams[activeDiagram].judul"
-                                        class="inline-flex items-center px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl transition gap-1.5">
+                                        class="inline-flex items-center px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl transition gap-1.5 cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
                                     Perbesar Fullscreen
                                 </button>
@@ -142,7 +159,7 @@
                                     <button type="button"
                                             @click="activeDiagram = idx"
                                             :class="activeDiagram === idx ? 'ring-2 ring-blue-600 bg-blue-50/50' : 'bg-white hover:bg-slate-50'"
-                                            class="p-3.5 rounded-2xl border border-slate-200 text-left transition flex items-center gap-3">
+                                            class="p-3.5 rounded-2xl border border-slate-200 text-left transition flex items-center gap-3 cursor-pointer">
                                         <div class="w-16 h-12 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
                                             <img :src="d.gambar" :alt="d.judul" class="w-full h-full object-cover">
                                         </div>
@@ -163,6 +180,7 @@
                 </div>
             </template>
         </div>
+        @endif
 
         <div class="mt-10 text-center">
             <a href="{{ url(app('tenant')->slug . '/profil') }}" class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 transition">

@@ -92,8 +92,23 @@
             <!-- TailDash Menu Navigation -->
             <nav id="adminSidebarNav" class="flex-1 px-4 py-4 space-y-1 overflow-y-auto overscroll-contain taildash-scrollbar text-xs">
                 
-                <!-- Section: PENGATURAN TAMPILAN -->
+                <!-- Section: KONTEN PORTAL -->
                 <div class="px-3 pt-2 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Konten Portal
+                </div>
+
+                <a
+                    href="{{ route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug]) }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.profil.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                >
+                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.profil.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span>Profil Sekolah</span>
+                </a>
+
+                <!-- Section: PENGATURAN TAMPILAN -->
+                <div class="px-3 pt-3 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                     Pengaturan
                 </div>
 

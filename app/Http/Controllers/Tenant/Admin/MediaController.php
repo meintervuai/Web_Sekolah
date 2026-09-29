@@ -17,7 +17,7 @@ class MediaController extends Controller
     /**
      * Tampilkan galeri dan manajemen media induk.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|JsonResponse
     {
         $tenant = app('tenant');
         $query = Media::query()->with('pengguna');
@@ -56,6 +56,16 @@ class MediaController extends Controller
         $daftarKategori = Media::select('kategori')->distinct()->pluck('kategori')->filter()->values();
 
         $medias = $query->orderBy('urutan', 'asc')->latest()->paginate(24)->withQueryString();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'data' => $medias->items(),
+                'current_page' => $medias->currentPage(),
+                'last_page' => $medias->lastPage(),
+                'total' => $medias->total(),
+            ]);
+        }
 
         return view('tenant.admin.media.index', compact('tenant', 'medias', 'stats', 'daftarKategori', 'tipe'));
     }

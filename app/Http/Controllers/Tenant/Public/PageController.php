@@ -78,7 +78,7 @@ class PageController extends Controller
             'stat_mitra_label' => PengaturanUmum::ambil('stat_mitra_label', 'Mitra Industri (DUDI)'),
             'stat_sumber_label' => PengaturanUmum::ambil('stat_sumber_label', 'Dapodik Kemendikbudristek TA 2025/2026'),
             // Video Profil Sekolah (Upload file atau link YouTube)
-            'video_profil' => PengaturanUmum::ambil('video_profil', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'),
+            'video_profil' => PengaturanUmum::ambil('video_profil', 'https://www.youtube.com/watch?v=kYJydU5jUqM'),
             'video_profil_judul' => PengaturanUmum::ambil('video_profil_judul', 'Profil & Kilas Pembelajaran Vokasi'),
             'video_profil_deskripsi' => PengaturanUmum::ambil('video_profil_deskripsi', 'Saksikan tayangan visual fasilitas modern, lingkungan belajar TEFA, dan aktivitas siswa vokasi unggulan kami.'),
         ];
@@ -107,6 +107,7 @@ class PageController extends Controller
     public function sejarah()
     {
         $this->checkFitur('profil');
+        $this->checkFitur('sejarah');
         $halaman = Page::where('slug', 'sejarah')->first();
 
         return view('public.pages.sejarah', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
@@ -115,6 +116,7 @@ class PageController extends Controller
     public function visiMisi()
     {
         $this->checkFitur('profil');
+        $this->checkFitur('visi_misi');
         $halaman = Page::where('slug', 'visi-misi')->first();
 
         return view('public.pages.visi-misi', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
@@ -123,6 +125,7 @@ class PageController extends Controller
     public function struktur()
     {
         $this->checkFitur('profil');
+        $this->checkFitur('struktur_organisasi');
         $struktur = StrukturOrganisasi::orderBy('urutan')->get();
 
         // Diagram bagan struktur organisasi (mendukung 1 atau beberapa gambar dinamis)
@@ -145,10 +148,15 @@ class PageController extends Controller
             ],
         ];
 
+        $halaman = Page::where('slug', 'struktur')->first();
+        $modeTampilan = PengaturanUmum::ambil('mode_tampilan_struktur', 'semua');
+
         return view('public.pages.struktur', [
             'sekolah' => $this->getSekolahData(),
+            'halaman' => $halaman,
             'struktur' => $struktur,
             'diagrams' => $diagrams,
+            'modeTampilan' => $modeTampilan,
         ]);
     }
 

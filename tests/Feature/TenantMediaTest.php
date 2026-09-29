@@ -22,6 +22,18 @@ beforeEach(function () {
     Storage::fake('public');
 });
 
+afterEach(function () {
+    // Bersihkan media yang dibuat saat pengujian agar tidak meninggalkan record tanpa berkas fisik di database
+    Media::whereIn('sumber', ['upload_langsung', 'youtube', 'url_eksternal'])
+        ->where('judul', 'like', '%Dokumentasi Prakerin Industri%')
+        ->orWhere('judul', 'like', '%Foto Master Asli%')
+        ->orWhere('judul', 'like', '%Video Profil SMKN 2 Bandung%')
+        ->orWhere('judul', 'like', '%Logo Sekolah Kemdikbud%')
+        ->orWhere('judul', 'like', '%Berkas Pedoman Kurikulum%')
+        ->orWhere('judul', 'like', '%Media Massal%')
+        ->delete();
+});
+
 test('1. guest tidak dapat mengakses halaman manajemen media', function () {
     $response = $this->get('/smk-negeri-2-bandung/admin/media');
 

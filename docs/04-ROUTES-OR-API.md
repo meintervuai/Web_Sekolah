@@ -47,25 +47,31 @@ Setiap modul diperiksa ketersediaannya melalui `PengaturanFitur::isAktif($kodeFi
 
 ## 4. Rute Panel Admin Sekolah (Prefix: `/{tenant}/admin`)
 
-Sejak penyederhanaan panel admin (2026-09-29), grup rute `tenant.admin.*` hanya memuat autentikasi dan pengaturan tema.
+Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media, dan tema visual portal.
 
 | No | URL Path | Route Name | Method | Middleware | Deskripsi Halaman |
 |---|---|---|---|---|---|
-| 1 | `/{tenant}/admin/login` | `tenant.admin.login` | GET | - | Formulir login Admin Sekolah. Jika sesi admin masih aktif, otomatis dialihkan ke `tenant.admin.pengaturan.index`. |
-| 2 | `/{tenant}/admin/login` | `tenant.admin.login.submit` | POST | `guest:tenant_admin` | Proses autentikasi Admin Sekolah, lalu dialihkan ke `tenant.admin.pengaturan.index`. |
-| 3 | `/{tenant}/admin/logout` | `tenant.admin.logout` | POST | `auth:tenant_admin` | Mengakhiri sesi Admin Sekolah. |
-| 4 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah (7 preset, custom hex, live preview). |
-| 5 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
+| 1 | `/{tenant}/admin` | `tenant.admin.dashboard` | GET | `auth:tenant_admin` | Mengalihkan otomatis ke `tenant.admin.profil.index`. |
+| 2 | `/{tenant}/admin/login` | `tenant.admin.login` | GET | - | Formulir login Admin Sekolah. Jika sesi admin masih aktif, otomatis dialihkan ke `tenant.admin.profil.index`. |
+| 3 | `/{tenant}/admin/login` | `tenant.admin.login.submit` | POST | `guest:tenant_admin` | Proses autentikasi Admin Sekolah. |
+| 4 | `/{tenant}/admin/logout` | `tenant.admin.logout` | POST | `auth:tenant_admin` | Mengakhiri sesi Admin Sekolah. |
+| 5 | `/{tenant}/admin/profil` | `tenant.admin.profil.index` | GET | `auth:tenant_admin` | Manajemen Profil Sekolah CMS (Identitas, Sambutan Kepsek, Sejarah, Visi Misi, Struktur, Visibilitas Menu). |
+| 5 | `/{tenant}/admin/profil/identitas` | `tenant.admin.profil.identitas.update` | PUT | `auth:tenant_admin` | Simpan identitas sekolah, kepala sekolah, dan video profil ke `pengaturan_umum` (berelasi `pengguna_id`). |
+| 6 | `/{tenant}/admin/profil/halaman/{slug}` | `tenant.admin.profil.halaman.update` | PUT | `auth:tenant_admin` | Simpan konten Sejarah / Visi Misi WYSIWYG ke `halaman_statis` (berelasi `pengguna_id`). |
+| 7 | `/{tenant}/admin/profil/struktur` | `tenant.admin.profil.struktur.update` | PUT | `auth:tenant_admin` | Simpan diagram bagan struktur organisasi ke `pengaturan_umum`. |
+| 8 | `/{tenant}/admin/profil/pejabat` | `tenant.admin.profil.pejabat.store` | POST | `auth:tenant_admin` | Tambah data pejabat struktural (FK `guru_id` ke `guru_staf`). |
+| 9 | `/{tenant}/admin/profil/pejabat/{pejabat}` | `tenant.admin.profil.pejabat.update` | PUT | `auth:tenant_admin` | Perbarui data pejabat struktural. |
+| 10 | `/{tenant}/admin/profil/pejabat/{pejabat}` | `tenant.admin.profil.pejabat.destroy` | DELETE | `auth:tenant_admin` | Hapus data pejabat struktural. |
+| 11 | `/{tenant}/admin/profil/toggle-menu` | `tenant.admin.profil.toggle-menu` | POST | `auth:tenant_admin` | Sakelar AJAX untuk sembunyikan/tampilkan menu/rute profil di publik (`menus` & `pengaturan_fitur`). |
+| 12 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
+| 13 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
+| 14 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
+| 15 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
 
 ### 4.1 Shortcut Global
 
 | URL | Route Name | Perilaku |
 |---|---|---|
-| `/admin` | `admin.shortcut` | Mengarah ke `/{tenant}/admin/pengaturan` bila tenant terikat & sesi admin aktif, selain itu ke `/{tenant}/admin/login`. |
+| `/admin` | `admin.shortcut` | Mengarah ke `/{tenant}/admin/profil` bila tenant terikat & sesi admin aktif, selain itu ke `/{tenant}/admin/login`. |
 | `/admin/login` | `admin.login.shortcut` | Mengarah ke halaman login admin sekolah aktif pertama. |
-
-### 4.2 Catatan Penghapusan
-
-- Rute modul lama (`dashboard`, `slider`, `profil`, `struktur`, `jurusan`, `berita`, `pengumuman`, `agenda`, `galeri`, `prestasi`, `ekskul`, `guru`, `fasilitas`, `spmb`, `kontak`, `media`) sudah tidak terdaftar dan mengembalikan respons HTTP 404.
-- Tabel, model, migrasi, dan seeder modul tersebut tetap utuh sehingga dapat diaktifkan kembali tanpa migrasi ulang.
 

@@ -5,8 +5,17 @@
 
 @section('content')
 <!-- Header & Breadcrumb -->
+@php
+    $polaVisiMisi = $halaman->pola_latar ?? 'dots';
+@endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if($polaVisiMisi === 'dots')
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @elseif($polaVisiMisi === 'grid')
+        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    @elseif($polaVisiMisi === 'mesh')
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
@@ -14,7 +23,7 @@
                 <li><span class="text-slate-500">/</span></li>
                 <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition">Profil</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Visi & Misi</li>
+                <li class="text-sky-300 font-medium">Visi &amp; Misi</li>
             </ol>
         </nav>
         <div class="max-w-2xl">
@@ -22,7 +31,7 @@
                 {{ $halaman->judul ?? 'Visi & Misi Sekolah' }}
             </h1>
             <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                Arah haluan, cita-cita luhur, dan komitmen penyelenggaraan pendidikan vokasi di {{ $sekolah['nama'] }}.
+                {{ $halaman->subjudul ?? ('Arah haluan, cita-cita luhur, dan komitmen penyelenggaraan pendidikan vokasi di ' . $sekolah['nama']) }}
             </p>
         </div>
     </div>

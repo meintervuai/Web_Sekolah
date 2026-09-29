@@ -2,6 +2,46 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Penyempurnaan Header, Mode Tampilan Struktur & Repeater Bagan Diagram] - 2026-09-29
+
+### Changed
+- **Penyederhanaan Header Admin**: Menghapus card sub-header duplikat di dalam view `profil/index.blade.php` dan mengintegrasikan judul utama ke header navigasi layout (`@section('header_title', 'Pengaturan Profil & Konten Sekolah')`).
+- **Pembersihan Sakelar Inline Visibilitas**: Menghapus switch sakelar di Tab 2 (Sejarah), Tab 3 (Visi & Misi), dan Tab 4 (Struktur) agar pengaturan visibilitas menu publik terpusat di **Tab 5 (Visibilitas Menu & Rute)**.
+- **Mode Tampilan Struktur Organisasi**: Admin dapat memilih apakah halaman publik `/profil/struktur` menampilkan:
+  1. *Tampilkan Keduanya* (Jajaran Pejabat & Bagan Diagram dengan tab switcher),
+  2. *Hanya Jajaran Pejabat*, atau
+  3. *Hanya Bagan Diagram Struktur*.
+- **Repeater Dinamis Bagan Diagram**: Menambahkan fitur tombol **"+ Tambah Bagan Baru"** dan **"Hapus Bagan"** dinamis berbasis Alpine.js dengan integrasi Pusat Media sehingga admin bebas menambah/mengurangi bagan diagram tanpa batasan.
+- **Perbaikan Animasi Toggle Switch**: Menjamin posisi thumb switch toggle bergeser ke kanan (`translate-x-5`) saat aktif (biru) dan ke kiri (`translate-x-0`) saat nonaktif (abu-abu).
+
+## [Kustomisasi Hero Banner Profil Lengkap, Fade Mask Gambar & Tab 1 Profil Lengkap] - 2026-09-29
+
+### Added
+- **Kustomisasi Hero Banner Halaman Profil Publik ([profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php))**:
+  - Penyesuaian nama tab pertama di admin menjadi **"1. Profil Lengkap"**.
+  - Menyediakan input pengaturan **Judul Utama Hero**, **Subjudul / Deskripsi Hero**, **Pola Dekorasi Latar (Radial Dots / Grid / Mesh / Polos)**, serta **Gambar Latar Hero** dari Pusat Media.
+  - Implementasi desain hero banner artistik (Opsi 1): jika gambar latar diisi oleh Admin, gambar tampil di sisi kanan dengan efek *gradual fade mask* ke kiri (luntur menyatu halus dengan warna latar gelap) disertai *drop-shadow* pada teks judul dan deskripsi agar tetap kontras dan sangat mudah dibaca. Jika tidak diisi gambar, hero kembali ke tampilan tema gelap bersih standar.
+- **Pembaruan Controller Admin ([ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**:
+  - Menyimpan `judul_profil`, `subjudul_profil`, `pola_latar_profil`, dan `gambar_banner_profil` ke tabel `halaman_statis` (slug `profil`).
+
+## [CMS Manajemen Profil Sekolah, WYSIWYG Editor, Integrasi Media & Kontrol Visibilitas Rute] - 2026-09-29
+
+### Added
+- **Manajemen Profil Sekolah CMS (`app/Http/Controllers/Tenant/Admin/ProfilController.php`)**:
+  - Menyediakan panel admin terpadu dengan 5 tab interaktif (*Identitas & Sambutan*, *Sejarah Sekolah*, *Visi & Misi*, *Struktur Organisasi*, dan *Visibilitas Menu & Rute*).
+  - Tersimpan 100% berelasi di database (`pengaturan_umum`, `halaman_statis`, `struktur_organisasi`, `pengaturan_fitur`, `menus`) dengan tracking foreign key `pengguna_id = auth('tenant_admin')->id()`.
+- **Editor Teks WYSIWYG (Quill.js)**:
+  - Integrasi editor teks WYSIWYG clean tanpa AI slop untuk penyuntingan konten *Sejarah Sekolah* dan *Visi, Misi & Sasaran Mutu*.
+- **Integrasi Pustaka Media (Pusat Berkas Media Picker)**:
+  - Terintegrasi langsung dengan database `media` sekolah sehingga admin dapat memilih foto/video yang telah diunggah atau mengunggah berkas baru langsung dari modal pemilih media.
+- **Kontrol Visibilitas Dinamis (Feature Flag & Menu Toggle)**:
+  - Admin dapat menyembunyikan atau menampilkan sub-menu/halaman (`Sejarah`, `Visi & Misi`, `Struktur Organisasi`, `Guru & Staf`, `Fasilitas`).
+  - Ketika dinonaktifkan: link otomatis hilang dari navbar desktop & mobile drawer publik, dan rute publik mengembalikan respon **HTTP 404 (Not Found)** secara otomatis untuk perlindungan konten.
+- **Sidebar Admin Layout (`resources/views/layouts/tenant_admin.blade.php`)**:
+  - Menambahkan menu navigasi "Profil Sekolah" pada sidebar panel admin.
+- **Pest Feature Test Suite (`tests/Feature/TenantAdminProfilTest.php`)**:
+  - 6 unit & feature test komprehensif menguji seluruh alur update identitas, konten WYSIWYG, relasi database pejabat, media picker, dan respon 404 saat fitur dinonaktifkan (69 test / 420 assertions passing 100%).
+
 ## [Pengecualian Resmi Identitas Merek Tombol Floating WhatsApp] - 2026-09-29
 
 ### Added

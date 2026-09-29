@@ -4,8 +4,17 @@
 @section('meta_description', 'Sejarah dan rekam jejak berdirinya ' . $sekolah['nama'] . ' sejak tahun 1951 di Kota Bandung.')
 
 @section('content')
+@php
+    $polaSejarah = $halaman->pola_latar ?? 'dots';
+@endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if($polaSejarah === 'dots')
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @elseif($polaSejarah === 'grid')
+        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    @elseif($polaSejarah === 'mesh')
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
@@ -20,8 +29,8 @@
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
                 {{ $halaman->judul ?? 'Sejarah Sekolah' }}
             </h1>
-            <p class="theme-accent-text text-sm md:text-base leading-relaxed">
-                Mengenal perjalanan panjang dan tonggak bersejarah pendirian {{ $sekolah['nama'] }}.
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+                {{ $halaman->subjudul ?? ('Mengenal perjalanan panjang dan tonggak bersejarah pendirian ' . $sekolah['nama']) }}
             </p>
         </div>
     </div>

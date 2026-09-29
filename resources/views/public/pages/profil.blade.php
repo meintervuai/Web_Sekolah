@@ -5,22 +5,42 @@
 
 @section('content')
 <!-- Header & Breadcrumb -->
+@php
+    $polaProfil = $profil->pola_latar ?? 'dots';
+    $bannerProfil = $profil->gambar_banner ?? null;
+@endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if($polaProfil === 'dots')
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @elseif($polaProfil === 'grid')
+        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    @elseif($polaProfil === 'mesh')
+        <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
+    @endif
+
+    @if($bannerProfil)
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $bannerProfil }}" alt="{{ $profil->judul ?? 'Profil Sekolah' }}" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
+
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Profil</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Profil</li>
             </ol>
         </nav>
         <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
-                Profil {{ $sekolah['nama'] }}
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
+                {{ $profil->judul ?? ('Profil ' . $sekolah['nama']) }}
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed drop-shadow-xs">
+                {{ $profil->subjudul ?? 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.' }}
             </p>
         </div>
     </div>
@@ -62,7 +82,7 @@
                 </div>
 
                 <!-- Sejarah -->
-                @if($sejarah)
+                @if(\App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && $sejarah)
                 <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="sejarah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Sejarah Singkat
@@ -74,7 +94,7 @@
                 @endif
 
                 <!-- Visi & Misi -->
-                @if($visiMisi)
+                @if(\App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) && $visiMisi)
                 <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="visi-misi">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Visi, Misi & Tujuan
@@ -103,8 +123,8 @@
                         $isYouTube = Str::contains($videoUrl, ['youtube.com', 'youtu.be']);
                         $ytEmbed = '';
                         if ($isYouTube) {
-                            if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
-                                $ytEmbed = 'https://www.youtube.com/embed/' . $match[1] . '?rel=0';
+                            if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
+                                $ytEmbed = 'https://www.youtube-nocookie.com/embed/' . $match[1] . '?rel=0&modestbranding=1&playsinline=1';
                             }
                         }
                     @endphp
@@ -113,9 +133,10 @@
                         @if($ytEmbed)
                             <iframe
                                 src="{{ $ytEmbed }}"
-                                title="{{ $sekolah['video_profil_judul'] ?? 'Video Profil' }}"
+                                title="{{ $sekolah['video_profil_judul'] ?? 'Video Profil Sekolah' }}"
                                 class="w-full h-full border-0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
                                 allowfullscreen></iframe>
                         @elseif(!empty($videoUrl))
                             <video controls class="w-full h-full object-cover">

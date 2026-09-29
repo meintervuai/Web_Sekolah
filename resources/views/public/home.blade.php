@@ -457,8 +457,8 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       $isYouTube = Str::contains($videoUrl, ['youtube.com', 'youtu.be']);
       $ytEmbed = '';
       if ($isYouTube) {
-      if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
-      $ytEmbed = 'https://www.youtube.com/embed/' . $match[1] . '?rel=0';
+      if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
+      $ytEmbed = 'https://www.youtube-nocookie.com/embed/' . $match[1] . '?rel=0&modestbranding=1&playsinline=1';
       }
       }
       @endphp
@@ -466,9 +466,10 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       @if($ytEmbed)
       <iframe
         src="{{ $ytEmbed }}"
-        title="{{ $sekolahData['video_profil_judul'] ?? 'Video Profil' }}"
+        title="{{ $sekolahData['video_profil_judul'] ?? 'Video Profil Sekolah' }}"
         class="w-full h-full border-0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
         allowfullscreen></iframe>
       @else
       <video controls class="w-full h-full object-cover">
