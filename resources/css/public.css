@@ -5,15 +5,98 @@
    disuntikkan oleh public.blade.php dari database tenant.
    ============================================================= */
 
+/* =============================================================
+   DETECTOR KONTRAS CSS (lapisan kedua setelah hitungan server)
+   contrast() menghasilkan boolean di dalam calc(); agar hasilnya
+   bisa dipakai sebagai bobot color-mix(), hasil itu disimpan pada
+   custom property bertype <number>. Initial 1 = kandidat dipakai
+   (perilaku lama) bila perbandingan tidak didukung browser.
+   ============================================================= */
+@property --kontras-aman {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 1;
+}
+
+@property --kontras-terang {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 1;
+}
+
+/* =============================================================
+   NILAI FALLBACK VARIABEL TEMA
+   Nilai sebenarnya di-inject oleh public.blade.php dari tabel
+   tenant `pengaturan_umum` dan diatur dari panel admin
+   (menu Tema & Warna).
+   ============================================================= */
+:root {
+    /* A. Warna Identitas */
+    --theme-color: #1E3A8A;
+    --theme-accent: #0284C7;
+
+    /* B. Tipografi & Teks */
+    --theme-heading: #0F172A;
+    --theme-text: #0F172A;
+    --theme-text-muted: #475569;
+
+    /* C. Latar & Permukaan */
+    --theme-page-bg: #F8FAFC;
+    --theme-section-bg: #F1F5F9;
+    --theme-card-bg: #FFFFFF;
+
+    /* D. Garis & Batas */
+    --theme-border: #E2E8F0;
+
+    /* E. Tombol & Aksi */
+    --theme-btn-bg: #1D4ED8;
+    --theme-btn-text: #FFFFFF;
+
+    /* F. Header, Navigasi & Footer */
+    --theme-header-bg: #1E3A8A;
+    --theme-footer-bg: #1E3A8A;
+
+    /* Turunan otomatis dari warna identitas (tidak diatur manual) */
+    --theme-color-dark: color-mix(in srgb, var(--theme-color) 80%, black);
+    --theme-color-light: color-mix(in srgb, var(--theme-color) 15%, var(--theme-page-bg));
+    --theme-color-transparent: color-mix(in srgb, var(--theme-color) 20%, transparent);
+
+    /* G. Auto-kontras WCAG - default memakai warna panel langsung;
+       nilai terhitung (dari luminans tiap latar) disuntikkan oleh
+       public.blade.php sehingga teks tetap terbaca walau latar berubah. */
+    --theme-fg-halaman-heading: var(--theme-heading);
+    --theme-fg-halaman-text: var(--theme-text);
+    --theme-fg-halaman-muted: var(--theme-text-muted);
+    --theme-fg-section-heading: var(--theme-heading);
+    --theme-fg-section-text: var(--theme-text);
+    --theme-fg-section-muted: var(--theme-text-muted);
+    --theme-fg-kartu-heading: var(--theme-heading);
+    --theme-fg-kartu-text: var(--theme-text);
+    --theme-fg-kartu-muted: var(--theme-text-muted);
+    --theme-fg-header: var(--theme-btn-text);
+    --theme-fg-footer: var(--theme-btn-text);
+    --theme-fg-zona: var(--theme-btn-text);
+    --theme-fg-tombol: var(--theme-btn-text);
+    --theme-fg-aksen: var(--theme-btn-text);
+    --theme-fg-badge: color-mix(in srgb, var(--theme-color) 85%, black);
+    --theme-fg-link: var(--theme-accent);
+}
+
 /* ---- Typography & Body ---- */
 body {
     font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--theme-page-bg);
     color: var(--theme-text);
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
     font-family: 'Plus Jakarta Sans', sans-serif;
     letter-spacing: -0.02em;
+    color: var(--theme-heading);
+}
+
+p {
+    color: var(--theme-text);
 }
 
 /* ---- Layout Utilities ---- */
@@ -66,7 +149,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .theme-bg-dark       { background-color: var(--theme-color-dark); }
 .theme-text          { color: var(--theme-color); }
 .theme-border        { border-color: var(--theme-color); }
-.theme-accent-text   { color: var(--theme-accent); }
+.theme-accent-text   { color: var(--theme-fg-link); }
 
 .theme-header {
     background-color: var(--theme-header-bg) !important;
@@ -79,7 +162,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 /* ---- Primary Button ---- */
 .theme-btn-primary {
     background-color: var(--theme-btn-bg) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-tombol) !important;
     transition: all 0.2s ease-in-out;
 }
 .theme-btn-primary:hover {
@@ -96,7 +179,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 .theme-btn-outline:hover {
     background-color: var(--theme-btn-bg) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-tombol) !important;
 }
 
 /* ---- Hero Gradient Utility ---- */
@@ -121,41 +204,41 @@ header.theme-bg {
     background-color: var(--theme-header-bg) !important;
     border-bottom-color: color-mix(in srgb, var(--theme-header-bg) 75%, black) !important;
 }
+/* Teks di atas latar zona memakai --theme-fg-zona yang nilainya
+   diganti per scope (header/footer) sehingga otomatis mengikuti
+   kontras luminans latarnya. */
 header.theme-bg .theme-accent-text,
 header.theme-bg .theme-text {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 85%, transparent) !important;
 }
 header.theme-bg .text-blue-700 {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 40%, transparent) !important;
 }
 header.theme-bg .border-blue-800\/50 {
     border-color: color-mix(in srgb, var(--theme-header-bg) 75%, black) !important;
 }
-header.theme-bg .theme-accent-text,
-header.theme-bg .theme-accent-text {
-    color: rgba(255, 255, 255, 0.75) !important;
-}
 
 /* ---- Footer ---- */
-footer.theme-bg {
-    background-color: var(--theme-color) !important;
-    border-top-color: color-mix(in srgb, var(--theme-color) 75%, black) !important;
+footer.theme-bg,
+footer.theme-footer {
+    background-color: var(--theme-footer-bg) !important;
+    border-top-color: color-mix(in srgb, var(--theme-footer-bg) 75%, black) !important;
 }
 footer.theme-bg .theme-accent-text,
 footer.theme-bg .theme-text {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 85%, transparent) !important;
 }
 footer.theme-bg .text-amber-200,
 footer.theme-bg .text-amber-300 {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 75%, transparent) !important;
 }
 footer.theme-bg .border-blue-800\/50,
 footer.theme-bg .border-blue-700\/50 {
-    border-color: color-mix(in srgb, var(--theme-color) 75%, black) !important;
+    border-color: color-mix(in srgb, var(--theme-footer-bg) 75%, black) !important;
 }
 footer.theme-bg .bg-blue-800 {
-    background-color: color-mix(in srgb, var(--theme-color) 80%, black) !important;
-    border-color: color-mix(in srgb, var(--theme-color) 65%, black) !important;
+    background-color: color-mix(in srgb, var(--theme-footer-bg) 80%, black) !important;
+    border-color: color-mix(in srgb, var(--theme-footer-bg) 65%, black) !important;
 }
 footer.theme-bg .bg-blue-800:hover {
     background-color: var(--theme-accent) !important;
@@ -196,7 +279,7 @@ section.bg-gradient-to-br .bg-blue-600\/30 {
 /* Solid blue buttons & pills */
 .bg-blue-900, .bg-blue-800, .bg-blue-700, .bg-blue-600, .bg-blue-500 {
     background-color: var(--theme-btn-bg) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-tombol) !important;
 }
 .bg-blue-900:hover, .bg-blue-800:hover,
 .bg-blue-700:hover, .bg-blue-600:hover, .bg-blue-500:hover,
@@ -212,29 +295,29 @@ section.bg-blue-900 {
 
 /* Light blue pills/badges */
 .bg-blue-50, .bg-blue-100, .bg-sky-50, .bg-sky-100 {
-    background-color: color-mix(in srgb, var(--theme-accent) 15%, white) !important;
-    color: color-mix(in srgb, var(--theme-color) 90%, black) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-page-bg)) !important;
+    color: var(--theme-fg-badge) !important;
 }
 .border-blue-100, .border-blue-200, .border-sky-200 {
-    border-color: color-mix(in srgb, var(--theme-accent) 25%, white) !important;
+    border-color: color-mix(in srgb, var(--theme-accent) 25%, var(--theme-page-bg)) !important;
 }
 
 /* Blue text & links */
 .text-blue-500, .text-blue-600, .text-blue-700, .text-blue-800,
 .text-sky-300, .text-sky-400, .text-sky-500 {
-    color: var(--theme-accent) !important;
+    color: var(--theme-fg-link) !important;
 }
 a:hover.hover\:text-blue-600,
 a:hover.hover\:text-blue-700,
 a:hover.hover\:text-blue-800,
 .group:hover .group-hover\:text-blue-600,
 .group:hover .group-hover\:text-blue-700 {
-    color: var(--theme-accent) !important;
+    color: var(--theme-fg-link) !important;
 }
 
-/* Navbar brand */
+/* Navbar brand - ikut warna judul permukaan kartu (auto-kontras) */
 nav .text-blue-950 {
-    color: color-mix(in srgb, var(--theme-color) 90%, black) !important;
+    color: var(--theme-heading) !important;
 }
 
 /* Focus rings */
@@ -245,7 +328,7 @@ nav .text-blue-950 {
 /* Filter pills active (prestasi, dll) */
 .bg-blue-600.text-white {
     background-color: var(--theme-btn-bg) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-tombol) !important;
 }
 
 /* Slide dots carousel */
@@ -258,7 +341,7 @@ button.bg-blue-500.w-8,
 /* Solid amber - ke theme accent */
 .bg-amber-500, .bg-amber-400, .bg-amber-300 {
     background-color: var(--theme-accent) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-aksen) !important;
 }
 .bg-amber-500:hover, .bg-amber-400:hover,
 .hover\:bg-amber-300:hover, .hover\:bg-amber-200:hover {
@@ -267,57 +350,54 @@ button.bg-blue-500.w-8,
 
 /* Light amber pills */
 .bg-amber-50, .bg-amber-100 {
-    background-color: color-mix(in srgb, var(--theme-accent) 12%, white) !important;
-    color: color-mix(in srgb, var(--theme-color) 90%, black) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-page-bg)) !important;
+    color: var(--theme-fg-badge) !important;
 }
 .bg-amber-50\/60 {
-    background-color: color-mix(in srgb, var(--theme-accent) 8%, white) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 8%, var(--theme-page-bg)) !important;
 }
 
 /* Amber borders */
 .border-amber-500, .border-amber-300, .border-amber-200, .border-amber-100 {
-    border-color: color-mix(in srgb, var(--theme-accent) 40%, white) !important;
+    border-color: color-mix(in srgb, var(--theme-accent) 40%, var(--theme-page-bg)) !important;
 }
 
-/* Amber text - REMOVED hardcoded amber colors to respect theme */
+/* Amber text - mengikuti panel tema */
 .text-amber-900, .text-amber-800, .text-amber-700 {
     color: color-mix(in srgb, var(--theme-color) 80%, black) !important;
 }
 .text-amber-600, .text-amber-500, .text-amber-400, .text-amber-300, .text-amber-200 {
-    color: var(--theme-accent) !important;
+    color: var(--theme-fg-link) !important;
 }
 
-/* Amber text di dalam dark cards (bg-blue-900 = sudah di-remap ke theme) */
+/* Amber di atas dark cards & dark section: teks mengikuti
+   --theme-fg-zona per scope (zona/header/footer). */
 .bg-blue-900 .text-amber-300, .bg-blue-900 .text-amber-200,
-.bg-blue-800 .text-amber-300, .bg-blue-800 .text-amber-200 {
-    color: rgba(255, 255, 255, 0.90) !important;
+.bg-blue-800 .text-amber-300, .bg-blue-800 .text-amber-200,
+section.theme-bg .text-amber-200,
+section.theme-bg .text-amber-300 {
+    color: color-mix(in srgb, var(--theme-fg-zona) 90%, transparent) !important;
 }
 .bg-blue-900 a.text-amber-300:hover,
 .bg-blue-900 a.hover\:text-amber-200:hover,
 .bg-blue-800 a.text-amber-300:hover {
-    color: rgba(255, 255, 255, 1) !important;
-}
-
-/* Amber di dark section */
-section.theme-bg .text-amber-200,
-section.theme-bg .text-amber-300 {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: var(--theme-fg-zone) !important;
 }
 
 /* ---- Indigo Color Overrides ---- */
 .bg-indigo-600, .bg-indigo-700, .bg-indigo-800 {
     background-color: var(--theme-btn-bg) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-tombol) !important;
 }
 .bg-indigo-600\/25, .bg-indigo-600\/20 {
     background-color: color-mix(in srgb, var(--theme-color) 25%, transparent) !important;
 }
 .bg-indigo-50, .bg-indigo-100 {
-    background-color: color-mix(in srgb, var(--theme-accent) 12%, white) !important;
-    color: color-mix(in srgb, var(--theme-color) 85%, black) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-page-bg)) !important;
+    color: var(--theme-fg-badge) !important;
 }
 .border-indigo-100, .border-indigo-200 {
-    border-color: color-mix(in srgb, var(--theme-accent) 25%, white) !important;
+    border-color: color-mix(in srgb, var(--theme-accent) 25%, var(--theme-page-bg)) !important;
 }
 .text-indigo-800, .text-indigo-700, .text-indigo-600 {
     color: color-mix(in srgb, var(--theme-color) 80%, black) !important;
@@ -326,14 +406,15 @@ section.theme-bg .text-amber-300 {
 /* ---- Orange Color Overrides ---- */
 .bg-orange-500, .bg-orange-600, .bg-orange-400 {
     background-color: var(--theme-accent) !important;
-    color: var(--theme-btn-text) !important;
+    color: var(--theme-fg-aksen) !important;
 }
 .text-orange-500, .text-orange-600, .text-orange-400 {
-    color: var(--theme-accent) !important;
+    color: var(--theme-fg-link) !important;
 }
 
-/* ---- Emerald (notifikasi sukses - tetap hijau, jangan override) ---- */
-/* .bg-emerald-* dibiarkan apa adanya karena itu warna semantik sukses */
+/* ---- Emerald & keluarga status (green, red, rose, ...) ---- */
+/* Tanpa pengecualian: seluruh keluarga dipetakan ke panel tema lewat
+   blok `:root` di akhir file (emerald/green/red/rose -> skala aksen). */
 
 /* =============================================================
    CARD & INTERACTION STYLES
@@ -362,13 +443,11 @@ section.theme-bg .text-amber-300 {
     border-color: color-mix(in srgb, var(--theme-accent) 30%, transparent) !important;
 }
 .hover\:bg-sky-200:hover {
-    background-color: color-mix(in srgb, var(--theme-accent) 20%, white) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 20%, var(--theme-page-bg)) !important;
 }
-.text-sky-300, .text-sky-400 {
-    color: color-mix(in srgb, var(--theme-accent) 80%, white) !important;
-}
+.text-sky-300, .text-sky-400,
 .group:hover .group-hover\:text-sky-300 {
-    color: rgba(255,255,255,0.9) !important;
+    color: color-mix(in srgb, var(--theme-accent) 80%, var(--theme-page-bg)) !important;
 }
 
 /* bg-blue-900/85 (berita card category badge overlay) */
@@ -391,7 +470,7 @@ section.theme-bg .text-amber-300 {
 
 /* bg-blue-50/50 (struktur diagram active) */
 .bg-blue-50\/50 {
-    background-color: color-mix(in srgb, var(--theme-accent) 8%, white) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 8%, var(--theme-page-bg)) !important;
 }
 
 /* Ring overrides */
@@ -399,7 +478,7 @@ section.theme-bg .text-amber-300 {
     --tw-ring-color: var(--theme-accent) !important;
 }
 .focus\:ring-blue-500:focus {
-    --tw-ring-color: color-mix(in srgb, var(--theme-accent) 70%, white) !important;
+    --tw-ring-color: color-mix(in srgb, var(--theme-accent) 70%, var(--theme-page-bg)) !important;
 }
 
 /* Hover states yang belum dicakup */
@@ -407,10 +486,10 @@ section.theme-bg .text-amber-300 {
 .hover\:text-blue-700:hover,
 .hover\:text-blue-800:hover,
 .hover\:text-blue-900:hover {
-    color: var(--theme-accent) !important;
+    color: var(--theme-fg-link) !important;
 }
-.hover\:bg-blue-50:hover  { background-color: color-mix(in srgb, var(--theme-accent) 10%, white) !important; }
-.hover\:bg-blue-100:hover { background-color: color-mix(in srgb, var(--theme-accent) 15%, white) !important; }
+.hover\:bg-blue-50:hover  { background-color: color-mix(in srgb, var(--theme-accent) 10%, var(--theme-page-bg)) !important; }
+.hover\:bg-blue-100:hover { background-color: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-page-bg)) !important; }
 .hover\:bg-blue-800:hover { background-color: var(--theme-btn-bg) !important; filter: brightness(0.88); }
 .hover\:bg-blue-900:hover { background-color: var(--theme-btn-bg) !important; filter: brightness(0.80); }
 .hover\:border-blue-900\/30:hover {
@@ -418,28 +497,698 @@ section.theme-bg .text-amber-300 {
 }
 .hover\:bg-blue-50:hover,
 a.hover\:bg-blue-50:hover {
-    background-color: color-mix(in srgb, var(--theme-accent) 10%, white) !important;
-    color: color-mix(in srgb, var(--theme-color) 90%, black) !important;
+    background-color: color-mix(in srgb, var(--theme-accent) 10%, var(--theme-page-bg)) !important;
+    color: var(--theme-fg-badge) !important;
 }
 
 /* Group-hover */
 .group:hover .group-hover\:text-blue-600,
-.group:hover .group-hover\:text-blue-700 { color: var(--theme-accent) !important; }
-.group:hover .group-hover\:bg-blue-600   { background-color: var(--theme-btn-bg) !important; color: var(--theme-btn-text) !important; }
+.group:hover .group-hover\:text-blue-700 { color: var(--theme-fg-link) !important; }
+.group:hover .group-hover\:bg-blue-600   { background-color: var(--theme-btn-bg) !important; color: var(--theme-fg-tombol) !important; }
 
-/* text-blue-900, text-blue-950 (fasilitas stat, jurusan heading) */
+/* text-blue-900, text-blue-950 (navbar brand, stat, jurusan):
+   "tinta" identitas - otomatis jadi putih bila kartu gelap. */
 .text-blue-900, .text-blue-950 {
-    color: color-mix(in srgb, var(--theme-color) 90%, black) !important;
+    --kontras-aman: calc(color-mix(in srgb, var(--theme-color) 90%, black) contrast(var(--theme-card-bg)) >= 4.5);
+    color: color-mix(in srgb, color-mix(in srgb, var(--theme-color) 90%, black) calc(100% * var(--kontras-aman)), #FFFFFF) !important;
 }
 
-/* Breadcrumb sub-text di dark hero */
+/* Breadcrumb di dark hero / top bar: mengikuti zona efektif
+   (zona halaman, atau warna teks header bila ia bagian header). */
 nav .text-blue-200,
-.text-blue-200 { color: rgba(255,255,255,0.75) !important; }
-.text-blue-100 { color: rgba(255,255,255,0.85) !important; }
+.text-blue-200 { color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 75%, transparent) !important; }
+.text-blue-100 { color: color-mix(in srgb, var(--fg-zona-efektif, var(--theme-fg-zona)) 85%, transparent) !important; }
 
 /* Scrollbar hidden */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* =============================================================
+   LEGACY UTILITY MAPPING (WARNA NETRAL)
+   Kelas Tailwind netral yang masih tertulis langsung pada view
+   publik dipetakan ke variabel tema, sehingga seluruh halaman
+   ikut berubah tanpa harus diubah satu per satu.
+   ============================================================= */
+
+/* Kartu / panel putih */
+.bg-white,
+.bg-white\/95,
+.bg-white\/90,
+.bg-white\/80 {
+    background-color: var(--theme-card-bg) !important;
+}
+
+/* Latar section terang */
+.bg-slate-50,
+.bg-slate-50\/80,
+.bg-slate-100,
+.bg-slate-100\/80,
+.bg-slate-200,
+.bg-gray-50,
+.bg-gray-100 {
+    background-color: var(--theme-section-bg) !important;
+}
+
+/* Garis & batas */
+.border-slate-100,
+.border-slate-200,
+.border-slate-200\/90,
+.border-slate-300,
+.border-gray-100,
+.border-gray-200 {
+    border-color: var(--theme-border) !important;
+}
+
+.divide-slate-100 > * + *,
+.divide-slate-200 > * + * {
+    border-color: var(--theme-border) !important;
+}
+
+/* Teks judul */
+.text-slate-900,
+.text-slate-800 {
+    color: var(--theme-heading) !important;
+}
+
+/* Teks isi & sekunder */
+.text-slate-700,
+.text-slate-600,
+.text-slate-500 {
+    color: var(--theme-text-muted) !important;
+}
+
+.text-slate-400 {
+    color: color-mix(in srgb, var(--theme-text-muted) 65%, var(--theme-page-bg)) !important;
+}
+
+/* ---- ZONA GELAP ----
+   Hero, header, footer, dan section gelap memakai --fg-zona-efektif
+   (= --theme-fg-zona di halaman, diganti per scope menjadi
+   --theme-fg-header/--theme-fg-footer di header/footer).
+   --theme-text ikut dipantau: kartu di dalam zona gelap (mis. widget
+   di footer) tetap memakai warna teks permukaannya sendiri. */
+:root { --fg-zona-efektif: var(--theme-fg-zona); }
+
+:is(.theme-header, .theme-footer, .theme-bg, .theme-bg-dark, .theme-bg-darker,
+    .bg-hero-gradient, .public-hero-gradient,
+    [class*="bg-blue-950"], [class*="bg-blue-900"],
+    [class*="bg-slate-900"], [class*="bg-slate-800"])
+:is(h1, h2, h3, h4, h5, h6, p,
+    .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600,
+    .text-slate-500, .text-slate-400,
+    .theme-heading, .theme-text-body, .theme-text-muted) {
+    color: color-mix(in srgb, var(--fg-zona-efektif) 88%, transparent) !important;
+}
+
+/* Komponen yang tetap memakai warnanya sendiri walau di zona gelap */
+:is(.theme-header, .theme-footer, .theme-bg, .theme-bg-dark, .theme-bg-darker,
+    .bg-hero-gradient, .public-hero-gradient,
+    [class*="bg-blue-950"], [class*="bg-blue-900"],
+    [class*="bg-slate-900"], [class*="bg-slate-800"])
+.theme-btn-primary {
+    color: var(--theme-fg-tombol) !important;
+}
+
+:is(.theme-header, .theme-footer, .theme-bg, .theme-bg-dark, .theme-bg-darker,
+    .bg-hero-gradient, .public-hero-gradient,
+    [class*="bg-blue-950"], [class*="bg-blue-900"],
+    [class*="bg-slate-900"], [class*="bg-slate-800"])
+:is(.theme-badge, .theme-icon-box) {
+    color: var(--theme-fg-badge) !important;
+}
+
+/* =============================================================
+   GLOBAL THEME CLASSES
+   Satu kelas = satu bagian tampilan. Gunakan kelas ini pada
+   markup baru agar seluruh warna otomatis mengikuti panel tema.
+   Diletakkan di akhir file agar menang pada cascade CSS.
+   Daftar: page-bg, section-bg, card, heading, text-body,
+   text-muted, link, border, divider, badge, icon-box, header,
+   footer, table-head, table-row, input, btn-ghost.
+   ============================================================= */
+
+/* ---- C. Latar & Permukaan ---- */
+.theme-page-bg     { background-color: var(--theme-page-bg) !important; }
+.theme-section-bg  { background-color: var(--theme-section-bg) !important; }
+.theme-surface-alt { background-color: color-mix(in srgb, var(--theme-section-bg) 65%, var(--theme-card-bg)) !important; }
+.theme-card {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-border) !important;
+}
+
+/* ---- B. Tipografi & Teks ---- */
+.theme-heading    { color: var(--theme-heading) !important; }
+.theme-text-body  { color: var(--theme-text) !important; }
+.theme-text-muted { color: var(--theme-text-muted) !important; }
+.theme-link       { color: var(--theme-accent) !important; }
+.theme-link:hover { color: var(--theme-color) !important; }
+
+/* ---- D. Garis & Batas ---- */
+.theme-border,
+.theme-divider   { border-color: var(--theme-border) !important; }
+.theme-divide-x > * + * { border-left-color: var(--theme-border) !important; }
+.theme-divide-y > * + * { border-top-color: var(--theme-border) !important; }
+
+/* ---- A. Warna Identitas & Aksen ---- */
+.theme-accent-bg {
+    background-color: var(--theme-accent) !important;
+    color: var(--theme-fg-aksen) !important;
+}
+.theme-badge {
+    background-color: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-page-bg)) !important;
+    color: var(--theme-fg-badge) !important;
+    border-color: color-mix(in srgb, var(--theme-accent) 30%, var(--theme-page-bg)) !important;
+}
+.theme-icon-box {
+    background-color: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-page-bg)) !important;
+    color: var(--theme-color) !important;
+    border-color: color-mix(in srgb, var(--theme-accent) 25%, var(--theme-page-bg)) !important;
+}
+
+/* ---- E. Tombol & Aksi ---- */
+.theme-btn-ghost {
+    background-color: var(--theme-section-bg) !important;
+    color: var(--theme-fg-section-heading) !important;
+    border-color: var(--theme-border) !important;
+}
+
+/* ---- F. Header, Navigasi & Footer ---- */
+.theme-header { background-color: var(--theme-header-bg) !important; }
+.theme-footer {
+    background-color: var(--theme-footer-bg) !important;
+    border-top-color: color-mix(in srgb, var(--theme-footer-bg) 75%, black) !important;
+}
+
+/* ---- Tabel & Daftar ---- */
+.theme-table-head {
+    background-color: var(--theme-section-bg) !important;
+    color: var(--theme-fg-section-heading) !important;
+}
+.theme-table-row:hover {
+    background-color: color-mix(in srgb, var(--theme-accent) 6%, var(--theme-card-bg)) !important;
+}
+
+/* ---- Formulir ---- */
+.theme-input {
+    background-color: var(--theme-card-bg) !important;
+    border-color: var(--theme-border) !important;
+    color: var(--theme-fg-kartu-text) !important;
+}
+.theme-input:focus {
+    border-color: var(--theme-accent) !important;
+    --tw-ring-color: color-mix(in srgb, var(--theme-accent) 25%, transparent) !important;
+}
+
+/* =============================================================
+   PEMETAAN PALET TAILWIND v4 (MENUTUP CELAH KELAS YANG LOLOS)
+   Tailwind v4 merender utilitas seperti `.text-blue-600` atau
+   `.from-blue-900` menjadi `color: var(--color-blue-600)`.
+   Dengan menimpa variabel palet di `:root` (deklarasi tanpa
+   layer menang atas `@layer theme` bawaan Tailwind), SELURUH
+   utilitas SEMUA keluarga warna (blue, indigo, purple, violet,
+   fuchsia, pink, sky, cyan, teal, green, emerald, lime, yellow,
+   amber, orange, red, rose, slate, gray, zinc, stone, neutral)
+   serta putih literal (`--color-white`) otomatis mengikuti panel
+   tema - termasuk varian hover/focus, opacity `/xx`, gradien
+   from-via-to, ring, dan placeholder - tanpa mengubah ratusan
+   view dan TANPA pengecualian semantik. Aturan kontekstual yang
+   sudah ada (mis. `.bg-blue-600` -> tombol) tetap menang karena
+   lebih spesifik dan memakai `!important`; seluruh literal putih
+   pada aturan lama diganti kunci panel `warna_tombol_teks`.
+   ============================================================= */
+
+:root {
+    /* Skala turunan A. Warna Identitas -> keluarga blue, indigo,
+       purple, violet, fuchsia, pink */
+    --theme-identity-50:  color-mix(in srgb, var(--theme-color) 5%, var(--theme-page-bg));
+    --theme-identity-100: color-mix(in srgb, var(--theme-color) 10%, var(--theme-page-bg));
+    --theme-identity-200: color-mix(in srgb, var(--theme-color) 20%, var(--theme-page-bg));
+    --theme-identity-300: color-mix(in srgb, var(--theme-color) 33%, var(--theme-page-bg));
+    --theme-identity-400: color-mix(in srgb, var(--theme-color) 50%, var(--theme-page-bg));
+    --theme-identity-500: var(--theme-color);
+    --theme-identity-600: color-mix(in srgb, var(--theme-color) 88%, black);
+    --theme-identity-700: color-mix(in srgb, var(--theme-color) 76%, black);
+    --theme-identity-800: color-mix(in srgb, var(--theme-color) 64%, black);
+    --theme-identity-900: color-mix(in srgb, var(--theme-color) 52%, black);
+    --theme-identity-950: color-mix(in srgb, var(--theme-color) 40%, black);
+
+    /* Skala turunan E. Aksen -> keluarga sky, amber, orange, cyan,
+       teal, green, emerald, lime, yellow, red, rose */
+    --theme-accent-50:  color-mix(in srgb, var(--theme-accent) 5%, var(--theme-page-bg));
+    --theme-accent-100: color-mix(in srgb, var(--theme-accent) 10%, var(--theme-page-bg));
+    --theme-accent-200: color-mix(in srgb, var(--theme-accent) 20%, var(--theme-page-bg));
+    --theme-accent-300: color-mix(in srgb, var(--theme-accent) 33%, var(--theme-page-bg));
+    --theme-accent-400: color-mix(in srgb, var(--theme-accent) 50%, var(--theme-page-bg));
+    --theme-accent-500: var(--theme-accent);
+    --theme-accent-600: color-mix(in srgb, var(--theme-accent) 88%, black);
+    --theme-accent-700: color-mix(in srgb, var(--theme-accent) 76%, black);
+    --theme-accent-800: color-mix(in srgb, var(--theme-accent) 64%, black);
+    --theme-accent-900: color-mix(in srgb, var(--theme-accent) 52%, black);
+    --theme-accent-950: color-mix(in srgb, var(--theme-accent) 40%, black);
+
+    /* Skala turunan B. Teks sekunder -> keluarga slate, gray, zinc,
+       stone, neutral (netral bertema) */
+    --theme-neutral-50:  color-mix(in srgb, var(--theme-text-muted) 4%, var(--theme-page-bg));
+    --theme-neutral-100: color-mix(in srgb, var(--theme-text-muted) 8%, var(--theme-page-bg));
+    --theme-neutral-200: color-mix(in srgb, var(--theme-text-muted) 15%, var(--theme-page-bg));
+    --theme-neutral-300: color-mix(in srgb, var(--theme-text-muted) 25%, var(--theme-page-bg));
+    --theme-neutral-400: color-mix(in srgb, var(--theme-text-muted) 65%, var(--theme-page-bg));
+    --theme-neutral-500: var(--theme-text-muted);
+    --theme-neutral-600: color-mix(in srgb, var(--theme-text-muted) 85%, black);
+    --theme-neutral-700: color-mix(in srgb, var(--theme-color) 70%, black);
+    --theme-neutral-800: color-mix(in srgb, var(--theme-color) 56%, black);
+    --theme-neutral-900: color-mix(in srgb, var(--theme-color) 45%, black);
+    --theme-neutral-950: color-mix(in srgb, var(--theme-color) 34%, black);
+}
+
+:root {
+    /* Blue -> A. Warna Identitas */
+    --color-blue-50:  var(--theme-identity-50);
+    --color-blue-100: var(--theme-identity-100);
+    --color-blue-200: var(--theme-identity-200);
+    --color-blue-300: var(--theme-identity-300);
+    --color-blue-400: var(--theme-identity-400);
+    --color-blue-500: var(--theme-identity-500);
+    --color-blue-600: var(--theme-identity-600);
+    --color-blue-700: var(--theme-identity-700);
+    --color-blue-800: var(--theme-identity-800);
+    --color-blue-900: var(--theme-identity-900);
+    --color-blue-950: var(--theme-identity-950);
+
+    /* Indigo -> A. Warna Identitas */
+    --color-indigo-50:  var(--theme-identity-50);
+    --color-indigo-100: var(--theme-identity-100);
+    --color-indigo-200: var(--theme-identity-200);
+    --color-indigo-300: var(--theme-identity-300);
+    --color-indigo-400: var(--theme-identity-400);
+    --color-indigo-500: var(--theme-identity-500);
+    --color-indigo-600: var(--theme-identity-600);
+    --color-indigo-700: var(--theme-identity-700);
+    --color-indigo-800: var(--theme-identity-800);
+    --color-indigo-900: var(--theme-identity-900);
+    --color-indigo-950: var(--theme-identity-950);
+
+    /* Purple, violet, fuchsia, pink -> A. Warna Identitas */
+    --color-purple-50: var(--theme-identity-50);
+    --color-purple-100: var(--theme-identity-100);
+    --color-purple-200: var(--theme-identity-200);
+    --color-purple-300: var(--theme-identity-300);
+    --color-purple-400: var(--theme-identity-400);
+    --color-purple-500: var(--theme-identity-500);
+    --color-purple-600: var(--theme-identity-600);
+    --color-purple-700: var(--theme-identity-700);
+    --color-purple-800: var(--theme-identity-800);
+    --color-purple-900: var(--theme-identity-900);
+    --color-purple-950: var(--theme-identity-950);
+    --color-violet-50: var(--theme-identity-50);
+    --color-violet-100: var(--theme-identity-100);
+    --color-violet-200: var(--theme-identity-200);
+    --color-violet-300: var(--theme-identity-300);
+    --color-violet-400: var(--theme-identity-400);
+    --color-violet-500: var(--theme-identity-500);
+    --color-violet-600: var(--theme-identity-600);
+    --color-violet-700: var(--theme-identity-700);
+    --color-violet-800: var(--theme-identity-800);
+    --color-violet-900: var(--theme-identity-900);
+    --color-violet-950: var(--theme-identity-950);
+    --color-fuchsia-50: var(--theme-identity-50);
+    --color-fuchsia-100: var(--theme-identity-100);
+    --color-fuchsia-200: var(--theme-identity-200);
+    --color-fuchsia-300: var(--theme-identity-300);
+    --color-fuchsia-400: var(--theme-identity-400);
+    --color-fuchsia-500: var(--theme-identity-500);
+    --color-fuchsia-600: var(--theme-identity-600);
+    --color-fuchsia-700: var(--theme-identity-700);
+    --color-fuchsia-800: var(--theme-identity-800);
+    --color-fuchsia-900: var(--theme-identity-900);
+    --color-fuchsia-950: var(--theme-identity-950);
+    --color-pink-50: var(--theme-identity-50);
+    --color-pink-100: var(--theme-identity-100);
+    --color-pink-200: var(--theme-identity-200);
+    --color-pink-300: var(--theme-identity-300);
+    --color-pink-400: var(--theme-identity-400);
+    --color-pink-500: var(--theme-identity-500);
+    --color-pink-600: var(--theme-identity-600);
+    --color-pink-700: var(--theme-identity-700);
+    --color-pink-800: var(--theme-identity-800);
+    --color-pink-900: var(--theme-identity-900);
+    --color-pink-950: var(--theme-identity-950);
+
+    /* Sky -> E. Aksen */
+    --color-sky-50:  var(--theme-accent-50);
+    --color-sky-100: var(--theme-accent-100);
+    --color-sky-200: var(--theme-accent-200);
+    --color-sky-300: var(--theme-accent-300);
+    --color-sky-400: var(--theme-accent-400);
+    --color-sky-500: var(--theme-accent-500);
+    --color-sky-600: var(--theme-accent-600);
+    --color-sky-700: var(--theme-accent-700);
+    --color-sky-800: var(--theme-accent-800);
+    --color-sky-900: var(--theme-accent-900);
+    --color-sky-950: var(--theme-accent-950);
+
+    /* Amber -> E. Aksen */
+    --color-amber-50:  var(--theme-accent-50);
+    --color-amber-100: var(--theme-accent-100);
+    --color-amber-200: var(--theme-accent-200);
+    --color-amber-300: var(--theme-accent-300);
+    --color-amber-400: var(--theme-accent-400);
+    --color-amber-500: var(--theme-accent-500);
+    --color-amber-600: var(--theme-accent-600);
+    --color-amber-700: var(--theme-accent-700);
+    --color-amber-800: var(--theme-accent-800);
+    --color-amber-900: var(--theme-accent-900);
+    --color-amber-950: var(--theme-accent-950);
+
+    /* Orange -> E. Aksen */
+    --color-orange-50:  var(--theme-accent-50);
+    --color-orange-100: var(--theme-accent-100);
+    --color-orange-200: var(--theme-accent-200);
+    --color-orange-300: var(--theme-accent-300);
+    --color-orange-400: var(--theme-accent-400);
+    --color-orange-500: var(--theme-accent-500);
+    --color-orange-600: var(--theme-accent-600);
+    --color-orange-700: var(--theme-accent-700);
+    --color-orange-800: var(--theme-accent-800);
+    --color-orange-900: var(--theme-accent-900);
+    --color-orange-950: var(--theme-accent-950);
+
+    /* Green, emerald, lime, teal, cyan, yellow, red, rose -> E. Aksen
+       (keluarga status/notifikasi ikut panel tema, tanpa kecuali) */
+    --color-green-50: var(--theme-accent-50);
+    --color-green-100: var(--theme-accent-100);
+    --color-green-200: var(--theme-accent-200);
+    --color-green-300: var(--theme-accent-300);
+    --color-green-400: var(--theme-accent-400);
+    --color-green-500: var(--theme-accent-500);
+    --color-green-600: var(--theme-accent-600);
+    --color-green-700: var(--theme-accent-700);
+    --color-green-800: var(--theme-accent-800);
+    --color-green-900: var(--theme-accent-900);
+    --color-green-950: var(--theme-accent-950);
+    --color-emerald-50: var(--theme-accent-50);
+    --color-emerald-100: var(--theme-accent-100);
+    --color-emerald-200: var(--theme-accent-200);
+    --color-emerald-300: var(--theme-accent-300);
+    --color-emerald-400: var(--theme-accent-400);
+    --color-emerald-500: var(--theme-accent-500);
+    --color-emerald-600: var(--theme-accent-600);
+    --color-emerald-700: var(--theme-accent-700);
+    --color-emerald-800: var(--theme-accent-800);
+    --color-emerald-900: var(--theme-accent-900);
+    --color-emerald-950: var(--theme-accent-950);
+    --color-lime-50: var(--theme-accent-50);
+    --color-lime-100: var(--theme-accent-100);
+    --color-lime-200: var(--theme-accent-200);
+    --color-lime-300: var(--theme-accent-300);
+    --color-lime-400: var(--theme-accent-400);
+    --color-lime-500: var(--theme-accent-500);
+    --color-lime-600: var(--theme-accent-600);
+    --color-lime-700: var(--theme-accent-700);
+    --color-lime-800: var(--theme-accent-800);
+    --color-lime-900: var(--theme-accent-900);
+    --color-lime-950: var(--theme-accent-950);
+    --color-teal-50: var(--theme-accent-50);
+    --color-teal-100: var(--theme-accent-100);
+    --color-teal-200: var(--theme-accent-200);
+    --color-teal-300: var(--theme-accent-300);
+    --color-teal-400: var(--theme-accent-400);
+    --color-teal-500: var(--theme-accent-500);
+    --color-teal-600: var(--theme-accent-600);
+    --color-teal-700: var(--theme-accent-700);
+    --color-teal-800: var(--theme-accent-800);
+    --color-teal-900: var(--theme-accent-900);
+    --color-teal-950: var(--theme-accent-950);
+    --color-cyan-50: var(--theme-accent-50);
+    --color-cyan-100: var(--theme-accent-100);
+    --color-cyan-200: var(--theme-accent-200);
+    --color-cyan-300: var(--theme-accent-300);
+    --color-cyan-400: var(--theme-accent-400);
+    --color-cyan-500: var(--theme-accent-500);
+    --color-cyan-600: var(--theme-accent-600);
+    --color-cyan-700: var(--theme-accent-700);
+    --color-cyan-800: var(--theme-accent-800);
+    --color-cyan-900: var(--theme-accent-900);
+    --color-cyan-950: var(--theme-accent-950);
+    --color-yellow-50: var(--theme-accent-50);
+    --color-yellow-100: var(--theme-accent-100);
+    --color-yellow-200: var(--theme-accent-200);
+    --color-yellow-300: var(--theme-accent-300);
+    --color-yellow-400: var(--theme-accent-400);
+    --color-yellow-500: var(--theme-accent-500);
+    --color-yellow-600: var(--theme-accent-600);
+    --color-yellow-700: var(--theme-accent-700);
+    --color-yellow-800: var(--theme-accent-800);
+    --color-yellow-900: var(--theme-accent-900);
+    --color-yellow-950: var(--theme-accent-950);
+    --color-red-50: var(--theme-accent-50);
+    --color-red-100: var(--theme-accent-100);
+    --color-red-200: var(--theme-accent-200);
+    --color-red-300: var(--theme-accent-300);
+    --color-red-400: var(--theme-accent-400);
+    --color-red-500: var(--theme-accent-500);
+    --color-red-600: var(--theme-accent-600);
+    --color-red-700: var(--theme-accent-700);
+    --color-red-800: var(--theme-accent-800);
+    --color-red-900: var(--theme-accent-900);
+    --color-red-950: var(--theme-accent-950);
+    --color-rose-50: var(--theme-accent-50);
+    --color-rose-100: var(--theme-accent-100);
+    --color-rose-200: var(--theme-accent-200);
+    --color-rose-300: var(--theme-accent-300);
+    --color-rose-400: var(--theme-accent-400);
+    --color-rose-500: var(--theme-accent-500);
+    --color-rose-600: var(--theme-accent-600);
+    --color-rose-700: var(--theme-accent-700);
+    --color-rose-800: var(--theme-accent-800);
+    --color-rose-900: var(--theme-accent-900);
+    --color-rose-950: var(--theme-accent-950);
+
+    /* Slate -> netral bertema (terang dari B. Teks sekunder,
+       gelap dari A. Warna Identitas untuk zona hero/footer) */
+    --color-slate-50:  var(--theme-neutral-50);
+    --color-slate-100: var(--theme-neutral-100);
+    --color-slate-200: var(--theme-neutral-200);
+    --color-slate-300: var(--theme-neutral-300);
+    --color-slate-400: var(--theme-neutral-400);
+    --color-slate-500: var(--theme-neutral-500);
+    --color-slate-600: var(--theme-neutral-600);
+    --color-slate-700: var(--theme-neutral-700);
+    --color-slate-800: var(--theme-neutral-800);
+    --color-slate-900: var(--theme-neutral-900);
+    --color-slate-950: var(--theme-neutral-950);
+
+    /* Gray, zinc, stone, neutral -> netral bertema */
+    --color-gray-50: var(--theme-neutral-50);
+    --color-gray-100: var(--theme-neutral-100);
+    --color-gray-200: var(--theme-neutral-200);
+    --color-gray-300: var(--theme-neutral-300);
+    --color-gray-400: var(--theme-neutral-400);
+    --color-gray-500: var(--theme-neutral-500);
+    --color-gray-600: var(--theme-neutral-600);
+    --color-gray-700: var(--theme-neutral-700);
+    --color-gray-800: var(--theme-neutral-800);
+    --color-gray-900: var(--theme-neutral-900);
+    --color-gray-950: var(--theme-neutral-950);
+    --color-zinc-50: var(--theme-neutral-50);
+    --color-zinc-100: var(--theme-neutral-100);
+    --color-zinc-200: var(--theme-neutral-200);
+    --color-zinc-300: var(--theme-neutral-300);
+    --color-zinc-400: var(--theme-neutral-400);
+    --color-zinc-500: var(--theme-neutral-500);
+    --color-zinc-600: var(--theme-neutral-600);
+    --color-zinc-700: var(--theme-neutral-700);
+    --color-zinc-800: var(--theme-neutral-800);
+    --color-zinc-900: var(--theme-neutral-900);
+    --color-zinc-950: var(--theme-neutral-950);
+    --color-stone-50: var(--theme-neutral-50);
+    --color-stone-100: var(--theme-neutral-100);
+    --color-stone-200: var(--theme-neutral-200);
+    --color-stone-300: var(--theme-neutral-300);
+    --color-stone-400: var(--theme-neutral-400);
+    --color-stone-500: var(--theme-neutral-500);
+    --color-stone-600: var(--theme-neutral-600);
+    --color-stone-700: var(--theme-neutral-700);
+    --color-stone-800: var(--theme-neutral-800);
+    --color-stone-900: var(--theme-neutral-900);
+    --color-stone-950: var(--theme-neutral-950);
+    --color-neutral-50: var(--theme-neutral-50);
+    --color-neutral-100: var(--theme-neutral-100);
+    --color-neutral-200: var(--theme-neutral-200);
+    --color-neutral-300: var(--theme-neutral-300);
+    --color-neutral-400: var(--theme-neutral-400);
+    --color-neutral-500: var(--theme-neutral-500);
+    --color-neutral-600: var(--theme-neutral-600);
+    --color-neutral-700: var(--theme-neutral-700);
+    --color-neutral-800: var(--theme-neutral-800);
+    --color-neutral-900: var(--theme-neutral-900);
+    --color-neutral-950: var(--theme-neutral-950);
+
+    /* Putih literal (text-white, border-white, bg-white/xx yang belum
+       tercakup aturan kontekstual) -> kunci panel warna_tombol_teks,
+       sehingga TIDAK ADA putih hardcoded yang mengabaikan panel. */
+    --color-white: var(--theme-fg-zona);
+}
+
+/* ---- Border netral ber-opacity -> D. Garis & Batas ---- */
+.border-slate-100\/80,
+.border-slate-200\/80 {
+    border-color: color-mix(in srgb, var(--theme-border) 80%, transparent) !important;
+}
+
+.border-slate-200\/60 {
+    border-color: color-mix(in srgb, var(--theme-border) 60%, transparent) !important;
+}
+
+/* ---- Pola titik radial hardcoded (#38bdf8) -> E. Aksen ----
+   Dipakai sebagai dekorasi hero di ~17 halaman publik. */
+[class*="radial-gradient(#38bdf8"] {
+    background-image: radial-gradient(
+        var(--theme-accent-400) 1px,
+        transparent 1px
+    ) !important;
+}
+
+/* ---- Warna merek arbitrary -> panel tema (tanpa kecuali) ----
+   Tombol WhatsApp di public.blade: bg-[#25D366] + hover:bg-[#20ba5a]
+   dipetakan ke E. Aksen agar mengikuti panel Tema & Warna. */
+.bg-\[\#25D366\] {
+    background-color: var(--theme-accent) !important;
+    color: var(--theme-fg-aksen) !important;
+}
+.hover\:bg-\[\#20ba5a\]:hover {
+    background-color: color-mix(in srgb, var(--theme-accent) 88%, black) !important;
+}
+
+/* =============================================================
+   SCOPE AUTO-KONTRAS PER PERMUKAAN
+   Setiap permukaan (halaman, section, kartu, zona gelap, header,
+   footer) memasang ulang variabel teks di dalam scope-nya:
+   - nilai terhitung server (--theme-fg-*) dipakai bila lolos
+     uji contrast() terhadap latar permukaan tersebut;
+   - bila tidak lolos (mis. kartu diganti hijau tua sedang warna
+     judul masih gelap), fallback otomatis memilih putih atau
+     tinta gelap sesuai luminans latar.
+   Akibatnya kartu hijau tua otomatis berjudul/berisi teks putih,
+   header terang otomatis memakai teks gelap, dan seterusnya,
+   tanpa admin harus mengganti warna teks manual.
+   ============================================================= */
+
+/* 1) Halaman - teks yang langsung berada di atas --theme-page-bg */
+.theme-page-bg {
+    --kontras-aman: calc(var(--theme-fg-halaman-text) contrast(var(--theme-page-bg)) >= 4.5);
+    --kontras-terang: calc(#FFFFFF contrast(var(--theme-page-bg)) >= 3);
+    --fallback-teks: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), #0F172A);
+    --fg-zona-efektif: color-mix(in srgb, var(--theme-fg-zona) calc(100% * var(--kontras-terang)), var(--theme-text));
+    --theme-heading: color-mix(in srgb, var(--theme-fg-halaman-heading) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text: color-mix(in srgb, var(--theme-fg-halaman-text) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text-muted: color-mix(in srgb, var(--theme-fg-halaman-muted) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-fg-link: color-mix(in srgb, var(--theme-fg-link) calc(100% * var(--kontras-aman)), var(--theme-text));
+}
+
+/* 2) Section terang - latar --theme-section-bg */
+.theme-section-bg,
+.theme-surface-alt,
+.bg-slate-50,
+.bg-slate-50\/80,
+.bg-slate-100,
+.bg-slate-100\/80,
+.bg-slate-200,
+.bg-gray-50,
+.bg-gray-100 {
+    --kontras-aman: calc(var(--theme-fg-section-text) contrast(var(--theme-section-bg)) >= 4.5);
+    --kontras-terang: calc(#FFFFFF contrast(var(--theme-section-bg)) >= 3);
+    --fallback-teks: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), #0F172A);
+    --fg-zona-efektif: color-mix(in srgb, var(--theme-fg-zona) calc(100% * var(--kontras-terang)), var(--theme-text));
+    --theme-heading: color-mix(in srgb, var(--theme-fg-section-heading) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text: color-mix(in srgb, var(--theme-fg-section-text) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text-muted: color-mix(in srgb, var(--theme-fg-section-muted) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-fg-link: color-mix(in srgb, var(--theme-fg-link) calc(100% * var(--kontras-aman)), var(--theme-text));
+}
+
+/* 3) Kartu / panel - latar --theme-card-bg.
+      Di sinilah auto-contrast paling terasa: ganti warna kartu
+      menjadi gelap maka seluruh judul & isi kartu ikut putih. */
+.theme-card,
+.bg-white,
+.bg-white\/95,
+.bg-white\/90 {
+    --kontras-aman: calc(var(--theme-fg-kartu-text) contrast(var(--theme-card-bg)) >= 4.5);
+    --kontras-terang: calc(#FFFFFF contrast(var(--theme-card-bg)) >= 3);
+    --fallback-teks: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), #0F172A);
+    --fg-zona-efektif: var(--theme-text);
+    --theme-heading: color-mix(in srgb, var(--theme-fg-kartu-heading) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text: color-mix(in srgb, var(--theme-fg-kartu-text) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-text-muted: color-mix(in srgb, var(--theme-fg-kartu-muted) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-fg-link: color-mix(in srgb, var(--theme-fg-link) calc(100% * var(--kontras-aman)), var(--theme-text));
+    --color-white: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), var(--theme-text));
+}
+
+/* 4) Pill/badge/icon box - latarnya selalu terang (aksen 12-15%
+      dicampur latar halaman), jadi teks ikut warna badge walau
+      kartu di sekitarnya gelap. */
+.theme-badge,
+.theme-icon-box,
+.bg-blue-50,
+.bg-blue-100,
+.bg-sky-50,
+.bg-sky-100,
+.bg-amber-50,
+.bg-amber-100,
+.bg-indigo-50,
+.bg-indigo-100 {
+    --fg-zona-efektif: var(--theme-fg-badge);
+    --theme-heading: var(--theme-fg-badge);
+    --theme-text: var(--theme-fg-badge);
+    --theme-text-muted: var(--theme-fg-badge);
+    --theme-fg-link: var(--theme-fg-badge);
+}
+
+/* 5) Zona gelap (hero, section bertema, footer/header dasar) -
+      kembali memakai warna zona hasil hitungan warna identitas. */
+.theme-bg,
+.theme-bg-dark,
+.theme-bg-darker,
+.bg-hero-gradient,
+.public-hero-gradient,
+[class*="bg-blue-950"],
+[class*="bg-blue-900"],
+[class*="bg-slate-900"],
+[class*="bg-slate-800"] {
+    --fg-zona-efektif: var(--theme-fg-zona);
+}
+
+/* 6) Header - kontras dihitung terhadap warna header itu sendiri,
+      termasuk utilitas white/blue-50 yang dipakai top bar. */
+.theme-header,
+header.theme-bg {
+    --kontras-aman: calc(var(--theme-fg-header) contrast(var(--theme-header-bg)) >= 4.5);
+    --kontras-terang: calc(#FFFFFF contrast(var(--theme-header-bg)) >= 3);
+    --fallback-teks: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), #0F172A);
+    --fg-zona-efektif: color-mix(in srgb, var(--theme-fg-header) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-heading: var(--fg-zona-efektif);
+    --theme-text: var(--fg-zona-efektif);
+    --theme-text-muted: var(--fg-zona-efektif);
+    --theme-fg-link: var(--fg-zona-efektif);
+    --color-white: var(--fg-zona-efektif);
+    --color-blue-50: var(--fg-zona-efektif);
+}
+
+/* 7) Footer - sama seperti header, basisnya --theme-fg-footer. */
+.theme-footer,
+footer.theme-bg {
+    --kontras-aman: calc(var(--theme-fg-footer) contrast(var(--theme-footer-bg)) >= 4.5);
+    --kontras-terang: calc(#FFFFFF contrast(var(--theme-footer-bg)) >= 3);
+    --fallback-teks: color-mix(in srgb, #FFFFFF calc(100% * var(--kontras-terang)), #0F172A);
+    --fg-zona-efektif: color-mix(in srgb, var(--theme-fg-footer) calc(100% * var(--kontras-aman)), var(--fallback-teks));
+    --theme-heading: var(--fg-zona-efektif);
+    --theme-text: var(--fg-zona-efektif);
+    --theme-text-muted: var(--fg-zona-efektif);
+    --theme-fg-link: var(--fg-zona-efektif);
+    --color-white: var(--fg-zona-efektif);
+}
+
+
 
 
 

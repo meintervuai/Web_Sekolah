@@ -53,7 +53,7 @@ Pengguna admin dan staf operator sekolah.
 ### 2.2 Tabel `pengaturan_umum`
 Menyimpan konfigurasi identitas sekolah (Key-Value).
 - `id`: BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
-- `kunci`: VARCHAR(100) UNIQUE NOT NULL (Contoh: `nama_sekolah`, `logo`, `warna_tema`, `alamat`, `no_telepon`, `email_sekolah`, `sambutan_kepsek`, `foto_kepsek`)
+- `kunci`: VARCHAR(100) UNIQUE NOT NULL (Contoh: `nama_sekolah`, `logo`, `alamat`, `no_telepon`, `email_sekolah`, `sambutan_kepsek`, `foto_kepsek`; kunci tema portal: `skema_tema`, `warna_tema`, `warna_aksen`, `warna_judul`, `warna_teks`, `warna_teks_sekunder`, `warna_latar_halaman`, `warna_latar_section`, `warna_kartu`, `warna_border`, `warna_tombol`, `warna_tombol_teks`, `warna_header`, `warna_footer`)
 - `nilai`: LONGTEXT NULL
 - `created_at`, `updated_at`: TIMESTAMP
 

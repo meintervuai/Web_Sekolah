@@ -18,7 +18,7 @@ class AuthController extends Controller
         $tenant = app('tenant');
 
         if (Auth::guard('tenant_admin')->check()) {
-            return redirect()->route('tenant.admin.dashboard', ['tenant' => $tenant->slug]);
+            return redirect()->route('tenant.admin.pengaturan.index', ['tenant' => $tenant->slug]);
         }
 
         return view('tenant.admin.auth.login', compact('tenant'));
@@ -56,7 +56,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->intended(route('tenant.admin.dashboard', ['tenant' => $tenant->slug]))
+            return redirect()->intended(route('tenant.admin.pengaturan.index', ['tenant' => $tenant->slug]))
                 ->with('sukses', "Selamat datang kembali di Panel Admin {$tenant->nama_sekolah}, {$user->nama}!");
         }
 

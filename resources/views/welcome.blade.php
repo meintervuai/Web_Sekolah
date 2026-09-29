@@ -310,10 +310,10 @@
                         </div>
                         <h3 class="font-heading font-bold text-lg text-slate-900 mb-2">Administrator Sekolah</h3>
                         <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                            Pengelola internal sekolah mengelola konten slider, guru, fasilitas, artikel, dan memverifikasi calon pendaftar siswa baru pada basis data sekolahnya.
+                            Pengelola internal sekolah mengatur tema dan palet warna portal sekolah (13 kunci warna dalam 6 grup tampilan, 7 preset terverifikasi, atau kustomisasi warna sendiri) langsung pada basis data sekolahnya.
                         </p>
                         <p class="text-xs font-semibold text-indigo-700">
-                            URL Akses: <code>/{slug-sekolah}/admin</code> atau <code>/admin</code>
+                            URL Akses: <code>/{slug-sekolah}/admin/pengaturan</code> atau <code>/admin</code>
                         </p>
                     </div>
 

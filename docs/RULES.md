@@ -9,6 +9,7 @@
 - Wajib **Mobile-First**: Gunakan default style untuk layar kecil, gunakan breakpoint (`sm:`, `md:`, `lg:`) untuk layar yang lebih besar.
 - **Tidak ada burger menu** pada desktop. Navigasi harus terbuka dan jelas.
 - Hindari AI Slop (terapkan aturan `anti-slop-ui`).
+- **Wajib Loading / Spinner State pada Setiap Aksi & Request**: Setiap kali user mengklik tombol submit, tombol hapus, eksekusi REST API / rute, atau manipulasi DOM, **wajib menampilkan indikator loading/animasi proses** agar antarmuka tidak membeku atau terlihat lag. Proses upload & download wajib menampilkan progress/status berjalan.
 - **Wajib gunakan Tailgrids** sebagai sumber komponen UI:
   - Setup: `npx @tailgrids/cli@latest init`
   - Tambah komponen: `npx @tailgrids/cli@latest add <component-id>`
@@ -67,4 +68,20 @@ Setelah setiap perubahan selesai, **WAJIB langsung perbarui file-file `.md` yang
 - `docs/05-UI-UX.md` - jika ada perubahan standar visual/komponen
 - `README.md` - jika struktur folder, URL, atau fitur berubah
 
+
+
+## 8. STANDAR TEMA & AUTO-KONTRAS CSS (Portal Publik)
+
+Aturan lengkap: `.ai/rules/publik-tema-kontras.md` (checklist kerja) dan `docs/08-CSS-ARSITEKTUR-TEMA.md` (tabel variabel, registri scope, resep).
+
+Poin yang mengikat setiap perubahan pada portal publik:
+
+1. **Satu sumber warna.** Semua warna publik berasal dari 13 kunci panel *Tema & Warna* yang diinjeksi ke `:root` oleh `resources/views/layouts/public.blade.php`. Jangan menambah palet kedua.
+2. **Dua lapis auto-kontras.** `App\Support\WarnaKontras` (server, hasil akhir di `--theme-fg-*`) + `@property`/`contrast()` di `resources/css/public.css` (pengaman). Keduanya wajib tetap ada.
+3. **Markup tidak menulis warna.** Pakai kelas `.theme-*` (heading, text-body, text-muted, card, badge, icon-box, btn-primary, btn-ghost, input, header, footer, table, border, link). Warna literal (`text-white`, `bg-blue-900`, `#hex`, `rgba()`) dilarang di kode baru.
+4. **Komponen membaca variabel ter-scope**: `--theme-heading`, `--theme-text`, `--theme-text-muted`, `--theme-fg-link`, `--fg-zona-efektif`, `--theme-fg-tombol/aksen/badge/header/footer/zona`. Bukan `--theme-btn-text`.
+5. **Permukaan baru harus terdaftar di scope** `SCOPE AUTO-KONTRAS PER PERMUKAAN` (template 8 baris) atau memakai `color-mix()` berbasis variabel tema.
+6. **Tambah menu publik = data `menu` + route di grup `{tenant}`** dengan nama route `tenant.*`; view `@extends('layouts.public')` dan controller memakai `getSekolahData()`.
+7. **Setiap kunci warna baru** harus sinkron di 6 titik: migrasi/seed, `PengaturanController`, `PageController::getSekolahData()` + `HomeController`, `layouts/public.blade.php`, `public.css`, dan JS pratinjau admin.
+8. **Verifikasi**: `vendor/bin/pest tests/Unit/WarnaKontrasTest.php`, `vendor/bin/pest tests/Feature/TenantThemeColorTest.php`, `npm run build`, lalu pastikan compiled CSS tetap memuat `@property` dan `contrast()`.
 

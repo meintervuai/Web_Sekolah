@@ -40,18 +40,9 @@ website_sekolah/
 │   │   │       │   ├── PpdbController.php
 │   │   │       │   ├── UnduhanController.php
 │   │   │       │   └── KontakController.php
-│   │   │       └── Admin/             # Controller Admin CMS Sekolah
-│   │   │           ├── DashboardController.php
-│   │   │           ├── PengaturanController.php
-│   │   │           ├── FiturToggleController.php
-│   │   │           ├── GuruStafController.php
-│   │   │           ├── JurusanController.php
-│   │   │           ├── FasilitasController.php
-│   │   │           ├── ArtikelController.php
-│   │   │           ├── GaleriController.php
-│   │   │           ├── MediaManagerController.php
-│   │   │           ├── PpdbAdminController.php
-│   │   │           └── PesanMasukController.php
+│   │   │       └── Admin/             # Controller Panel Admin Sekolah
+│   │   │           ├── AuthController.php        # Login & logout admin sekolah
+│   │   │           └── PengaturanController.php  # Pengaturan tema & palet warna portal
 │   │   └── Middleware/
 │   ├── Models/
 │   │   ├── Central/                   # Model untuk Central (Sekolah, Domain, SuperAdmin)

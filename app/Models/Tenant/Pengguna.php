@@ -81,4 +81,9 @@ class Pengguna extends Authenticatable
     {
         return $this->hasMany(SosialMedia::class, 'pengguna_id');
     }
+
+    public function medias()
+    {
+        return $this->hasMany(Media::class, 'pengguna_id');
+    }
 }

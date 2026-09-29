@@ -3,22 +3,8 @@
 use App\Http\Controllers\Central\AuthController;
 use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
-use App\Http\Controllers\Tenant\Admin\AgendaController;
-use App\Http\Controllers\Tenant\Admin\BeritaController;
-use App\Http\Controllers\Tenant\Admin\EkstrakurikulerController;
-use App\Http\Controllers\Tenant\Admin\FasilitasController;
-use App\Http\Controllers\Tenant\Admin\GaleriController;
-use App\Http\Controllers\Tenant\Admin\GuruStafController;
-use App\Http\Controllers\Tenant\Admin\JurusanController;
-use App\Http\Controllers\Tenant\Admin\KontakController;
 use App\Http\Controllers\Tenant\Admin\MediaController;
 use App\Http\Controllers\Tenant\Admin\PengaturanController;
-use App\Http\Controllers\Tenant\Admin\PengumumanController;
-use App\Http\Controllers\Tenant\Admin\PrestasiController;
-use App\Http\Controllers\Tenant\Admin\ProfilController;
-use App\Http\Controllers\Tenant\Admin\SliderController;
-use App\Http\Controllers\Tenant\Admin\SpmbController;
-use App\Http\Controllers\Tenant\Admin\StrukturController;
 use App\Http\Controllers\Tenant\Public\HomeController;
 use App\Http\Controllers\Tenant\Public\PageController;
 use App\Http\Middleware\TenantMiddleware;
@@ -70,7 +56,7 @@ Route::get('/', function () {
 // Shortcut Rute Global Admin Sekolah (/admin dan /admin/login)
 Route::get('/admin', function () {
     if (app()->bound('tenant') && auth('tenant_admin')->check()) {
-        return redirect('/'.app('tenant')->slug.'/admin/dashboard');
+        return redirect('/'.app('tenant')->slug.'/admin/pengaturan');
     }
 
     $sekolah = Sekolah::where('status_aktif', true)->first();
@@ -179,76 +165,31 @@ Route::prefix('{tenant}')
         // 15. Panel Admin Sekolah (CMS)
         Route::prefix('admin')->name('tenant.admin.')->group(function () {
             // Guest Admin Sekolah (Login)
+            Route::get('/login', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'showLogin'])->name('login');
+
             Route::middleware('guest:tenant_admin')->group(function () {
-                Route::get('/login', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'showLogin'])->name('login');
                 Route::post('/login', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'login'])->name('login.submit');
             });
 
             // Terproteksi Admin Sekolah (Auth)
             Route::middleware('auth:tenant_admin')->group(function () {
                 Route::post('/logout', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'logout'])->name('logout');
-                Route::get('/dashboard', [App\Http\Controllers\Tenant\Admin\DashboardController::class, 'index'])->name('dashboard');
 
-                // 1. Navigasi Beranda: Slider Banner & Pengaturan Beranda
-                Route::resource('slider', SliderController::class)->except(['show']);
+                // Pengaturan Tampilan Sekolah (Tema & Warna)
                 Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
                 Route::put('/pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
-                // 2. Navigasi Profil: Visi Misi, Sejarah, & Sambutan Kepsek
-                Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
-                Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
-
-                // Navigasi Struktur Organisasi: Bagan Diagram & Pejabat Struktural
-                Route::get('/struktur', [StrukturController::class, 'index'])->name('struktur.index');
-                Route::post('/struktur/anggota', [StrukturController::class, 'storeAnggota'])->name('struktur.anggota.store');
-                Route::put('/struktur/anggota/{id}', [StrukturController::class, 'updateAnggota'])->name('struktur.anggota.update');
-                Route::delete('/struktur/anggota/{id}', [StrukturController::class, 'destroyAnggota'])->name('struktur.anggota.destroy');
-                Route::post('/struktur/diagram', [StrukturController::class, 'storeDiagram'])->name('struktur.diagram.store');
-                Route::delete('/struktur/diagram/{index}', [StrukturController::class, 'destroyDiagram'])->name('struktur.diagram.destroy');
-
-                // Alias kompatibilitas rute profil struktur
-                Route::post('/profil/struktur', [StrukturController::class, 'storeAnggota'])->name('profil.struktur.store');
-                Route::delete('/profil/struktur/{id}', [StrukturController::class, 'destroyAnggota'])->name('profil.struktur.destroy');
-
-                // 3. Navigasi Program Keahlian: Jurusan & Kompetensi Keahlian
-                Route::resource('jurusan', JurusanController::class)->parameters(['jurusan' => 'jurusan'])->except(['show']);
-
-                // 4. Navigasi Informasi: Berita, Pengumuman, Agenda, & Galeri
-                Route::resource('berita', BeritaController::class)->parameters(['berita' => 'berita'])->except(['show']);
-                Route::resource('pengumuman', PengumumanController::class)->parameters(['pengumuman' => 'pengumuman'])->except(['show']);
-                Route::resource('agenda', AgendaController::class)->parameters(['agenda' => 'agenda'])->except(['show']);
-                Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri.index');
-                Route::post('/galeri/album', [GaleriController::class, 'storeAlbum'])->name('galeri.album.store');
-                Route::post('/galeri/item', [GaleriController::class, 'storeItem'])->name('galeri.item.store');
-                Route::delete('/galeri/album/{id}', [GaleriController::class, 'destroyAlbum'])->name('galeri.album.destroy');
-                Route::delete('/galeri/item/{id}', [GaleriController::class, 'destroyItem'])->name('galeri.item.destroy');
-
-                // 5. Navigasi Kesiswaan: Prestasi & Ekstrakurikuler
-                Route::resource('prestasi', PrestasiController::class)->parameters(['prestasi' => 'prestasi'])->except(['show']);
-                Route::resource('ekskul', EkstrakurikulerController::class)->parameters(['ekskul' => 'ekskul'])->except(['show']);
-
-                // 6. Navigasi Guru & Staf
-                Route::resource('guru', GuruStafController::class)->parameters(['guru' => 'guru'])->except(['show']);
-
-                // 7. Navigasi Fasilitas
-                Route::resource('fasilitas', FasilitasController::class)->parameters(['fasilitas' => 'fasilitas'])->except(['show']);
-
-                // 8. Navigasi SPMB 2026
-                Route::get('/spmb', [SpmbController::class, 'index'])->name('spmb.index');
-                Route::put('/spmb', [SpmbController::class, 'update'])->name('spmb.update');
-
-                // 9. Navigasi Kontak: Kontak, Jam Layanan, Medsos, & Inbox Pesan Masuk
-                Route::get('/kontak', [KontakController::class, 'index'])->name('kontak.index');
-                Route::put('/kontak', [KontakController::class, 'update'])->name('kontak.update');
-                Route::patch('/kontak/pesan/{id}/toggle', [KontakController::class, 'toggleDibaca'])->name('kontak.pesan.toggle');
-                Route::delete('/kontak/pesan/{id}', [KontakController::class, 'destroyPesan'])->name('kontak.pesan.destroy');
-
-                // 10. Pengelola Media & Berkas (Crop Gambar, Rename, Upload, Galeri File)
-                Route::get('/media', [MediaController::class, 'index'])->name('media.index');
-                Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
-                Route::post('/media/rename', [MediaController::class, 'rename'])->name('media.rename');
-                Route::post('/media/crop', [MediaController::class, 'crop'])->name('media.crop');
-                Route::delete('/media', [MediaController::class, 'destroy'])->name('media.destroy');
+                // Manajemen Media & File Manager Induk
+                Route::prefix('media')->name('media.')->group(function () {
+                    Route::get('/', [MediaController::class, 'index'])->name('index');
+                    Route::post('/upload', [MediaController::class, 'upload'])->name('upload');
+                    Route::post('/import-url', [MediaController::class, 'importUrl'])->name('import-url');
+                    Route::post('/check-url', [MediaController::class, 'checkUrl'])->name('check-url');
+                    Route::post('/bulk-delete', [MediaController::class, 'bulkDestroy'])->name('bulk-destroy');
+                    Route::put('/{media}', [MediaController::class, 'update'])->name('update');
+                    Route::post('/{media}/edit-image', [MediaController::class, 'editImage'])->name('edit-image');
+                    Route::delete('/{media}', [MediaController::class, 'destroy'])->name('destroy');
+                });
             });
         });
     });

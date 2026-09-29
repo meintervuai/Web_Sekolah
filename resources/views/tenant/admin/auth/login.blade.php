@@ -134,11 +134,14 @@
 
                 <!-- Remember Me -->
                 <div class="flex items-center justify-between">
-                    <label class="flex items-center text-xs text-zinc-600 cursor-pointer select-none">
+                    <label for="remember" class="flex items-center text-xs text-zinc-600 cursor-pointer select-none">
                         <input 
+                            id="remember"
                             type="checkbox" 
                             name="remember" 
-                            class="w-3.5 h-3.5 rounded bg-white border-zinc-300 text-zinc-900 focus:ring-zinc-900"
+                            value="1"
+                            {{ old('remember') ? 'checked' : '' }}
+                            class="w-3.5 h-3.5 rounded bg-white border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer"
                         >
                         <span class="ml-2">Ingat saya di perangkat ini</span>
                     </label>

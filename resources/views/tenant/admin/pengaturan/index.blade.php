@@ -1,670 +1,360 @@
 @extends('layouts.tenant_admin')
 
-@section('title', 'Identitas & Statistik Sekolah')
-@section('header_title', 'Identitas & Statistik Sekolah')
+@section('title', 'Tema & Warna Sekolah')
+@section('header_title', 'Tema & Warna Sekolah')
 
 @section('content')
 <div class="space-y-6">
 
-    <!-- Kartu Navigasi Terarah untuk Mencegah Kebingungan / Duplikasi Input -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <!-- Ke Menu Kontak & Layanan -->
-        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between gap-3 shadow-2xs">
-            <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold text-slate-900">Kontak, Layanan & Media Sosial</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">
-                        Alamat, telepon, WhatsApp hotline, Google Maps, dan akun medsos (IG, TikTok, YouTube, FB, X) dikelola terpusat di menu <strong>Kontak & Layanan</strong>.
-                    </p>
-                </div>
-            </div>
-            <a 
-                href="{{ route('tenant.admin.kontak.index', ['tenant' => $tenant->slug]) }}" 
-                class="self-start text-xs font-bold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1.5 transition"
-            >
-                <span>Buka Menu Kontak & Layanan</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </a>
-        </div>
-
-        <!-- Ke Menu Profil Sekolah -->
-        <div class="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between gap-3 shadow-2xs">
-            <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold text-slate-900">Kepala Sekolah & Konten Profil</h4>
-                    <p class="text-xs text-slate-500 mt-1 leading-relaxed font-medium">
-                        Pas foto resmi, NIP, sambutan pimpinan, rumusan visi & misi, serta sejarah sekolah dikelola terpusat di menu <strong>Profil Sekolah</strong>.
-                    </p>
-                </div>
-            </div>
-            <a 
-                href="{{ route('tenant.admin.profil.index', ['tenant' => $tenant->slug]) }}" 
-                class="self-start text-xs font-bold text-blue-600 hover:text-blue-700 inline-flex items-center gap-1.5 transition"
-            >
-                <span>Buka Menu Profil Sekolah</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </a>
-        </div>
-    </div>
-
-    <!-- Formulir Pengaturan dengan Tab-Tab Modern -->
-    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden" 
-         x-data="{ 
-             activeTab: 'identitas',
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden"
+         x-data="{
              selectedTheme: '{{ old('skema_tema', $pengaturanRaw['skema_tema'] ?? 'navy_classic') }}',
-             warnaTema: '{{ old('warna_tema', $pengaturanRaw['warna_tema'] ?? '#1E3A8A') }}',
-             warnaAksen: '{{ old('warna_aksen', $pengaturanRaw['warna_aksen'] ?? '#0284C7') }}',
-             warnaTeks: '{{ old('warna_teks', $pengaturanRaw['warna_teks'] ?? '#0F172A') }}',
-             warnaKartu: '{{ old('warna_kartu', $pengaturanRaw['warna_kartu'] ?? '#FFFFFF') }}',
-             warnaTombol: '{{ old('warna_tombol', $pengaturanRaw['warna_tombol'] ?? '#1D4ED8') }}',
-             warnaTombolTeks: '{{ old('warna_tombol_teks', $pengaturanRaw['warna_tombol_teks'] ?? '#FFFFFF') }}',
-             warnaHeader: '{{ old('warna_header', $pengaturanRaw['warna_header'] ?? '#1E3A8A') }}',
+
+             /* A. Warna Identitas */
+             primary: '{{ old('warna_tema', $pengaturanRaw['warna_tema'] ?? '#1E3A8A') }}',
+             accent: '{{ old('warna_aksen', $pengaturanRaw['warna_aksen'] ?? '#0284C7') }}',
+
+             /* B. Tipografi & Teks */
+             heading: '{{ old('warna_judul', $pengaturanRaw['warna_judul'] ?? '#0F172A') }}',
+             bodyText: '{{ old('warna_teks', $pengaturanRaw['warna_teks'] ?? '#1E293B') }}',
+             muted: '{{ old('warna_teks_sekunder', $pengaturanRaw['warna_teks_sekunder'] ?? '#475569') }}',
+
+             /* C. Latar & Permukaan */
+             pageBg: '{{ old('warna_latar_halaman', $pengaturanRaw['warna_latar_halaman'] ?? '#F8FAFC') }}',
+             sectionBg: '{{ old('warna_latar_section', $pengaturanRaw['warna_latar_section'] ?? '#F1F5F9') }}',
+             cardBg: '{{ old('warna_kartu', $pengaturanRaw['warna_kartu'] ?? '#FFFFFF') }}',
+
+             /* D. Garis & Batas */
+             garis: '{{ old('warna_border', $pengaturanRaw['warna_border'] ?? '#E2E8F0') }}',
+
+             /* E. Tombol & Aksi */
+             btnBg: '{{ old('warna_tombol', $pengaturanRaw['warna_tombol'] ?? '#1D4ED8') }}',
+             btnText: '{{ old('warna_tombol_teks', $pengaturanRaw['warna_tombol_teks'] ?? '#FFFFFF') }}',
+
+             /* F. Header, Navigasi & Footer */
+             headerBg: '{{ old('warna_header', $pengaturanRaw['warna_header'] ?? '#1E3A8A') }}',
+             footerBg: '{{ old('warna_footer', $pengaturanRaw['warna_footer'] ?? '#172F63') }}',
+
+             /* Pemetaan kunci preset ke variabel warna */
+             petaPreset: {
+                 tema: 'primary', aksen: 'accent', judul: 'heading', teks: 'bodyText',
+                 sekunder: 'muted', halaman: 'pageBg', section: 'sectionBg', kartu: 'cardBg',
+                 border: 'garis', tombol: 'btnBg', tombol_teks: 'btnText',
+                 header: 'headerBg', footer: 'footerBg'
+             },
+
+             /* Auto-kontras WCAG - salinan App\Support\WarnaKontras agar
+                pratinjau ini sama persis dengan hasil render portal publik.
+                Warna teks pilihan dipertahankan bila kontrasnya >= 4.5:1,
+                jika tidak putih/tinta dipilih otomatis oleh luminans. */
+             luminans(hex) {
+                 let h = String(hex || '').replace('#', '').trim();
+                 if (h.length === 3) { h = h.split('').map((c) => c + c).join(''); }
+                 if (!/^[0-9a-fA-F]{6}$/.test(h)) { return 1; }
+                 const kanal = [0, 2, 4].map((i) => {
+                     const c = parseInt(h.substr(i, 2), 16) / 255;
+                     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+                 });
+                 return 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2];
+             },
+             rasio(a, b) {
+                 const la = this.luminans(a), lb = this.luminans(b);
+                 return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+             },
+             pilihTeks(bg, pilihan, min = 4.5) {
+                 if (this.rasio(bg, pilihan) >= min) { return pilihan; }
+                 return this.rasio(bg, '#FFFFFF') >= this.rasio(bg, '#0F172A') ? '#FFFFFF' : '#0F172A';
+             },
+             campur(a, b, porsiA) {
+                 const rgd = (hex) => {
+                     let h = String(hex || '').replace('#', '').trim();
+                     if (h.length === 3) { h = h.split('').map((c) => c + c).join(''); }
+                     return /^[0-9a-fA-F]{6}$/.test(h) ? [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16)) : [0, 0, 0];
+                 };
+                 const A = rgd(a), B = rgd(b), t = porsiA / 100;
+                 return '#' + A.map((v, i) => Math.round(v * t + B[i] * (1 - t)).toString(16).padStart(2, '0')).join('').toUpperCase();
+             },
+
+             /* Warna teks per permukaan - dipakai pratinjau di bawah */
+             get fgHeader() { return this.pilihTeks(this.headerBg, this.btnText); },
+             get fgFooter() { return this.pilihTeks(this.footerBg, this.btnText); },
+             get fgTombol() { return this.pilihTeks(this.btnBg, this.btnText, 3); },
+             get fgAksen() { return this.pilihTeks(this.accent, this.btnText, 3); },
+             get fgKartuHeading() { return this.pilihTeks(this.cardBg, this.heading); },
+             get fgKartuTeks() { return this.pilihTeks(this.cardBg, this.bodyText); },
+             get fgKartuMuted() { return this.pilihTeks(this.cardBg, this.muted); },
+             get fgSectionHeading() { return this.pilihTeks(this.sectionBg, this.heading); },
+             get fgBadge() { return this.pilihTeks(this.campur(this.accent, this.pageBg, 15), this.campur(this.primary, '#000000', 85)); },
+             get fgLink() { return this.pilihTeks(this.pageBg, this.accent, 2); },
+
              presets: {
-                 navy_classic: {
-                     nama: 'Biru Navy Klasik',
-                     deskripsi: 'Wibawa, formal, standar institusi pendidikan negeri',
-                     tema: '#1E3A8A',
-                     aksen: '#0284C7',
-                     teks: '#0F172A',
-                     kartu: '#FFFFFF',
-                     tombol: '#1D4ED8',
-                     tombol_teks: '#FFFFFF',
-                     header: '#1E3A8A'
-                 },
-                 emerald_nature: {
-                     nama: 'Hijau Zamrud Edukasi',
-                     deskripsi: 'Segar, bernuansa alam, islami & ramah lingkungan',
-                     tema: '#065F46',
-                     aksen: '#10B981',
-                     teks: '#064E3B',
-                     kartu: '#FFFFFF',
-                     tombol: '#059669',
-                     tombol_teks: '#FFFFFF',
-                     header: '#065F46'
-                 },
-                 maroon_prestige: {
-                     nama: 'Merah Marun Prestisius',
-                     deskripsi: 'Elegan, berani, bergengsi & berkarakter kuat',
-                     tema: '#881337',
-                     aksen: '#F43F5E',
-                     teks: '#4C0519',
-                     kartu: '#FFFFFF',
-                     tombol: '#BE123C',
-                     tombol_teks: '#FFFFFF',
-                     header: '#881337'
-                 },
-                 royal_purple: {
-                     nama: 'Ungu Dinamis Kreatif',
-                     deskripsi: 'Modern, teknologi, seni & kreativitas vokasi',
-                     tema: '#581C87',
-                     aksen: '#A855F7',
-                     teks: '#3B0764',
-                     kartu: '#FFFFFF',
-                     tombol: '#7E22CE',
-                     tombol_teks: '#FFFFFF',
-                     header: '#581C87'
-                 },
-                 slate_dark: {
-                     nama: 'Abu Gelap Elegan',
-                     deskripsi: 'Minimalis modern, fokus industri & arsitektur',
-                     tema: '#0F172A',
-                     aksen: '#38BDF8',
-                     teks: '#0F172A',
-                     kartu: '#FFFFFF',
-                     tombol: '#1E293B',
-                     tombol_teks: '#FFFFFF',
-                     header: '#0F172A'
-                 },
-                 amber_sunset: {
-                     nama: 'Emas Oranye Enerjik',
-                     deskripsi: 'Hangat, antusias, kewirausahaan & inovasi',
-                     tema: '#78350F',
-                     aksen: '#F59E0B',
-                     teks: '#451A03',
-                     kartu: '#FFFFFF',
-                     tombol: '#D97706',
-                     tombol_teks: '#FFFFFF',
-                     header: '#78350F'
-                 },
-                 teal_modern: {
-                     nama: 'Teal Bahari Futuristik',
-                     deskripsi: 'Keseimbangan profesional, teknologi & kemajuan sains',
-                     tema: '#134E4A',
-                     aksen: '#14B8A6',
-                     teks: '#042F2E',
-                     kartu: '#FFFFFF',
-                     tombol: '#0D9488',
-                     tombol_teks: '#FFFFFF',
-                     header: '#134E4A'
+                 navy_classic: { nama: 'Biru Navy Klasik', deskripsi: 'Formal dan berwibawa, lazim dipakai sekolah negeri.', tema: '#1E3A8A', aksen: '#0284C7', judul: '#0F172A', teks: '#1E293B', sekunder: '#475569', halaman: '#F8FAFC', section: '#F1F5F9', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1D4ED8', tombol_teks: '#FFFFFF', header: '#1E3A8A', footer: '#172F63' },
+                 emerald_nature: { nama: 'Hijau Zamrud Edukasi', deskripsi: 'Sejuk, alami, dan ramah lingkungan.', tema: '#065F46', aksen: '#10B981', judul: '#052E1F', teks: '#0F2A22', sekunder: '#4B6B62', halaman: '#F6FBF9', section: '#E7F4EF', kartu: '#FFFFFF', border: '#D5E9E2', tombol: '#059669', tombol_teks: '#FFFFFF', header: '#065F46', footer: '#044435' },
+                 maroon_prestige: { nama: 'Merah Marun Prestisius', deskripsi: 'Tegas dan berkarakter kuat untuk sekolah berprestasi.', tema: '#881337', aksen: '#F43F5E', judul: '#4C0519', teks: '#3F0B1A', sekunder: '#7C5160', halaman: '#FDF6F7', section: '#FBEAEE', kartu: '#FFFFFF', border: '#F2D7DD', tombol: '#BE123C', tombol_teks: '#FFFFFF', header: '#881337', footer: '#6B0E2B' },
+
+                 royal_purple: { nama: 'Ungu Dinamis Kreatif', deskripsi: 'Modern dan kreatif untuk sekolah seni dan teknologi.', tema: '#581C87', aksen: '#A855F7', judul: '#3B0764', teks: '#3F1D5C', sekunder: '#6B5B7B', halaman: '#FAF7FD', section: '#F2E9FA', kartu: '#FFFFFF', border: '#E4D4F0', tombol: '#7E22CE', tombol_teks: '#FFFFFF', header: '#581C87', footer: '#431263' },
+                 slate_dark: { nama: 'Abu Gelap Elegan', deskripsi: 'Minimalis modern berorientasi industri.', tema: '#0F172A', aksen: '#38BDF8', judul: '#0F172A', teks: '#1E293B', sekunder: '#64748B', halaman: '#F8FAFC', section: '#EEF2F7', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1E293B', tombol_teks: '#FFFFFF', header: '#0F172A', footer: '#020617' },
+                 amber_sunset: { nama: 'Emas Oranye Enerjik', deskripsi: 'Hangat dan inovatif untuk kewirausahaan.', tema: '#78350F', aksen: '#F59E0B', judul: '#451A03', teks: '#431407', sekunder: '#7C5A3C', halaman: '#FFFAF3', section: '#FDF0DC', kartu: '#FFFFFF', border: '#F3DFC2', tombol: '#D97706', tombol_teks: '#FFFFFF', header: '#78350F', footer: '#57260A' },
+                 teal_modern: { nama: 'Teal Bahari Futuristik', deskripsi: 'Profesional dan futuristik untuk teknologi dan sains.', tema: '#134E4A', aksen: '#14B8A6', judul: '#042F2E', teks: '#073B39', sekunder: '#476A69', halaman: '#F5FBFB', section: '#E5F4F2', kartu: '#FFFFFF', border: '#CFE9E6', tombol: '#0D9488', tombol_teks: '#FFFFFF', header: '#134E4A', footer: '#0A3633' }
+             },
+
+             terapkanPreset(kunciPreset) {
+                 const preset = this.presets[kunciPreset];
+                 if (!preset) { return; }
+                 this.selectedTheme = kunciPreset;
+                 for (const kunci in this.petaPreset) {
+                     this[this.petaPreset[kunci]] = preset[kunci];
                  }
              },
-             applyPreset(key) {
-                 this.selectedTheme = key;
-                 if (this.presets[key]) {
-                     const p = this.presets[key];
-                     this.warnaTema = p.tema;
-                     this.warnaAksen = p.aksen;
-                     this.warnaTeks = p.teks;
-                     this.warnaKartu = p.kartu;
-                     this.warnaTombol = p.tombol;
-                     this.warnaTombolTeks = p.tombol_teks;
-                     this.warnaHeader = p.header;
-                 }
-             }
+
+             tandaiCustom() { this.selectedTheme = 'custom'; }
          }">
-        
-        <!-- Header & Navigasi Tab -->
+
+        <!-- Header Kartu Pengaturan -->
         <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-                <h3 class="text-base font-bold text-slate-900">Pengaturan Identitas & Tampilan Sekolah</h3>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Kelola identitas resmi, palet tema warna mandiri, statistik, dan video profil portal.</p>
+                <h3 class="text-base font-bold text-slate-900">Pengaturan Tema & Warna Portal Sekolah</h3>
+                <p class="text-xs text-slate-500 mt-1 font-medium">
+                    Setiap bagian tampilan punya warna tersendiri: huruf judul, teks isi, teks sekunder, latar halaman, latar section, kartu, garis pembatas, tombol, header, dan footer.
+                </p>
             </div>
-
-            <!-- Segmented Tab Navigation -->
-            <div class="inline-flex flex-wrap p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600 shrink-0 border border-slate-200/80">
-                <button 
-                    type="button" 
-                    @click="activeTab = 'identitas'" 
-                    :class="activeTab === 'identitas' ? 'bg-white text-blue-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'" 
-                    class="px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    <span>Identitas & Logo</span>
-                </button>
-                <button 
-                    type="button" 
-                    @click="activeTab = 'tema'" 
-                    :class="activeTab === 'tema' ? 'bg-white text-blue-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'" 
-                    class="px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4c2 0 3-1 3-3a5 5 0 0110 0c0 2.2-1.8 4-4 4h-2a2 2 0 00-2 2v1a2 2 0 01-2 2h-3z"/><circle cx="9" cy="8.5" r="1.5"/><circle cx="15" cy="8.5" r="1.5"/></svg>
-                    <span>Tema & Warna</span>
-                </button>
-                <button 
-                    type="button" 
-                    @click="activeTab = 'statistik'" 
-                    :class="activeTab === 'statistik' ? 'bg-white text-blue-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'" 
-                    class="px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    <span>Statistik Beranda</span>
-                </button>
-                <button 
-                    type="button" 
-                    @click="activeTab = 'video'" 
-                    :class="activeTab === 'video' ? 'bg-white text-blue-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'" 
-                    class="px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                    <span>Video Profil</span>
-                </button>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="text-xs font-bold text-slate-500">Skema terpilih:</span>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200"
+                      x-text="selectedTheme === 'custom' ? 'Custom warna' : (presets[selectedTheme] ? presets[selectedTheme].nama : selectedTheme)"></span>
             </div>
         </div>
 
-        <form action="{{ route('tenant.admin.pengaturan.update', ['tenant' => $tenant->slug]) }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-6">
+        <form action="{{ route('tenant.admin.pengaturan.update', ['tenant' => $tenant->slug]) }}" method="POST" class="p-6 sm:p-8 space-y-8">
             @csrf
             @method('PUT')
 
-            <!-- Tab 1: Identitas Pokok & Logo -->
-            <div x-show="activeTab === 'identitas'" x-cloak class="space-y-5">
+            <input type="hidden" name="skema_tema" :value="selectedTheme">
+
+            <!-- 7 Preset Tema Warna -->
+            <div class="space-y-3">
                 <div class="border-b border-slate-100 pb-3">
                     <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                        Identitas Pokok & Logo Sekolah
+                        Preset Cepat (7 Skema Terverifikasi)
                     </h4>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">Informasi utama lembaga yang ditampilkan pada header, navigasi, dan footer portal.</p>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Satu klik menerapkan 13 warna sekaligus. Semua nilai masih bisa disesuaikan pada rincian warna di bawah.</p>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="md:col-span-2">
-                        <x-admin.input-gambar 
-                            name="logo" 
-                            value="{{ old('logo', $pengaturanRaw['logo'] ?? '') }}" 
-                            label="Logo Resmi Sekolah (Header & Navigasi)" 
-                            recommended="Format PNG (transparan), SVG, atau WebP. Maks 2MB. Resolusi ideal 400x400px." 
-                        />
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Nama Resmi Sekolah <span class="text-rose-500">*</span></label>
-                        <input type="text" name="nama_sekolah" value="{{ old('nama_sekolah', $pengaturanRaw['nama_sekolah'] ?? $tenant->nama_sekolah) }}" required class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Jenjang Pendidikan <span class="text-rose-500">*</span></label>
-                        <input type="text" name="jenjang" value="{{ old('jenjang', $pengaturanRaw['jenjang'] ?? $tenant->jenjang) }}" required class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Slogan / Tagline Sekolah</label>
-                        <input type="text" name="slogan" value="{{ old('slogan', $pengaturanRaw['slogan'] ?? '') }}" placeholder="Contoh: Terdepan dalam Prestasi, Siap Kerja & Berakhlak Mulia" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">NPSN (Nomor Pokok Sekolah Nasional)</label>
-                        <input type="text" name="npsn" value="{{ old('npsn', $pengaturanRaw['npsn'] ?? '') }}" placeholder="Contoh: 20219213" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Status Akreditasi</label>
-                        <input type="text" name="akreditasi" value="{{ old('akreditasi', $pengaturanRaw['akreditasi'] ?? 'A (Unggul)') }}" placeholder="Contoh: A (Unggul)" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Tahun Berdiri</label>
-                        <input type="text" name="tahun_berdiri" value="{{ old('tahun_berdiri', $pengaturanRaw['tahun_berdiri'] ?? '1951') }}" placeholder="Contoh: 1951" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Deskripsi Profil Singkat</label>
-                        <textarea name="deskripsi" rows="3" placeholder="Tuliskan gambaran umum profil sekolah yang ringkas dan informatif..." class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition leading-relaxed">{{ old('deskripsi', $pengaturanRaw['deskripsi'] ?? '') }}</textarea>
-                    </div>
-
-                    <div class="md:col-span-2 pt-2 border-t border-slate-100 space-y-4">
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
-                                Media Hero Banner Beranda (Tepat di Atas Sambutan Kepala Sekolah)
-                            </h4>
-                            <p class="text-xs text-slate-500 font-medium">
-                                Anda dapat mengunggah <strong>Gambar</strong>, <strong>Video</strong>, atau <strong>Keduanya</strong>.
-                                <br>
-                                <span class="text-slate-600 font-semibold">• Jika gambar saja:</span> Slideshow gambar.
-                                <br>
-                                <span class="text-slate-600 font-semibold">• Jika video saja:</span> Video berputar berulang terus menerus (looping).
-                                <br>
-                                <span class="text-slate-600 font-semibold">• Jika ada keduanya:</span> Video diputar terlebih dahulu sampai selesai, lalu berpindah menampilkan gambar banner.
-                            </p>
-                        </div>
-
-                        <!-- 1. Gambar Hero Banner -->
-                        <x-admin.input-gambar 
-                            name="hero_banner" 
-                            value="{{ old('hero_banner', $pengaturanRaw['hero_banner'] ?? '') }}" 
-                            label="1. Gambar Banner Hero (Landscape)" 
-                            recommended="Format JPG, PNG, atau WebP. Maks 3MB. Resolusi ideal 1600x600px atau 1920x800px." 
-                        />
-
-                        <!-- 2. Video Hero Banner -->
-                        <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-200/90 space-y-3">
-                            <label class="block text-xs font-bold text-slate-800">
-                                2. Video Banner Hero (MP4 / WebM / Link Video)
-                            </label>
-
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Upload Berkas Video (Maks 25MB)</label>
-                                    <input type="file" name="hero_banner_video_file" accept="video/mp4,video/webm" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-white border border-slate-200 rounded-xl transition">
-                                </div>
-
-                                <div class="flex items-center gap-3">
-                                    <div class="h-px bg-slate-200 flex-1"></div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ATAU INPUT URL VIDEO</span>
-                                    <div class="h-px bg-slate-200 flex-1"></div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">URL Video Langsung (MP4 / WebM / CDN)</label>
-                                    <input type="url" name="hero_banner_video" value="{{ old('hero_banner_video', $pengaturanRaw['hero_banner_video'] ?? '') }}" placeholder="https://domain.com/video-sekolah.mp4" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                                </div>
-
-                                @if(!empty($pengaturanRaw['hero_banner_video']))
-                                <div class="pt-2 border-t border-slate-200">
-                                    <div class="text-[11px] font-bold text-slate-700 mb-1">Video Banner Aktif:</div>
-                                    <div class="text-xs font-mono text-slate-700 bg-white p-2 rounded-lg border border-slate-200 truncate">
-                                        {{ $pengaturanRaw['hero_banner_video'] }}
-                                    </div>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab Tema & Warna Mandiri (7 Presets + Custom Color Pickers + Live Preview) -->
-            <div x-show="activeTab === 'tema'" x-cloak class="space-y-6">
-                <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                            Pengaturan Tema & Palet Warna Mandiri
-                        </h4>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">Pilih salah satu dari 7 preset tema warna terverifikasi atau atur warna sendiri (Custom Hex).</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-500">Skema Terpilih:</span>
-                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 capitalize" x-text="selectedTheme === 'custom' ? 'Custom Warna' : (presets[selectedTheme] ? presets[selectedTheme].nama : selectedTheme)"></span>
-                    </div>
-                </div>
-
-                <!-- Input Hidden untuk Menyimpan Skema Tema -->
-                <input type="hidden" name="skema_tema" :value="selectedTheme">
-
-                <!-- 7 Preset Tema Warna Kartu Interaktif -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-800 mb-2.5">
-                        Pilih Dari 7 Preset Warna Sekolah Terverifikasi:
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                        <template x-for="(preset, key) in presets" :key="key">
-                            <div 
-                                @click="applyPreset(key)" 
-                                :class="selectedTheme === key ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-slate-200/90 hover:border-slate-300 bg-white'"
-                                class="p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between group shadow-2xs"
-                            >
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.tema"></span>
-                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.aksen"></span>
-                                            <span class="w-4 h-4 rounded-full border border-black/10 shadow-2xs" :style="'background-color:' + preset.tombol"></span>
-                                        </div>
-                                        <template x-if="selectedTheme === key">
-                                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">Aktif</span>
-                                        </template>
-                                    </div>
-                                    <h5 class="text-xs font-bold text-slate-900" x-text="preset.nama"></h5>
-                                    <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed" x-text="preset.deskripsi"></p>
-                                </div>
-                                <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                                    <span class="font-mono text-slate-500" x-text="preset.tema"></span>
-                                    <span class="text-blue-600 font-bold group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                                </div>
-                            </div>
-                        </template>
-
-                        <!-- Pilihan Custom Warna Card -->
-                        <div 
-                            @click="selectedTheme = 'custom'" 
-                            :class="selectedTheme === 'custom' ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-slate-200/90 hover:border-slate-300 bg-white'"
-                            class="p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between group shadow-2xs"
-                        >
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <template x-for="(preset, kunci) in presets" :key="kunci">
+                        <button type="button" @click="terapkanPreset(kunci)"
+                            :class="selectedTheme === kunci ? 'border-blue-600 ring-2 ring-blue-600/20 bg-blue-50/20' : 'border-slate-200/90 hover:border-slate-300 bg-white'"
+                            class="text-left p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between group shadow-2xs">
                             <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-500 via-amber-500 to-indigo-500 border border-black/10 shadow-2xs"></span>
-                                    </div>
-                                    <template x-if="selectedTheme === 'custom'">
-                                        <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">Aktif</span>
+                                <div class="flex items-center gap-1.5 mb-2">
+                                    <span class="w-4 h-4 rounded-full border border-black/10" :style="'background-color:' + preset.tema"></span>
+                                    <span class="w-4 h-4 rounded-full border border-black/10" :style="'background-color:' + preset.aksen"></span>
+                                    <span class="w-4 h-4 rounded-full border border-black/10" :style="'background-color:' + preset.tombol"></span>
+                                    <span class="w-4 h-4 rounded-full border border-black/10" :style="'background-color:' + preset.header"></span>
+                                    <template x-if="selectedTheme === kunci">
+                                        <span class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-600 text-white">Aktif</span>
                                     </template>
                                 </div>
-                                <h5 class="text-xs font-bold text-slate-900">Custom Warna Mandiri</h5>
-                                <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">Atur kode warna hex secara bebas menggunakan color picker di bawah.</p>
+                                <h5 class="text-xs font-bold text-slate-900" x-text="preset.nama"></h5>
+                                <p class="text-[11px] text-slate-500 mt-1 leading-relaxed" x-text="preset.deskripsi"></p>
                             </div>
-                            <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                                <span class="font-bold text-slate-500">Bebas Custom</span>
-                                <span class="text-blue-600 font-bold group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Input Color Picker & Hex Code -->
-                <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                        <div>
-                            <h5 class="text-xs font-bold text-slate-900">Rincian Variabel Warna</h5>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Ubah nilai warna di bawah jika ingin memodifikasi elemen tertentu atau membuat tema khusus.</p>
-                        </div>
-                        <button 
-                            type="button" 
-                            @click="selectedTheme = 'custom'" 
-                            class="text-[11px] font-bold text-blue-600 hover:text-blue-700 underline"
-                        >
-                            Aktifkan Mode Custom
                         </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        
-                        <!-- 1. Warna Teks Utama -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Teks Utama Konten
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Warna default body text portal.</p>
-                            <div class="flex items-center gap-2">
-                                <input type="color" x-model="warnaTeks" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                <input type="text" name="warna_teks" x-model="warnaTeks" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
-                            </div>
-                        </div>
-
-                        <!-- 2. Warna Kartu (Card Background) -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Background Kartu (Card)
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Warna kartu artikel, agenda, & jurusan.</p>
-                            <div class="flex items-center gap-2">
-                                <input type="color" x-model="warnaKartu" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                <input type="text" name="warna_kartu" x-model="warnaKartu" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
-                            </div>
-                        </div>
-
-                        <!-- 3. Warna Tombol Utama (Button BG) -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Tombol Utama (Button BG)
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Warna latar tombol aksi & CTA utama.</p>
-                            <div class="flex items-center gap-2">
-                                <input type="color" x-model="warnaTombol" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                <input type="text" name="warna_tombol" x-model="warnaTombol" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
-                            </div>
-                        </div>
-
-                        <!-- 4. Warna Teks Tombol (Button Text) -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Teks Tombol (Button Text)
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Warna label teks di dalam tombol.</p>
-                            <div class="flex items-center gap-2">
-                                <input type="color" x-model="warnaTombolTeks" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                <input type="text" name="warna_tombol_teks" x-model="warnaTombolTeks" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
-                            </div>
-                        </div>
-
-                        <!-- 5. Warna Header Bar (Top Bar) -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Bar Header (Top Bar)
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Warna strip pengumuman/kontak teratas.</p>
-                            <div class="flex items-center gap-2">
-                                <input type="color" x-model="warnaHeader" @input="selectedTheme = 'custom'" class="w-10 h-10 rounded-lg border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                <input type="text" name="warna_header" x-model="warnaHeader" @input="selectedTheme = 'custom'" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:ring-1 focus:ring-blue-600">
-                            </div>
-                        </div>
-
-                        <!-- 6. Warna Tema Utama & Aksen -->
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-                            <label class="block text-xs font-bold text-slate-800 mb-1">
-                                Warna Tema Pokok & Aksen
-                            </label>
-                            <p class="text-[11px] text-slate-400 mb-2.5">Identitas primer dan aksen badge.</p>
-                            <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-1.5 flex-1">
-                                    <input type="color" x-model="warnaTema" @input="selectedTheme = 'custom'" class="w-8 h-8 rounded-md border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                    <input type="text" name="warna_tema" x-model="warnaTema" @input="selectedTheme = 'custom'" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono font-bold text-slate-800 uppercase">
-                                </div>
-                                <div class="flex items-center gap-1.5 flex-1">
-                                    <input type="color" x-model="warnaAksen" @input="selectedTheme = 'custom'" class="w-8 h-8 rounded-md border border-slate-200 p-0.5 cursor-pointer bg-white">
-                                    <input type="text" name="warna_aksen" x-model="warnaAksen" @input="selectedTheme = 'custom'" class="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono font-bold text-slate-800 uppercase">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Pratinjau Interaktif Real-Time (Live Preview Box) -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-800 mb-2">
-                        Pratinjau Interaktif Komponen (Live Preview Sesuai Pilihan):
-                    </label>
-                    <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm bg-slate-100">
-                        <!-- Top Bar Mockup -->
-                        <div class="px-4 py-2 text-white flex items-center justify-between text-xs transition-colors duration-300" :style="'background-color:' + warnaHeader">
-                            <div class="flex items-center gap-3">
-                                <span>(022) 7234285</span>
-                                <span>|</span>
-                                <span>humas@sekolah.sch.id</span>
-                            </div>
-                            <span class="font-bold">NPSN: 20219146 | Akreditasi A</span>
-                        </div>
-
-                        <!-- Card & Button Mockup Body -->
-                        <div class="p-6 bg-slate-50">
-                            <div class="max-w-md mx-auto rounded-2xl border border-slate-200/80 p-5 shadow-sm transition-colors duration-300" :style="'background-color:' + warnaKartu">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded text-white" :style="'background-color:' + warnaAksen">Contoh Badge Aksen</span>
-                                    <span class="text-[11px] text-slate-400">28 September 2026</span>
-                                </div>
-                                <h4 class="text-base font-bold transition-colors duration-300 mb-2" :style="'color:' + warnaTeks">
-                                    Judul Kartu Berita / Agenda Sekolah
-                                </h4>
-                                <p class="text-xs transition-colors duration-300 mb-4 line-clamp-2 leading-relaxed" :style="'color:' + warnaTeks + '; opacity: 0.8;'">
-                                    Ini adalah simulasi tampilan warna teks konten, kartu komponen, serta tombol interaktif yang diatur dari tema sekolah.
-                                </p>
-                                <div class="flex items-center gap-2.5 pt-2 border-t border-slate-100">
-                                    <button 
-                                        type="button" 
-                                        class="px-4 py-2 rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1.5"
-                                        :style="'background-color:' + warnaTombol + '; color:' + warnaTombolTeks"
-                                    >
-                                        <span>Tombol Aksi Utama</span>
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                    </button>
-                                    <span class="text-xs font-semibold" :style="'color:' + warnaTema">Link Tautan Tema</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Tab 2: Statistik Beranda -->
-            <div x-show="activeTab === 'statistik'" x-cloak class="space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
-                    <div>
-                        <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                            Statistik Sekolah (Tampil di Beranda)
-                        </h4>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">Angka pencapaian dan sarana yang ditampilkan pada section statistik beranda.</p>
-                    </div>
-                    <span class="text-xs text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl font-bold border border-blue-200/50">
-                        Otomatis terhitung: <strong>{{ $countGuru }} Guru</strong> | <strong>{{ $countJurusan }} Jurusan</strong>
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Total Guru & Staf</label>
-                        <input type="text" name="stat_guru" value="{{ old('stat_guru', $pengaturanRaw['stat_guru'] ?? ($countGuru > 0 ? (string)$countGuru : '98')) }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Total Siswa Aktif</label>
-                        <input type="text" name="stat_siswa" value="{{ old('stat_siswa', $pengaturanRaw['stat_siswa'] ?? '1972') }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Total Rombel</label>
-                        <input type="text" name="stat_rombel" value="{{ old('stat_rombel', $pengaturanRaw['stat_rombel'] ?? '54') }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Ruang Kelas & Lab</label>
-                        <input type="text" name="stat_kelas" value="{{ old('stat_kelas', $pengaturanRaw['stat_kelas'] ?? '41') }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Program Keahlian</label>
-                        <input type="text" name="stat_jurusan" value="{{ old('stat_jurusan', $pengaturanRaw['stat_jurusan'] ?? ($countJurusan > 0 ? (string)$countJurusan : '7')) }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Mitra Industri (DUDI)</label>
-                        <input type="text" name="stat_mitra" value="{{ old('stat_mitra', $pengaturanRaw['stat_mitra'] ?? '85') }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Label Sumber Data Statistik</label>
-                        <input type="text" name="stat_sumber_label" value="{{ old('stat_sumber_label', $pengaturanRaw['stat_sumber_label'] ?? 'Data Pokok Pendidikan (Dapodik)') }}" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
+                    </template>
                 </div>
             </div>
 
-            <!-- Tab 3: Video Profil Sekolah -->
-            <div x-show="activeTab === 'video'" x-cloak class="space-y-5">
+            @php
+                // Satu bagian tampilan = satu pengaturan warna.
+                // Urutan mengikuti pengelompokan pada panel: A-F.
+                $kelompokWarna = [
+                    [
+                        'kode' => 'A',
+                        'judul' => 'Warna Identitas',
+                        'deskripsi' => 'Warna dasar sekolah: dipakai hero, section gelap, ikon, dan elemen aksen.',
+                        'bidang' => [
+                            ['kunci' => 'warna_tema', 'variabel' => 'primary', 'css' => '--theme-color', 'label' => 'Warna Identitas Utama', 'catatan' => 'Hero, section gelap, ikon, dan focus ring.', 'default' => '#1E3A8A'],
+                            ['kunci' => 'warna_aksen', 'variabel' => 'accent', 'css' => '--theme-accent', 'label' => 'Warna Aksen & Tautan', 'catatan' => 'Tautan, badge, dan sorotan teks.', 'default' => '#0284C7'],
+                        ],
+                    ],
+                    [
+                        'kode' => 'B',
+                        'judul' => 'Tipografi & Teks',
+                        'deskripsi' => 'Warna huruf untuk judul, teks isi paragraf, dan teks sekunder.',
+                        'bidang' => [
+                            ['kunci' => 'warna_judul', 'variabel' => 'heading', 'css' => '--theme-heading', 'label' => 'Huruf Judul (H1-H6)', 'catatan' => 'Semua heading dan nama pada kartu.', 'default' => '#0F172A'],
+                            ['kunci' => 'warna_teks', 'variabel' => 'bodyText', 'css' => '--theme-text', 'label' => 'Teks Isi (Paragraf)', 'catatan' => 'Paragraf, daftar, dan deskripsi konten.', 'default' => '#1E293B'],
+                            ['kunci' => 'warna_teks_sekunder', 'variabel' => 'muted', 'css' => '--theme-text-muted', 'label' => 'Teks Sekunder', 'catatan' => 'Tanggal, label, dan keterangan kecil.', 'default' => '#475569'],
+                        ],
+                    ],
+                    [
+                        'kode' => 'C',
+                        'judul' => 'Latar & Permukaan',
+                        'deskripsi' => 'Warna dasar halaman, latar section bergantian, dan latar kartu atau panel.',
+                        'bidang' => [
+                            ['kunci' => 'warna_latar_halaman', 'variabel' => 'pageBg', 'css' => '--theme-page-bg', 'label' => 'Latar Halaman', 'catatan' => 'Warna dasar seluruh halaman publik.', 'default' => '#F8FAFC'],
+                            ['kunci' => 'warna_latar_section', 'variabel' => 'sectionBg', 'css' => '--theme-section-bg', 'label' => 'Latar Section Bergantian', 'catatan' => 'Section pembeda dan panel abu-abu.', 'default' => '#F1F5F9'],
+                            ['kunci' => 'warna_kartu', 'variabel' => 'cardBg', 'css' => '--theme-card-bg', 'label' => 'Latar Kartu & Panel', 'catatan' => 'Kartu berita, agenda, form, dan dropdown.', 'default' => '#FFFFFF'],
+                        ],
+                    ],
+
+                    [
+                        'kode' => 'D',
+                        'judul' => 'Garis & Batas',
+                        'deskripsi' => 'Warna garis pembatas kartu, tabel, dan pemisah antar bagian.',
+                        'bidang' => [
+                            ['kunci' => 'warna_border', 'variabel' => 'garis', 'css' => '--theme-border', 'label' => 'Border & Garis Pemisah', 'catatan' => 'Border kartu, garis tabel, dan pemisah section.', 'default' => '#E2E8F0'],
+                        ],
+                    ],
+                    [
+                        'kode' => 'E',
+                        'judul' => 'Tombol & Aksi',
+                        'deskripsi' => 'Warna tombol aksi utama beserta warna teks di dalamnya.',
+                        'bidang' => [
+                            ['kunci' => 'warna_tombol', 'variabel' => 'btnBg', 'css' => '--theme-btn-bg', 'label' => 'Latar Tombol Utama', 'catatan' => 'Tombol CTA, filter aktif, dan tombol kirim.', 'default' => '#1D4ED8'],
+                            ['kunci' => 'warna_tombol_teks', 'variabel' => 'btnText', 'css' => '--theme-btn-text', 'label' => 'Teks di Tombol Utama', 'catatan' => 'Pastikan kontras minimal 4.5:1.', 'default' => '#FFFFFF'],
+                        ],
+                    ],
+                    [
+                        'kode' => 'F',
+                        'judul' => 'Header, Navigasi & Footer',
+                        'deskripsi' => 'Warna bar informasi atas, area navigasi gelap, dan footer portal.',
+                        'bidang' => [
+                            ['kunci' => 'warna_header', 'variabel' => 'headerBg', 'css' => '--theme-header-bg', 'label' => 'Latar Header & Navigasi', 'catatan' => 'Bar kontak atas dan area gelap navigasi.', 'default' => '#1E3A8A'],
+                            ['kunci' => 'warna_footer', 'variabel' => 'footerBg', 'css' => '--theme-footer-bg', 'label' => 'Latar Footer', 'catatan' => 'Footer bawah dan tombol media sosial.', 'default' => '#172F63'],
+                        ],
+                    ],
+                ];
+            @endphp
+
+            <!-- Rincian Warna per Bagian Tampilan -->
+            <div class="space-y-5">
                 <div class="border-b border-slate-100 pb-3">
                     <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                        Video Profil Sekolah (Publik)
+                        Rincian Warna per Bagian Tampilan
                     </h4>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">Tampilkan video profil resmi sekolah di halaman publik. Anda dapat memasukkan tautan YouTube/Vimeo atau mengunggah video MP4/WebM langsung.</p>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">13 pengaturan warna terkelompok dalam 6 bagian (A-F). Satu nilai diubah, seluruh halaman publik mengikuti.</p>
                 </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Judul Video Profil</label>
-                        <input type="text" name="video_profil_judul" value="{{ old('video_profil_judul', $pengaturanRaw['video_profil_judul'] ?? 'Profil & Lingkungan Belajar Sekolah') }}" placeholder="Contoh: Video Profil SMK Negeri 2 Bandung - Generasi Emas Vokasi" class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1.5">Deskripsi Singkat Video</label>
-                        <textarea name="video_profil_deskripsi" rows="2" placeholder="Gambaran isi tayangan video..." class="w-full px-3.5 py-2.5 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">{{ old('video_profil_deskripsi', $pengaturanRaw['video_profil_deskripsi'] ?? 'Saksikan fasilitas modern, suasana praktek industri, dan ragam kreativitas siswa vokasi kami.') }}</textarea>
-                    </div>
-
-                    <div class="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-4">
-                        <div class="text-xs font-bold text-slate-800">Pilihan Sumber Video:</div>
-
-                        <!-- Opsi 1: URL Video YouTube / Vimeo -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. Tautan URL Video (YouTube / Vimeo / Direct URL)</label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <svg class="w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                                </span>
-                                <input type="url" name="video_profil" value="{{ old('video_profil', $pengaturanRaw['video_profil'] ?? '') }}" placeholder="https://www.youtube.com/watch?v=..." class="w-full pl-10 pr-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
-                            </div>
-                            <span class="text-[11px] text-slate-400 mt-1 block font-medium">Contoh: https://www.youtube.com/watch?v=... atau tautan berkas video langsung.</span>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <div class="h-px bg-slate-200 flex-1"></div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">ATAU UPLOAD BERKAS</span>
-                            <div class="h-px bg-slate-200 flex-1"></div>
-                        </div>
-
-                        <!-- Opsi 2: Upload Video File -->
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. Upload Berkas Video Langsung (MP4 / WebM)</label>
-                            <input type="file" name="video_profil_file" accept="video/mp4,video/webm" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-white border border-slate-200 rounded-xl transition">
-                            <span class="text-[11px] text-slate-400 mt-1 block font-medium">Maksimal 25MB. Format disarankan: MP4 (H.264).</span>
-                        </div>
-
-                        <!-- Pratinjau Video Saat Ini -->
-                        @if(!empty($pengaturanRaw['video_profil']))
-                        <div class="pt-3 border-t border-slate-200">
-                            <div class="text-xs font-bold text-slate-700 mb-1">Video Yang Aktif Saat Ini:</div>
-                            <div class="text-xs text-slate-800 font-mono break-all bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs">
-                                {{ $pengaturanRaw['video_profil'] }}
+                @foreach ($kelompokWarna as $kelompok)
+                    <div class="rounded-2xl border border-slate-200/90 overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-100 flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">{{ $kelompok['kode'] }}</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-900">{{ $kelompok['judul'] }}</h5>
+                                <p class="text-[11px] text-slate-500 mt-0.5 font-medium">{{ $kelompok['deskripsi'] }}</p>
                             </div>
                         </div>
-                        @endif
+                        <div class="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            @foreach ($kelompok['bidang'] as $bidang)
+                                <div class="p-3.5 rounded-xl bg-white border border-slate-200/90">
+                                    <label for="{{ $bidang['kunci'] }}" class="block text-xs font-bold text-slate-800">{{ $bidang['label'] }}</label>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 font-medium">{{ $bidang['catatan'] }}</p>
+                                    <div class="mt-2.5 flex items-center gap-2">
+                                        <input type="color" x-model="{{ $bidang['variabel'] }}" @input="tandaiCustom()"
+                                            aria-label="Pilih warna {{ $bidang['label'] }}"
+                                            class="w-9 h-9 rounded-lg border border-slate-200 bg-white p-0.5 cursor-pointer shrink-0">
+                                        <input type="text" id="{{ $bidang['kunci'] }}" name="{{ $bidang['kunci'] }}"
+                                            x-model="{{ $bidang['variabel'] }}" @input="tandaiCustom()"
+                                            placeholder="{{ $bidang['default'] }}"
+                                            class="flex-1 min-w-0 px-3 py-2 bg-slate-50/80 border border-slate-200 rounded-lg text-xs font-mono uppercase text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-1.5 font-mono">var({{ $bidang['css'] }}) · default {{ $bidang['default'] }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Pratinjau Langsung -->
+            <div class="space-y-3">
+                <div class="border-b border-slate-100 pb-3">
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                        Pratinjau Langsung
+                    </h4>
+                    <p class="text-xs text-slate-500 mt-1 font-medium">Simulasi komponen portal publik memakai warna yang sedang dipilih. Warna teks tiap permukaan dihitung otomatis (kontras WCAG AA) dari luminans latar.</p>
+                </div>
+
+                <div class="rounded-2xl border border-slate-200/90 overflow-hidden" :style="'background-color:' + pageBg">
+                    <!-- Bar Header -->
+                    <div class="px-5 py-3 flex items-center justify-between gap-3" :style="'background-color:' + headerBg">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold" :style="'background-color:' + accent + '; color:' + fgAksen">S2</span>
+                            <span class="text-xs font-bold" :style="'color: color-mix(in srgb, ' + fgHeader + ' 92%, transparent)'">SMK Negeri 2 Bandung</span>
+                        </div>
+                        <div class="hidden sm:flex items-center gap-3 text-[11px]" :style="'color: color-mix(in srgb, ' + fgHeader + ' 75%, transparent)'">
+                            <span>Profil</span>
+                            <span>Berita</span>
+                            <span>Agenda</span>
+                            <span class="px-2 py-1 rounded-md font-bold" :style="'background-color:' + accent + '; color:' + fgAksen">SPMB 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Section & Kartu -->
+                    <div class="p-5 sm:p-6" :style="'background-color:' + sectionBg">
+                        <div class="max-w-xl mx-auto rounded-xl border p-5" :style="'background-color:' + cardBg + '; border-color:' + garis">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold border"
+                                  :style="'background-color: color-mix(in srgb, ' + accent + ' 12%, ' + pageBg + '); color:' + fgBadge + '; border-color: color-mix(in srgb, ' + accent + ' 30%, ' + pageBg + ')'">
+                                Prestasi Sekolah
+                            </span>
+                            <h4 class="mt-2.5 text-sm font-bold leading-snug" :style="'color:' + fgKartuHeading">Juara 1 LKS Nasional Bidang Web Technology</h4>
+                            <p class="text-xs mt-1.5 leading-relaxed" :style="'color:' + fgKartuTeks">
+                                Siswa SMK Negeri 2 Bandung meraih medali emas pada Lomba Kompetensi Siswa tingkat nasional tahun 2026.
+                            </p>
+                            <p class="text-[11px] mt-1.5" :style="'color:' + fgKartuMuted">Diterbitkan 28 September 2026 · Humas Sekolah</p>
+
+                            <div class="mt-4 flex flex-wrap items-center gap-2.5 pt-3.5" :style="'border-top: 1px solid ' + garis">
+                                <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold" :style="'background-color:' + btnBg + '; color:' + fgTombol">Baca Selengkapnya</button>
+                                <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold border" :style="'background-color:' + sectionBg + '; color:' + fgSectionHeading + '; border-color:' + garis">Panduan PPDB</button>
+                                <span class="text-xs font-semibold underline" :style="'color:' + fgLink">Lihat semua berita</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bar Footer -->
+                    <div class="px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2" :style="'background-color:' + footerBg">
+                        <span class="text-[11px] font-semibold" :style="'color: color-mix(in srgb, ' + fgFooter + ' 85%, transparent)'">&copy; 2026 SMK Negeri 2 Bandung</span>
+                        <span class="text-[11px]" :style="'color: color-mix(in srgb, ' + fgFooter + ' 65%, transparent)'">Jl. Ciliwung No. 4, Kota Bandung</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Submit Button Footer -->
-            <div class="pt-6 border-t border-slate-100 flex justify-end">
+            <!-- Legenda Kelas Global -->
+            <div class="rounded-2xl border border-slate-200/90 bg-slate-50 p-4 sm:p-5">
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Kelas Global Warna Portal</h4>
+                <p class="text-[11px] text-slate-500 mt-1 font-medium">
+                    Seluruh halaman publik memakai kelas bersama di bawah ini, jadi satu perubahan tema langsung berlaku menyeluruh.
+                </p>
+                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 text-[11px] font-mono text-slate-600">
+                    <span>.theme-page-bg</span>
+                    <span>.theme-section-bg</span>
+                    <span>.theme-surface-alt</span>
+                    <span>.theme-card</span>
+                    <span>.theme-heading</span>
+                    <span>.theme-text-body</span>
+                    <span>.theme-text-muted</span>
+                    <span>.theme-link</span>
+                    <span>.theme-border / .theme-divider</span>
+                    <span>.theme-badge</span>
+                    <span>.theme-icon-box</span>
+                    <span>.theme-btn-primary / .theme-btn-ghost</span>
+                    <span>.theme-header</span>
+                    <span>.theme-footer</span>
+                    <span>.theme-table-head / .theme-table-row</span>
+                    <span>.theme-input</span>
+                </div>
+            </div>
+
+            <!-- Tombol Simpan -->
+            <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <p class="text-[11px] text-slate-500 font-medium">
+                    Nilai disimpan pada tabel <code class="font-mono">pengaturan_umum</code> dan langsung dipakai seluruh halaman publik sekolah.
+                </p>
                 <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer inline-flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    Simpan Perubahan
+                    <span>Simpan Perubahan</span>
                 </button>
             </div>
         </form>

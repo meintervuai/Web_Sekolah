@@ -126,7 +126,7 @@ Aplikasi dapat diakses melalui peramban di `http://localhost:8000`.
 - **Akun Operator**:
   - Email: `operator@smkn2bandung.sch.id`
   - Password: `password123`
-- **Tugas**: Pengelolaan modul beranda, profil sekolah, 7 program keahlian, berita, agenda, pengumuman, prestasi, ekskul, fasilitas, galeri, SPMB, dan pesan kontak masuk.
+- **Tugas**: Pengaturan tema & palet warna portal sekolah (**13 kunci warna dalam 6 grup**, 7 preset terverifikasi + custom hex + pratinjau langsung) melalui satu menu **Tema & Warna**; auto-kontras WCAG dua lapis (helper `App\Support\WarnaKontras` + CSS `contrast()`) memastikan teks tetap terbaca pada latar kustom apa pun. Modul CMS lain (dashboard, slider, profil, struktur, jurusan, berita, pengumuman, agenda, galeri, prestasi, ekskul, guru, fasilitas, SPMB, kontak, media) dihapus dari panel pada 2026-09-29; seluruh datanya tetap utuh di database dan tetap tampil pada portal publik.
 
 ### C. Portal Direktori & Publik Sekolah
 - **URL Utama Direktori Multi-Sekolah**: `http://localhost:8000/` (Daftar direktori seluruh sekolah terdaftar dengan tautan langsung ke website dan CMS masing-masing)
@@ -151,7 +151,7 @@ Aplikasi dapat diakses melalui peramban di `http://localhost:8000`.
 ## 6. Pengujian dan Kualitas Kode
 
 ### Menjalankan Test Otomatis
-Project ini dilengkapi 32 pengujian integrasi (Feature Tests) menggunakan Pest PHP:
+Project ini dilengkapi 63 pengujian (Feature + Unit, 377 assertion) menggunakan Pest PHP:
 ```bash
 php artisan test
 ```
@@ -160,18 +160,25 @@ Cakupan pengujian meliputi:
 - Autentikasi dan otorisasi Super Admin (`Tests\Feature\SuperAdminAuthTest`)
 - Autentikasi dan otorisasi Admin Tenant (`Tests\Feature\TenantAdminTest`)
 - Portal direktori utama dan ketersediaan seluruh 14 halaman publik tenant (`Tests\Feature\TenantPublicPagesTest`)
+- Auto-kontras WCAG per permukaan tema (`Tests\Unit\WarnaKontrasTest`, `Tests\Feature\TenantThemeColorTest`)
 
 ### Menjalankan Linter Kode
 Pastikan format kode mengikuti standar Laravel Pint:
 ```bash
 vendor/bin/pint
 ```
+### Aturan Penulisan Kode Portal Publik
+Seluruh perubahan pada portal publik (menu, halaman, section, komponen, warna) wajib mengikuti rule `.ai/rules/publik-tema-kontras.md` (indeks: `.ai/rules/index.md`) dan referensi teknis `docs/08-CSS-ARSITEKTUR-TEMA.md`: gunakan kelas `.theme-*`, jangan menulis warna literal, dan daftarkan permukaan baru ke scope auto-kontras agar teks tetap terbaca di preset warna apa pun.
+
 
 ---
 
 ## 7. Struktur Direktori Utama
 
 ```
+├── .ai/
+│   └── rules/                  # Rule AI per area (index.md + publik-tema-kontras.md)
+
 website_sekolah/
 ├── app/
 │   ├── Console/Commands/       # Command Artisan (MigrateTenants)
@@ -179,13 +186,15 @@ website_sekolah/
 │   │   ├── Controllers/
 │   │   │   ├── Central/        # Auth & Tenant Manajemen Super Admin
 │   │   │   └── Tenant/
-│   │   │       ├── Admin/      # CMS Panel Admin Sekolah
+│   │   │       ├── Admin/      # Panel Admin Sekolah (Pengaturan Tema)
 │   │   │       └── Public/     # Halaman Publik Sekolah
 │   │   └── Middleware/         # TenantMiddleware (Database Switching)
 │   ├── Models/
 │   │   ├── Central/            # SuperAdmin, Sekolah, DomainSekolah
 │   │   └── Tenant/             # Artikel, Jurusan, GuruStaf, dll.
-│   └── Providers/
+│   ├── Providers/
+│   ├── Services/                # MediaService (upload, WebP, crop, import URL)
+│   └── Support/WarnaKontras.php # Auto-kontras WCAG 2.1 (luminans, rasio, pilihTeks)
 ├── database/
 │   ├── migrations/
 │   │   ├── central/            # Migrasi database central
@@ -193,7 +202,7 @@ website_sekolah/
 │   └── seeders/
 │       ├── SuperAdminSeeder.php
 │       └── TenantSmkn2BandungSeeder.php
-├── docs/                       # Dokumentasi arsitektur, PRD, dan UI/UX
+├── docs/                       # PRD, arsitektur, database, route, UI/UX, arsitektur CSS tema
 ├── resources/
 │   ├── css/
 │   ├── js/

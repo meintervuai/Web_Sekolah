@@ -1,8 +1,11 @@
 <?php
 
 use App\Models\Central\Sekolah;
+use App\Models\Tenant\Jurusan;
+use App\Models\Tenant\PengaturanUmum;
 use App\Models\Tenant\Pengguna;
-use App\Models\Tenant\StrukturOrganisasi;
+use App\Models\Tenant\Post;
+use App\Models\Tenant\SliderBeranda;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
@@ -26,35 +29,77 @@ test('halaman login admin sekolah dapat diakses oleh guest', function () {
     $response->assertSee('SMK Negeri 2 Bandung');
 });
 
-test('dashboard admin sekolah dilindungi middleware auth tenant_admin', function () {
-    $response = $this->get('/smk-negeri-2-bandung/admin/dashboard');
-
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/login');
-});
-
-test('halaman pengaturan sekolah dilindungi middleware auth', function () {
+test('halaman pengaturan tampilan sekolah dilindungi middleware auth', function () {
     $response = $this->get('/smk-negeri-2-bandung/admin/pengaturan');
 
     $response->assertRedirect('/smk-negeri-2-bandung/admin/login');
 });
 
-test('admin sekolah dapat login dengan kredensial yang valid', function () {
+test('admin sekolah dapat login dan langsung diarahkan ke halaman pengaturan tema', function () {
     $response = $this->post('/smk-negeri-2-bandung/admin/login', [
         'email' => 'admin@smkn2bdg.test',
         'password' => 'password',
     ]);
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/dashboard');
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
     $this->assertAuthenticatedAs(Pengguna::first(), 'tenant_admin');
 });
 
-test('admin sekolah yang login dapat mengakses seluruh halaman pengaturan per navigasi', function () {
+test('login admin dengan remember me menyetel cookie dan session lifetime 24 jam', function () {
+    expect(config('session.lifetime'))->toBe(1440);
+
+    $response = $this->post('/smk-negeri-2-bandung/admin/login', [
+        'email' => 'admin@smkn2bdg.test',
+        'password' => 'password',
+        'remember' => '1',
+    ]);
+
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    $this->assertAuthenticatedAs(Pengguna::first(), 'tenant_admin');
+
+    // Memastikan guard remember cookie terkirim
+    $user = Pengguna::first();
+    expect($user->getRememberToken())->not()->toBeEmpty();
+});
+
+test('admin yang sudah login dan membuka halaman login diarahkan ke pengaturan tema', function () {
+    $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/login');
+
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+});
+
+test('halaman pengaturan tema dapat dibuka oleh admin sekolah', function () {
+    $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/pengaturan');
+
+    $response->assertStatus(200);
+    $response->assertSee('Tema & Warna');
+    $response->assertSee('Pengaturan Tema & Warna Portal Sekolah', false);
+    $response->assertSee('Rincian Warna per Bagian Tampilan', false);
+    $response->assertDontSee('Identitas Pokok & Logo Sekolah', false);
+    $response->assertDontSee('Statistik Sekolah (Tampil di Beranda)');
+    $response->assertDontSee('Video Profil Sekolah (Publik)');
+});
+
+test('sidebar admin memuat menu pengaturan tema dan manajemen media', function () {
+    $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/pengaturan');
+
+    $response->assertStatus(200);
+    $response->assertSee('Tema & Warna');
+    $response->assertSee('Manajemen Media');
+    $response->assertDontSee('Slider Banner Hero');
+    $response->assertDontSee('Pesan Pengunjung');
+    $response->assertDontSee('Dashboard');
+});
+
+test('seluruh route modul admin lama sudah dihapus dari sistem', function () {
     $user = Pengguna::first();
 
-    $routes = [
+    $removedRoutes = [
         '/smk-negeri-2-bandung/admin/dashboard',
         '/smk-negeri-2-bandung/admin/slider',
-        '/smk-negeri-2-bandung/admin/pengaturan',
         '/smk-negeri-2-bandung/admin/profil',
         '/smk-negeri-2-bandung/admin/struktur',
         '/smk-negeri-2-bandung/admin/jurusan',
@@ -70,26 +115,29 @@ test('admin sekolah yang login dapat mengakses seluruh halaman pengaturan per na
         '/smk-negeri-2-bandung/admin/kontak',
     ];
 
-    foreach ($routes as $url) {
-        $response = $this->actingAs($user, 'tenant_admin')->get($url);
-        $response->assertStatus(200);
+    foreach ($removedRoutes as $url) {
+        $this->actingAs($user, 'tenant_admin')->get($url)->assertStatus(404);
     }
 });
 
-test('admin sekolah dapat menambah dan menghapus anggota struktur organisasi pada menu struktur', function () {
+test('penyimpanan palet tema portal sekolah tetap berjalan', function () {
     $user = Pengguna::first();
 
-    $response = $this->actingAs($user, 'tenant_admin')->post('/smk-negeri-2-bandung/admin/struktur/anggota', [
-        'nama_lengkap' => 'Dra. Hj. Test Pejabat, M.Pd.',
-        'jabatan' => 'Wakasek Penguji',
-        'urutan' => 99,
+    $warnaTema = PengaturanUmum::ambil('warna_tema') ?: '#1E3A8A';
+    $skemaTema = PengaturanUmum::ambil('skema_tema') ?: 'navy_classic';
+
+    $response = $this->actingAs($user, 'tenant_admin')->put('/smk-negeri-2-bandung/admin/pengaturan', [
+        'skema_tema' => $skemaTema,
+        'warna_tema' => $warnaTema,
     ]);
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/struktur');
-    $item = StrukturOrganisasi::where('nama_lengkap', 'Dra. Hj. Test Pejabat, M.Pd.')->first();
-    expect($item)->not->toBeNull();
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    expect(PengaturanUmum::ambil('warna_tema'))->toBe($warnaTema);
+});
 
-    $delResponse = $this->actingAs($user, 'tenant_admin')->delete('/smk-negeri-2-bandung/admin/struktur/anggota/'.$item->id);
-    $delResponse->assertRedirect('/smk-negeri-2-bandung/admin/struktur');
-    expect(StrukturOrganisasi::find($item->id))->toBeNull();
+test('data konten sekolah tetap utuh di database tenant setelah modul admin dihapus', function () {
+    expect(Pengguna::count())->toBeGreaterThan(0);
+    expect(Jurusan::count())->toBeGreaterThan(0);
+    expect(Post::count())->toBeGreaterThan(0);
+    expect(SliderBeranda::count())->toBeGreaterThan(0);
 });

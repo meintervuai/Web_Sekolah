@@ -16,24 +16,85 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- CSS Variables Dinamis dari Database Tenant --}}
+    {{-- Auto-kontras WCAG: warna teks tiap permukaan dihitung dari
+         luminans latarnya. Contoh: kartu hijau tua -> teks putih;
+         kartu terang -> teks panel dipertahankan. --}}
+    @php
+        // Warna teks tiap permukaan: warna pilihan panel dipakai selama
+        // kontras AA terpenuhi, selain itu putih/tinta dipilih otomatis.
+        $kontras = fn (string $bg, string $panel, float $min = 4.5)
+            => \App\Support\WarnaKontras::pilihTeks($bg, $panel, $min);
+
+        $bgHalaman = $sekolah['warna_latar_halaman'] ?? '#F8FAFC';
+        $bgSection = $sekolah['warna_latar_section'] ?? '#F1F5F9';
+        $bgKartu   = $sekolah['warna_kartu'] ?? '#FFFFFF';
+        $bgHeader  = $sekolah['warna_header'] ?? '#1E3A8A';
+        $bgFooter  = $sekolah['warna_footer'] ?? '#1E3A8A';
+        $tema      = $sekolah['warna_tema'] ?? '#1E3A8A';
+        $aksen     = $sekolah['warna_aksen'] ?? '#0284C7';
+        $tombol    = $sekolah['warna_tombol'] ?? '#1D4ED8';
+        $btnText   = $sekolah['warna_tombol_teks'] ?? '#FFFFFF';
+        $judul     = $sekolah['warna_judul'] ?? '#0F172A';
+        $teks      = $sekolah['warna_teks'] ?? '#0F172A';
+        $sekunder  = $sekolah['warna_teks_sekunder'] ?? '#475569';
+    @endphp
+
     <style>
         :root {
-            --theme-color:       {{ $sekolah['warna_tema']         ?? '#1E3A8A' }};
+            /* A. Warna Identitas */
+            --theme-color:       {{ $sekolah['warna_tema']            ?? '#1E3A8A' }};
+            --theme-accent:      {{ $sekolah['warna_aksen']           ?? '#0284C7' }};
+
+            /* B. Tipografi & Teks */
+            --theme-heading:     {{ $sekolah['warna_judul']           ?? '#0F172A' }};
+            --theme-text:        {{ $sekolah['warna_teks']            ?? '#0F172A' }};
+            --theme-text-muted:  {{ $sekolah['warna_teks_sekunder']   ?? '#475569' }};
+
+            /* C. Latar & Permukaan */
+            --theme-page-bg:     {{ $sekolah['warna_latar_halaman']   ?? '#F8FAFC' }};
+            --theme-section-bg:  {{ $sekolah['warna_latar_section']   ?? '#F1F5F9' }};
+            --theme-card-bg:     {{ $sekolah['warna_kartu']           ?? '#FFFFFF' }};
+
+            /* D. Garis & Batas */
+            --theme-border:      {{ $sekolah['warna_border']          ?? '#E2E8F0' }};
+
+            /* E. Tombol & Aksi */
+            --theme-btn-bg:      {{ $sekolah['warna_tombol']          ?? '#1D4ED8' }};
+            --theme-btn-text:    {{ $sekolah['warna_tombol_teks']     ?? '#FFFFFF' }};
+
+            /* F. Header, Navigasi & Footer */
+            --theme-header-bg:   {{ $sekolah['warna_header']          ?? '#1E3A8A' }};
+            --theme-footer-bg:   {{ $sekolah['warna_footer']          ?? '#1E3A8A' }};
+
+            /* G. Auto-kontras WCAG (dihitung dari luminans tiap latar).
+               Teks tetap terbaca walau latar diganti gelap/terang. */
+            --theme-fg-halaman-heading: {{ $kontras($bgHalaman, $judul) }};
+            --theme-fg-halaman-text:    {{ $kontras($bgHalaman, $teks) }};
+            --theme-fg-halaman-muted:   {{ $kontras($bgHalaman, $sekunder) }};
+            --theme-fg-section-heading: {{ $kontras($bgSection, $judul) }};
+            --theme-fg-section-text:    {{ $kontras($bgSection, $teks) }};
+            --theme-fg-section-muted:   {{ $kontras($bgSection, $sekunder) }};
+            --theme-fg-kartu-heading:   {{ $kontras($bgKartu, $judul) }};
+            --theme-fg-kartu-text:      {{ $kontras($bgKartu, $teks) }};
+            --theme-fg-kartu-muted:     {{ $kontras($bgKartu, $sekunder) }};
+            --theme-fg-header:          {{ $kontras($bgHeader, $btnText) }};
+            --theme-fg-footer:          {{ $kontras($bgFooter, $btnText) }};
+            --theme-fg-zona:            {{ $kontras($tema, $btnText) }};
+            --theme-fg-tombol:          {{ $kontras($tombol, $btnText, 3.0) }};
+            --theme-fg-aksen:           {{ $kontras($aksen, $btnText, 3.0) }};
+            --theme-fg-badge:           {{ $kontras(\App\Support\WarnaKontras::campurWarna($aksen, $bgHalaman, 15), \App\Support\WarnaKontras::campurWarna($tema, '#000000', 85)) }};
+            --theme-fg-link:            {{ $kontras($bgHalaman, $aksen, 2.0) }};
+
+            /* Turunan otomatis dari warna identitas */
             --theme-color-dark:  color-mix(in srgb, var(--theme-color) 80%, black);
-            --theme-color-light: color-mix(in srgb, var(--theme-color) 15%, white);
+            --theme-color-light: color-mix(in srgb, var(--theme-color) 15%, var(--theme-page-bg));
             --theme-color-transparent: color-mix(in srgb, var(--theme-color) 20%, transparent);
-            --theme-accent:      {{ $sekolah['warna_aksen']        ?? '#0284C7' }};
-            --theme-text:        {{ $sekolah['warna_teks']         ?? '#0F172A' }};
-            --theme-card-bg:     {{ $sekolah['warna_kartu']        ?? '#FFFFFF' }};
-            --theme-btn-bg:      {{ $sekolah['warna_tombol']       ?? '#1D4ED8' }};
-            --theme-btn-text:    {{ $sekolah['warna_tombol_teks']  ?? '#FFFFFF' }};
-            --theme-header-bg:   {{ $sekolah['warna_header']       ?? '#1E3A8A' }};
         }
     </style>
     @stack('styles')
 </head>
 
-<body class="bg-slate-50 text-slate-900 antialiased flex flex-col min-h-screen selection:bg-blue-600 selection:text-white"
+<body class="theme-page-bg theme-text-body antialiased flex flex-col min-h-screen selection:bg-blue-600 selection:text-white"
     x-data="{ mobileNav: false, lightboxOpen: false, lightboxSrc: '', lightboxCaption: '' }"
     @keydown.escape.window="mobileNav = false; lightboxOpen = false">
 
@@ -63,7 +124,7 @@
     @endphp
 
     <!-- Top Bar -->
-    <header class="theme-bg text-blue-50 text-xs py-2 hidden md:block border-b border-blue-800/50">
+    <header class="theme-header theme-bg text-blue-50 text-xs py-2 hidden md:block border-b border-blue-800/50">
         <div class="container-custom flex justify-between items-center">
             <div class="flex items-center space-x-6">
                 <span class="flex items-center text-blue-100">
@@ -349,7 +410,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="theme-bg text-blue-100 pt-16 pb-12 border-t border-blue-800/50 mt-auto">
+    <footer class="theme-footer theme-bg text-blue-100 pt-16 pb-12 border-t border-blue-800/50 mt-auto">
         <div class="container-custom">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-blue-800/50">
                 <!-- Col 1: School Identity -->

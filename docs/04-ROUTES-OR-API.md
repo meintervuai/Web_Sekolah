@@ -44,3 +44,28 @@ Setiap modul diperiksa ketersediaannya melalui `PengaturanFitur::isAktif($kodeFi
 - Rute mengembalikan respons HTTP 404 (Not Found).
 - Item pada header/navbar otomatis disembunyikan.
 - Section terkait pada homepage otomatis disembunyikan.
+
+## 4. Rute Panel Admin Sekolah (Prefix: `/{tenant}/admin`)
+
+Sejak penyederhanaan panel admin (2026-09-29), grup rute `tenant.admin.*` hanya memuat autentikasi dan pengaturan tema.
+
+| No | URL Path | Route Name | Method | Middleware | Deskripsi Halaman |
+|---|---|---|---|---|---|
+| 1 | `/{tenant}/admin/login` | `tenant.admin.login` | GET | - | Formulir login Admin Sekolah. Jika sesi admin masih aktif, otomatis dialihkan ke `tenant.admin.pengaturan.index`. |
+| 2 | `/{tenant}/admin/login` | `tenant.admin.login.submit` | POST | `guest:tenant_admin` | Proses autentikasi Admin Sekolah, lalu dialihkan ke `tenant.admin.pengaturan.index`. |
+| 3 | `/{tenant}/admin/logout` | `tenant.admin.logout` | POST | `auth:tenant_admin` | Mengakhiri sesi Admin Sekolah. |
+| 4 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah (7 preset, custom hex, live preview). |
+| 5 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
+
+### 4.1 Shortcut Global
+
+| URL | Route Name | Perilaku |
+|---|---|---|
+| `/admin` | `admin.shortcut` | Mengarah ke `/{tenant}/admin/pengaturan` bila tenant terikat & sesi admin aktif, selain itu ke `/{tenant}/admin/login`. |
+| `/admin/login` | `admin.login.shortcut` | Mengarah ke halaman login admin sekolah aktif pertama. |
+
+### 4.2 Catatan Penghapusan
+
+- Rute modul lama (`dashboard`, `slider`, `profil`, `struktur`, `jurusan`, `berita`, `pengumuman`, `agenda`, `galeri`, `prestasi`, `ekskul`, `guru`, `fasilitas`, `spmb`, `kontak`, `media`) sudah tidak terdaftar dan mengembalikan respons HTTP 404.
+- Tabel, model, migrasi, dan seeder modul tersebut tetap utuh sehingga dapat diaktifkan kembali tanpa migrasi ulang.
+

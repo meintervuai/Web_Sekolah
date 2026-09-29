@@ -110,3 +110,69 @@
   - [x] Hero section highlight agenda unggulan.
 - [x] Update controller `PageController@agenda` menyuplai `$allAgenda` & `$featuredAgenda`.
 - [x] Pest automated tests pass (33 tests, 123 assertions).
+
+---
+
+### Tahap 7: Penyederhanaan Panel Admin Sekolah (Hanya Tema & Warna) (Selesai)
+- [x] Sidebar admin (`resources/views/layouts/tenant_admin.blade.php`) disisakan satu menu: **Tema & Warna**; brand header sidebar menaut ke halaman pengaturan tema.
+- [x] 16 controller dan 36 view modul admin lain dihapus dari sistem; komponen `resources/views/components/admin/*` dan `App\Services\ImageService` yang tidak terpakai dibersihkan, termasuk aset CDN Quill.
+- [x] Grup rute `tenant.admin.*` tersisa `login`, `login.submit`, `logout`, `pengaturan.index`, dan `pengaturan.update`; shortcut `/admin` mengarah ke `/{tenant}/admin/pengaturan`.
+- [x] Halaman `tenant/admin/pengaturan/index.blade.php` hanya memuat panel Tema & Warna (7 preset, 6 grup rincian warna, custom hex, pratinjau langsung) tanpa navigasi tab dan tanpa kartu navigasi modul lain.
+- [x] `PengaturanController` hanya memvalidasi & menyimpan `skema_tema` + 13 kunci warna dengan pesan validasi Bahasa Indonesia.
+- [x] Login admin sekolah langsung diarahkan ke halaman pengaturan tema, termasuk saat admin yang sudah login membuka halaman login.
+- [x] Database utuh: seluruh migrasi, tabel tenant, model `App\Models\Tenant\*`, seeder, dan data konten (7 jurusan, 10 artikel, slider, agenda, prestasi, ekskul, guru, fasilitas, galeri, SPMB, kontak) tidak diubah dan tetap tampil pada portal publik.
+- [x] Pest `TenantAdminTest` diperbarui menjadi 9 skenario (proteksi auth, redirect login, isi sidebar, 404 rute lama, penyimpanan palet, integritas data tenant) dengan full suite **36 test / 135 assertions PASSED**.
+- [x] Laravel Pint bersih pada seluruh berkas PHP yang diubah (`vendor/bin/pint --dirty`).
+
+---
+
+### Tahap 8: Sistem Warna Global Terkelompok (13 Kunci, 6 Grup) (Selesai)
+- [x] `resources/css/public.css` memuat fallback 13 variabel `--theme-*`, **Legacy Utility Mapping** utilitas netral (`bg-white`, `bg-slate-50/100/200`, `border-slate-*`, `text-slate-*` → variabel tema dengan `!important`, zona gelap dikecualikan lewat `:is(...)`), kelas global (`.theme-*`), serta `footer` yang memakai `--theme-footer-bg`.
+- [x] `layouts/public.blade.php` menginjeksi 13 variabel warna dari `$sekolah`; `<body>`, header, dan footer memakai kelas `.theme-page-bg`, `.theme-text-body`, `.theme-header`, `.theme-footer`.
+- [x] `HomeController` & `PageController` menyiapkan 13 kunci warna + `skema_tema`; `PengaturanController` memvalidasi 13 kunci; seeder `TenantSmkn2BandungSeeder` menulis kunci default ke `pengaturan_umum`.
+- [x] Panel admin menampilkan 6 grup warna (A-F) dengan 13 color picker + input hex tersinkronisasi, pratinjau langsung (header, section + kartu, footer), dan legenda kelas global.
+- [x] Test Pest `TenantThemeColorTest` (5 skenario) lulus; full suite **41 test / 243 assertions PASSED**.
+- [x] `npm run build` sukses (`public/build/assets/public-CU8YmPSe.css`, 14.58 kB); request HTTP nyata membuktikan seluruh 13 variabel `--theme-*` tersuntik sesuai palet uji `#BE123C`.
+- [x] **Penutup celah kelas warna (Tailwind v4 Palette Override):** `public.css` menimpa `--color-blue-*`/`--color-indigo-*` → skala `--theme-identity-*`, `--color-sky-*`/`--color-amber-*`/`--color-orange-*` → skala `--theme-accent-*`, `--color-slate-*` → skala `--theme-neutral-*`, pola radial `#38bdf8` → aksen, dan `border-slate-*/80|60` → `--theme-border`.
+- [x] Test Pest skenario `pemetaan palet Tailwind v4 menutup kelas warna yang lolos dari tema` ditambahkan; full suite **42 test / 254 assertions PASSED**; `npm run build` menghasilkan `public-DCqQ4nZP.css` (20.03 kB) dan request HTTP nyata menautkan stylesheet hash baru tersebut.
+- [x] **Kelompok warna lengkap tanpa pengecualian (permintaan pemilik produk):** 12 keluarga tambahan ikut terpetakan di `:root` (purple/violet/fuchsia/pink → identitas; green/emerald/lime/teal/cyan/yellow/red/rose → aksen; gray/zinc/stone/neutral → netral) beserta `--color-white` → `--theme-btn-text`; 37 dasar campuran `color-mix(..., white)` → `warna_latar_halaman` dan titik radial hero → `--theme-accent-400`; seluruh literal putih hardcoded (header/footer, breadcrumb, amber dark card, aturan zona gelap) diganti kunci panel `warna_tombol_teks`; pratinjau panel admin memakai `btnText`/`pageBg`; tombol WhatsApp `bg-[#25D366]` + `hover:bg-[#20ba5a]` → aksen. Full suite **42 test / 278 assertions PASSED**; `npm run build` → `public-CCKXuORS.css` (28,54 kB); request HTTP port 8000 & 8123 menautkan stylesheet hash baru tersebut.
+
+---
+
+### Tahap 9: Pusat Manajemen Media Induk (File Manager) (Selesai)
+- [x] Tabel database tenant `media` (100% berelasi via Foreign Key `pengguna_id` ke `pengguna.id`).
+- [x] Model Eloquent `App\Models\Tenant\Media` dengan relasi dua arah ke `Pengguna` (`$media->pengguna` & `$pengguna->medias`).
+- [x] Service komprehensif `App\Services\MediaService`:
+  - [x] Otomatis kompresi gambar dan konversi ke `.webp` via PHP GD (maks 1920px, kualitas 82%).
+  - [x] Penanganan berkas video upload lokal (MP4/WebM) dan dokumen PDF.
+  - [x] Pendaftaran video YouTube dengan ekstraksi ID dan poster thumbnail otomatis.
+  - [x] Impor media via URL eksternal dengan live checking HTTP & thumbnail preview.
+  - [x] Editor gambar interaktif (Crop aspek rasio 16:9, 4:3, 1:1, Bebas & Rotate 90°).
+  - [x] Manajemen berkas: ubah judul/nama file, alt text SEO, kategori, copy link URL, dan hapus berkas fisik dari storage.
+- [x] Migrator data media existing `TenantMediaSeeder`: 24 aset media dari tabel lama termigrasi ke tabel induk `media`.
+- [x] Controller `MediaController` dan 7 endpoint rute admin tenant (`auth:tenant_admin`).
+- [x] Antarmuka admin `resources/views/tenant/admin/media/index.blade.php` (Grid Bento, modal upload, modal import URL, modal editor canvas, modal rename).
+- [x] Menu *Manajemen Media* di sidebar admin sekolah (`layouts/tenant_admin.blade.php`).
+- [x] Feature test `TenantMediaTest` (8 skenario); Full test suite **51 test / 317 assertions PASSED (100% Green)**.
+
+---
+
+### Tahap 10: Auto-Kontras WCAG Server-side & Client-side (Selesai)
+- [x] Helper `App\Support\WarnaKontras` (`app/Support/WarnaKontras.php`): `luminans()`, `rasio()`, `pilihTeks()`, `campurWarna()` mengikuti rumus luminance WCAG 2.1; menerima hex 3/6 digit, format tidak dikenal dianggap terang supaya teks tidak pernah ikut hilang.
+- [x] **Lapis server-side** `resources/views/layouts/public.blade.php`: closure `$kontras()` menyuntik 16 kunci teks per permukaan (`--theme-fg-header`, `--theme-fg-footer`, `--theme-fg-zona`, `--theme-fg-tombol`, `--theme-fg-aksen`, `--theme-fg-link`, `--theme-fg-badge`, `--theme-fg-halaman-*`, `--theme-fg-section-*`, `--theme-fg-kartu-*`) dengan ambang 4.5:1 (isi), 3:1 (tombol), 2:1 (tautan).
+- [x] **Lapis client-side** `resources/css/public.css`: `@property --kontras-aman` + `--kontras-terang` dan detektor `calc(var(--fg) contrast(var(--bg)) >= 4.5)`; `--fg-zona-efektif` diselesaikan per scope (`:root`, `.theme-page-bg`, `.theme-section-bg`, `.theme-card`/`.bg-white/80|90`, `.theme-badge`, `.theme-bg`/`bg-blue-900`, `.theme-header`, `footer.theme-bg`/`footer.theme-footer`).
+- [x] `--theme-fg-zone` dinormalkan menjadi `--theme-fg-zona`; `--theme-btn-text`, `color-mix(..., black)`, dan putih hardcoded pada `.text-blue-900/950`, `.theme-btn-ghost`, `.theme-table-head`, `.theme-input`, `nav .text-blue-950`, badge, dan zona gelap diganti resolver hasil auto-kontras.
+- [x] Pratinjau panel tema `resources/views/tenant/admin/pengaturan/index.blade.php` memakai salinan JS `WarnaKontras` + computed getter (`fgHeader`, `fgFooter`, `fgTombol`, `fgAksen`, `fgKartuHeading`, `fgKartuTeks`, `fgKartuMuted`, `fgSectionHeading`, `fgBadge`, `fgLink`) sehingga pratinjau identik dengan render publik.
+- [x] Unit test `tests/Unit/WarnaKontrasTest.php` (7 skenario / 22 assertion) + 3 skenario auto-kontras pada `tests/Feature/TenantThemeColorTest.php` (mempertahankan warna lolos AA; memaksa putih pada kartu `#052E1F` dan tinta pada header `#F1F5F9`; memastikan scope CSS terpasang).
+- [x] Verifikasi: full suite **63 test / 377 assertions PASSED**; `vendor/bin/pint --dirty` passed; `npm run build` menghasilkan `public/build/assets/public-CMXtt0o7.css` (34.00 kB, gzip 4.52 kB) yang tetap memuat 2 blok `@property`, 11 panggilan `contrast()`, dan 26 rujukan `--fg-zona-efektif`.
+
+
+## Tahap 11: Penegakan Aturan Tema & Auto-Kontras (Dokumentasi)
+**Status:** Selesai
+
+- [x] Rule operasional dibuat di `.ai/rules/publik-tema-kontras.md` + indeks `.ai/rules/index.md` (dibaca otomatis sesuai `AGENTS.md` bagian 2 Langkah 2) sehingga tiap permintaan tambah menu/halaman/section publik ditulis mengikuti pola auto-kontras.
+- [x] Referensi teknis `docs/08-CSS-ARSITEKTUR-TEMA.md`: diagram alur warna, tabel 13 kunci panel + 16 kunci `--theme-fg-*`, registri 8 scope, inventaris kelas `.theme-*`, resep cepat, fallback browser, verifikasi.
+- [x] `docs/RULES.md` bagian 8 "Standar Tema & Auto-Kontras CSS (Portal Publik)" (8 poin mengikat).
+- [x] `docs/05-UI-UX.md` menautkan rule dan dokumen teknis pada bagian Auto-Kontras WCAG.
+- [x] Tidak ada perubahan kode runtime; test suite tidak terdampak.
+

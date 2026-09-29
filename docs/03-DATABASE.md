@@ -51,6 +51,7 @@ erDiagram
     PENGGUNA ||--o{ PENGATURAN_UMUM : "mengubah profil (FK pengguna_id)"
     PENGGUNA ||--o{ PENGATURAN_FITUR : "mengatur sakelar (FK pengguna_id)"
     PENGGUNA ||--o{ SOSIAL_MEDIA : "mengelola tautan medsos (FK pengguna_id)"
+    PENGGUNA ||--o{ MEDIA : "mengunggah / mengelola berkas (FK pengguna_id)"
     
     %% Article Categorization
     KATEGORI_ARTIKEL ||--o{ ARTIKEL : "mengkategorikan (FK kategori_id)"
@@ -259,6 +260,24 @@ Semua tabel dalam database kini terhubung secara formal dengan relasi Foreign Ke
 | 20 | `pengaturan_umum` | `pengguna_id` | `pengguna` | `id` | `SET NULL` | Akun pengubah konfigurasi identitas sekolah |
 | 21 | `pengaturan_fitur` | `pengguna_id` | `pengguna` | `id` | `SET NULL` | Akun pengubah sakelar modul portal |
 | 22 | `sosial_media` | `pengguna_id` | `pengguna` | `id` | `SET NULL` | Akun pengelola tautan media sosial sekolah |
+
+---
+
+### Kunci Tema Portal pada Tabel `pengaturan_umum`
+
+Tabel `pengaturan_umum` bekerja sebagai penyimpanan key-value. Panel admin **Tema & Warna** menulis 14 kunci berikut (13 warna + pemilih skema) yang dibaca `HomeController`, `PageController`, dan `PengaturanController`, lalu diinjeksi ke `:root` oleh `layouts/public.blade.php`:
+
+| Grup | Kunci (`pengaturan_umum`) | Variabel CSS |
+|------|---------------------------|--------------|
+| Skema | `skema_tema` | - (penanda preset aktif: `navy_classic`, `emerald_nature`, `maroon_prestige`, `royal_purple`, `slate_dark`, `amber_sunset`, `teal_modern`, `custom`) |
+| A. Warna Identitas | `warna_tema`, `warna_aksen` | `--theme-color`, `--theme-accent` |
+| B. Tipografi & Teks | `warna_judul`, `warna_teks`, `warna_teks_sekunder` | `--theme-heading`, `--theme-text`, `--theme-text-muted` |
+| C. Latar & Permukaan | `warna_latar_halaman`, `warna_latar_section`, `warna_kartu` | `--theme-page-bg`, `--theme-section-bg`, `--theme-card-bg` |
+| D. Garis & Batas | `warna_border` | `--theme-border` |
+| E. Tombol & Aksi | `warna_tombol`, `warna_tombol_teks` | `--theme-btn-bg`, `--theme-btn-text` |
+| F. Header, Navigasi & Footer | `warna_header`, `warna_footer` | `--theme-header-bg`, `--theme-footer-bg` |
+
+Nilai disimpan sebagai heksadesimal 7 karakter (mis. `#BE123C`). Perubahan ini tidak menyentuh skema, hanya menambah baris kunci.
 
 ---
 

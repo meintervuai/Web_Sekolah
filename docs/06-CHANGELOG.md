@@ -2,6 +2,203 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Aturan Baru: Kontrak Tema & Auto-Kontras untuk Kode Publik] - 2026-09-29
+
+### Added
+- `.ai/rules/publik-tema-kontras.md` + `.ai/rules/index.md`: rule blocking (dibaca lewat `AGENTS.md` bagian 2) yang membuat setiap penambahan menu, halaman, section, atau komponen publik ditulis mengikuti sistem tema dan auto-kontras yang sudah ada: wajib kelas `.theme-*`, dilarang warna literal, komponen membaca variabel ter-scope (`--theme-heading`, `--theme-text`, `--theme-fg-link`, `--fg-zona-efektif`), SOP tambah menu (data `menu` + filter nama layout), SOP tambah halaman (`route tenant.*` -> `getSekolahData()` -> view `layouts.public` -> test), template scope kontras baru, SOP 6 titik kunci warna baru, anti-pattern, dan daftar verifikasi.
+- `docs/08-CSS-ARSITEKTUR-TEMA.md`: referensi teknis (diagram alur warna, API `WarnaKontras`, 13 kunci panel + 16 kunci `--theme-fg-*`, registri 8 scope, inventaris kelas, resep cepat, fallback browser, pemeriksaan compiled CSS).
+
+### Changed
+- `docs/RULES.md` bagian 8: 8 poin standar tema & auto-kontras portal publik.
+- `docs/05-UI-UX.md`: tautan ke rule dan referensi teknis pada bagian Auto-Kontras WCAG.
+- `docs/07-IMPLEMENTATION-CHECKLIST.md`: Tahap 11 ditambahkan.
+
+### Notes
+- Tanpa perubahan kode runtime dan tanpa migrasi; test suite tidak terdampak.
+
+
+## [Auto-Kontras WCAG Otomatis untuk Seluruh Permukaan Portal] - 2026-09-29
+
+### Added
+- **Helper `App\Support\WarnaKontras`** (`app/Support/WarnaKontras.php`): `luminans()`, `rasio()`, `pilihTeks()`, `campurWarna()` sesuai rumus luminance WCAG 2.1. Menerima hex 3 dan 6 digit; format tidak dikenal diperlakukan sebagai latar terang supaya teks tidak pernah ikut hilang.
+- **Lapis server-side di `resources/views/layouts/public.blade.php`:** closure `$kontras()` menyuntik 16 kunci teks per permukaan (`--theme-fg-header`, `--theme-fg-footer`, `--theme-fg-zona`, `--theme-fg-tombol`, `--theme-fg-aksen`, `--theme-fg-link`, `--theme-fg-badge`, `--theme-fg-halaman-heading|text|muted`, `--theme-fg-section-heading|text|muted`, `--theme-fg-kartu-heading|text|muted`). Warna usulan admin dipakai selama lolos ambang (teks isi 4.5:1, tombol 3:1, tautan 2:1); bila tidak, putih/tinta `#0F172A` dipilih lewat argmax kontras.
+- **Lapis client-side (pengaman) di `resources/css/public.css`:** `@property --kontras-aman` dan `--kontras-terang` bertipe integer yang beranimasi, dipakai sebagai sakelar `color-mix()` pada `--fg-zona-efektif` per scope (`:root`, `.theme-page-bg`, `.theme-section-bg`, `.theme-card` / `.bg-white/80|/90`, `.theme-badge`, zona gelap `.theme-bg`/`bg-blue-900`, `.theme-header`, `footer.theme-bg`/`footer.theme-footer`). Deteksi memakai `calc(var(--fg) contrast(var(--bg)) >= 4.5)`, sehingga override warna dari DevTools, ekstensi browser, atau JS tetap dipaksa terbaca.
+- **Pratinjau admin sejalan hasil render (`resources/views/tenant/admin/pengaturan/index.blade.php`):** salinan JS `WarnaKontras` (`luminans`/`rasio`/`pilihTeks`/`campur`) beserta computed getter `fgHeader`, `fgFooter`, `fgTombol`, `fgAksen`, `fgKartuHeading`, `fgKartuTeks`, `fgKartuMuted`, `fgSectionHeading`, `fgBadge`, `fgLink` menggantikan pemakaian warna mentah panel pada mock header, section, kartu, dan footer.
+- **Test baru:** `tests/Unit/WarnaKontrasTest.php` (7 skenario / 22 assertion) dan 3 skenario auto-kontras pada `tests/Feature/TenantThemeColorTest.php`.
+
+### Changed
+- `--theme-fg-zone` menjadi `--theme-fg-zona` (konsistensi istilah); `--fg-zona-efektif` kini menjadi resolver yang bernilai berbeda per scope (header, footer, halaman, kartu, badge, zona gelap).
+- Warna teks tidak lagi membaca `--theme-btn-text` secara mentah. Aturan `.text-blue-900`/`.text-blue-950`, `nav .text-blue-950`, `.theme-btn-ghost`, `.theme-table-head`, `.theme-input`, badge, serta zona gelap (pengganti `color-mix(..., black)`) kini membaca hasil auto-kontras.
+
+### Verification
+- `vendor/bin/pest`: **63 test / 377 assertions PASSED** (termasuk 9 skenario `TenantThemeColorTest`).
+- `vendor/bin/pint --dirty`: passed.
+- `npm run build`: `public/build/assets/public-CMXtt0o7.css` 34.00 kB (gzip 4.52 kB); compiled CSS tetap memuat 2 blok `@property`, 11 panggilan `contrast()`, dan 26 rujukan `--fg-zona-efektif`.
+- Verifikasi angka kontras: `#FFFFFF` vs `#000000` = 21:1; judul `#0F2A22` di kartu `#052E1F` = 1.03:1 lalu dipaksa `#FFFFFF`; teks `#FFFFFF` di header `#F1F5F9` = 1.10:1 lalu dipaksa `#0F172A`; `#94A3B8` di atas putih = 2.56:1 (lolos ambang tautan, gagal ambang teks isi).
+
+## [Pusat Media: Filter Monokrom Rapi, Crop Non-Destruktif, Toast Kanan Bawah & Pembersihan Warna] - 2026-09-29
+
+### Changed
+- **Penyelarasan & Perapian Filter Bar (Anti-Warna Pelangi)**:
+  - Menggabungkan filter chips tipe media, dropdown kategori, form pencarian nama berkas, dan toggle Grid/Tabel ke dalam satu kesatuan toolbar rapi dan simetris.
+  - Menghapus penggunaan aneka warna cerah/pelangi pada filter badge dan menggantinya dengan palet netral institusional yang elegan (Slate-900 / Slate-100 / Slate-600).
+- **Arsitektur Crop Non-Destruktif (Perlindungan Berkas Master)**:
+  - Memodifikasi `MediaService@prosesEditGambar` dan `MediaController@editImage`: Fitur crop dan rotasi gambar kini **TIDAK MENIMPA/MERUSAK** berkas master asli (`media.path` asli tetap utuh di database & storage server).
+  - Menyimpan hasil potongan sebagai berkas WebP varian baru terpisah (`{nama}-crop-{timestamp}.webp`) dengan record media baru berstatus WebP teroptimasi.
+- **Notifikasi Toast Mengambang di Pojok Kanan Bawah (Floating Auto-Dismiss Toast)**:
+  - Menghapus banner flash alert statis di atas layout admin (`layouts/tenant_admin.blade.php`).
+  - Menggantinya dengan kartu notifikasi Toast interaktif berbasis Alpine.js yang melayang di pojok kanan bawah (`fixed bottom-6 right-6 z-50`) dengan transisi animasi halus dan menghilang otomatis setelah 4 detik.
+- **Perbaikan & Penguatan REST API Upload**:
+  - Memastikan endpoint `POST /admin/media/upload` menangani payload JSON/Multipart secara aman dengan validasi respons status 200/422 dan penanganan error yang jelas.
+
+### Verification
+- `php artisan test tests/Feature/TenantMediaTest.php`: **10 test / 47 assertions PASSED** (100% hijau).
+- `vendor/bin/pint --dirty`: Bersih dan sesuai standar PSR-12 / Laravel Pint.
+
+## [Pusat Manajemen Media: Kotak Crop Interaktif, Bulk Action, Chips Mobile & Loading Feedback] - 2026-09-29
+
+### Added
+- **Editor Gambar dengan Kotak Crop Interaktif (Drag & Resize Box)**:
+  - Kotak crop visual interaktif dengan garis bantu komposisi (*rule of thirds*), 4 sudut handle penarik ukuran, dan visualisasi area terpotong (*dark overlay*) secara real-time.
+  - Perhitungan koordinat skala asli gambar (`crop_x`, `crop_y`, `crop_w`, `crop_h`) otomatis saat digeser atau diubah ukurannya sebelum disimpan ulang ke WebP.
+- **Tampilan Filter Chips Mobile-Friendly**:
+  - Filter tipe media dirombak menggunakan desain *chips badge* berbalut *horizontal scrollbar* yang ramah sentuhan layar ponsel/tablet.
+  - Menampilkan jumlah berkas spesifik untuk setiap tipe secara presisi: `Semua (x)`, `Gambar (x)`, `Video Lokal (x)`, `YouTube (x)`, `Dokumen (x)`.
+- **Penghapusan Massal & Multi-Select Checkbox**:
+  - Checkbox pemilihan pada setiap kartu grid dan baris tabel, serta tombol centang *Pilih Semua Berkas*.
+  - Endpoint & Method `POST /admin/media/bulk-delete` (`MediaController@bulkDestroy`) untuk menghapus banyak berkas sekaligus secara bersih dari database dan storage server.
+- **Modal Konfirmasi Hapus Kustom (Anti-Native Alert)**:
+  - Mengganti seluruh `window.confirm()` bawaan browser dengan modal dialog kustom Tailwind/Alpine yang modern dan terintegrasi dengan tema.
+- **Indikator Loading & Feedback Interaksi Responsif (Anti-Freeze)**:
+  - Spinner animasi dan status teks berjalan (*"Mengunggah & mengompresi WebP..."*, *"Mengunduh & menyimpan..."*, *"Memproses crop..."*, *"Menghapus..."*) pada setiap tombol aksi dan modal proses global.
+- **Pembaruan Aturan Kerja (RULES.md & AGENTS.md)**:
+  - Menambahkan aturan wajib penyediaan status loading animasi/spinner pada setiap pembuatan interaksi asinkron, manipulasi DOM, atau rute/REST API untuk mencegah kesan antarmuka lag atau membeku.
+- **Pembersihan Tombol Salin URL & Posisi Layout**:
+  - Menghapus tombol salin URL dari kartu dan tabel sesuai arahan.
+  - Memposisikan toggle Grid/List konsisten di pojok kanan atas.
+- **Test Suite Pest `TenantMediaTest`**: Menambahkan skenario uji bulk delete (total **52 test / 322 assertions PASSED**).
+
+### Verification
+- `php artisan test`: **52 test / 322 assertions PASSED** (100% hijau).
+- `vendor/bin/pint`: Seluruh kode bersih dan terformat rapi.
+
+## [Otentikasi Admin: Penguatan Remember Me & Durasi Sesi 24 Jam] - 2026-09-29
+
+### Changed
+- **Session Lifetime 1 x 24 Jam**: Mengubah durasi sesi login aplikasi (`SESSION_LIFETIME`) dari 120 menit (2 jam) menjadi **1440 menit (24 jam)** pada `.env`, `.env.example`, dan `config/session.php`. Sesi admin kini bertahan 24 jam dan baru logout otomatis setelah 1 x 24 jam tanpa aktivitas.
+- **Formulir Login Admin (`login.blade.php`)**: Memperbaiki dan mempertegas atribut input *Ingat saya di perangkat ini* (`id="remember"`, `value="1"`, `{{ old('remember') ? 'checked' : '' }}`) yang terhubung langsung dengan `remember_token` pada database pengguna tenant.
+- **Konsistensi Tema**: Memperbarui variabel turunan `--theme-color-light` di [`layouts/public.blade.php`](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php) agar menggunakan `var(--theme-page-bg)` dan tidak lagi menggunakan literal `white`.
+
+### Verification
+- `php artisan test`: **43 test / 285 assertions PASSED** (termasuk skenario pengujian remember me & konfigurasi sesi 1440 menit).
+
+## [Halaman Profil: Logo Lebih Besar & Penggantian Sidebar dengan Video Player] - 2026-09-29
+
+### Added
+- **Komponen Video Profil Media Player** pada kolom kanan halaman profil publik ([`profil.blade.php`](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php)) yang mendukung pemutaran video YouTube embed maupun video MP4/HTML5 native lengkap dengan judul dan deskripsinya.
+
+### Changed
+- **Logo Resmi Sekolah**: Ukuran ditingkatkan menjadi lebih besar (`w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48`) dan background wadah dibuat transparan (`bg-transparent`) tanpa border berlebih.
+
+### Removed
+- Sidebar lama (kartu kepala sekolah & menu navigasi redundan) di halaman profil digantikan oleh kartu video player.
+
+### Verification
+- `php artisan test tests/Feature/TenantPublicPagesTest.php`: **17 test / 60 assertions PASSED**.
+
+## [Halaman Profil: Penambahan Logo Sekolah pada Kartu Identitas] - 2026-09-29
+
+### Added
+- **Logo Resmi Sekolah** pada kartu *Identitas Satuan Pendidikan* di halaman profil publik ([`profil.blade.php`](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php)) dengan layout flex responsif yang terintegrasi dinamis dengan data/pengaturan tema.
+
+### Verification
+- `php artisan test tests/Feature/TenantPublicPagesTest.php`: **17 test / 60 assertions PASSED**.
+
+## [Pembersihan Halaman Profil: Penghapusan Section Struktur Pimpinan Sekolah] - 2026-09-29
+
+### Removed
+- **Section "Struktur Pimpinan Sekolah"** (`#struktur`) pada halaman profil publik ([`profil.blade.php`](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php)) beserta tautan menu navigasi anchor terkait.
+
+### Verification
+- `php artisan test`: **42 test / 278 assertions PASSED**.
+
+## [Kelompok Warna Lengkap: Semua Keluarga Ikut Panel Tema Tanpa Pengecualian] - 2026-09-29
+
+### Added
+- **133 variabel palet baru di `:root` `resources/css/public.css`** (total kini **199**): `--color-purple-*`/`--color-violet-*`/`--color-fuchsia-*`/`--color-pink-*` → skala `--theme-identity-*`; `--color-green-*`/`--color-emerald-*`/`--color-lime-*`/`--color-teal-*`/`--color-cyan-*`/`--color-yellow-*`/`--color-red-*`/`--color-rose-*` → skala `--theme-accent-*`; `--color-gray-*`/`--color-zinc-*`/`--color-stone-*`/`--color-neutral-*` → skala `--theme-neutral-*`; `--color-white` → `--theme-identity-50`.
+- **Aturan arbitrary value WhatsApp**: `.bg-\[\#25D366\]` → `--theme-accent` + `--theme-btn-text`, `.hover\:bg-\[\#20ba5a\]:hover` → aksen digelapkan (tenant `smk-negeri-2-bandung`, `layouts/public.blade.php:529`).
+
+### Changed
+- **Sapu bersih sisa putih (tindak lanjut laporan "masih ada putih"):** 37 dasar campuran `color-mix(..., white)` di `public.css` → `var(--theme-page-bg)`, `--color-white` → `var(--theme-btn-text)` (sebelumnya `--theme-identity-50` yang ±95% putih), titik radial hero → `--theme-accent-400`, serta pratinjau panel admin memakai Alpine `btnText`/`pageBg` (4 teks `rgba(255,255,255,..)` + badge `white` dihapus; 1 bug CSS `rgba(...0.85"` ikut terbenahi).
+- **Seluruh literal putih hardcoded diganti kunci panel `warna_tombol_teks`** (permintaan pemilik produk: "semua dikelompokan dan ikut tema"): aturan header/footer (`theme-text`/`theme-accent-text`/`text-blue-700`), breadcrumb `text-blue-100`/`text-blue-200`, amber di dark card & `section.theme-bg`, `group-hover:text-sky-300`, dan aturan "PENGECUALIAN ZONA GELAP" kini `color-mix(in srgb, var(--theme-btn-text) …, transparent)`. Dengan preset default (`warna_tombol_teks` = `#FFFFFF`) hasil visual identik dengan sebelumnya; saat kunci diubah lewat panel Tema & Warna, semua teks ikut berubah.
+- **Pengecualian semantik dihapus:** `emerald`/`green`/`red`/`rose`/`yellow`/`teal`/`cyan`/`lime` kini ikut grup aksen; merek WhatsApp `#25D366`/`#20ba5a` ikut aksen. Hanya overlay `bg-black/xx` yang tetap hitam (fungsi redup, bukan warna tema).
+
+### Verification
+- `php artisan test`: **42 test / 278 assertions PASSED**; `vendor/bin/pint --dirty` bersih (guardrail baru: `public.css` & pratinjau panel dilarang memuat `, white` / `rgba(255,255,255`).
+- `npm run build`: sukses, `public/build/assets/public-CCKXuORS.css` (28,54 kB); sisa `, white` & `rgba(255` di file hasil build = 0.
+- Request HTTP nyata ke `/{tenant}` pada port **8123 dan 8000** menautkan `public-CCKXuORS.css`.
+
+## [Penutupan Celah Pemetaan Warna: Override Palet Tailwind v4] - 2026-09-29
+
+### Added
+- **Skala turunan baru di `resources/css/public.css`:** `--theme-identity-50..950` (dari `--theme-color`), `--theme-accent-50..950` (dari `--theme-accent`), dan `--theme-neutral-50..950` (terang dari `--theme-text-muted`, gelap dari `--theme-color`), semuanya via `color-mix()`.
+- **Override 66 variabel palet Tailwind v4 di `:root`:** `--color-blue-*` & `--color-indigo-*` → skala identitas, `--color-sky-*`, `--color-amber-*`, `--color-orange-*` → skala aksen, `--color-slate-*` → skala netral. Menutup kelas yang sebelumnya lolos dari Legacy Utility Mapping: `text-blue-300/400/50`, `hover:text-blue-300`, varian opacity (`bg-blue-950/70`, `border-blue-900/30`, `border-slate-200/80`), gradien (`from-blue-700`, `via-blue-950`, `to-indigo-950`, `from-slate-900`), `ring-blue-*`, `placeholder-slate-400`, serta `text-slate-200/300` pada breadcrumb hero gelap.
+- **Override pola titik radial hardcoded `#38bdf8`** (dekorasi hero ±17 halaman) → mengikuti `--theme-accent`; `border-slate-100/200` ber-opacity → `--theme-border`.
+- **Test Pest `TenantThemeColorTest` skenario ke-6:** `pemetaan palet Tailwind v4 menutup kelas warna yang lolos dari tema`.
+
+### Changed
+- **`resources/css/public.css`**: blok `:root` baru di akhir file; deklarasi tanpa layer menang atas `@layer theme` bawaan Tailwind v4, sehingga seluruh utilitas (termasuk varian `hover:`/`focus:`, opacity `/xx`, gradien `from-via-to`, `ring`, `placeholder`) ikut mengikuti tema tanpa mengedit view. Aturan kontekstual lama (zona gelap, `.bg-blue-600` → tombol, dll) tetap menang karena lebih spesifik dan `!important`.
+- **Keputusan semantik:** keluarga `emerald` (sukses/Aktif), `rose`/`red` (error & validasi form), dan merek WhatsApp `bg-[#25D366]` sengaja TIDAK dipetakan agar makna status tetap terbaca.
+
+### Verification
+- `php artisan test`: **42 test / 254 assertions PASSED**; `vendor/bin/pint --dirty` bersih.
+- `npm run build`: sukses, `public/build/assets/public-DCqQ4nZP.css` (20.03 kB) memuat seluruh override `--color-*`.
+- Request HTTP nyata ke `/{tenant}/program-keahlian/teknik-mesin` menautkan `public-DCqQ4nZP.css` dan tetap menyuntik palet `#BE123C`.
+
+## [Sistem Warna Global Terkelompok: 13 Kunci Warna dalam 6 Grup] - 2026-09-29
+
+### Added
+- **6 kunci warna baru** pada tabel `pengaturan_umum` (tanpa perubahan skema): `warna_judul`, `warna_teks_sekunder`, `warna_latar_halaman`, `warna_latar_section`, `warna_border`, `warna_footer`. Total kini **13 kunci warna** + `skema_tema`.
+- **Pengelompokan warna di panel admin** menjadi 6 grup: A Warna Identitas, B Tipografi & Teks, C Latar & Permukaan, D Garis & Batas, E Tombol & Aksi, F Header, Navigasi & Footer.
+- **Pratinjau langsung** (mock header, section + kartu, footer) yang terikat pada ke-13 variabel warna sebelum disimpan.
+- **Legenda kelas global** untuk pengembang (`.theme-page-bg`, `.theme-card`, `.theme-heading`, `.theme-btn-ghost`, `.theme-header`, `.theme-footer`, `.theme-input`, dll.).
+- **Test Pest `TenantThemeColorTest`** (5 skenario): injeksi 13 variabel ke 3 halaman publik, kelas tema pada kerangka halaman, isi `public.css`, isi panel admin (6 grup + 13 field), dan penyimpanan 13 warna via `PUT tenant.admin.pengaturan.update`.
+
+### Changed
+- **`resources/css/public.css`**: blok `:root` fallback kini memuat 13 variabel `--theme-*`; ditambah **Legacy Utility Mapping** (`.bg-white`, `.bg-slate-50/100/200`, `.border-slate-*`, `.text-slate-*` → variabel tema dengan `!important`, zona gelap dikecualikan agar teks tetap kontras); `footer` memakai `--theme-footer-bg`.
+- **`layouts/public.blade.php`**: injeksi `:root` diperluas dari 7 menjadi 13 variabel; `<body>`, header, dan footer memakai kelas `.theme-page-bg`, `.theme-text-body`, `.theme-header`, `.theme-footer`.
+- **`HomeController` & `PageController`**: `$sekolah` memuat seluruh 13 kunci warna + `skema_tema`.
+- **`PengaturanController`**: validasi 13 kunci warna + `skema_tema` dengan pesan validasi Bahasa Indonesia.
+- **`tenant/admin/pengaturan/index.blade.php`**: dibangun ulang (Alpine `x-data`, 7 preset, 6 kartu grup rincian warna, pratinjau langsung, legenda, tombol simpan).
+- **Seeder `TenantSmkn2BandungSeeder`**: menulis 13 kunci warna + `skema_tema` ke `pengaturan_umum`.
+- **Pest `TenantAdminTest`**: judul panel disesuaikan menjadi `Pengaturan Tema & Warna Portal Sekolah`.
+
+### Verification
+- `php artisan test`: **41 test / 243 assertions PASSED**.
+- `npm run build`: sukses, aset `public/build/assets/public-CU8YmPSe.css` (14.58 kB) memuat seluruh kelas tema.
+- Request HTTP nyata ke `/{tenant}` (port 8123) mengembalikan seluruh 13 variabel `--theme-*` sesuai palet uji `#BE123C` dan menautkan kedua stylesheet hasil build.
+
+## [Penyederhanaan Panel Admin Sekolah: Hanya Menu Tema & Warna] - 2026-09-29
+
+### Removed
+- **Modul admin sekolah selain tema dihapus dari sistem** (sesuai permintaan, tanpa menyentuh database):
+  - 16 controller di `app/Http/Controllers/Tenant/Admin/` (`DashboardController`, `SliderController`, `ProfilController`, `StrukturController`, `JurusanController`, `BeritaController`, `PengumumanController`, `AgendaController`, `GaleriController`, `PrestasiController`, `EkstrakurikulerController`, `GuruStafController`, `FasilitasController`, `SpmbController`, `KontakController`, `MediaController`).
+  - 36 view pada folder `resources/views/tenant/admin/` (dashboard, slider, profil, struktur, jurusan, berita, pengumuman, agenda, galeri, prestasi, ekskul, guru, fasilitas, spmb, kontak, media).
+  - Komponen `components/admin/input-gambar`, `input-waktu`, `quill-editor` dan aset CDN Quill di `layouts/tenant_admin.blade.php`.
+  - `App\Services\ImageService` (hanya dipakai modul identitas/hero yang dihapus).
+  - Seluruh rute modul admin lama pada grup `tenant.admin.*` kecuali `login`, `login.submit`, `logout`, `pengaturan.index`, dan `pengaturan.update`.
+  - Tab Identitas & Logo, Statistik Beranda, dan Video Profil pada halaman pengaturan admin.
+
+### Changed
+- **Sidebar admin (`layouts/tenant_admin.blade.php`)** kini hanya memuat satu menu: **Tema & Warna** (route `tenant.admin.pengaturan.index`).
+- **Login admin (`Tenant\Admin\AuthController`)** diarahkan langsung ke halaman pengaturan tema, termasuk saat admin yang sudah login membuka halaman login (rute GET login tidak lagi memakai middleware `guest:tenant_admin`).
+- **Shortcut `/admin`** mengarah ke `/{tenant}/admin/pengaturan` bila sesi admin sekolah aktif.
+- **`PengaturanController`** dipersempit menjadi pengelola `skema_tema` dan 7 kunci warna palet (`warna_tema`, `warna_aksen`, `warna_teks`, `warna_kartu`, `warna_tombol`, `warna_tombol_teks`, `warna_header`) dengan pesan validasi Bahasa Indonesia dan flash `Tema dan palet warna portal sekolah berhasil disimpan.`
+- **Pest `TenantAdminTest`**: 9 skenario baru (login guest, proteksi auth, redirect otomatis ke pengaturan tema, isi sidebar, 404 seluruh rute lama, penyimpanan palet, dan integritas data tenant). Full suite **36 test / 135 assertions lulus**.
+
+### Preserved
+- **Database, migrasi, model Eloquent, dan seeder tidak diubah**: seluruh data konten sekolah (7 jurusan, 10 artikel, agenda, prestasi, ekskul, guru & staf, fasilitas, galeri, SPMB, pesan kontak, pengaturan umum) tetap tersimpan dan tetap tampil pada portal publik.
+
 ## [Phase 5: Pengaturan Tema Warna Mandiri & 7 Preset Tema] - 2026-09-28
 
 ### Added

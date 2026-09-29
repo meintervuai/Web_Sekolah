@@ -3,261 +3,347 @@
 namespace App\Http\Controllers\Tenant\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\ImageService;
+use App\Models\Tenant\Media;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 class MediaController extends Controller
 {
     /**
-     * Tampilkan antarmuka manajemen berkas dan media (gambar, video, dokumen).
+     * Tampilkan galeri dan manajemen media induk.
      */
     public function index(Request $request): View
     {
         $tenant = app('tenant');
-        $tenantSlug = $tenant ? $tenant->slug : 'common';
-        $baseDir = "uploads/{$tenantSlug}";
+        $query = Media::query()->with('pengguna');
 
-        // Pastikan folder uploads tenant ada
-        if (! Storage::disk('public')->exists($baseDir)) {
-            Storage::disk('public')->makeDirectory($baseDir);
+        // Filter tipe media
+        $tipe = $request->get('tipe', 'semua');
+        if (in_array($tipe, ['gambar', 'video', 'dokumen', 'youtube'])) {
+            $query->where('tipe_media', $tipe);
         }
 
-        $allFiles = Storage::disk('public')->allFiles($baseDir);
-        $filesData = [];
+        // Filter kategori
+        if ($kategori = $request->get('kategori')) {
+            $query->where('kategori', $kategori);
+        }
 
-        $filterType = $request->query('type', 'all');
-        $searchQuery = strtolower(trim($request->query('q', '')));
+        // Pencarian judul / nama file / alt text
+        if ($search = $request->get('q')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                    ->orWhere('nama_file_asli', 'like', "%{$search}%")
+                    ->orWhere('alt_teks', 'like', "%{$search}%")
+                    ->orWhere('url', 'like', "%{$search}%");
+            });
+        }
 
-        $totalBytes = 0;
-        $countImages = 0;
-        $countVideos = 0;
-        $countDocs = 0;
+        // Statistik ringkas media
+        $stats = [
+            'total' => Media::count(),
+            'gambar' => Media::where('tipe_media', 'gambar')->count(),
+            'video' => Media::where('tipe_media', 'video')->count(),
+            'youtube' => Media::where('tipe_media', 'youtube')->count(),
+            'dokumen' => Media::where('tipe_media', 'dokumen')->count(),
+        ];
 
-        foreach ($allFiles as $filePath) {
-            $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-            $filename = basename($filePath);
-            $sizeBytes = Storage::disk('public')->size($filePath);
-            $lastModified = Storage::disk('public')->lastModified($filePath);
+        // Daftar kategori unik untuk filter
+        $daftarKategori = Media::select('kategori')->distinct()->pluck('kategori')->filter()->values();
 
-            $type = match ($extension) {
-                'jpg', 'jpeg', 'png', 'webp', 'gif', 'svg' => 'image',
-                'mp4', 'webm', 'mov', 'avi', 'mkv' => 'video',
-                'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar' => 'document',
-                default => 'other',
-            };
+        $medias = $query->orderBy('urutan', 'asc')->latest()->paginate(24)->withQueryString();
 
-            $totalBytes += $sizeBytes;
-            if ($type === 'image') {
-                $countImages++;
-            } elseif ($type === 'video') {
-                $countVideos++;
-            } elseif ($type === 'document') {
-                $countDocs++;
+        return view('tenant.admin.media.index', compact('tenant', 'medias', 'stats', 'daftarKategori', 'tipe'));
+    }
+
+    /**
+     * Unggah berkas media baru (otomatis konversi ke WebP untuk gambar & kompresi).
+     */
+    public function upload(Request $request, MediaService $mediaService): JsonResponse|RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'max:51200'], // Maksimal 50MB
+            'kategori' => ['nullable', 'string', 'max:100'],
+            'judul' => ['nullable', 'string', 'max:255'],
+            'alt_teks' => ['nullable', 'string', 'max:500'],
+        ], [
+            'file.required' => 'Pilih berkas yang akan diunggah.',
+            'file.max' => 'Ukuran berkas maksimal adalah 50MB.',
+        ]);
+
+        $penggunaId = Auth::guard('tenant_admin')->id();
+        $kategori = $request->get('kategori', 'umum') ?: 'umum';
+        $judul = $request->get('judul');
+        $altTeks = $request->get('alt_teks');
+
+        try {
+            $media = $mediaService->unggahBerkas(
+                $request->file('file'),
+                $penggunaId,
+                $kategori,
+                $judul,
+                $altTeks
+            );
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => true,
+                    'pesan' => 'Berkas berhasil diunggah dan dikompresi ke WebP.',
+                    'data' => $media,
+                ]);
             }
 
-            // Filter pencarian
-            if ($searchQuery && ! str_contains(strtolower($filename), $searchQuery)) {
-                continue;
+            return back()->with('sukses', "Berkas \"{$media->judul}\" berhasil diunggah ke pustaka media.");
+        } catch (\Throwable $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => $e->getMessage(),
+                ], 422);
             }
 
-            // Filter tipe
-            if ($filterType !== 'all' && $type !== $filterType) {
-                continue;
+            return back()->withErrors(['file' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Impor berkas gambar atau video YouTube dari tautan URL eksternal.
+     */
+    public function importUrl(Request $request, MediaService $mediaService): JsonResponse|RedirectResponse
+    {
+        $request->validate([
+            'url' => ['required', 'url', 'max:1000'],
+            'kategori' => ['nullable', 'string', 'max:100'],
+            'judul' => ['nullable', 'string', 'max:255'],
+            'alt_teks' => ['nullable', 'string', 'max:500'],
+        ], [
+            'url.required' => 'Tautan URL media wajib diisi.',
+            'url.url' => 'Format tautan URL tidak valid.',
+        ]);
+
+        $penggunaId = Auth::guard('tenant_admin')->id();
+        $kategori = $request->get('kategori', 'umum') ?: 'umum';
+
+        try {
+            $media = $mediaService->imporDariUrl(
+                $request->get('url'),
+                $penggunaId,
+                $kategori,
+                $request->get('judul'),
+                $request->get('alt_teks')
+            );
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => true,
+                    'pesan' => 'Media dari URL berhasil diimpor ke pustaka.',
+                    'data' => $media,
+                ]);
             }
 
-            $filesData[] = [
-                'name' => $filename,
-                'path' => $filePath,
-                'url' => Storage::url($filePath),
-                'size' => $this->formatBytes($sizeBytes),
-                'size_bytes' => $sizeBytes,
-                'extension' => $extension,
-                'type' => $type,
-                'last_modified' => date('d M Y H:i', $lastModified),
-                'timestamp' => $lastModified,
+            return back()->with('sukses', "Media dari tautan URL \"{$media->judul}\" berhasil disimpan.");
+        } catch (\Throwable $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => $e->getMessage(),
+                ], 422);
+            }
+
+            return back()->withErrors(['url' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Pengecekan URL otomatis (Live check & thumbnail preview sebelum diimpor).
+     */
+    public function checkUrl(Request $request, MediaService $mediaService): JsonResponse
+    {
+        $url = trim($request->get('url', ''));
+        if (empty($url) || ! filter_var($url, FILTER_VALIDATE_URL)) {
+            return response()->json(['valid' => false, 'pesan' => 'URL tidak valid'], 422);
+        }
+
+        // Cek jika YouTube
+        if ($mediaService->isYouTubeUrl($url)) {
+            $ytId = $mediaService->ekstrakYouTubeId($url);
+            if ($ytId) {
+                return response()->json([
+                    'valid' => true,
+                    'tipe' => 'youtube',
+                    'preview_url' => "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg",
+                    'judul_saran' => 'Video YouTube ('.$ytId.')',
+                    'pesan' => 'Tautan YouTube valid.',
+                ]);
+            }
+        }
+
+        // Cek URL direct file / image
+        try {
+            $resp = Http::timeout(5)->head($url);
+            if (! $resp->successful()) {
+                $resp = Http::timeout(5)->get($url);
+            }
+
+            if ($resp->successful()) {
+                $contentType = $resp->header('Content-Type') ?: '';
+                $isImage = str_starts_with($contentType, 'image/') || preg_match('/\.(jpg|jpeg|png|webp|gif|svg)$/i', $url);
+                $isVideo = str_starts_with($contentType, 'video/') || preg_match('/\.(mp4|webm|ogg)$/i', $url);
+
+                return response()->json([
+                    'valid' => true,
+                    'tipe' => $isImage ? 'gambar' : ($isVideo ? 'video' : 'dokumen'),
+                    'preview_url' => $isImage ? $url : null,
+                    'content_type' => $contentType,
+                    'pesan' => 'Tautan media aktif dan siap diimpor.',
+                ]);
+            }
+        } catch (\Throwable $e) {
+            return response()->json([
+                'valid' => false,
+                'pesan' => 'Tidak dapat menghubungi tautan URL: '.$e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json(['valid' => false, 'pesan' => 'Tautan tidak dapat diakses atau tidak merespons.'], 422);
+    }
+
+    /**
+     * Perbarui metadata media (Ganti nama judul, alt text, kategori, urutan).
+     */
+    public function update(Request $request, Media $media): JsonResponse|RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul' => ['required', 'string', 'max:255'],
+            'alt_teks' => ['nullable', 'string', 'max:500'],
+            'kategori' => ['required', 'string', 'max:100'],
+            'urutan' => ['nullable', 'integer'],
+        ], [
+            'judul.required' => 'Judul atau nama berkas wajib diisi.',
+            'kategori.required' => 'Kategori berkas wajib ditentukan.',
+        ]);
+
+        $media->update($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'sukses' => true,
+                'pesan' => 'Metadata media berhasil diperbarui.',
+                'data' => $media,
+            ]);
+        }
+
+        return back()->with('sukses', "Informasi berkas \"{$media->judul}\" berhasil disimpan.");
+    }
+
+    /**
+     * Edit gambar interaktif (Crop & Rotate) dan perbarui file WebP.
+     */
+    public function editImage(Request $request, Media $media, MediaService $mediaService): JsonResponse|RedirectResponse
+    {
+        $request->validate([
+            'crop_x' => ['nullable', 'numeric'],
+            'crop_y' => ['nullable', 'numeric'],
+            'crop_w' => ['nullable', 'numeric'],
+            'crop_h' => ['nullable', 'numeric'],
+            'rotate' => ['nullable', 'integer', 'in:0,90,180,270'],
+        ]);
+
+        $cropData = null;
+        if ($request->filled('crop_w') && $request->filled('crop_h') && $request->crop_w > 0 && $request->crop_h > 0) {
+            $cropData = [
+                'x' => (int) $request->crop_x,
+                'y' => (int) $request->crop_y,
+                'width' => (int) $request->crop_w,
+                'height' => (int) $request->crop_h,
             ];
         }
 
-        // Urutkan file terbaru di paling atas
-        usort($filesData, fn ($a, $b) => $b['timestamp'] <=> $a['timestamp']);
+        $rotateAngle = (int) $request->get('rotate', 0);
 
-        $stats = [
-            'total_files' => count($allFiles),
-            'total_size' => $this->formatBytes($totalBytes),
-            'images' => $countImages,
-            'videos' => $countVideos,
-            'documents' => $countDocs,
-        ];
+        try {
+            $croppedMedia = $mediaService->prosesEditGambar($media, $cropData, $rotateAngle);
 
-        return view('tenant.admin.media.index', compact('tenant', 'filesData', 'stats', 'filterType', 'searchQuery'));
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => true,
+                    'pesan' => 'Versi potong (crop) WebP baru berhasil dibuat tanpa mengubah berkas master asli.',
+                    'data' => $croppedMedia,
+                ]);
+            }
+
+            return back()->with('sukses', "Versi potong (crop) baru untuk \"{$media->judul}\" berhasil disimpan ke pustaka media.");
+        } catch (\Throwable $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => $e->getMessage(),
+                ], 422);
+            }
+
+            return back()->withErrors(['edit' => $e->getMessage()]);
+        }
     }
 
     /**
-     * Upload berkas baru ke direktori media tenant.
+     * Hapus berkas media tunggal dari database dan storage.
      */
-    public function upload(Request $request): RedirectResponse
+    public function destroy(Media $media, MediaService $mediaService): JsonResponse|RedirectResponse
     {
-        $tenant = app('tenant');
-        $tenantSlug = $tenant ? $tenant->slug : 'common';
+        $judul = $media->judul;
+        $mediaService->hapusMedia($media);
 
-        $request->validate([
-            'file' => ['required', 'file', 'max:25600'], // maks 25MB
-            'folder' => ['nullable', 'string', 'max:50'],
-        ]);
-
-        $folder = $request->input('folder', 'media');
-        $folder = preg_replace('/[^a-zA-Z0-9_\-]/', '', $folder) ?: 'media';
-        $uploadedFile = $request->file('file');
-        $mime = $uploadedFile->getMimeType();
-
-        if (str_starts_with($mime, 'image/') && ! in_array($uploadedFile->getClientOriginalExtension(), ['svg', 'gif'])) {
-            ImageService::uploadAndConvertToWebp($uploadedFile, $folder, 1920);
-        } else {
-            $ext = $uploadedFile->getClientOriginalExtension();
-            $safeName = Str::slug(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME)).'-'.Str::random(6).'.'.$ext;
-            $uploadedFile->storeAs("public/uploads/{$tenantSlug}/{$folder}", $safeName);
+        if (request()->wantsJson()) {
+            return response()->json([
+                'sukses' => true,
+                'pesan' => "Media \"{$judul}\" berhasil dihapus.",
+            ]);
         }
 
-        return redirect()->route('tenant.admin.media.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Berkas berhasil diunggah ke penyimpanan media.');
+        return back()->with('sukses', "Media \"{$judul}\" berhasil dihapus.");
     }
 
     /**
-     * Ganti nama berkas (Rename file).
+     * Hapus beberapa berkas media sekaligus (bulk delete).
      */
-    public function rename(Request $request): RedirectResponse
+    public function bulkDestroy(Request $request, MediaService $mediaService): JsonResponse|RedirectResponse
     {
-        $tenant = app('tenant');
-        $tenantSlug = $tenant ? $tenant->slug : 'common';
-
-        $validated = $request->validate([
-            'path' => ['required', 'string'],
-            'new_name' => ['required', 'string', 'max:100'],
-        ]);
-
-        $oldPath = $validated['path'];
-        $baseDir = "uploads/{$tenantSlug}";
-
-        // Keamanan: Pastikan path berada dalam folder tenant
-        if (! str_starts_with($oldPath, $baseDir) || ! Storage::disk('public')->exists($oldPath)) {
-            return back()->with('error', 'Berkas tidak ditemukan atau berada di luar batas izin.');
+        $ids = $request->input('ids', []);
+        if (is_string($ids)) {
+            $ids = explode(',', $ids);
         }
 
-        $oldExtension = pathinfo($oldPath, PATHINFO_EXTENSION);
-        $cleanBaseName = Str::slug(pathinfo($validated['new_name'], PATHINFO_FILENAME));
+        $ids = array_filter(array_map('intval', (array) $ids));
 
-        if (empty($cleanBaseName)) {
-            return back()->with('error', 'Nama berkas baru tidak valid.');
+        if (empty($ids)) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'sukses' => false,
+                    'pesan' => 'Tidak ada berkas media yang dipilih untuk dihapus.',
+                ], 422);
+            }
+
+            return back()->withErrors(['ids' => 'Pilih minimal satu berkas media untuk dihapus.']);
         }
 
-        $dirName = dirname($oldPath);
-        $newFilename = $cleanBaseName.'.'.$oldExtension;
-        $newPath = $dirName.'/'.$newFilename;
+        $medias = Media::whereIn('id', $ids)->get();
+        $jumlah = $medias->count();
 
-        if (Storage::disk('public')->exists($newPath) && $newPath !== $oldPath) {
-            $newPath = $dirName.'/'.$cleanBaseName.'-'.Str::random(4).'.'.$oldExtension;
+        foreach ($medias as $media) {
+            $mediaService->hapusMedia($media);
         }
 
-        Storage::disk('public')->move($oldPath, $newPath);
-
-        return redirect()->route('tenant.admin.media.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Nama berkas berhasil diperbarui menjadi: '.basename($newPath));
-    }
-
-    /**
-     * Simpan hasil pemotongan gambar (Crop image).
-     */
-    public function crop(Request $request): JsonResponse
-    {
-        $tenant = app('tenant');
-        $tenantSlug = $tenant ? $tenant->slug : 'common';
-
-        $validated = $request->validate([
-            'path' => ['required', 'string'],
-            'cropped_image' => ['required', 'string'], // Base64 dataURL
-            'save_mode' => ['required', 'in:replace,new'], // Ganti file asli atau simpan baru
-        ]);
-
-        $originalPath = $validated['path'];
-        $baseDir = "uploads/{$tenantSlug}";
-
-        if (! str_starts_with($originalPath, $baseDir) || ! Storage::disk('public')->exists($originalPath)) {
-            return response()->json(['success' => false, 'message' => 'Berkas sumber tidak ditemukan.'], 404);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'sukses' => true,
+                'pesan' => "Sebanyak {$jumlah} berkas media berhasil dihapus secara permanen.",
+            ]);
         }
 
-        // Ambil data binary dari base64
-        $base64Data = $validated['cropped_image'];
-        if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $matches)) {
-            $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
-        }
-        $decoded = base64_decode($base64Data);
-
-        if (! $decoded) {
-            return response()->json(['success' => false, 'message' => 'Data gambar hasil crop tidak valid.'], 422);
-        }
-
-        $dirName = dirname($originalPath);
-        $originalExt = pathinfo($originalPath, PATHINFO_EXTENSION);
-
-        if ($validated['save_mode'] === 'replace') {
-            $targetPath = $originalPath;
-        } else {
-            $targetFilename = pathinfo($originalPath, PATHINFO_FILENAME).'-crop-'.Str::random(5).'.'.$originalExt;
-            $targetPath = $dirName.'/'.$targetFilename;
-        }
-
-        Storage::disk('public')->put($targetPath, $decoded);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Gambar hasil pemotongan (crop) berhasil disimpan.',
-            'url' => Storage::url($targetPath),
-            'filename' => basename($targetPath),
-        ]);
-    }
-
-    /**
-     * Hapus berkas dari disk.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $tenant = app('tenant');
-        $tenantSlug = $tenant ? $tenant->slug : 'common';
-
-        $validated = $request->validate([
-            'path' => ['required', 'string'],
-        ]);
-
-        $filePath = $validated['path'];
-        $baseDir = "uploads/{$tenantSlug}";
-
-        if (! str_starts_with($filePath, $baseDir) || ! Storage::disk('public')->exists($filePath)) {
-            return back()->with('error', 'Berkas tidak ditemukan.');
-        }
-
-        Storage::disk('public')->delete($filePath);
-
-        return redirect()->route('tenant.admin.media.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Berkas berhasil dihapus secara permanen.');
-    }
-
-    /**
-     * Format ukuran berkas (bytes to KB/MB).
-     */
-    private function formatBytes(int $bytes, int $precision = 1): string
-    {
-        if ($bytes <= 0) {
-            return '0 B';
-        }
-        $units = ['B', 'KB', 'MB', 'GB'];
-        $i = (int) floor(log($bytes, 1024));
-
-        return round($bytes / pow(1024, $i), $precision).' '.$units[$i];
+        return back()->with('sukses', "Sebanyak {$jumlah} berkas media berhasil dihapus secara permanen.");
     }
 }

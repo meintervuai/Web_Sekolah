@@ -37,30 +37,6 @@
     </style>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <!-- Quill WYSIWYG Editor CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-    <style>
-        .ql-toolbar.ql-snow {
-            border-top-left-radius: 0.625rem;
-            border-top-right-radius: 0.625rem;
-            border-color: #e2e8f0;
-            background-color: #f8fafc;
-            padding: 10px 14px;
-        }
-        .ql-container.ql-snow {
-            border-bottom-left-radius: 0.625rem;
-            border-bottom-right-radius: 0.625rem;
-            border-color: #e2e8f0;
-            background-color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.875rem;
-            min-height: 220px;
-        }
-        .ql-editor {
-            min-height: 220px;
-            line-height: 1.65;
-        }
-    </style>
     @stack('styles')
 </head>
 <body class="min-h-full bg-[#f4f7fb] text-slate-800" x-data="{ sidebarOpen: false, searchOpen: false }">
@@ -92,7 +68,7 @@
 
             <!-- TailDash Brand Header -->
             <div class="h-18 shrink-0 flex items-center justify-between px-6 border-b border-slate-100 bg-white">
-                <a href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
+                <a href="{{ route('tenant.admin.pengaturan.index', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
                     <div class="w-9 h-9 rounded-xl bg-slate-50 p-1 border border-slate-200 flex items-center justify-center shrink-0 group-hover:border-primary transition-colors overflow-hidden">
                         <img src="{{ !empty($adminLogo) ? $adminLogo : asset('images/logo-smkn2.svg') }}" alt="Logo {{ app('tenant')->nama_sekolah }}" class="w-full h-full object-contain">
                     </div>
@@ -116,190 +92,36 @@
             <!-- TailDash Menu Navigation -->
             <nav id="adminSidebarNav" class="flex-1 px-4 py-4 space-y-1 overflow-y-auto overscroll-contain taildash-scrollbar text-xs">
                 
-                <!-- Section: MENU -->
+                <!-- Section: PENGATURAN TAMPILAN -->
                 <div class="px-3 pt-2 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Menu Utama
+                    Pengaturan
                 </div>
-                
-                <a 
-                    href="{{ route('tenant.admin.dashboard', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.dashboard') ? 'bg-blue-50 text-blue-600 shadow-2xs font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <div class="flex items-center gap-3">
-                        <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.dashboard') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                        <span>Dashboard</span>
-                    </div>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700">Utama</span>
-                </a>
 
-                <!-- Section: TAMPILAN BERANDA -->
-                <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Tampilan Beranda
-                </div>
-                
-                <a 
-                    href="{{ route('tenant.admin.slider.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.slider.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.slider.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Slider Banner Hero</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.pengaturan.index', ['tenant' => app('tenant')->slug]) }}" 
+                <a
+                    href="{{ route('tenant.admin.pengaturan.index', ['tenant' => app('tenant')->slug]) }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.pengaturan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
                 >
                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.pengaturan.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4c2 0 3-1 3-3a5 5 0 0110 0c0 2.2-1.8 4-4 4h-2a2 2 0 00-2 2v1a2 2 0 01-2 2h-3z"/>
+                        <circle cx="9" cy="8.5" r="1.5"/>
+                        <circle cx="15" cy="8.5" r="1.5"/>
                     </svg>
-                    <span>Identitas & Statistik</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.profil.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.profil.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    <span>Profil & Visi Misi</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.struktur.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.struktur.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.struktur.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    <span>Struktur Organisasi</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.jurusan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.jurusan.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                    <span>Program Keahlian</span>
+                    <span>Tema &amp; Warna</span>
                 </a>
 
-                <!-- Section: KONTEN & PUBLIKASI -->
-                <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Konten & Publikasi
+                <!-- Section: PUSAT MEDIA -->
+                <div class="px-3 pt-3 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    Pusat Berkas
                 </div>
-                
-                <a 
-                    href="{{ route('tenant.admin.berita.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.berita.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.berita.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
-                    </svg>
-                    <span>Berita & Artikel</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.pengumuman.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.pengumuman.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.pengumuman.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
-                    </svg>
-                    <span>Pengumuman</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.agenda.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.agenda.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.agenda.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Agenda Acara</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.galeri.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.galeri.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.galeri.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Galeri Dokumentasi</span>
-                </a>
 
-                <!-- Section: KESISWAAN & SDM -->
-                <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Kesiswaan & SDM
-                </div>
-                
-                <a 
-                    href="{{ route('tenant.admin.prestasi.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.prestasi.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.prestasi.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                    </svg>
-                    <span>Prestasi Siswa</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.ekskul.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.ekskul.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.ekskul.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    <span>Ekstrakurikuler</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.guru.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.guru.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.guru.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                    <span>Direktori Guru & Staf</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.fasilitas.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.fasilitas.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.fasilitas.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                    <span>Fasilitas & Lab</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.spmb.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.spmb.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.spmb.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span>Informasi SPMB</span>
-                </a>
-                <a 
-                    href="{{ route('tenant.admin.kontak.index', ['tenant' => app('tenant')->slug]) }}" 
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.kontak.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.kontak.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Pesan Pengunjung</span>
-                </a>
-
-                <!-- Section: MANAJEMEN BERKAS -->
-                <div class="px-3 pt-4 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Sistem & Media
-                </div>
-                
-                <a 
-                    href="{{ route('tenant.admin.media.index', ['tenant' => app('tenant')->slug]) }}" 
+                <a
+                    href="{{ route('tenant.admin.media.index', ['tenant' => app('tenant')->slug]) }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.media.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
                 >
                     <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.media.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    <span>Media & Manajemen Berkas</span>
+                    <span>Manajemen Media</span>
                 </a>
             </nav>
 
@@ -376,32 +198,66 @@
 
             <!-- Page Content Body TailDash Padding 24px - 32px -->
             <main class="flex-1 p-5 sm:p-7 lg:p-8">
-                <!-- Flash Alerts TailDash -->
-                @if (session('sukses'))
-                    <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-medium flex items-center justify-between shadow-2xs">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</span>
-                            <span>{{ session('sukses') }}</span>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-medium flex items-center justify-between shadow-2xs">
-                        <div class="flex items-center gap-3">
-                            <span class="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold text-xs shrink-0">✕</span>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                    </div>
-                @endif
-
                 @yield('content')
             </main>
         </div>
     </div>
 
-    <!-- Quill WYSIWYG Editor JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <!-- Floating Toast Notification (Pojok Kanan Bawah, Auto-dismiss 4s) -->
+    <div 
+        x-data="{
+            show: {{ (session('sukses') || session('error')) ? 'true' : 'false' }},
+            type: '{{ session('sukses') ? 'sukses' : (session('error') ? 'error' : '') }}',
+            message: '{{ addslashes(session('sukses') ?: session('error') ?: '') }}',
+            init() {
+                if (this.show) {
+                    setTimeout(() => { this.show = false; }, 4000);
+                }
+            }
+        }"
+        x-show="show"
+        x-transition:enter="transform ease-out duration-300 transition"
+        x-transition:enter-start="translate-y-4 opacity-0 scale-95"
+        x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        x-cloak
+        class="fixed bottom-6 right-6 z-50 max-w-sm w-full pointer-events-auto"
+        role="alert"
+    >
+        <div 
+            class="flex items-start gap-3 p-4 rounded-2xl shadow-xl border bg-white"
+            :class="type === 'sukses' ? 'border-emerald-200/90 text-slate-800' : 'border-rose-200/90 text-slate-800'"
+        >
+            <div 
+                class="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+                :class="type === 'sukses' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'"
+            >
+                <template x-if="type === 'sukses'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </template>
+                <template x-if="type === 'error'">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </template>
+            </div>
+
+            <div class="flex-1 min-w-0 pr-1">
+                <div class="text-xs font-bold text-slate-900" x-text="type === 'sukses' ? 'Berhasil' : 'Pemberitahuan'"></div>
+                <div class="text-xs text-slate-600 mt-0.5 leading-relaxed break-words" x-text="message"></div>
+            </div>
+
+            <button 
+                type="button" 
+                @click="show = false" 
+                class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                aria-label="Tutup"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+    </div>
+
     @stack('scripts')
     <script>
         // Mempertahankan posisi scroll sidebar saat klik navigasi

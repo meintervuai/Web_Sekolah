@@ -32,7 +32,7 @@ Baca file-file berikut secara berurutan:
 | 3 | `docs/02-ARCHITECTURE.md` | Arsitektur sistem, pola multi-tenant, service layer |
 | 4 | `docs/03-DATABASE.md` | Schema database central dan tenant, relasi antar tabel |
 | 5 | `docs/04-ROUTES-OR-API.md` | Daftar route, endpoint, middleware, parameter |
-| 6 | `docs/05-UI-UX.md` | Standar desain, komponen, palet warna, tipografi |
+| 6 | `docs/05-UI-UX.md` | Standar desain, komponen, palet warna, tipografi. Untuk portal publik lanjut ke `docs/08-CSS-ARSITEKTUR-TEMA.md` (kontrak variabel tema, registri scope auto-kontras, resep tambah menu/halaman/section) |
 | 7 | `docs/06-CHANGELOG.md` | Riwayat perubahan terakhir |
 | 8 | `docs/07-IMPLEMENTATION-CHECKLIST.md` | Status implementasi fitur |
 | 9 | `docs/RULES.md` | Aturan kerja tambahan |
@@ -165,6 +165,19 @@ Jangan membuat placeholder atau mock data lalu menyebut fitur production-ready.
 - Reuse component existing sebelum membuat component baru.
 - Setiap halaman interaktif harus mempertimbangkan loading, empty, error, success, disabled, dan permission state.
 
+### Wajib ikuti kontrak tema & auto-kontras CSS (portal publik)
+
+Untuk perubahan apa pun pada portal publik (`resources/css/public.css`, `resources/views/layouts/public.blade.php`, `resources/views/public/**`, `app/Http/Controllers/Tenant/Public/**`, route grup `{tenant}`, `app/Support/WarnaKontras.php`, pratinjau tema admin), **WAJIB** membuka `.ai/rules/publik-tema-kontras.md` dan mengikuti SOP di dalamnya sebelum menulis kode. Referensi teknis: `docs/08-CSS-ARSITEKTUR-TEMA.md`.
+
+Inti kontrak:
+1. Warna hanya berasal dari 13 kunci panel *Tema & Warna* yang diinjeksi ke `:root` oleh `layouts/public.blade.php`; hasil teks akhir dihitung `App\Support\WarnaKontras` (server) lalu diamankan `@property` + `contrast()` (CSS).
+2. Markup baru tidak menulis warna literal. Pakai kelas `.theme-*` (`.theme-heading`, `.theme-text-body`, `.theme-text-muted`, `.theme-card`, `.theme-badge`, `.theme-icon-box`, `.theme-btn-primary`, `.theme-btn-ghost`, `.theme-input`, `.theme-header`, `.theme-footer`, `.theme-link`, `.theme-border`).
+3. Komponen baru membaca variabel ter-scope (`--theme-heading`, `--theme-text`, `--theme-text-muted`, `--theme-fg-link`, `--fg-zona-efektif`, `--theme-fg-tombol/aksen/badge/header/footer/zona`), bukan `--theme-btn-text`.
+4. Permukaan berlatar baru wajib didaftarkan ke blok `SCOPE AUTO-KONTRAS PER PERMUKAAN` (template 8 baris) atau memakai `color-mix()` berbasis variabel tema.
+5. Tambah menu publik = data tabel `menu` + route `tenant.*` di grup `{tenant}` + view `@extends('layouts.public')` dengan controller memakai `getSekolahData()`.
+6. Verifikasi: `vendor/bin/pest tests/Unit/WarnaKontrasTest.php`, `vendor/bin/pest tests/Feature/TenantThemeColorTest.php`, `npm run build`, lalu pastikan compiled CSS tetap memuat `@property` dan `contrast()`.
+
+
 ### Wajib gunakan Tailgrids sebagai sumber komponen UI
 
 Semua komponen UI/UX **WAJIB** diambil dari Tailgrids agar konsisten dan selaras di seluruh halaman admin maupun publik.
@@ -199,13 +212,21 @@ Gunakan **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sect
 Gunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`: `take_screenshot`, `resize_page`, `list_console_messages`, `evaluate_script`) hanya ketika user menginstruksikan untuk memeriksa tampilan visual, responsivitas browser, atau console log aktif.
 
 
-## 12. Animasi dan interaction
+## 12. Animasi, interaction, dan feedback responsif (Loading & Progress States)
 
 Uji animasi melalui page load, scroll, hover, focus, click, dropdown, tab, accordion, carousel, modal, lightbox, loading, dan form feedback.
 
 Untuk setiap animasi, catat trigger, durasi, easing, tujuan UX, performa, layout shift, mobile behavior, keyboard behavior, reduced-motion behavior, fallback, dan keputusan penggunaannya.
 
 Prioritaskan CSS native, Alpine.js yang sudah dipakai project, atau library ringan. Jangan menambah library besar untuk satu efek kecil.
+
+### Aturan Wajib Feedback Interaksi & Loading State (Anti-Freeze):
+1. **Wajib Loading / Spinner State pada Setiap Interaksi Asinkron & Manipulasi DOM**:
+   - Setiap kali pengguna mengklik tombol submit form, tombol hapus, tombol simpan, tombol eksekusi REST API / rute, atau manipulasi DOM yang memerlukan proses latar belakang, **WAJIB menampilkan indikator loading** (spinner animasi, status teks "Memproses...", atau tombol disabled) agar antarmuka tidak terlihat membeku (*freeze*), lag, atau tidak responsif.
+2. **Indikator Progres & Status saat Unggah / Unduh Berkas**:
+   - Setiap proses upload berkas, impor URL / download media, atau crop gambar wajib memiliki indikator status/progres yang jelas (misal: "Mengunggah...", "Mengompresi WebP...", "Mengunduh...", atau status proses) sehingga pengguna mengetahui proses sedang berjalan dengan aman dan tidak mengira aplikasi gagal/macet.
+3. **Modal Konfirmasi Custom (Bukan Native Browser Alert/Confirm)**:
+   - Dilarang menggunakan dialog bawaan browser (`window.confirm()` / `window.alert()`) untuk aksi destruktif atau penting. Gunakan modal konfirmasi kustom Tailwind/Alpine.js yang ramah pengguna, berhierarki jelas, dan selaras dengan tema portal.
 
 ## 13. Laravel dan package rules
 
@@ -264,6 +285,7 @@ Setelah setiap perubahan atau perbaikan selesai, **WAJIB perbarui semua file dok
 | `docs/03-DATABASE.md` | Jika ada perubahan migration, tabel, kolom, relasi, index |
 | `docs/04-ROUTES-OR-API.md` | Jika ada perubahan route, endpoint, middleware, parameter, nama route |
 | `docs/05-UI-UX.md` | Jika ada perubahan desain, komponen, layout, animasi |
+| `docs/08-CSS-ARSITEKTUR-TEMA.md` | Jika ada perubahan variabel tema (`--theme-*`), scope auto-kontras, kelas `.theme-*`, atau SOP tambah menu/halaman publik |
 | `docs/06-CHANGELOG.md` | **Selalu** - setiap perubahan wajib dicatat di sini |
 | `docs/07-IMPLEMENTATION-CHECKLIST.md` | Jika ada fitur yang selesai, ditambah, atau berubah statusnya |
 | `docs/RULES.md` | Jika ada perubahan aturan kerja |

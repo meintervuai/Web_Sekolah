@@ -72,6 +72,20 @@ class TenantSmkn2BandungSeeder extends Seeder
             ['kunci' => 'foto_kepsek', 'nilai' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'],
             ['kunci' => 'warna_tema', 'nilai' => '#1E3A8A'], // Navy Blue elegan khas sekolah kejuruan
             ['kunci' => 'warna_aksen', 'nilai' => '#0284C7'],
+            // Pengaturan Tema & Warna Portal (panel admin: Tema & Warna)
+            // A. Warna Identitas, B. Tipografi, C. Latar, D. Garis, E. Tombol, F. Header & Footer
+            ['kunci' => 'warna_judul', 'nilai' => '#0F172A'],
+            ['kunci' => 'warna_teks', 'nilai' => '#1E293B'],
+            ['kunci' => 'warna_teks_sekunder', 'nilai' => '#475569'],
+            ['kunci' => 'warna_latar_halaman', 'nilai' => '#F8FAFC'],
+            ['kunci' => 'warna_latar_section', 'nilai' => '#F1F5F9'],
+            ['kunci' => 'warna_kartu', 'nilai' => '#FFFFFF'],
+            ['kunci' => 'warna_border', 'nilai' => '#E2E8F0'],
+            ['kunci' => 'warna_tombol', 'nilai' => '#1D4ED8'],
+            ['kunci' => 'warna_tombol_teks', 'nilai' => '#FFFFFF'],
+            ['kunci' => 'warna_header', 'nilai' => '#1E3A8A'],
+            ['kunci' => 'warna_footer', 'nilai' => '#172F63'],
+            ['kunci' => 'skema_tema', 'nilai' => 'navy_classic'],
             ['kunci' => 'logo', 'nilai' => ''],
             // Statistik Resmi dengan label sumber & tahun
             ['kunci' => 'stat_guru', 'nilai' => '98'],

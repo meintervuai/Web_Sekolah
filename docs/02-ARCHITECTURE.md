@@ -41,6 +41,9 @@ Sistem menggunakan arsitektur **Single Codebase, Database Per Tenant**:
 3. **Controller Layer:**
    - `App\Http\Controllers\Tenant\Public\HomeController`: Menyajikan beranda sekolah dengan agregasi data modul yang aktif.
    - `App\Http\Controllers\Tenant\Public\PageController`: Menyajikan halaman listing dan detail profil, jurusan, berita, agenda, pengumuman, prestasi, kegiatan, ekskul, guru-staf, fasilitas, galeri, SPMB, dan kontak.
+   - `App\Http\Controllers\Tenant\Admin\AuthController`: Menangani login/logout Admin Sekolah dan mengarahkan admin langsung ke panel pengaturan tema.
+   - `App\Http\Controllers\Tenant\Admin\PengaturanController`: Mengelola `skema_tema` dan 7 kunci warna palet pada tabel tenant `pengaturan_umum` (7 preset, custom hex, live preview).
+   - Modul admin sekolah lainnya (dashboard, slider, profil, struktur, jurusan, berita, pengumuman, agenda, galeri, prestasi, ekskul, guru, fasilitas, SPMB, kontak, media) dihapus dari sistem pada 2026-09-29. Data, model, migrasi, dan seeder tetap utuh.
 4. **Model Layer (`app/Models/Tenant`):**
    - Menggunakan koneksi default `tenant` yang telah diset oleh middleware.
    - Dilengkapi fungsi helper seperti `PengaturanFitur::isAktif($kodeFitur)`.
