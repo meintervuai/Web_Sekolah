@@ -2,6 +2,16 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Auto-Sinkronisasi URL Eksternal ke Pusat Media & Smart Video Player Profil] - 2026-09-29
+
+### Added
+- **Auto-Sinkronisasi URL Eksternal ke Entitas `media` ([MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php), [ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**:
+  - Menyediakan method `sinkronisasiOtomatisUrl()`: ketika admin memasukkan tautan URL eksternal (Unsplash, tautan gambar/video web luar) pada kolom input Logo, Foto Kepala Sekolah, Banner Hero, Video Profil, Diagram Struktur, atau Foto Pejabat, sistem otomatis mengunduh file, mengonversi gambar ke WebP lokal, dan menyimpannya sebagai record terstruktur di database `media`.
+  - Tautan URL pada pengaturan sekolah otomatis digantikan dengan URL storage internal lokal sehingga aset tersentralisasi penuh di satu entitas database `media`.
+  - Tautan video YouTube otomatis didaftarkan ke tabel `media` dengan `tipe_media = 'youtube'`.
+- **Smart Video Player Multi-Format ([profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php))**:
+  - Smart player otomatis mendeteksi apakah sumber video berasal dari YouTube (`<iframe>` embed dengan mode privasi `youtube-nocookie.com`) atau berkas video sendiri / lokal (HTML5 `<video>` player responsif dengan dukungan MIME type `video/mp4`, `video/webm`, `video/ogg`).
+
 ## [Perbaikan Konversi Gambar Palette WebP & Tangkapan Notifikasi Toast Error Upload] - 2026-09-29
 
 ### Fixed

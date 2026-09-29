@@ -160,7 +160,7 @@ class ProfilController extends Controller
     /**
      * Simpan pembaruan identitas sekolah & sambutan kepala sekolah.
      */
-    public function updateIdentitas(Request $request): RedirectResponse
+    public function updateIdentitas(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'nama_sekolah' => ['required', 'string', 'max:150'],
@@ -189,6 +189,20 @@ class ProfilController extends Controller
 
         $adminId = auth('tenant_admin')->id();
 
+        // 1. Auto-Sinkronisasi URL Eksternal ke Manajemen Media
+        if (! empty($validated['logo'])) {
+            $validated['logo'] = $mediaService->sinkronisasiOtomatisUrl($validated['logo'], $adminId, 'profil', 'Logo ' . $validated['nama_sekolah']);
+        }
+        if (! empty($validated['foto_kepsek'])) {
+            $validated['foto_kepsek'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto_kepsek'], $adminId, 'profil', 'Foto ' . ($validated['nama_kepsek'] ?: 'Kepala Sekolah'));
+        }
+        if (! empty($validated['video_profil'])) {
+            $validated['video_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['video_profil'], $adminId, 'profil', $validated['video_profil_judul'] ?: 'Video Profil Sekolah');
+        }
+        if (! empty($validated['gambar_banner_profil'])) {
+            $validated['gambar_banner_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner_profil'], $adminId, 'profil', 'Banner Hero Profil Sekolah');
+        }
+
         DB::connection('tenant')->transaction(function () use ($validated, $adminId, $request) {
             $keysToSave = [
                 'nama_sekolah', 'slogan', 'npsn', 'akreditasi', 'tahun_berdiri',
@@ -216,7 +230,7 @@ class ProfilController extends Controller
                     'judul' => $request->input('judul_profil', 'Profil '.$validated['nama_sekolah']),
                     'subjudul' => $request->input('subjudul_profil', 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.'),
                     'pola_latar' => $request->input('pola_latar_profil', 'dots'),
-                    'gambar_banner' => $request->input('gambar_banner_profil'),
+                    'gambar_banner' => $validated['gambar_banner_profil'] ?? null,
                     'pengguna_id' => $adminId,
                 ]
             );
@@ -230,7 +244,7 @@ class ProfilController extends Controller
     /**
      * Simpan pembaruan halaman statis (Sejarah / Visi Misi).
      */
-    public function updateHalaman(Request $request, string $slug): RedirectResponse
+    public function updateHalaman(Request $request, string $slug, \App\Services\MediaService $mediaService): RedirectResponse
     {
         if (! in_array($slug, ['sejarah', 'visi-misi', 'profil'], true)) {
             abort(404, 'Halaman tidak ditemukan.');
@@ -247,6 +261,10 @@ class ProfilController extends Controller
 
         $adminId = auth('tenant_admin')->id();
         $isAktif = $request->boolean('is_aktif', true);
+
+        if (! empty($validated['gambar_banner'])) {
+            $validated['gambar_banner'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner'], $adminId, 'profil', 'Banner ' . $validated['judul']);
+        }
 
         DB::connection('tenant')->transaction(function () use ($slug, $validated, $adminId, $isAktif) {
             Page::updateOrCreate(
@@ -289,7 +307,7 @@ class ProfilController extends Controller
     /**
      * Simpan pembaruan diagram struktur organisasi.
      */
-    public function updateStruktur(Request $request): RedirectResponse
+    public function updateStruktur(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'subjudul_struktur' => ['nullable', 'string', 'max:500'],
@@ -303,6 +321,14 @@ class ProfilController extends Controller
 
         $adminId = auth('tenant_admin')->id();
         $diagramsList = array_values($validated['diagrams'] ?? []);
+
+        // Sinkronisasi otomatis gambar diagram ke entitas Media
+        foreach ($diagramsList as &$diagram) {
+            if (! empty($diagram['gambar'])) {
+                $diagram['gambar'] = $mediaService->sinkronisasiOtomatisUrl($diagram['gambar'], $adminId, 'profil', $diagram['judul'] ?? 'Diagram Struktur Organisasi');
+            }
+        }
+        unset($diagram);
 
         DB::connection('tenant')->transaction(function () use ($validated, $adminId, $diagramsList, $request) {
             PengaturanUmum::updateOrCreate(
@@ -341,7 +367,7 @@ class ProfilController extends Controller
     /**
      * Tambah pejabat struktural baru.
      */
-    public function storePejabat(Request $request): RedirectResponse
+    public function storePejabat(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
@@ -351,11 +377,17 @@ class ProfilController extends Controller
             'urutan' => ['nullable', 'integer', 'min:0'],
         ]);
 
+        $adminId = auth('tenant_admin')->id();
+
         if (! empty($validated['guru_id']) && empty($validated['foto'])) {
             $guru = GuruStaf::find($validated['guru_id']);
             if ($guru && $guru->foto) {
                 $validated['foto'] = $guru->foto;
             }
+        }
+
+        if (! empty($validated['foto'])) {
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto ' . $validated['nama_lengkap']);
         }
 
         $validated['urutan'] = $validated['urutan'] ?? (StrukturOrganisasi::max('urutan') + 1);
@@ -370,7 +402,7 @@ class ProfilController extends Controller
     /**
      * Update pejabat struktural.
      */
-    public function updatePejabat(Request $request, StrukturOrganisasi $pejabat): RedirectResponse
+    public function updatePejabat(Request $request, StrukturOrganisasi $pejabat, \App\Services\MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
@@ -379,6 +411,12 @@ class ProfilController extends Controller
             'foto' => ['nullable', 'string', 'max:500'],
             'urutan' => ['nullable', 'integer', 'min:0'],
         ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        if (! empty($validated['foto'])) {
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto ' . $validated['nama_lengkap']);
+        }
 
         $pejabat->update($validated);
 

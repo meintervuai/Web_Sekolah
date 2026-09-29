@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Auto-Sinkronisasi URL Eksternal ke Pusat Media & Smart Video Player Profil] - 2026-09-29
+
+### Added
+- **Auto-Sinkronisasi URL Eksternal ke Entitas `media` ([MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php), [ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**: URL eksternal yang diinputkan pada form profil otomatis diunduh, dikompresi WebP, dan disimpan sebagai record di tabel `media` lokal. Tautan pada form otomatis diganti dengan link storage lokal. Tautan YouTube otomatis didaftarkan sebagai `tipe_media = 'youtube'`.
+- **Smart Video Player Multi-Format ([profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php))**: Deteksi otomatis format video YouTube (`<iframe>`) atau video lokal/sendiri (`<video>` HTML5 multi MIME-type MP4/WebM/OGG).
+
 ## [Perbaikan Konversi Gambar Palette WebP & Tangkapan Notifikasi Toast Error Upload] - 2026-09-29
 
 ### Fixed

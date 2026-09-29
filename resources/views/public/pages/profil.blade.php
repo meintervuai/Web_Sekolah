@@ -127,9 +127,15 @@
                                 $ytEmbed = 'https://www.youtube-nocookie.com/embed/' . $match[1] . '?rel=0&modestbranding=1&playsinline=1';
                             }
                         }
+                        $videoExt = strtolower(pathinfo(parse_url($videoUrl, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+                        $mimeType = match($videoExt) {
+                            'webm' => 'video/webm',
+                            'ogg', 'ogv' => 'video/ogg',
+                            default => 'video/mp4',
+                        };
                     @endphp
 
-                    <div class="rounded-xl overflow-hidden bg-black aspect-video shadow-md border border-slate-200 relative mb-4">
+                    <div class="rounded-xl overflow-hidden bg-slate-950 aspect-video shadow-md border border-slate-200 relative mb-4 flex items-center justify-center">
                         @if($ytEmbed)
                             <iframe
                                 src="{{ $ytEmbed }}"
@@ -139,17 +145,18 @@
                                 referrerpolicy="strict-origin-when-cross-origin"
                                 allowfullscreen></iframe>
                         @elseif(!empty($videoUrl))
-                            <video controls class="w-full h-full object-cover">
+                            <video controls preload="metadata" playsinline class="w-full h-full object-cover">
+                                <source src="{{ $videoUrl }}" type="{{ $mimeType }}">
                                 <source src="{{ $videoUrl }}" type="video/mp4">
                                 Browser Anda tidak mendukung pemutar video HTML5.
                             </video>
                         @else
                             <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 p-4 text-center">
-                                <svg class="w-12 h-12 text-slate-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-12 h-12 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span class="text-xs">Video profil belum tersedia</span>
+                                <span class="text-xs text-slate-400 font-medium">Video profil belum tersedia</span>
                             </div>
                         @endif
                     </div>

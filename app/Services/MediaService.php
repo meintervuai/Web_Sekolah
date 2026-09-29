@@ -140,8 +140,9 @@ class MediaService
             return $this->daftarkanYouTube($url, $penggunaId, $kategori, $judulCustom, $altTeks);
         }
 
-        // Unduh gambar/file dari URL
-        $response = Http::timeout(15)->get($url);
+        // Unduh gambar/file dari URL dengan timeout wajar & alokasi waktu aman
+        @set_time_limit(120);
+        $response = Http::timeout(8)->connectTimeout(4)->get($url);
 
         if (! $response->successful()) {
             throw new \RuntimeException("Gagal mengunduh file dari URL (Status: {$response->status()}).");
@@ -462,6 +463,61 @@ class MediaService
         }
 
         return null;
+    }
+
+    /**
+     * Sinkronisasi otomatis URL yang dimasukkan admin:
+     * Jika URL berupa http/https eksternal (Unsplash, file luar, dsb), unduh otomatis dan simpan ke entitas media,
+     * lalu kembalikan URL lokal internal storage.
+     * Jika sudah merupakan URL lokal atau link YouTube terdaftar, kembalikan URL yang valid.
+     */
+    public function sinkronisasiOtomatisUrl(
+        ?string $url,
+        ?int $penggunaId = null,
+        string $kategori = 'profil',
+        ?string $judul = null
+    ): ?string {
+        if (empty($url)) {
+            return null;
+        }
+
+        $url = trim($url);
+
+        // 1. Periksa apakah URL ini adalah berkas internal storage lokal kita
+        // (Mendeteksi /storage/uploads/, http://127.0.0.1:8000/storage/..., http://localhost:8000/storage/..., dsb)
+        if (str_contains($url, '/storage/') || str_contains($url, 'uploads/media/')) {
+            return $url;
+        }
+
+        // Abaikan jika bukan format URL http / https
+        if (! str_starts_with($url, 'http://') && ! str_starts_with($url, 'https://')) {
+            return $url;
+        }
+
+        // 2. Periksa apakah URL ini sudah pernah tersimpan di tabel Media database
+        $existing = Media::where('url', $url)->first();
+        if ($existing) {
+            return $existing->url;
+        }
+
+        // 3. Jika URL adalah link YouTube
+        if ($this->isYouTubeUrl($url)) {
+            try {
+                $media = $this->daftarkanYouTube($url, $penggunaId, $kategori, $judul);
+                return $media->url;
+            } catch (\Throwable $e) {
+                return $url;
+            }
+        }
+
+        // 4. Jika URL adalah file eksternal (gambar/video/dokumen luar) -> Unduh & simpan ke Media internal
+        try {
+            $media = $this->imporDariUrl($url, $penggunaId, $kategori, $judul);
+            return $media->url;
+        } catch (\Throwable $e) {
+            // Jika download gagal atau timeout, tetap gunakan URL yang dimasukkan admin
+            return $url;
+        }
     }
 
     /**
