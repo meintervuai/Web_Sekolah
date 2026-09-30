@@ -5,6 +5,7 @@ Aturan di folder ini bersifat **operasional**: dibaca tepat sebelum menyentuh fi
 | File Rule | Tipe | Cakupan file |
 |-----------|------|--------------|
 | [publik-tema-kontras.md](publik-tema-kontras.md) | Wajib (blocking) | `resources/css/public.css`, `resources/views/layouts/public.blade.php`, `resources/views/public/**`, `app/Http/Controllers/Tenant/Public/**`, `routes/web.php` (grup `Route::prefix('{tenant}')`), `app/Support/WarnaKontras.php`, `resources/views/tenant/admin/pengaturan/index.blade.php`, `database/seeders/**` (menu) |
+| [standar-rasio-media.md](standar-rasio-media.md) | Wajib (blocking) | `resources/views/**/*.blade.php`, `app/Services/MediaService.php`, `app/Models/Tenant/Media.php`, Semua kontainer gambar/kartu/banner |
 
 Referensi teknis lengkap (tabel variabel, registri scope, resep, anti-pattern): `docs/08-CSS-ARSITEKTUR-TEMA.md`.
 Spesifikasi desain: `docs/05-UI-UX.md` (terutama bagian "Sistem Tema Warna Dinamis" dan "Auto-Kontras WCAG Otomatis").

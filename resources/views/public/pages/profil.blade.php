@@ -35,13 +35,15 @@
                 <li class="text-sky-300 font-medium drop-shadow-xs">Profil</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
+        <div class="max-w-4xl lg:max-w-5xl">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
                 {{ $profil->judul ?? ('Profil ' . $sekolah['nama']) }}
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed drop-shadow-xs">
-                {{ $profil->subjudul ?? 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.' }}
+            @if(!empty($profil->subjudul))
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
+                {{ $profil->subjudul }}
             </p>
+            @endif
         </div>
     </div>
 </section>
@@ -53,23 +55,30 @@
             <!-- Left Main Content (8 cols) -->
             <div class="lg:col-span-8 space-y-10">
                 
-                <!-- Identitas Singkat -->
-                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                @if(!empty($profil->isi_konten))
+                <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="profil-sekolah">
+                    <div class="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-3">
+                        {!! $profil->isi_konten !!}
+                    </div>
+                </div>
+                @else
+                <!-- Fallback Identitas Satuan Pendidikan jika WYSIWYG belum diisi -->
+                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="identitas-sekolah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-6 pb-2 border-b border-slate-100">
                         Identitas Satuan Pendidikan
                     </h2>
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
                         <div class="shrink-0 flex items-center justify-center bg-transparent">
-                            <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
-                                 alt="Logo {{ $sekolah['nama'] }}" 
-                                 class="w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 object-contain">
+<img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
+           alt="Logo {{ $sekolah['nama'] }}">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700 flex-1 w-full">
                             <div class="space-y-2.5">
                                 <p><strong class="text-slate-900">Nama Sekolah:</strong> {{ $sekolah['nama'] }}</p>
                                 <p><strong class="text-slate-900">NPSN:</strong> {{ $sekolah['npsn'] }}</p>
                                 <p><strong class="text-slate-900">Bentuk Pendidikan:</strong> SMK</p>
-                                <p><strong class="text-slate-900">Status Akreditasi:</strong> <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded text-xs">Peringkat A</span></p>
+                                <p><strong class="text-slate-900">Status Akreditasi:</strong> <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded text-xs">Peringkat {{ $sekolah['akreditasi'] ?? 'A' }}</span></p>
                             </div>
                             <div class="space-y-2.5">
                                 <p><strong class="text-slate-900">Tahun Berdiri:</strong> {{ $sekolah['tahun_berdiri'] }}</p>
@@ -80,6 +89,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <!-- Sejarah -->
                 @if(\App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && $sejarah)

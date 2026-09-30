@@ -9,6 +9,7 @@ use App\Models\Tenant\Page;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\PengaturanUmum;
 use App\Models\Tenant\StrukturOrganisasi;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,6 +39,11 @@ class ProfilController extends Controller
             'whatsapp' => PengaturanUmum::ambil('whatsapp', '081222333444'),
             'jam_layanan' => PengaturanUmum::ambil('jam_layanan', 'Senin - Jumat: 07.00 - 16.00 WIB'),
             'logo' => PengaturanUmum::ambil('logo', ''),
+            'instagram' => PengaturanUmum::ambil('instagram', 'https://instagram.com/smkn2bandung'),
+            'facebook' => PengaturanUmum::ambil('facebook', 'https://facebook.com/smkn2bandung'),
+            'twitter' => PengaturanUmum::ambil('twitter', 'https://x.com/smkn2bandung'),
+            'youtube' => PengaturanUmum::ambil('youtube', 'https://youtube.com/@smkn2bandung'),
+            'tiktok' => PengaturanUmum::ambil('tiktok', 'https://tiktok.com/@smkn2bandung'),
             'nama_kepsek' => PengaturanUmum::ambil('nama_kepsek', 'Dr. H. Hasanudin, M.Pd.'),
             'nip_kepsek' => PengaturanUmum::ambil('nip_kepsek', '19680512 199303 1 004'),
             'foto_kepsek' => PengaturanUmum::ambil('foto_kepsek', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'),
@@ -45,21 +51,31 @@ class ProfilController extends Controller
             'video_profil' => PengaturanUmum::ambil('video_profil', 'https://www.youtube.com/watch?v=kYJydU5jUqM'),
             'video_profil_judul' => PengaturanUmum::ambil('video_profil_judul', 'Profil & Kilas Pembelajaran Vokasi'),
             'video_profil_deskripsi' => PengaturanUmum::ambil('video_profil_deskripsi', 'Saksikan tayangan visual fasilitas modern, lingkungan belajar TEFA, dan aktivitas siswa vokasi unggulan kami.'),
-            'mode_tampilan_struktur' => PengaturanUmum::ambil('mode_tampilan_struktur', 'semua'),
         ];
 
         // 2. Data Halaman Statis (Profil, Sejarah, Visi Misi, Struktur)
+        $defaultIsiProfil = '<p><strong>Nama Sekolah:</strong> '.$sekolah->nama_sekolah.'</p>'
+            .'<p><strong>NPSN:</strong> '.($sekolah->data['npsn'] ?? '20219146').' | <strong>Bentuk Pendidikan:</strong> SMK | <strong>Status Akreditasi:</strong> Peringkat '.($sekolah->data['akreditasi'] ?? 'A').'</p>'
+            .'<p><strong>Tahun Berdiri:</strong> 1951 | <strong>Alamat:</strong> '.($sekolah->data['alamat'] ?? 'Jl. Ciliwung No. 4 Bandung').'</p>'
+            .'<p><strong>Telepon:</strong> '.($sekolah->data['telepon'] ?? '(022) 7234285').' | <strong>Email:</strong> '.($sekolah->data['email'] ?? 'info@smkn2bandung.sch.id').'</p>'
+            .'<p><br></p>'
+            .'<h3>Budaya Kerja & Nilai Keunggulan</h3>'
+            .'<p>'.$sekolah->nama_sekolah.' berkomitmen menyelenggarakan pendidikan vokasi berkualitas unggul, menanamkan karakter integritas, budaya kerja industri berstandar global, serta membekali lulusan dengan keterampilan nyata yang adaptif terhadap perkembangan teknologi modern.</p>';
+
         $halamanProfil = Page::firstOrCreate(
             ['slug' => 'profil'],
             [
                 'judul' => 'Profil '.$sekolah->nama_sekolah,
                 'subjudul' => 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.',
-                'isi_konten' => '',
+                'isi_konten' => $defaultIsiProfil,
                 'gambar_banner' => null,
-                'pola_latar' => 'dots',
                 'pengguna_id' => $adminId,
             ]
         );
+
+        if (empty($halamanProfil->isi_konten)) {
+            $halamanProfil->isi_konten = $defaultIsiProfil;
+        }
 
         $halamanSejarah = Page::firstOrCreate(
             ['slug' => 'sejarah'],
@@ -68,7 +84,6 @@ class ProfilController extends Controller
                 'subjudul' => 'Mengenal perjalanan panjang dan tonggak bersejarah pendirian '.$sekolah->nama_sekolah.'.',
                 'isi_konten' => '<p>SMK Negeri 2 Bandung didirikan pada tahun 1951 sebagai salah satu pelopor pendidikan kejuruan teknik tertua dan terkemuka di Kota Bandung.</p>',
                 'gambar_banner' => 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1600&auto=format&fit=crop',
-                'pola_latar' => 'dots',
                 'pengguna_id' => $adminId,
             ]
         );
@@ -80,7 +95,6 @@ class ProfilController extends Controller
                 'subjudul' => 'Arah haluan, cita-cita luhur, dan komitmen penyelenggaraan pendidikan vokasi di '.$sekolah->nama_sekolah.'.',
                 'isi_konten' => '<h3>Visi</h3><p>Menjadi Sekolah Menengah Kejuruan unggul berstandar internasional yang menghasilkan lulusan berkarakter, berkompeten, dan berdaya saing global.</p><h3>Misi</h3><ul><li>Menyelenggarakan pembelajaran vokasi berbasis Teaching Factory (TEFA).</li><li>Mengembangkan budaya kerja industri dan nilai-nilai religius.</li><li>Membangun kemitraan strategis dengan dunia usaha dan industri.</li></ul>',
                 'gambar_banner' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1600&auto=format&fit=crop',
-                'pola_latar' => 'dots',
                 'pengguna_id' => $adminId,
             ]
         );
@@ -92,7 +106,17 @@ class ProfilController extends Controller
                 'subjudul' => 'Jajaran pimpinan, kepala program keahlian, dan koordinator tata kelola manajerial di '.$sekolah->nama_sekolah.'.',
                 'isi_konten' => '',
                 'gambar_banner' => null,
-                'pola_latar' => 'dots',
+                'pengguna_id' => $adminId,
+            ]
+        );
+
+        $halamanGuru = Page::firstOrCreate(
+            ['slug' => 'guru-staf'],
+            [
+                'judul' => 'Guru & Tenaga Kependidikan',
+                'subjudul' => 'Didukung oleh tenaga pendidik dan kependidikan profesional berpengalaman, berpendidikan S1/S2, dan bersertifikasi keahlian industri di '.$sekolah->nama_sekolah.'.',
+                'isi_konten' => '',
+                'gambar_banner' => null,
                 'pengguna_id' => $adminId,
             ]
         );
@@ -117,9 +141,10 @@ class ProfilController extends Controller
             ],
         ];
 
-        // 4. Pejabat Struktural
+        // 4. Pejabat Struktural & Guru Direktori
         $pejabatList = StrukturOrganisasi::with('guru')->orderBy('urutan')->get();
         $guruList = GuruStaf::where('status_aktif', true)->orderBy('nama_lengkap')->get();
+        $allGuru = GuruStaf::orderBy('nama_lengkap')->get();
 
         // 5. Menu Profil & Sub-item
         $menuProfil = Menu::where(function ($q) {
@@ -149,19 +174,52 @@ class ProfilController extends Controller
             'halamanSejarah',
             'halamanVisiMisi',
             'halamanStruktur',
+            'halamanGuru',
             'diagrams',
             'pejabatList',
             'guruList',
+            'allGuru',
             'menuProfil',
             'fiturProfil'
         ));
     }
 
     /**
-     * Simpan pembaruan identitas sekolah & sambutan kepala sekolah.
+     * Simpan pembaruan identitas sekolah & sambutan kepala sekolah / halaman profil.
      */
-    public function updateIdentitas(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
+    public function updateIdentitas(Request $request, MediaService $mediaService): RedirectResponse
     {
+        $formType = $request->input('form_type', 'datadiri');
+        $adminId = auth('tenant_admin')->id();
+
+        if ($formType === 'halaman_profil') {
+            $validated = $request->validate([
+                'judul_profil' => ['required', 'string', 'max:200'],
+                'subjudul_profil' => ['nullable', 'string', 'max:500'],
+                'gambar_banner_profil' => ['nullable', 'string', 'max:500'],
+                'isi_konten_profil' => ['nullable', 'string'],
+            ]);
+
+            if (! empty($validated['gambar_banner_profil'])) {
+                $validated['gambar_banner_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner_profil'], $adminId, 'profil', 'Banner Hero Profil Sekolah');
+            }
+
+            Page::updateOrCreate(
+                ['slug' => 'profil'],
+                [
+                    'judul' => $validated['judul_profil'],
+                    'subjudul' => $validated['subjudul_profil'] ?? null,
+                    'gambar_banner' => $validated['gambar_banner_profil'] ?? null,
+                    'isi_konten' => $validated['isi_konten_profil'] ?? '',
+                    'pengguna_id' => $adminId,
+                ]
+            );
+
+            return redirect()
+                ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'identitas'])
+                ->with('success', 'Halaman profil lengkap dan uraian budaya sekolah berhasil disimpan.');
+        }
+
         $validated = $request->validate([
             'nama_sekolah' => ['required', 'string', 'max:150'],
             'slogan' => ['nullable', 'string', 'max:255'],
@@ -174,6 +232,11 @@ class ProfilController extends Controller
             'whatsapp' => ['nullable', 'string', 'max:50'],
             'jam_layanan' => ['nullable', 'string', 'max:100'],
             'logo' => ['nullable', 'string', 'max:500'],
+            'instagram' => ['nullable', 'string', 'max:200'],
+            'facebook' => ['nullable', 'string', 'max:200'],
+            'twitter' => ['nullable', 'string', 'max:200'],
+            'youtube' => ['nullable', 'string', 'max:200'],
+            'tiktok' => ['nullable', 'string', 'max:200'],
             'nama_kepsek' => ['nullable', 'string', 'max:150'],
             'nip_kepsek' => ['nullable', 'string', 'max:50'],
             'foto_kepsek' => ['nullable', 'string', 'max:500'],
@@ -183,18 +246,16 @@ class ProfilController extends Controller
             'video_profil_deskripsi' => ['nullable', 'string', 'max:500'],
             'judul_profil' => ['nullable', 'string', 'max:200'],
             'subjudul_profil' => ['nullable', 'string', 'max:500'],
-            'pola_latar_profil' => ['nullable', 'string', 'in:dots,grid,mesh,polos'],
             'gambar_banner_profil' => ['nullable', 'string', 'max:500'],
+            'isi_konten_profil' => ['nullable', 'string'],
         ]);
 
-        $adminId = auth('tenant_admin')->id();
-
-        // 1. Auto-Sinkronisasi URL Eksternal ke Manajemen Media
+        // Auto-Sinkronisasi URL Eksternal ke Manajemen Media
         if (! empty($validated['logo'])) {
-            $validated['logo'] = $mediaService->sinkronisasiOtomatisUrl($validated['logo'], $adminId, 'profil', 'Logo ' . $validated['nama_sekolah']);
+            $validated['logo'] = $mediaService->sinkronisasiOtomatisUrl($validated['logo'], $adminId, 'profil', 'Logo '.$validated['nama_sekolah']);
         }
         if (! empty($validated['foto_kepsek'])) {
-            $validated['foto_kepsek'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto_kepsek'], $adminId, 'profil', 'Foto ' . ($validated['nama_kepsek'] ?: 'Kepala Sekolah'));
+            $validated['foto_kepsek'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto_kepsek'], $adminId, 'profil', 'Foto '.($validated['nama_kepsek'] ?: 'Kepala Sekolah'));
         }
         if (! empty($validated['video_profil'])) {
             $validated['video_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['video_profil'], $adminId, 'profil', $validated['video_profil_judul'] ?: 'Video Profil Sekolah');
@@ -207,7 +268,8 @@ class ProfilController extends Controller
             $keysToSave = [
                 'nama_sekolah', 'slogan', 'npsn', 'akreditasi', 'tahun_berdiri',
                 'alamat', 'no_telepon', 'email_sekolah', 'whatsapp', 'jam_layanan',
-                'logo', 'nama_kepsek', 'nip_kepsek', 'foto_kepsek', 'sambutan_kepsek',
+                'logo', 'instagram', 'facebook', 'twitter', 'youtube', 'tiktok',
+                'nama_kepsek', 'nip_kepsek', 'foto_kepsek', 'sambutan_kepsek',
                 'video_profil', 'video_profil_judul', 'video_profil_deskripsi',
             ];
 
@@ -223,28 +285,31 @@ class ProfilController extends Controller
                 }
             }
 
-            // Update judul, subjudul, gambar banner & pola latar hero halaman Profil
-            Page::updateOrCreate(
-                ['slug' => 'profil'],
-                [
-                    'judul' => $request->input('judul_profil', 'Profil '.$validated['nama_sekolah']),
-                    'subjudul' => $request->input('subjudul_profil', 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.'),
-                    'pola_latar' => $request->input('pola_latar_profil', 'dots'),
-                    'gambar_banner' => $validated['gambar_banner_profil'] ?? null,
-                    'pengguna_id' => $adminId,
-                ]
-            );
+            if ($request->has('judul_profil') || $request->has('isi_konten_profil')) {
+                Page::updateOrCreate(
+                    ['slug' => 'profil'],
+                    [
+                        'judul' => $request->input('judul_profil', 'Profil '.$validated['nama_sekolah']),
+                        'subjudul' => $request->input('subjudul_profil', 'Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.'),
+                        'gambar_banner' => $validated['gambar_banner_profil'] ?? null,
+                        'isi_konten' => $validated['isi_konten_profil'] ?? '',
+                        'pengguna_id' => $adminId,
+                    ]
+                );
+            }
         });
 
+        $targetTab = $request->input('current_tab', 'datadiri');
+
         return redirect()
-            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'identitas'])
-            ->with('success', 'Identitas sekolah, deskripsi hero, dan sambutan kepala sekolah berhasil disimpan.');
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => $targetTab])
+            ->with('success', 'Data diri sekolah, identitas resmi, dan pimpinan berhasil disimpan.');
     }
 
     /**
      * Simpan pembaruan halaman statis (Sejarah / Visi Misi).
      */
-    public function updateHalaman(Request $request, string $slug, \App\Services\MediaService $mediaService): RedirectResponse
+    public function updateHalaman(Request $request, string $slug, MediaService $mediaService): RedirectResponse
     {
         if (! in_array($slug, ['sejarah', 'visi-misi', 'profil'], true)) {
             abort(404, 'Halaman tidak ditemukan.');
@@ -255,7 +320,6 @@ class ProfilController extends Controller
             'subjudul' => ['nullable', 'string', 'max:500'],
             'isi_konten' => ['required', 'string'],
             'gambar_banner' => ['nullable', 'string', 'max:500'],
-            'pola_latar' => ['nullable', 'string', 'in:dots,grid,mesh,polos'],
             'is_aktif' => ['nullable', 'boolean'],
         ]);
 
@@ -263,7 +327,7 @@ class ProfilController extends Controller
         $isAktif = $request->boolean('is_aktif', true);
 
         if (! empty($validated['gambar_banner'])) {
-            $validated['gambar_banner'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner'], $adminId, 'profil', 'Banner ' . $validated['judul']);
+            $validated['gambar_banner'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner'], $adminId, 'profil', 'Banner '.$validated['judul']);
         }
 
         DB::connection('tenant')->transaction(function () use ($slug, $validated, $adminId, $isAktif) {
@@ -274,7 +338,6 @@ class ProfilController extends Controller
                     'subjudul' => $validated['subjudul'] ?? null,
                     'isi_konten' => $validated['isi_konten'],
                     'gambar_banner' => $validated['gambar_banner'] ?? null,
-                    'pola_latar' => $validated['pola_latar'] ?? 'dots',
                     'pengguna_id' => $adminId,
                 ]
             );
@@ -307,12 +370,12 @@ class ProfilController extends Controller
     /**
      * Simpan pembaruan diagram struktur organisasi.
      */
-    public function updateStruktur(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
+    public function updateStruktur(Request $request, MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
+            'judul_struktur' => ['nullable', 'string', 'max:200'],
             'subjudul_struktur' => ['nullable', 'string', 'max:500'],
-            'pola_latar_struktur' => ['nullable', 'string', 'in:dots,grid,mesh,polos'],
-            'mode_tampilan_struktur' => ['nullable', 'string', 'in:semua,pejabat,diagram'],
+            'gambar_banner_struktur' => ['nullable', 'string', 'max:500'],
             'diagrams' => ['nullable', 'array'],
             'diagrams.*.judul' => ['required', 'string', 'max:200'],
             'diagrams.*.deskripsi' => ['nullable', 'string', 'max:500'],
@@ -330,6 +393,11 @@ class ProfilController extends Controller
         }
         unset($diagram);
 
+        // Sinkronisasi otomatis banner hero struktur ke entitas Media
+        if (! empty($validated['gambar_banner_struktur'])) {
+            $validated['gambar_banner_struktur'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner_struktur'], $adminId, 'profil', 'Banner Hero Struktur Organisasi');
+        }
+
         DB::connection('tenant')->transaction(function () use ($validated, $adminId, $diagramsList, $request) {
             PengaturanUmum::updateOrCreate(
                 ['kunci' => 'struktur_diagrams'],
@@ -339,21 +407,13 @@ class ProfilController extends Controller
                 ]
             );
 
-            PengaturanUmum::updateOrCreate(
-                ['kunci' => 'mode_tampilan_struktur'],
-                [
-                    'nilai' => $request->input('mode_tampilan_struktur', 'semua'),
-                    'pengguna_id' => $adminId,
-                ]
-            );
-
-            // Update subjudul & pola latar hero halaman Struktur
+            // Update judul, subjudul & banner hero halaman Struktur
             Page::updateOrCreate(
                 ['slug' => 'struktur'],
                 [
-                    'judul' => 'Struktur Organisasi Sekolah',
+                    'judul' => ($validated['judul_struktur'] ?? null) ?: 'Struktur Organisasi Sekolah',
                     'subjudul' => $request->input('subjudul_struktur', 'Jajaran pimpinan, kepala program keahlian, dan koordinator tata kelola manajerial di sekolah.'),
-                    'pola_latar' => $request->input('pola_latar_struktur', 'dots'),
+                    'gambar_banner' => $validated['gambar_banner_struktur'] ?? null,
                     'pengguna_id' => $adminId,
                 ]
             );
@@ -367,7 +427,7 @@ class ProfilController extends Controller
     /**
      * Tambah pejabat struktural baru.
      */
-    public function storePejabat(Request $request, \App\Services\MediaService $mediaService): RedirectResponse
+    public function storePejabat(Request $request, MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
@@ -387,7 +447,7 @@ class ProfilController extends Controller
         }
 
         if (! empty($validated['foto'])) {
-            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto ' . $validated['nama_lengkap']);
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto '.$validated['nama_lengkap']);
         }
 
         $validated['urutan'] = $validated['urutan'] ?? (StrukturOrganisasi::max('urutan') + 1);
@@ -402,7 +462,7 @@ class ProfilController extends Controller
     /**
      * Update pejabat struktural.
      */
-    public function updatePejabat(Request $request, StrukturOrganisasi $pejabat, \App\Services\MediaService $mediaService): RedirectResponse
+    public function updatePejabat(Request $request, StrukturOrganisasi $pejabat, MediaService $mediaService): RedirectResponse
     {
         $validated = $request->validate([
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
@@ -415,7 +475,7 @@ class ProfilController extends Controller
         $adminId = auth('tenant_admin')->id();
 
         if (! empty($validated['foto'])) {
-            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto ' . $validated['nama_lengkap']);
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto '.$validated['nama_lengkap']);
         }
 
         $pejabat->update($validated);
@@ -435,6 +495,111 @@ class ProfilController extends Controller
         return redirect()
             ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'struktur'])
             ->with('success', 'Pejabat struktural berhasil dihapus.');
+    }
+
+    /**
+     * Simpan kustomisasi hero banner halaman Guru & Staf publik.
+     */
+    public function updateGuruHero(Request $request, MediaService $mediaService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul_guru' => ['required', 'string', 'max:200'],
+            'subjudul_guru' => ['nullable', 'string', 'max:500'],
+            'gambar_banner_guru' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        if (! empty($validated['gambar_banner_guru'])) {
+            $validated['gambar_banner_guru'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner_guru'], $adminId, 'profil', 'Banner Hero Guru & Staf');
+        }
+
+        Page::updateOrCreate(
+            ['slug' => 'guru-staf'],
+            [
+                'judul' => $validated['judul_guru'],
+                'subjudul' => $validated['subjudul_guru'] ?? null,
+                'gambar_banner' => $validated['gambar_banner_guru'] ?? null,
+                'isi_konten' => '',
+                'pengguna_id' => $adminId,
+            ]
+        );
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'guru'])
+            ->with('success', 'Pengaturan hero banner halaman Guru & Tenaga Kependidikan berhasil disimpan.');
+    }
+
+    /**
+     * Tambah data Guru / Tenaga Kependidikan baru.
+     */
+    public function storeGuru(Request $request, MediaService $mediaService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nip' => ['nullable', 'string', 'max:50'],
+            'nama_lengkap' => ['required', 'string', 'max:150'],
+            'jenis_kelamin' => ['required', 'in:L,P'],
+            'jabatan' => ['required', 'string', 'max:100'],
+            'mata_pelajaran' => ['nullable', 'string', 'max:100'],
+            'foto' => ['nullable', 'string', 'max:500'],
+            'status_aktif' => ['nullable', 'boolean'],
+        ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        if (! empty($validated['foto'])) {
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto '.$validated['nama_lengkap']);
+        }
+
+        $validated['status_aktif'] = $request->boolean('status_aktif', true);
+
+        GuruStaf::create($validated);
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'guru'])
+            ->with('success', 'Data Pendidik / Tenaga Kependidikan berhasil ditambahkan.');
+    }
+
+    /**
+     * Update data Guru / Tenaga Kependidikan.
+     */
+    public function updateGuru(Request $request, GuruStaf $guru, MediaService $mediaService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nip' => ['nullable', 'string', 'max:50'],
+            'nama_lengkap' => ['required', 'string', 'max:150'],
+            'jenis_kelamin' => ['required', 'in:L,P'],
+            'jabatan' => ['required', 'string', 'max:100'],
+            'mata_pelajaran' => ['nullable', 'string', 'max:100'],
+            'foto' => ['nullable', 'string', 'max:500'],
+            'status_aktif' => ['nullable', 'boolean'],
+        ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        if (! empty($validated['foto'])) {
+            $validated['foto'] = $mediaService->sinkronisasiOtomatisUrl($validated['foto'], $adminId, 'profil', 'Foto '.$validated['nama_lengkap']);
+        }
+
+        $validated['status_aktif'] = $request->boolean('status_aktif', true);
+
+        $guru->update($validated);
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'guru'])
+            ->with('success', 'Data Pendidik / Tenaga Kependidikan berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus data Guru / Tenaga Kependidikan.
+     */
+    public function destroyGuru(GuruStaf $guru): RedirectResponse
+    {
+        $guru->delete();
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'guru'])
+            ->with('success', 'Data Pendidik / Tenaga Kependidikan berhasil dihapus.');
     }
 
     /**

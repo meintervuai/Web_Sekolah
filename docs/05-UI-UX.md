@@ -53,16 +53,29 @@
 
   - Kontras teks memenuhi standar **WCAG AA** (minimal 4.5:1 untuk normal text); kombinasi warna teks terang pada latar gelap (hero, header, footer) dijaga agar tidak tereduksi oleh pemetaan utilitas netral.
 
-## 3. Komponen Card & Media Ratios
-- **Border Radius:**
-  - Card & Container: 16px (`rounded-2xl`).
+## 3. Matriks Rasio Media, Border, & Framing Baku
+Semua kontainer media di seluruh halaman (publik & admin) wajib mematuhi matriks 5 rasio baku berikut (lihat `.ai/rules/standar-rasio-media.md`):
+
+1. **Rasio 1:1 (Persegi - `aspect-square`):**
+   - Peruntukan: Logo Sekolah, Avatar Guru/Staf, Thumbnail Media Manager, Icon Box.
+   - Ukuran: 48x48px (badge), 96x96px s.d 160x160px (avatar), full grid card di media manager.
+2. **Rasio 3:4 (Portrait Vertikal - `aspect-[3/4]`):**
+   - Peruntukan: Foto Pejabat / Struktur Organisasi, Kartu Sambutan Kepala Sekolah di Beranda, Detail Profil Guru Formal.
+3. **Rasio 4:3 (Landscape Standar - `aspect-[4/3]`):**
+   - Peruntukan: Kartu Jurusan / Program Keahlian, Galeri Foto Fasilitas Sekolah, Ekstrakurikuler, Prestasi Siswa.
+4. **Rasio 16:9 (Widescreen - `aspect-video` / `aspect-[16/9]`):**
+   - Peruntukan: Thumbnail Berita, Artikel Populer, Pengumuman, Agenda Kegiatan, Video MP4 & YouTube.
+5. **Rasio 21:9 / Banner Adaptif (`aspect-[21/9]` atau tinggi responsif):**
+   - Peruntukan: Hero Carousel Utama Beranda, Header Banner Halaman Statis/Profil (tinggi desktop 420–540px, mobile 380px).
+
+- **Border Radius & Styling Token:**
+  - Card & Container Media: 16px (`rounded-2xl`) + `overflow-hidden`.
+  - Thumbnail Grid & Modal Picker: 12px (`rounded-xl`) + `overflow-hidden`.
   - Button & Form Input: 10px (`rounded-xl` / `rounded-[10px]`).
-- **Rasio Aspek Media & Banner:**
-  - Hero Slider Carousel: Rasio 16:9 desktop (tinggi 420–540px), mobile 380px, mendukung media Gambar atau Video MP4/WebM (`autoplay`, `muted`, `playsinline`, auto-next slide on ended).
-  - Banner Hero Beranda (atas Sambutan Kepsek): Tinggi responsif 288–480px, mendukung mode Gambar, Video Looping, atau Keduanya (video diputar sampai tamat baru berganti ke gambar) dengan kontrol mute/unmute audio.
-  - Berita / Pengumuman / Agenda: Rasio 16:9 thumbnail cover.
-  - Fasilitas & Program Keahlian: Rasio 4:3.
-  - Staff / Guru Avatar: Rasio 1:1 bulat/persegi minimal 160x160px desktop, 112x112px mobile.
+- **Pola Framing Baku (Double Layer Ambient Backdrop):**
+  - Mencegah letterboxing hitam/putih saat rasio foto berbeda dengan kartu:
+  - Lapis 1: `absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none`
+  - Lapis 2: `relative z-10 w-full h-full object-cover` + `style="{{ MediaService::getCropStyle($url) }}"`
 - **Card Hover:**
   - `transform: translateY(-4px)`, shadow bertambah, durasi transition 200ms.
   - Dinonaktifkan pada `prefers-reduced-motion: reduce`.

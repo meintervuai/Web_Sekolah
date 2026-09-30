@@ -961,7 +961,6 @@ class TenantSmkn2BandungSeeder extends Seeder
             ['id' => 23, 'name' => 'Visi & Misi', 'url' => '/profil/visi-misi', 'parent_id' => 2, 'urutan' => 3, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 24, 'name' => 'Struktur Organisasi', 'url' => '/profil/struktur', 'parent_id' => 2, 'urutan' => 4, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 25, 'name' => 'Guru & Staf', 'url' => '/guru-staf', 'parent_id' => 2, 'urutan' => 5, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 26, 'name' => 'Fasilitas Sekolah', 'url' => '/fasilitas', 'parent_id' => 2, 'urutan' => 6, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // 3. Program Keahlian (Dropdown 7 Jurusan)
@@ -989,6 +988,7 @@ class TenantSmkn2BandungSeeder extends Seeder
             ['id' => 43, 'name' => 'Agenda Kegiatan', 'url' => '/agenda', 'parent_id' => 4, 'urutan' => 3, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 44, 'name' => 'Dokumentasi Kegiatan', 'url' => '/kegiatan', 'parent_id' => 4, 'urutan' => 4, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 45, 'name' => 'Galeri Foto & Video', 'url' => '/galeri', 'parent_id' => 4, 'urutan' => 5, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 46, 'name' => 'Fasilitas Sekolah', 'url' => '/fasilitas', 'parent_id' => 4, 'urutan' => 6, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // 5. Kesiswaan (Dropdown)

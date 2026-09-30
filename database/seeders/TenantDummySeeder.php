@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class TenantDummySeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class TenantDummySeeder extends Seeder
                 'id' => 1,
                 'nama' => 'Administrator Sekolah',
                 'email' => 'admin@admin.com',
-                'password' => \Illuminate\Support\Facades\Hash::make('password123'),
+                'password' => Hash::make('password123'),
                 'peran' => 'admin',
                 'foto_profil' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop',
                 'status_aktif' => true,
@@ -63,7 +63,7 @@ class TenantDummySeeder extends Seeder
                 'gambar_banner' => 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1200&auto=format&fit=crop',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('halaman_statis')->insert($halaman_statis);
 
@@ -125,7 +125,7 @@ class TenantDummySeeder extends Seeder
                 'is_aktif' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('jurusan')->insert($jurusan);
 
@@ -159,7 +159,7 @@ class TenantDummySeeder extends Seeder
                 'foto_utama' => 'https://images.unsplash.com/photo-1574629810360-7efbb1925846?q=80&w=800&auto=format&fit=crop',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('fasilitas')->insert($fasilitas);
 
@@ -192,7 +192,7 @@ class TenantDummySeeder extends Seeder
                 'waktu_jadwal' => '15:30 - 17:00',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('ekstrakurikuler')->insert($ekskul);
 
@@ -218,7 +218,7 @@ class TenantDummySeeder extends Seeder
                 'foto' => 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?q=80&w=800&auto=format&fit=crop',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('prestasi_siswa')->insert($prestasi);
         // Kalender Akademik
@@ -230,25 +230,24 @@ class TenantDummySeeder extends Seeder
             ['nama_kegiatan' => 'Penilaian Akhir Semester (PAS)', 'tgl_mulai' => '2026-12-05', 'tgl_selesai' => '2026-12-15', 'keterangan' => 'Ujian akhir semester ganjil', 'created_at' => now(), 'updated_at' => now()],
         ];
         $tenantDb->table('kalender_akademik')->insert($kalender);
-        
+
         // Galeri
         $tenantDb->table('galeri_album')->truncate();
         $tenantDb->table('galeri_item')->truncate();
-        
+
         $album1Id = $tenantDb->table('galeri_album')->insertGetId([
             'nama_album' => 'Kegiatan MPLS 2026',
             'slug' => 'kegiatan-mpls-2026',
             'tipe' => 'foto',
             'cover_album' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
-        
+
         $tenantDb->table('galeri_item')->insert([
             ['album_id' => $album1Id, 'file_media_atau_link' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop', 'judul_item' => 'Pembukaan', 'created_at' => now(), 'updated_at' => now()],
             ['album_id' => $album1Id, 'file_media_atau_link' => 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=800&auto=format&fit=crop', 'judul_item' => 'Kegiatan Kelas', 'created_at' => now(), 'updated_at' => now()],
         ]);
-
 
         // Kategori Artikel
         $tenantDb->table('kategori_artikel')->truncate();
@@ -314,7 +313,7 @@ class TenantDummySeeder extends Seeder
                 'tgl_publikasi' => now()->subDays(10),
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]
+            ],
         ];
         $tenantDb->table('artikel')->insert($artikel);
 
@@ -331,20 +330,19 @@ class TenantDummySeeder extends Seeder
 
         // Seeding Menus
         $tenantDb->table('menus')->truncate();
-        
+
         $menuBerandaId = $tenantDb->table('menus')->insertGetId(['name' => 'Beranda', 'url' => '/', 'type' => 'link', 'urutan' => 1, 'created_at' => now(), 'updated_at' => now()]);
-        
+
         $menuProfilId = $tenantDb->table('menus')->insertGetId(['name' => 'Profil', 'url' => '#', 'type' => 'dropdown', 'urutan' => 2, 'created_at' => now(), 'updated_at' => now()]);
         $tenantDb->table('menus')->insert([
             ['name' => 'Sejarah Sekolah', 'url' => '/profil/sejarah', 'parent_id' => $menuProfilId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Visi, Misi & Tujuan', 'url' => '/profil/visi-misi', 'parent_id' => $menuProfilId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Struktur Organisasi', 'url' => '/profil/struktur', 'parent_id' => $menuProfilId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Fasilitas Sekolah', 'url' => '/profil/fasilitas', 'parent_id' => $menuProfilId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Guru & Tenaga Kependidikan', 'url' => '/profil/guru', 'parent_id' => $menuProfilId, 'urutan' => 5, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Guru & Tenaga Kependidikan', 'url' => '/profil/guru', 'parent_id' => $menuProfilId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $menuAkademikId = $tenantDb->table('menus')->insertGetId(['name' => 'Akademik', 'url' => '#', 'type' => 'dropdown', 'urutan' => 3, 'created_at' => now(), 'updated_at' => now()]);
-        
+
         // Program Keahlian sub-menu
         $menuProgramKeahlianId = $tenantDb->table('menus')->insertGetId(['name' => 'Program Keahlian', 'url' => '#', 'parent_id' => $menuAkademikId, 'type' => 'dropdown', 'urutan' => 1, 'created_at' => now(), 'updated_at' => now()]);
         $tenantDb->table('menus')->insert([
@@ -352,7 +350,7 @@ class TenantDummySeeder extends Seeder
             ['name' => 'Rekayasa Perangkat Lunak', 'url' => '/akademik/jurusan/rekayasa-perangkat-lunak', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Desain Komunikasi Visual', 'url' => '/akademik/jurusan/desain-komunikasi-visual', 'parent_id' => $menuProgramKeahlianId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
-        
+
         $tenantDb->table('menus')->insert([
             ['name' => 'Kurikulum', 'url' => '/akademik/kurikulum', 'parent_id' => $menuAkademikId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Kalender Akademik', 'url' => '/akademik/kalender', 'parent_id' => $menuAkademikId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
@@ -363,15 +361,16 @@ class TenantDummySeeder extends Seeder
             ['name' => 'Berita & Artikel', 'url' => '/informasi/berita', 'parent_id' => $menuInformasiId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Pengumuman', 'url' => '/informasi/pengumuman', 'parent_id' => $menuInformasiId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Galeri', 'url' => '/informasi/galeri', 'parent_id' => $menuInformasiId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Fasilitas Sekolah', 'url' => '/fasilitas', 'parent_id' => $menuInformasiId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
-        
+
         $menuKesiswaanId = $tenantDb->table('menus')->insertGetId(['name' => 'Kesiswaan', 'url' => '#', 'type' => 'dropdown', 'urutan' => 5, 'created_at' => now(), 'updated_at' => now()]);
         $tenantDb->table('menus')->insert([
             ['name' => 'Organisasi Siswa (OSIS)', 'url' => '/kesiswaan/osis', 'parent_id' => $menuKesiswaanId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Ekstrakurikuler', 'url' => '/kesiswaan/ekstrakurikuler', 'parent_id' => $menuKesiswaanId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Prestasi Siswa', 'url' => '/kesiswaan/prestasi', 'parent_id' => $menuKesiswaanId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
-        
+
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

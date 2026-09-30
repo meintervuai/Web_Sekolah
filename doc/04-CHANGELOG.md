@@ -6,6 +6,100 @@ Format changelog ini mengacu pada standar *Keep a Changelog* dan *Semantic Versi
 
 ---
 
+## [1.2.13] - 2026-09-30
+
+### Added
+- **Penambahan Tab 6 Guru & Tenaga Kependidikan di Admin Profil**: Menambahkan tab `?tab=guru` yang memuat Kustomisasi Hero Banner (judul, subjudul, foto latar banner 16:9) untuk halaman publik `/guru-staf` dan Direktori Master Guru & Tenaga Kependidikan lengkap (live search, filter gender & status, preview foto 3:4, modal Tambah/Edit, dan modal Hapus). Memperbarui `PageController::guruStaf` dan `guru.blade.php` agar dinamis dan artistik. Verifikasi: `vendor/bin/pest` **75 test / 489 assertions PASSED**.
+
+---
+
+## [1.2.12] - 2026-09-30
+
+### Fixed
+- **Perbaikan Render Bersyarat Subjudul & Sambutan Halaman Publik Profil**: Menghapus fallback string bawaan di Blade (`sejarah`, `visi-misi`, `profil`, `struktur`) sehingga saat input subjudul/deskripsi dikosongkan oleh admin di panel, halaman portal publik benar-benar tidak memunculkan teks deskripsi apa pun (bersih 100%). Serta memastikan sambutan kepsek di beranda hanya muncul jika tidak kosong. Verifikasi: `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+---
+
+## [1.2.11] - 2026-09-30
+
+### Changed
+- **Penataan & Penyeragaman Tab 5 Struktur Organisasi Admin Profil**: Memisahkan form Struktur Organisasi menjadi kartu terstruktur (Kartu Hero Banner dengan preview box 16:9, Kartu Bagan Diagram dengan repeater dinamis dan tombol submit beranimasi spinner, dan Kartu Daftar Pejabat Struktural dengan relasi guru/staf), serta menambahkan binding `bannerStrukturPreview` pada Alpine.js `profilManager`. Verifikasi: `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+---
+
+## [1.2.10] - 2026-09-30
+
+### Changed
+- **Penyeragaman Ukuran Teks & Gaya Input Form Admin Profil**: seluruh label diseragamkan ke `text-xs font-bold text-slate-700 mb-1` (hero Struktur, sub-field Media Sosial, Bagan Diagram, Video Profil sebelumnya berbeda), seluruh input/textarea/select diseragamkan ke `px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition` (Video Profil, hero Struktur, dan Bagan Diagram sebelumnya `bg-white` / `px-3 py-2`; varian `focus:ring` diseragamkan), hint diseragamkan ke `text-[10px] text-slate-400`, dan tombol "Pilih Media" kartu Bagan Diagram disamakan. Verifikasi: `php artisan view:cache` sukses, `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+---
+
+## [1.2.9] - 2026-09-30
+
+### Added
+- **Right-Side Artistic Banner Overlay pada Semua Halaman Publik**: Mengaplikasikan efek visual background banner sisi kanan dengan gradient mask halus (`[mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]`) dan theme header overlay ke seluruh halaman menu publik jika tersedia gambar sampul / banner.
+- **Pelebaran Container Judul Hero (`max-w-4xl lg:max-w-5xl`)**: Menghilangkan batasan sempit `max-w-2xl` pada hero halaman publik agar judul panjang tidak terpotong kaku ke bawah dan tampil optimal dalam satu baris.
+
+---
+
+## [1.2.8] - 2026-09-30
+
+### Added
+- **Tab Khusus "1. Data Diri Sekolah" (Tab `datadiri`)**: Memisahkan form Data Pokok Satuan Pendidikan (Nama Sekolah, Slogan, Logo, NPSN, Akreditasi, Tahun Berdiri, Kontak, Alamat, Email, WA, Jam Layanan, Medsos Resmi), Kepala Satuan Pendidikan, dan Video Profil ke dalam tab tersendiri.
+- **Tab "2. Profil Lengkap" (Tab `identitas`)**: Dikhususkan untuk Kustomisasi Hero Banner Halaman Profil (Judul, Subjudul, Gambar Banner) dan Editor WYSIWYG Uraian Lengkap Profil & Budaya Sekolah.
+- **Dukungan Controller `updateIdentitas()`**: Mendukung penyimpanan parsial form `datadiri` dan `halaman_profil` secara independen dengan redirect tepat sasaran.
+
+---
+
+## [1.2.7] - 2026-09-30
+
+### Added
+- **Judul Halaman & Foto Banner pada tab Struktur Organisasi admin**: tab kini punya tiga field hero seperti tab Sejarah dan Visi & Misi (`judul_struktur`, `subjudul_struktur`, `gambar_banner_struktur` + tombol *Pilih dari Media*).
+- **Penyimpanan ke `halaman_statis` slug `struktur`**: `ProfilController::updateStruktur()` menyimpan `judul`, `subjudul`, dan `gambar_banner` (banner disinkronkan ke Pusat Media via `MediaService::sinkronisasiOtomatisUrl()`).
+- **Banner & judul tampil di halaman publik struktur**: banner dirender di atas section konten (21:9, `max-h-[420px]`) dan `<title>` memakai `$halaman->judul`.
+- **Blok header kartu tab Struktur Organisasi**: judul "Kelola Struktur Organisasi & Data Pejabat" + deskripsi singkat, konsisten dengan tab Sejarah dan Visi & Misi.
+
+### Notes
+- Sebelumnya `judul` halaman struktur selalu di-hardcode `'Struktur Organisasi Sekolah'` dan `gambar_banner` tidak pernah disimpan.
+- Test baru pada `tests/Feature/TenantAdminProfilTest.php`. Full suite Pest **72 test / 453 assertions PASSED**; `vendor/bin/pint --dirty` passed.
+
+---
+
+
+## [1.2.6] - 2026-09-30
+
+### Removed
+- **Kontrol "Mode Pilihan Tampilan Halaman Struktur Publik"** dihapus dari tab Struktur Organisasi admin (`resources/views/tenant/admin/profil/index.blade.php`).
+- **Kunci `mode_tampilan_struktur`** dihapus dari `ProfilController::index()` / `updateStruktur()`, `Tenant\Public\PageController::struktur()`, dan view publik `struktur.blade.php`.
+
+### Fixed
+- **Fatal parse error view publik struktur**: `@if($mode === 'semua' || $mode === 'pejabat')` tanpa `@endif` membuat kompilasi Blade gagal (`unexpected end of file, expecting "elseif" or "else" or "endif"`). Directive mode dihapus sehingga halaman `/profil/struktur` kembali dirender normal.
+- Halaman publik struktur kini selalu menampilkan kedua bagian (Jajaran Pejabat + Bagan Diagram) dengan tab default "Jajaran Pejabat".
+
+### Notes
+- Kunci `pengaturan_umum.mode_tampilan_struktur` dibiarkan di database sebagai data lama (tidak dipakai lagi, tanpa migrasi destruktif).
+- Regression test: `TenantPublicPagesTest` skenario `2b` dan tambahan `assertDontSee` pada `TenantAdminProfilTest`. Full suite Pest **71 test / 435 assertions PASSED**.
+
+---
+
+
+## [1.2.5] - 2026-09-30
+
+### Removed
+- **Dropdown "Pola Dekorasi Latar" di admin Profil Sekolah**: dihapus dari 4 tab (`Identitas/Profil`, `Sejarah`, `Visi & Misi`, `Struktur`) pada `resources/views/tenant/admin/profil/index.blade.php` karena tidak dipakai operator sekolah.
+- **Validasi & penulisan `pola_latar*`** di `app/Http/Controllers/Tenant/Admin/ProfilController.php`: `pola_latar_profil`, `pola_latar` (updateHalaman), dan `pola_latar_struktur` beserta penulisan kolom pada `updateIdentitas()`, `updateHalaman()`, dan `updateStruktur()` dihapus.
+
+### Changed
+- Layout hero admin dirapikan: judul halaman `sm:col-span-2` pada tab Sejarah dan Visi & Misi; panel hero Struktur kembali satu kolom.
+
+### Notes
+- Kolom `halaman_statis.pola_latar`, `$fillable` model `Page`, dan rendering pola hero pada 4 halaman publik dipertahankan; tidak ada migrasi destruktif dan tampilan publik tidak berubah (fallback `dots`).
+- Verifikasi: full suite Pest **70 test / 429 assertions PASSED**; `vendor/bin/pint --dirty` bersih.
+- Ringkasan rinci ada di `docs/06-CHANGELOG.md` dan `CHANGELOG.md`.
+
+---
+
+
 ## [1.2.4] - 2026-09-29
 
 ### Added

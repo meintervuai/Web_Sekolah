@@ -1,29 +1,45 @@
 @extends('layouts.public')
 
-@section('title', 'Guru & Tenaga Kependidikan - ' . $sekolah['nama'])
+@php
+    $bannerGuru = $halaman->gambar_banner ?? null;
+    $judulGuru = $halaman->judul ?? 'Guru & Tenaga Kependidikan';
+    $subjudulGuru = $halaman->subjudul ?? null;
+@endphp
+
+@section('title', $judulGuru . ' - ' . $sekolah['nama'])
 @section('meta_description', 'Direktori pendidik dan tenaga kependidikan profesional bersertifikasi di ' . $sekolah['nama'] . ' Bandung.')
 
 @section('content')
 <!-- Header & Breadcrumb -->
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if(!empty($bannerGuru))
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $bannerGuru }}" alt="{{ $judulGuru }}" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition">Profil</a></li>
+                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition drop-shadow-xs">Profil</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Guru & Tenaga Kependidikan</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Guru &amp; Tenaga Kependidikan</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
-                Guru & Tenaga Kependidikan
+        <div class="max-w-4xl lg:max-w-5xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
+                {{ $judulGuru }}
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                Didukung oleh 98 guru dan staf kependidikan berpengalaman, berpendidikan S1/S2, dan bersertifikasi keahlian industri.
+            @if(!empty($subjudulGuru))
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
+                {{ $subjudulGuru }}
             </p>
+            @endif
         </div>
     </div>
 </section>
@@ -51,11 +67,18 @@
             @forelse($guru as $g)
             <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs hover:shadow-md transition text-center flex flex-col items-center group">
                 <!-- Photo -->
-                <div class="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
+                <div class="relative w-28 h-28 rounded-2xl overflow-hidden bg-slate-900 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
+                    <!-- Ambient Blurred Backdrop -->
+                    <img src="{{ $g->foto ?? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop' }}" 
+                         alt="" 
+                         aria-hidden="true" 
+                         class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+                    
+                    <!-- Main Fit Photo -->
                     <img src="{{ $g->foto ?? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop' }}" 
                          alt="{{ $g->nama_lengkap }}" 
                          style="{{ $g->foto_crop_style }}"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                         class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 </div>
 
                 <!-- Name & Degree -->

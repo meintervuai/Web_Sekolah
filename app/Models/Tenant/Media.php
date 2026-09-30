@@ -33,6 +33,11 @@ class Media extends Model
         'urutan',
     ];
 
+    protected $appends = [
+        'focal_position_css',
+        'smart_crop_style',
+    ];
+
     protected function casts(): array
     {
         return [

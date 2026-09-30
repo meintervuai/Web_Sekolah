@@ -7,19 +7,27 @@
 <!-- Header & Breadcrumb -->
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if(!empty($gambarBanner ?? $banner ?? null))
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $gambarBanner ?? $banner }}" alt="Berita & Informasi" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Berita & Informasi</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Berita & Informasi</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+        <div class="max-w-4xl lg:max-w-5xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
                 Kabar Sekolah Terkini
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
                 Dapatkan informasi resmi seputar kegiatan belajar mengajar, pencapaian siswa, inovasi kejuruan, dan agenda di {{ $sekolah['nama'] }}.
             </p>
         </div>
@@ -77,13 +85,20 @@
             @forelse($berita as $item)
             <article class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col h-full group">
                 <!-- Image Ratio 16:9 -->
-                <a href="{{ url(app('tenant')->slug . '/berita/' . $item->slug) }}" class="block aspect-video w-full overflow-hidden bg-slate-100 relative">
+                <a href="{{ url(app('tenant')->slug . '/berita/' . $item->slug) }}" class="block aspect-video w-full overflow-hidden bg-slate-900 relative flex items-center justify-center">
+                    <!-- Ambient Blurred Backdrop -->
+                    <img src="{{ $item->gambar_sampul ?? 'https://images.unsplash.com/photo-1546410531-ea4cea477149?q=80&w=800&auto=format&fit=crop' }}" 
+                         alt="" 
+                         aria-hidden="true" 
+                         class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+                    <!-- Main Image -->
                     <img src="{{ $item->gambar_sampul ?? 'https://images.unsplash.com/photo-1546410531-ea4cea477149?q=80&w=800&auto=format&fit=crop' }}" 
                          alt="{{ $item->judul }}" 
                          loading="lazy"
-                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                         style="{{ \App\Services\MediaService::getCropStyle($item->gambar_sampul ?? '') }}"
+                         class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @if($item->kategori)
-                    <span class="absolute top-3 left-3 bg-blue-900/85 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                    <span class="absolute top-3 left-3 z-20 bg-blue-900/85 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
                         {{ $item->kategori->nama_kategori }}
                     </span>
                     @endif

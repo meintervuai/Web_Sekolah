@@ -176,3 +176,54 @@
 - [x] `docs/05-UI-UX.md` menautkan rule dan dokumen teknis pada bagian Auto-Kontras WCAG.
 - [x] Tidak ada perubahan kode runtime; test suite tidak terdampak.
 
+
+---
+
+## Tahap 12: Pembersihan Kontrol Tidak Terpakai pada Admin Profil Sekolah
+**Status:** Selesai
+
+- [x] Dropdown **"Pola Dekorasi Latar"** dihapus dari 4 tab admin Profil Sekolah (`resources/views/tenant/admin/profil/index.blade.php`) karena tidak dipakai operator sekolah.
+- [x] `ProfilController` tidak lagi memvalidasi/menulis `pola_latar_profil`, `pola_latar`, dan `pola_latar_struktur` pada `updateIdentitas()`, `updateHalaman()`, dan `updateStruktur()` sehingga nilai tersimpan tidak ditimpa lagi menjadi `dots`.
+- [x] Kolom `halaman_statis.pola_latar`, `$fillable` model `Page`, dan rendering pola hero publik (`profil`, `sejarah`, `visi-misi`, `struktur`) dipertahankan agar tidak ada data hilang dan tampilan publik tidak berubah.
+- [x] Layout form hero dirapikan: judul halaman `sm:col-span-2` pada tab Sejarah dan Visi & Misi, panel hero Struktur satu kolom.
+- [x] Verifikasi: full suite Pest **70 test / 429 assertions PASSED**, `vendor/bin/pint --dirty` bersih, `php artisan view:clear` dijalankan.
+
+---
+
+## Tahap 13: Pembersihan Mode Tampilan Struktur & Perbaikan Fatal View Publik
+**Status:** Selesai
+
+- [x] Radio **"Mode Pilihan Tampilan Halaman Struktur Publik"** (`semua` / `pejabat` / `diagram`) dihapus dari tab Struktur Organisasi admin (`resources/views/tenant/admin/profil/index.blade.php`).
+- [x] Kunci `mode_tampilan_struktur` tidak lagi divalidasi/disimpan di `ProfilController::updateStruktur()` dan tidak lagi diambil di `ProfilController::index()` maupun `Tenant\Public\PageController::struktur()`.
+- [x] Halaman publik `/profil/struktur` selalu menampilkan Tab Jajaran Pejabat + Tab Bagan Diagram (default tab "Jajaran Pejabat").
+- [x] Bug fatal `@if($mode === 'semua' || $mode === 'pejabat')` tanpa `@endif` pada `resources/views/public/pages/struktur.blade.php` diperbaiki; kompilasi Blade dan `php -l` kini bersih.
+- [x] Regression test: `TenantPublicPagesTest` skenario `2b` (halaman struktur publik 200 + kedua bagian tampil) dan `TenantAdminProfilTest` memastikan kontrol `pola_latar_profil` serta `mode_tampilan_struktur` tidak muncul lagi di form admin.
+- [x] Verifikasi: full suite Pest **71 test / 435 assertions PASSED**; `vendor/bin/pint --dirty` bersih; `php artisan view:clear` dijalankan.
+
+
+---
+
+## Tahap 14: Kelengkapan Field Hero Banner Tab Struktur Organisasi
+**Status:** Selesai
+
+- [x] Tab Struktur Organisasi admin kini memuat **Judul Halaman**, **Deskripsi Ringkas / Subjudul Hero**, dan **Foto Banner / Sampul (Pusat Media)** seperti tab Sejarah dan Visi & Misi.
+- [x] `ProfilController::updateStruktur()` memvalidasi `judul_struktur` + `gambar_banner_struktur`, menyinkronkan banner ke Pusat Media, dan menyimpan `judul`/`subjudul`/`gambar_banner` ke `halaman_statis` slug `struktur` (sebelumnya judul di-hardcode `'Struktur Organisasi Sekolah'` dan banner tidak pernah disimpan).
+- [x] Halaman publik `/profil/struktur` menampilkan banner di atas section konten (21:9, `max-h-[420px]`) dan `<title>` mengikuti judul dari admin.
+- [x] Test baru `TenantAdminProfilTest` membuktikan penyimpanan database, relasi `pengguna_id`, dan tampilan judul + banner di halaman publik.
+- [x] Blok header kartu tab Struktur ("Kelola Struktur Organisasi & Data Pejabat") ditambahkan agar konsisten dengan tab Sejarah dan Visi & Misi; diafirmasi test admin.
+- [x] Verifikasi: full suite Pest **72 test / 453 assertions PASSED**; `vendor/bin/pint --dirty` passed; `php artisan view:clear` dijalankan.
+
+---
+
+## Tahap 15: Tab 6 Pengaturan Guru & Tenaga Kependidikan pada Admin Profil
+**Status:** Selesai
+
+- [x] Menambahkan Tab 6 `?tab=guru` ("6. Guru & Tenaga Kependidikan") pada panel CMS Admin Profil (`resources/views/tenant/admin/profil/index.blade.php`).
+- [x] **Kustomisasi Hero Banner `/guru-staf`**: Pengaturan Judul Halaman (`judul_guru`), Subjudul/Deskripsi Hero (`subjudul_guru`), dan Foto Latar Banner (`gambar_banner_guru`) dengan preview box 16:9 (`bannerGuruPreview`) serta integrasi pemilih berkas Pusat Media.
+- [x] **Direktori Master Guru & Tenaga Kependidikan**: Tabel interaktif Tailgrids lengkap dengan live search, filter jenis kelamin (L/P), filter keaktifan (Aktif/Non-aktif), avatar portrait 3:4, modal Tambah/Edit Guru, dan modal konfirmasi Hapus Guru.
+- [x] Controller & Rute: `ProfilController::updateGuruHero`, `storeGuru`, `updateGuru`, `destroyGuru` terdaftar di `routes/web.php` dan `PageController::guruStaf` menyuplai model `Page` slug `guru-staf` ke `public.pages.guru`.
+- [x] Rendering publik `guru.blade.php`: Tampil dinamis dengan banner artistik sisi kanan, judul kustom, dan subjudul bersyarat `@if(!empty($subjudulGuru))`.
+- [x] Verifikasi: Full suite Pest **75 test / 489 assertions PASSED**; `vendor/bin/pint --dirty` passed; `php artisan view:clear` sukses.
+
+
+

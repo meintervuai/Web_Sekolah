@@ -385,11 +385,18 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 
       <!-- Left: Foto Kepsek (Rasio Elegan, Card Bersih) -->
       <div class="lg:col-span-5 flex justify-center">
-        <div class="w-full max-w-sm rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+        <div class="w-full max-w-sm rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-sm relative">
+          <!-- Ambient Blurred Backdrop -->
+          <img src="{{ $sekolahData['foto_kepsek'] }}"
+            alt=""
+            aria-hidden="true"
+            class="absolute inset-0 w-full h-80 sm:h-96 object-cover blur-md scale-125 opacity-40 pointer-events-none">
+
+          <!-- Main Fit Photo -->
           <img src="{{ $sekolahData['foto_kepsek'] }}"
             alt="{{ $sekolahData['kepsek'] }}"
             style="{{ \App\Services\MediaService::getCropStyle($sekolahData['foto_kepsek'] ?? '') }}"
-            class="w-full h-80 sm:h-96 object-cover">
+            class="relative z-10 w-full h-80 sm:h-96 object-cover">
           <div class="p-5 theme-bg-dark text-white">
             <h3 class="font-heading font-bold text-base sm:text-lg text-white leading-tight">{{ $sekolahData['kepsek'] }}</h3>
             <p class="text-xs text-white/90 font-medium mt-0.5">Kepala SMK Negeri 2 Bandung</p>
@@ -407,9 +414,11 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           Mewujudkan Pendidikan Vokasi yang Unggul, Adaptif, dan Berkarakter
         </h2>
         <div class="theme-accent-text text-sm sm:text-base leading-relaxed space-y-3">
+          @if(!empty($sekolahData['sambutan']))
           <p class="italic text-slate-800 font-medium border-l-4 pl-4 py-1" style="border-left-color: var(--theme-color);">
             "{{ $sekolahData['sambutan'] }}"
           </p>
+          @endif
           <p>
             Sebagai sekolah yang berdiri sejak 1951 di jantung Kota Bandung, kami terus berinovasi mengintegrasikan kurikulum industri, penguatan Teaching Factory (TEFA), sertifikasi keahlian berstandar BNSP, dan pembentukan karakter Profil Pelajar Pancasila.
           </p>

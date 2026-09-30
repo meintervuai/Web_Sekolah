@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Struktur Organisasi & Pimpinan - ' . $sekolah['nama'])
+@section('title', ($halaman->judul ?? 'Struktur Organisasi') . ' - ' . $sekolah['nama'])
 @section('meta_description', 'Susunan struktur organisasi, diagram bagan alur manajerial, dan jajaran pimpinan di ' . $sekolah['nama'])
 
 @section('content')
@@ -16,41 +16,55 @@
     @elseif($polaStruktur === 'mesh')
         <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
     @endif
+
+    @if(!empty($halaman->gambar_banner))
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $halaman->gambar_banner }}" alt="{{ $halaman->judul ?? 'Struktur Organisasi' }}" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
+
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition">Profil</a></li>
+                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition drop-shadow-xs">Profil</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Struktur Organisasi</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Struktur Organisasi</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+        <div class="max-w-4xl lg:max-w-5xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
                 {{ $halaman->judul ?? 'Struktur Organisasi Sekolah' }}
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                {{ $halaman->subjudul ?? ('Jajaran pimpinan, kepala program keahlian, dan koordinator tata kelola manajerial di ' . $sekolah['nama']) }}
+            @if(!empty($halaman->subjudul))
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
+                {{ $halaman->subjudul }}
             </p>
+            @endif
         </div>
     </div>
 </section>
 
 <!-- Content Section -->
-@php
-    $mode = $modeTampilan ?? 'semua';
-    $defaultTab = ($mode === 'diagram') ? 'diagram' : 'pejabat';
-@endphp
 <section class="section-py bg-slate-50" x-data="{ 
-    activeTab: '{{ $defaultTab }}', 
+    activeTab: 'pejabat', 
     activeDiagram: 0,
     diagrams: {{ Js::from($diagrams ?? []) }}
 }">
     <div class="container-custom">
 
-        @if($mode === 'semua')
-        <!-- Mode Switcher Tabs (Hanya Tampil Jika Mode Admin Mengizinkan Keduanya) -->
+        @if(!empty($halaman->gambar_banner))
+        <!-- Banner / Sampul Halaman (Pusat Media) -->
+        <div class="rounded-2xl overflow-hidden shadow-sm mb-8 bg-slate-100">
+            <img src="{{ $halaman->gambar_banner }}" alt="{{ $halaman->judul ?? 'Struktur Organisasi Sekolah' }}" class="w-full h-auto max-h-[420px] object-cover">
+        </div>
+        @endif
+
+        <!-- Pilihan Tampilan Struktur (Jajaran Pejabat & Bagan Diagram) -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200">
             <div>
                 <h2 class="font-heading font-bold text-lg text-slate-900">Pilihan Tampilan Struktur</h2>
@@ -74,19 +88,24 @@
                 </button>
             </div>
         </div>
-        @endif
 
-        @if($mode === 'semua' || $mode === 'pejabat')
         <!-- TAB 1: JAJARAN PEJABAT & PIMPINAN (GRID FOTO) -->
         <div x-show="activeTab === 'pejabat'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @forelse($struktur as $s)
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs hover:shadow-md transition text-center flex flex-col items-center group">
-                    <div class="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
+                    <div class="relative w-28 h-28 rounded-2xl overflow-hidden bg-slate-900 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
+                        <!-- Ambient Blurred Backdrop -->
+                        <img src="{{ $s->foto ?? 'https://ui-avatars.com/api/?name='.urlencode($s->nama_lengkap).'&background=1E3A8A&color=fff&size=200' }}" 
+                             alt="" 
+                             aria-hidden="true" 
+                             class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+
+                        <!-- Main Fit Photo -->
                         <img src="{{ $s->foto ?? 'https://ui-avatars.com/api/?name='.urlencode($s->nama_lengkap).'&background=1E3A8A&color=fff&size=200' }}" 
                              alt="{{ $s->nama_lengkap }}" 
                              style="{{ $s->foto_crop_style }}"
-                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                             class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     <h2 class="text-base font-bold text-slate-900 font-heading mb-1 leading-snug">
                         {{ $s->nama_lengkap }}
@@ -108,7 +127,6 @@
             </div>
         </div>
 
-        @if($mode === 'semua' || $mode === 'diagram')
         <!-- TAB 2: BAGAN DIAGRAM STRUKTUR (1 ATAU BEBERAPA GAMBAR) -->
         <div x-show="activeTab === 'diagram'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" style="display: none;">
             <template x-if="diagrams.length > 0">
@@ -181,7 +199,6 @@
                 </div>
             </template>
         </div>
-        @endif
 
         <div class="mt-10 text-center">
             <a href="{{ url(app('tenant')->slug . '/profil') }}" class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 transition">

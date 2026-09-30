@@ -16,23 +16,35 @@
     @elseif($polaVisiMisi === 'mesh')
         <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
     @endif
+
+    @if(!empty($halaman->gambar_banner))
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $halaman->gambar_banner }}" alt="{{ $halaman->judul ?? 'Visi & Misi' }}" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
+
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition">Profil</a></li>
+                <li><a href="{{ url(app('tenant')->slug . '/profil') }}" class="hover:text-white transition drop-shadow-xs">Profil</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Visi &amp; Misi</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Visi &amp; Misi</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+        <div class="max-w-4xl lg:max-w-5xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
                 {{ $halaman->judul ?? 'Visi & Misi Sekolah' }}
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-                {{ $halaman->subjudul ?? ('Arah haluan, cita-cita luhur, dan komitmen penyelenggaraan pendidikan vokasi di ' . $sekolah['nama']) }}
+            @if(!empty($halaman->subjudul))
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
+                {{ $halaman->subjudul }}
             </p>
+            @endif
         </div>
     </div>
 </section>

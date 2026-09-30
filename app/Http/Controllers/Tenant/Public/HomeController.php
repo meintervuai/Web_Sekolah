@@ -39,7 +39,7 @@ class HomeController extends Controller
             'whatsapp' => PengaturanUmum::ambil('whatsapp', '081222333444'),
             'jam_layanan' => PengaturanUmum::ambil('jam_layanan', 'Senin - Jumat: 07.00 - 16.00 WIB'),
             'deskripsi' => PengaturanUmum::ambil('deskripsi', 'Website resmi '.$sekolah->nama_sekolah),
-            'sambutan' => PengaturanUmum::ambil('sambutan_kepsek', 'Selamat datang di website resmi '.$sekolah->nama_sekolah.'.'),
+            'sambutan' => PengaturanUmum::ambil('sambutan_kepsek', ''),
             'kepsek' => PengaturanUmum::ambil('nama_kepsek', 'Dr. H. Hasanudin, M.Pd.'),
             'nip_kepsek' => PengaturanUmum::ambil('nip_kepsek', '19680512 199303 1 004'),
             'foto_kepsek' => PengaturanUmum::ambil('foto_kepsek', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'),

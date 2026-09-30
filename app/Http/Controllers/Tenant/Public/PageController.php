@@ -149,14 +149,12 @@ class PageController extends Controller
         ];
 
         $halaman = Page::where('slug', 'struktur')->first();
-        $modeTampilan = PengaturanUmum::ambil('mode_tampilan_struktur', 'semua');
 
         return view('public.pages.struktur', [
             'sekolah' => $this->getSekolahData(),
             'halaman' => $halaman,
             'struktur' => $struktur,
             'diagrams' => $diagrams,
-            'modeTampilan' => $modeTampilan,
         ]);
     }
 
@@ -430,8 +428,13 @@ class PageController extends Controller
         }
 
         $guru = $query->paginate(12)->withQueryString();
+        $halaman = Page::where('slug', 'guru-staf')->first();
 
-        return view('public.pages.guru', ['sekolah' => $this->getSekolahData(), 'guru' => $guru]);
+        return view('public.pages.guru', [
+            'sekolah' => $this->getSekolahData(),
+            'halaman' => $halaman,
+            'guru' => $guru,
+        ]);
     }
 
     // 10. FASILITAS

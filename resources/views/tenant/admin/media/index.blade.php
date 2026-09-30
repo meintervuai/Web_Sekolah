@@ -214,7 +214,7 @@
                 <div class="group bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between relative" :class="selectedIds.includes({{ $media->id }}) ? 'ring-2 ring-blue-600 border-blue-600' : ''">
                     
                     <!-- Checkbox Seleksi Grid -->
-                    <div class="absolute top-2 left-2 z-10">
+                    <div class="absolute top-2 left-2 z-30 pointer-events-auto">
                         <input 
                             type="checkbox" 
                             :value="{{ $media->id }}" 
@@ -224,7 +224,7 @@
                     </div>
 
                     <!-- Badge Status Penggunaan di Website -->
-                    <div class="absolute top-2 right-2 z-10">
+                    <div class="absolute top-2 right-2 z-30 pointer-events-auto">
                         @if($media->is_digunakan)
                             <span class="px-2 py-0.5 text-[9px] font-bold rounded-md shadow-xs bg-emerald-600 text-white flex items-center gap-1 cursor-help" 
                                   title="Sedang Dipakai di: {{ implode(', ', $media->penggunaan) }}">
@@ -241,14 +241,22 @@
                     <!-- Media Preview Box -->
                     <div class="relative bg-slate-900 aspect-square overflow-hidden flex items-center justify-center">
                         @if($media->tipe_media === 'gambar')
+                            <!-- Ambient Blurred Backdrop -->
+                            <img 
+                                src="{{ $media->url }}" 
+                                alt="" 
+                                aria-hidden="true" 
+                                class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0"
+                            >
+                            <!-- Main Image with Smart Crop -->
                             <img 
                                 src="{{ $media->url }}" 
                                 alt="{{ $media->alt_teks ?: $media->judul }}" 
                                 loading="lazy"
                                 style="{{ $media->smart_crop_style }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >
-                            <span class="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold rounded uppercase">
+                            <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold rounded uppercase">
                                 {{ $media->ekstensi ?: 'webp' }}
                             </span>
                         @elseif($media->tipe_media === 'youtube')
@@ -263,7 +271,7 @@
                                 alt="{{ $media->judul }}" 
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             >
-                            <span class="absolute bottom-2 left-2 px-1.5 py-0.5 bg-rose-600 text-white text-[9px] font-bold rounded uppercase flex items-center gap-1 shadow-xs">
+                            <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-rose-600 text-white text-[9px] font-bold rounded uppercase flex items-center gap-1 shadow-xs">
                                 <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 22c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 2c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
                                 YouTube
                             </span>
@@ -276,7 +284,7 @@
                                         <svg class="w-4 h-4 ml-0.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                                     </div>
                                 </div>
-                                <span class="absolute bottom-2 left-2 px-1.5 py-0.5 bg-slate-900/90 text-blue-300 font-mono text-[9px] font-bold rounded uppercase shadow-xs">
+                                <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-slate-900/90 text-blue-300 font-mono text-[9px] font-bold rounded uppercase shadow-xs">
                                     {{ $media->ekstensi ?: 'mp4' }}
                                 </span>
                             </div>
@@ -290,7 +298,7 @@
                         @endif
 
                         <!-- Hover Overlay Action Bar -->
-                        <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                        <div class="absolute inset-0 z-40 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
                             @if($media->tipe_media === 'gambar')
                             <button 
                                 type="button" 
@@ -387,9 +395,10 @@
 
                                 <!-- Thumbnail -->
                                 <td class="py-2.5 px-4">
-                                    <div class="w-12 h-12 rounded-lg bg-slate-900 overflow-hidden shrink-0 border border-slate-200 flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-lg bg-slate-900 overflow-hidden shrink-0 border border-slate-200 relative flex items-center justify-center">
                                         @if($media->tipe_media === 'gambar')
-                                            <img src="{{ $media->url }}" alt="{{ $media->judul }}" style="{{ $media->smart_crop_style }}" class="w-full h-full object-cover">
+                                            <img src="{{ $media->url }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-40 pointer-events-none">
+                                            <img src="{{ $media->url }}" alt="{{ $media->judul }}" style="{{ $media->smart_crop_style }}" class="relative z-10 w-full h-full object-cover">
                                         @elseif($media->tipe_media === 'youtube')
                                             @php
                                                 $ytId = null;
@@ -808,8 +817,41 @@
                             type="text" 
                             name="alt_teks" 
                             x-model="selectedMedia.alt_teks" 
+                            placeholder="Deskripsi gambar untuk aksesibilitas & SEO"
                             class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
                         >
+                    </div>
+
+                    <!-- Tautan URL Berkas & Tombol Salin -->
+                    <div x-show="selectedMedia.url" class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-700">Tautan / URL Berkas Media</label>
+                        <div class="flex items-center gap-1.5">
+                            <input 
+                                type="text" 
+                                readonly 
+                                :value="selectedMedia.url" 
+                                class="w-full text-xs px-3 py-2 bg-white border border-slate-200 rounded-xl text-slate-700 font-mono select-all focus:outline-none"
+                            >
+                            <button 
+                                type="button" 
+                                @click="navigator.clipboard.writeText(selectedMedia.url); triggerToast('Tautan URL berkas berhasil disalin!');" 
+                                class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-xl border border-blue-200 shrink-0 transition flex items-center gap-1 cursor-pointer"
+                                title="Salin URL ke Clipboard"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                Salin
+                            </button>
+                            <a 
+                                :href="selectedMedia.url" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 shrink-0 transition"
+                                title="Buka Berkas di Tab Baru"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Klik 'Salin' untuk menempelkan URL ini ke halaman atau formulir lain.</p>
                     </div>
 
                     <div class="pt-2 flex items-center justify-end gap-2">
@@ -863,10 +905,11 @@
                 <div class="flex flex-wrap items-center gap-1.5">
                     <span class="font-bold text-slate-700 mr-1">Simulasi Rasio:</span>
                     <button type="button" @click="setAspectRatio(null)" :class="aspectRatio === null ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">Bebas</button>
-                    <button type="button" @click="setAspectRatio(16/9)" :class="aspectRatio === 16/9 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">16:9 (Hero / Banner)</button>
-                    <button type="button" @click="setAspectRatio(4/3)" :class="aspectRatio === 4/3 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">4:3 (Kartu Galeri)</button>
                     <button type="button" @click="setAspectRatio(1/1)" :class="aspectRatio === 1/1 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">1:1 (Logo / Avatar)</button>
-                    <button type="button" @click="setAspectRatio(9/16)" :class="aspectRatio === 9/16 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">9:16 (Story / Mobile)</button>
+                    <button type="button" @click="setAspectRatio(3/4)" :class="aspectRatio === 3/4 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">3:4 (Pejabat / Guru)</button>
+                    <button type="button" @click="setAspectRatio(4/3)" :class="aspectRatio === 4/3 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">4:3 (Jurusan / Galeri)</button>
+                    <button type="button" @click="setAspectRatio(16/9)" :class="aspectRatio === 16/9 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">16:9 (Berita / Video)</button>
+                    <button type="button" @click="setAspectRatio(21/9)" :class="aspectRatio === 21/9 ? 'bg-blue-600 text-white font-bold' : 'bg-white text-slate-700 hover:bg-slate-100'" class="px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs cursor-pointer transition">21:9 (Hero Banner)</button>
                 </div>
 
                 <div class="flex items-center gap-2">

@@ -2,6 +2,163 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Penambahan Tab 6 Guru & Tenaga Kependidikan di Admin Profil] - 2026-09-30
+
+### Added
+- **Tab 6: Guru & Tenaga Kependidikan pada Admin Profil ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Menambahkan tombol tab navigasi `6. Guru & Tenaga Kependidikan` (`?tab=guru`) dan memperbarui nomor tab visibilitas menjadi `7. Visibilitas Menu & Rute`.
+  - **Kartu 1 (Kustomisasi Hero Banner Halaman Guru & Staf)**: Pengaturan judul utama (`judul_guru`), subjudul/deskripsi ringkas (`subjudul_guru`), dan foto latar banner (`gambar_banner_guru`) dengan preview box 16:9 (`bannerGuruPreview`) serta pemilih berkas dari Pusat Media (`openMediaPicker('input_banner_guru')`).
+  - **Penerapan Konsep Smart Crop & Ambient Blur Media pada Preview Foto**: Memperbaiki kotak preview Foto Kepala Sekolah, Modal Pejabat Struktural, dan Modal Guru/Staf agar menerapkan `:style="...CropStyle"` (membaca crop zoom & focal position langsung dari Pusat Media) dan efek ambient background `blur-md scale-125 opacity-40 z-0` yang konsisten dengan Media Library.
+- **Rute Admin & Controller Guru ([web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php), [ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**:
+  - Menambahkan endpoint `PUT /admin/profil/guru-hero` (`tenant.admin.profil.guru.hero.update`) untuk pembaruan banner hero `/guru-staf`.
+  - Menambahkan rute CRUD `POST /admin/profil/guru`, `PUT /admin/profil/guru/{guru}`, `DELETE /admin/profil/guru/{guru}` (`tenant.admin.profil.guru.*`).
+- **Pembaruan Halaman Publik Direktori Guru ([guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php), [PageController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/PageController.php))**:
+  - Halaman `http://127.0.0.1:8000/{tenant}/guru-staf` kini membaca judul dinamis `$halaman->judul`, subjudul bersyarat `@if(!empty($subjudulGuru))`, dan gambar latar banner hero dengan efek artistik right-side gradient mask.
+- **Automated Feature Tests ([TenantAdminProfilTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminProfilTest.php))**:
+  - Menambahkan test `admin can update guru-staf hero banner and it displays on public guru-staf page` dan `admin can perform CRUD operations on guru and tenaga kependidikan`.
+  - Verifikasi: `vendor/bin/pest` **75 test / 489 assertions PASSED**.
+
+## [Perbaikan Render Bersyarat Subjudul & Sambutan Halaman Publik Profil] - 2026-09-30
+
+### Fixed
+- **Penghapusan Fallback Teks Keras jika Field Dikosongkan ([resources/views/public/pages/](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/))**:
+  - Memperbaiki `sejarah.blade.php`, `visi-misi.blade.php`, `profil.blade.php`, dan `struktur.blade.php` agar membungkus paragraf subjudul/deskripsi ke dalam `@if(!empty($halaman->subjudul))` / `@if(!empty($profil->subjudul))` murni tanpa fallback string bawaan `?? ('Mengenal perjalanan panjang...')`.
+  - Jika admin mengosongkan kolom Subjudul / Deskripsi Hero pada panel admin, portal publik kini benar-benar bersih dan tidak menampilkan teks deskripsi apa pun.
+  - Memperbaiki `home.blade.php` dan `HomeController.php` agar Sambutan Kepala Sekolah hanya tampil jika diisi (`@if(!empty($sekolahData['sambutan']))`), dan tidak memunculkan kalimat fallback bawaan saat dikosongkan admin.
+  - Verifikasi: `php artisan view:clear` & `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+## [Penataan & Penyeragaman Tab 5 Struktur Organisasi Admin Profil] - 2026-09-30
+
+### Changed
+- **Restrukturisasi Tab 5 Struktur Organisasi ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Memisahkan form Struktur Organisasi menjadi kartu-kartu mandiri berdesain Tailgrids yang konsisten dengan Tab 1 (Data Diri), Tab 2 (Profil Lengkap), Tab 3 (Sejarah), dan Tab 4 (Visi Misi).
+  - **Kartu 1 (Kustomisasi Hero Banner)**: Kartu putih terpisah di bagian atas dengan ikon header, input Judul Halaman Struktur, Subjudul/Deskripsi Ringkas, input Foto Banner dengan thumbnail preview box 16:9 (`bannerStrukturPreview`), dan trigger Media Picker.
+  - **Kartu 2 (Bagan Diagram Struktur Organisasi)**: Kartu dinamis repeater dengan list bagan hierarki, input judul, deskripsi, thumbnail preview box 16:9 (`diag.gambar`), tombol Pilih Media reaktif, dan tombol Simpan lengkap dengan spinner animasi loading state (`<template x-if="submitLoading">`).
+  - **Kartu 3 (Daftar Pejabat Struktural)**: Tabel pejabat dengan avatar 3:4, badge NIP berelasi guru/staf, dan aksi modal Add/Edit/Delete.
+  - **Alpine.js `profilManager`**: Menambahkan state `bannerStrukturPreview`, serta mengintegrasikan pemilih media untuk `input_banner_struktur` dan `input_diag_*`.
+  - Verifikasi: `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+## [Penyeragaman Ukuran Teks & Gaya Input Form Admin Profil] - 2026-09-30
+
+### Changed
+- **Seragamkan ukuran teks dan gaya seluruh field admin profil ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Label seluruh tab dan modal Pejabat diseragamkan ke `text-xs font-bold text-slate-700 mb-1` - termasuk label hero Struktur Organisasi (sebelumnya `slate-800`), sub-field Media Sosial (sebelumnya `text-[11px] font-semibold text-slate-600`), label Bagan Diagram (sebelumnya `text-[11px]`), dan label Video Profil (sebelumnya `slate-800`).
+  - Input/textarea/select diseragamkan ke `px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition` - input Video Profil, hero Struktur Organisasi, dan Bagan Diagram (sebelumnya `bg-white` dan/atau padding `px-3 py-2`) kini sama persis dengan tab lain; varian `focus:ring-1 focus:ring-blue-500` diseragamkan agar identik di semua tab.
+  - Teks bantuan (hint) diseragamkan ke `text-[10px] text-slate-400`.
+  - Tombol "Pilih Media" pada kartu Bagan Diagram disamakan dengan tombol serupa di kartu lain (`px-3.5 py-2`, ikon 16px, `gap-1.5`).
+  - Verifikasi: `php artisan view:cache` sukses kompilasi; `vendor/bin/pest` **73 test / 461 assertions PASSED**.
+
+## [Penerapan Banner Hero Artistik & Pelebaran Judul Halaman Publik] - 2026-09-30
+
+### Added
+- **Right-Side Artistic Banner Overlay di Seluruh Menu Publik ([resources/views/public/pages/](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/))**:
+  - Mengimplementasikan efek visual banner artistik sisi kanan dengan gradient mask (`[mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]`) dan theme header overlay ke seluruh halaman menu publik (`sejarah`, `visi-misi`, `struktur`, `profil`, `berita`, `galeri`, `fasilitas`, `jurusan`, `jurusan_detail`, `prestasi`, `ekstrakurikuler`, `guru`, `kontak`, `kurikulum`, `osis`, `kegiatan`, `kalender`, `spmb`).
+  
+### Changed
+- **Pelebaran Container Judul Hero (`max-w-4xl lg:max-w-5xl`)**:
+  - Mengubah batas sempit `max-w-2xl` / `max-w-3xl` menjadi `max-w-4xl lg:max-w-5xl` pada seluruh hero section publik, sehingga judul panjang (seperti "Sejarah Panjang SMK Negeri 2 Bandung") tampil utuh dan proporsional dalam satu baris tanpa terpotong kaku ke bawah saat ruang layar mencukupi.
+
+## [Pemisahan Tab 1 Data Diri Sekolah & Tab 2 Profil Lengkap] - 2026-09-30
+
+### Added
+- **Tab Khusus "1. Data Diri Sekolah" (Tab `datadiri`) ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Memisahkan form Data Pokok Satuan Pendidikan (Nama Sekolah, Slogan, Logo, NPSN, Akreditasi, Tahun Berdiri, No Telepon, Alamat, Email, WhatsApp, Jam Layanan, dan Akun Medsos Resmi) serta Kepala Satuan Pendidikan dan Video Profil ke dalam tab mandiri yang terfokus.
+  - Tombol simpan "Simpan Data Diri Sekolah" dengan feedback loading state dan redirect langsung ke tab `?tab=datadiri`.
+- **Tab "2. Profil Lengkap" (Tab `identitas`)**:
+  - Dikhususkan untuk Kustomisasi Hero Banner Halaman Profil (Judul Utama, Subjudul, Gambar Latar) dan Editor WYSIWYG Uraian Lengkap Profil & Budaya Sekolah.
+  - Tombol simpan "Simpan Halaman Profil" dengan feedback loading state dan redirect langsung ke tab `?tab=identitas`.
+
+### Changed
+- **Controller Admin Profil ([ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**:
+  - Memperbarui `updateIdentitas()` agar dapat memproses form `datadiri` dan `halaman_profil` secara modular dan independen berdasarkan field `form_type` dan `current_tab`.
+- **Test Suite Feature ([TenantAdminProfilTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminProfilTest.php))**:
+  - Menambahkan test case untuk verifikasi penyimpanan data diri sekolah dan pembaruan halaman profil secara terpisah.
+
+## [Penyelarasan Layout Tab Profil: Hero di Atas, Input Media Sosial & Editor WYSIWYG Profil] - 2026-09-30
+
+### Added
+- **Input Akun Media Sosial Resmi di Tab Profil Admin ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Menambahkan input URL media sosial resmi (Instagram, Facebook, YouTube, TikTok, dan X/Twitter) di bawah Data Pokok Sekolah pada Tab 1 (Profil Lengkap).
+  - Nilai tersimpan langsung disinkronkan ke footer portal publik lewat kunci `pengaturan_umum` (`instagram`, `facebook`, `youtube`, `tiktok`, `twitter`).
+- **Editor Teks Bebas WYSIWYG untuk Uraian Lengkap Profil Sekolah**:
+  - Menyediakan editor WYSIWYG Quill pada Tab 1 (Profil Lengkap) yang tersimpan ke tabel `halaman_statis` (slug `profil`, kolom `isi_konten`).
+  - Halaman publik profil ([profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php)) otomatis merender bagian kartu "Profil & Budaya Sekolah" jika konten WYSIWYG diisi.
+
+### Changed
+- **Pemindahan Kustomisasi Hero Banner ke Bagian Teratas Tab 1 (Profil Lengkap)**:
+  - Posisi Hero Banner di Tab 1 kini berada paling atas, seragam dan konsisten dengan tata letak Tab 2 (Sejarah), Tab 3 (Visi & Misi), dan Tab 4 (Struktur Organisasi).
+- **Controller Admin Profil ([ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**:
+  - Menambahkan validasi dan penyimpanan array input media sosial serta `isi_konten_profil` pada method `updateIdentitas()`.
+
+## [Kelengkapan Field Hero Banner pada Tab Struktur Organisasi] - 2026-09-30
+
+### Added
+- **Field "Judul Halaman Struktur Organisasi" dan "Foto Banner / Sampul Struktur (Pusat Media)" di tab Struktur Organisasi admin ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**: tab Struktur Organisasi kini memiliki tiga field hero yang sama dengan tab Sejarah dan Visi & Misi (Judul Halaman, Deskripsi Ringkas / Subjudul Hero, Foto Banner dengan tombol *Pilih dari Media*). Sebelumnya tab ini hanya punya field subjudul dan judulnya di-hardcode.
+- **Penyimpanan judul & banner hero struktur ([ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**: `updateStruktur()` memvalidasi `judul_struktur` dan `gambar_banner_struktur`, menyinkronkan banner ke Pusat Media lewat `MediaService::sinkronisasiOtomatisUrl()`, lalu menyimpan `judul` dan `gambar_banner` ke tabel `halaman_statis` (slug `struktur`). Sebelumnya `judul` selalu ditimpa `'Struktur Organisasi Sekolah'` dan `gambar_banner` tidak pernah disimpan.
+- **Banner halaman publik struktur ([struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php))**: gambar banner tampil di bagian atas section konten (rasio baku 21:9, `max-h-[420px]`, `rounded-2xl`) mengikuti pola halaman Sejarah dan Visi & Misi, dan `<title>` halaman kini memakai judul dari admin (`$halaman->judul`).
+- **Blok header kartu tab Struktur Organisasi**: judul kartu "Kelola Struktur Organisasi & Data Pejabat" beserta deskripsi singkat, mengikuti pola blok header di tab Sejarah ("Kelola Halaman Sejarah Sekolah") dan Visi & Misi ("Kelola Visi, Misi & Sasaran Mutu") agar konsisten.
+
+### Notes
+- Test baru: `tests/Feature/TenantAdminProfilTest.php` - "admin can update struktur hero title, description, and banner and it appears on public page" (verifikasi simpan ke database, relasi `pengguna_id`, dan tampilan judul + banner di halaman publik).
+- Verifikasi: full suite Pest **72 test / 453 assertions PASSED**; `vendor/bin/pint --dirty` passed; `php artisan view:clear` dijalankan.
+
+
+## [Pemindahan Menu Fasilitas Sekolah ke Bagian Informasi] - 2026-09-30
+
+### Changed
+- **Menu Navigasi Fasilitas Sekolah Dipindahkan ke Dropdown Informasi**:
+  - Item menu *Fasilitas Sekolah* (`/fasilitas`) kini berinduk ke menu *Informasi* (`parent_id = 4`) bukan lagi di *Profil*.
+  - Pembaruan disinkronkan ke database tenant aktif (`menus` table) dan seeder (`TenantSmkn2BandungSeeder.php` dan `TenantDummySeeder.php`).
+- **Penambahan Alias Rute Sub-prefix `/informasi/fasilitas` ([routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php))**:
+  - Menambahkan rute `Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');` di dalam grup `Route::prefix('informasi')`.
+  - Rute langsung `/{tenant}/fasilitas` tetap aktif sebagai rute utama (`tenant.fasilitas`).
+
+## [Penghapusan Mode Tampilan Struktur & Perbaikan Fatal View Publik Struktur] - 2026-09-30
+
+### Removed & Fixed
+- **Kontrol "Mode Pilihan Tampilan Halaman Struktur Publik" dihapus dari tab Struktur Organisasi admin ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**: tiga pilihan radio (`semua` / `pejabat` / `diagram`) dihapus karena tidak dibutuhkan operator sekolah.
+- **Kunci `mode_tampilan_struktur` tidak lagi dibaca/ditulis**: dihapus dari `ProfilController::index()` dan `updateStruktur()` (validasi + `PengaturanUmum::updateOrCreate`), dari `Public\PageController::struktur()` (variabel `$modeTampilan` dan data view), serta dari view publik `struktur.blade.php`.
+- **Halaman publik `/profil/struktur` selalu menampilkan kedua bagian**: tombol pilih tampilan selalu tampil dengan default tab "Jajaran Pejabat", dan blok "Jajaran Pejabat" serta "Bagan Diagram Struktur" dirender tanpa syarat mode.
+- **Perbaikan bug fatal pada view publik struktur ([struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php))**: directive `@if($mode === 'semua' || $mode === 'pejabat')` tidak pernah ditutup `@endif`, sehingga hasil kompilasi Blade berakhir dengan fatal parse error `unexpected end of file, expecting "elseif" or "else" or "endif"` (halaman publik struktur gagal dirender). Seluruh directive mode dihapus sehingga view valid; dibuktikan lewat kompilasi Blade + `php -l` yang kini bersih.
+- **Regression test ditambahkan**: skenario `2b` pada `tests/Feature/TenantPublicPagesTest.php` (halaman `/profil/struktur` merespons 200 dan memuat kedua mode tampilan) serta `assertDontSee('pola_latar_profil')` dan `assertDontSee('mode_tampilan_struktur')` pada `tests/Feature/TenantAdminProfilTest.php`.
+
+### Notes
+- Kunci lama `pengaturan_umum.mode_tampilan_struktur` dibiarkan di database (tidak dihapus, tanpa migrasi destruktif) namun sudah tidak dipakai lagi oleh aplikasi.
+- Verifikasi: full suite Pest **71 test / 435 assertions PASSED**; `vendor/bin/pint --dirty` bersih; `php artisan view:clear` dijalankan.
+
+
+## [Tampilan URL & Tombol Salin di Modal Ubah Informasi Media] - 2026-09-30
+
+### Added
+- **Tampilan URL Berkas & Tombol Salin Cepat ([media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php))**:
+  - Modal *Ubah Informasi Berkas* sekarang menampilkan baris tautan URL berkas media lengkap dengan tombol **"Salin"** (ke clipboard) dan tombol **"Buka di Tab Baru"** agar admin dapat dengan mudah menyalin URL aset untuk digunakan di form/halaman lain.
+
+## [Penghapusan Kontrol Pola Dekorasi Latar Hero di Admin Profil Sekolah] - 2026-09-30
+
+### Removed & Simplified
+- **Kontrol "Pola Dekorasi Latar" dihapus dari menu admin Profil Sekolah ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**: dropdown pola dekoratif hero di 4 tab (Identitas/Profil, Sejarah, Visi & Misi, Struktur) dihapus karena tidak berguna bagi operator sekolah dan hanya menambah beban form.
+- **Penulisan nilai pola dihentikan di controller ([ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php))**: aturan validasi `pola_latar_profil`, `pola_latar`, dan `pola_latar_struktur` beserta penulisan kolom `pola_latar` pada `updateIdentitas()`, `updateHalaman()`, dan `updateStruktur()` dihapus, sehingga penyimpanan form tidak lagi menimpa nilai tersimpan menjadi `dots`.
+- **Data lama tetap aman tanpa migrasi destruktif**: kolom `halaman_statis.pola_latar`, `$fillable` model `Page`, dan 4 view publik (`profil`, `sejarah`, `visi-misi`, `struktur`) dipertahankan; hero publik tetap membaca nilai tersimpan dengan fallback `dots`.
+- **Layout form hero dirapikan**: judul halaman kini `sm:col-span-2` (full width) pada tab Sejarah dan Visi & Misi, sedangkan panel hero Struktur kembali satu kolom karena hanya berisi subjudul.
+- **Verifikasi**: `vendor/bin/pest` full suite **70 test / 429 assertions PASSED**; `vendor/bin/pint --dirty --format agent` bersih; `php artisan view:clear` dijalankan.
+
+
+## [Standar Baku Matriks Rasio Aspek, Border, & Framing Media] - 2026-09-30
+
+### Added & Standardized
+- **Standar Baku Matriks Rasio Aspek ([.ai/rules/standar-rasio-media.md](file:///d:/databaru/Magang/website_sekolah/.ai/rules/standar-rasio-media.md), [docs/05-UI-UX.md](file:///d:/databaru/Magang/website_sekolah/docs/05-UI-UX.md))**:
+  - Menetapkan 5 rasio baku terstandarisasi untuk seluruh halaman web: `1:1` (Avatar/Logo/Icon), `3:4` (Foto Pejabat/Kepsek/Guru), `4:3` (Jurusan/Fasilitas/Ekskul), `16:9` (Berita/Agenda/Video), dan `21:9` (Hero Banner).
+  - Menetapkan standar token border radius (`rounded-2xl` untuk kartu, `rounded-xl` untuk thumbnail).
+  - Menetapkan pola baku *Double Layer Ambient Backdrop* (`blur-md scale-125 opacity-40`) untuk mencegah letterbox hitam/putih saat rasio foto berbeda dengan kartu.
+- **Penerapan Matriks Rasio Baku & Ambient Backdrop di Seluruh Halaman**:
+  - **Admin Profil Sekolah ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**: Preview Logo (`1:1`), Foto Kepala Sekolah (`3:4`), Banner Hero (`16:9`), Modal Pejabat (`3:4`), dan Thumbnail Tabel Pejabat Struktur (`1:1` + crop style) tersinkronisasi live.
+  - **Jurusan & Program Keahlian ([jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php))**: Rasio baku `4:3` dengan ambient backdrop dan crop style.
+  - **Berita & Artikel ([berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/berita.blade.php))**: Rasio baku `16:9` (`aspect-video`) dengan ambient backdrop dan crop style.
+  - **Galeri Foto & Dokumentasi ([galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/galeri.blade.php))**: Rasio baku `1:1` (`aspect-square`) dengan ambient backdrop dan crop style.
+  - **Guru/Staf & Struktur ([guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php), [struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php))**: Rasio baku `1:1` / `3:4` squircle dengan ambient backdrop.
+- **Sinkronisasi Media Picker Modal**:
+  - Menambahkan serialization `$appends = ['smart_crop_style', 'focal_position_css']` di [Media.php](file:///d:/databaru/Magang/website_sekolah/app/Models/Tenant/Media.php) dan styling thumbnail di modal *Pilih Media* agar selalu identik dengan hasil crop di Media Library.
+
 ## [Crop & Focal Point Non-Destruktif Universal (CSS Object-Position)] - 2026-09-30
 
 ### Added & Improved

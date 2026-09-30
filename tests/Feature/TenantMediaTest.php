@@ -191,13 +191,16 @@ test('10. fitur crop gambar bekerja secara non-destruktif dan REST API mengembal
     $masterMedia = Media::find($mediaMasterId);
     $masterPath = $masterMedia->path;
 
-    // 2. Crop gambar via REST API
+    // 2. Crop gambar via REST API (Non-destruktif zero-duplication)
     $cropResponse = $this->actingAs($this->admin, 'tenant_admin')
         ->postJson("/smk-negeri-2-bandung/admin/media/{$masterMedia->id}/edit-image", [
-            'crop_x' => 50,
-            'crop_y' => 50,
-            'crop_w' => 300,
-            'crop_h' => 200,
+            'box_x' => 10,
+            'box_y' => 10,
+            'box_w' => 80,
+            'box_h' => 60,
+            'focal_x' => 50,
+            'focal_y' => 40,
+            'ratio' => '4:3',
             'rotate' => 0,
         ]);
 
@@ -205,16 +208,12 @@ test('10. fitur crop gambar bekerja secara non-destruktif dan REST API mengembal
     $cropResponse->assertJson(['sukses' => true]);
 
     $croppedMediaId = $cropResponse->json('data.id');
-    expect($croppedMediaId)->not()->toBe($masterMedia->id);
+    expect($croppedMediaId)->toBe($masterMedia->id);
 
     // Pastikan berkas master asli tetap utuh di database & storage
     $masterMedia->refresh();
     expect($masterMedia->path)->toBe($masterPath);
-    expect(Media::find($masterMedia->id))->not()->toBeNull();
-
-    // Pastikan berkas crop tersimpan sebagai record WebP baru
-    $croppedMedia = Media::find($croppedMediaId);
-    expect($croppedMedia)->not()->toBeNull();
-    expect($croppedMedia->ekstensi)->toBe('webp');
-    expect($croppedMedia->dimensi)->toBe('300x200');
+    expect($masterMedia->crop_settings)->toBeArray();
+    expect($masterMedia->crop_settings['ratio'])->toBe('4:3');
+    expect($masterMedia->crop_settings['focal_x'])->toBe(50);
 });

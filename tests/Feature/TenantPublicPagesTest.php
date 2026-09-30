@@ -4,6 +4,7 @@ use App\Models\Central\Sekolah;
 use App\Models\Tenant\Agenda;
 use App\Models\Tenant\Ekstrakurikuler;
 use App\Models\Tenant\Jurusan;
+use App\Models\Tenant\Page;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\Post;
 use App\Models\Tenant\PrestasiSiswa;
@@ -49,12 +50,32 @@ test('1. beranda sekolah dapat diakses dan menampilkan identitas smkn 2 bandung'
 });
 
 test('2. halaman profil sekolah lengkap dapat diakses', function () {
+    Page::updateOrCreate(
+        ['slug' => 'profil'],
+        [
+            'judul' => 'Profil SMK Negeri 2 Bandung',
+            'isi_konten' => '<p>Budaya industri dan karakter kerja berstandar global.</p>',
+        ]
+    );
+
     $response = $this->get('/'.$this->tenantSlug.'/profil');
     $response->assertStatus(200);
-    $response->assertSee('Profil Sekolah');
+    $response->assertSee('Profil SMK Negeri 2 Bandung');
+    $response->assertSee('Budaya industri dan karakter kerja berstandar global.', false);
     $response->assertSee('Sejarah Singkat');
     $response->assertSee('Visi');
     $response->assertSee('Misi');
+});
+
+test('2b. halaman struktur organisasi publik dapat diakses dan menampilkan kedua mode tampilan', function () {
+    // Regression: view publik struktur pernah gagal kompilasi (500) karena @if tidak tertutup.
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'struktur_organisasi')->update(['is_aktif' => true]);
+
+    $response = $this->get('/'.$this->tenantSlug.'/profil/struktur');
+    $response->assertStatus(200);
+    $response->assertSee('Pilihan Tampilan Struktur');
+    $response->assertSee('Jajaran Pejabat');
+    $response->assertSee('Bagan Diagram Struktur');
 });
 
 test('3. halaman program keahlian dan detail jurusan dapat diakses', function () {

@@ -7,19 +7,27 @@
 <!-- Header & Breadcrumb -->
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    @if(!empty($gambarBanner ?? $banner ?? null))
+        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+            <img src="{{ $gambarBanner ?? $banner }}" alt="Galeri Foto & Video" 
+                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+        </div>
+    @endif
     <div class="container-custom relative z-10">
         <nav aria-label="Breadcrumb" class="mb-4">
             <ol class="flex items-center space-x-2 text-xs md:text-sm text-slate-300">
-                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition">Beranda</a></li>
+                <li><a href="{{ url(app('tenant')->slug) }}" class="hover:text-white transition drop-shadow-xs">Beranda</a></li>
                 <li><span class="text-slate-500">/</span></li>
-                <li class="text-sky-300 font-medium">Galeri Sekolah</li>
+                <li class="text-sky-300 font-medium drop-shadow-xs">Galeri Sekolah</li>
             </ol>
         </nav>
-        <div class="max-w-2xl">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3">
+        <div class="max-w-4xl lg:max-w-5xl">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
                 Galeri Foto & Video
             </h1>
-            <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+            <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
                 Merekam setiap momen bersejarah, kreasi siswa vokasi, pameran karya, dan interaksi hangat di lingkungan {{ $sekolah['nama'] }}.
             </p>
         </div>
@@ -109,10 +117,15 @@
                             </div>
                         @else
                             <img src="{{ $src }}" 
+                                 alt="" 
+                                 aria-hidden="true" 
+                                 class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+                            <img src="{{ $src }}" 
                                  alt="{{ $item->judul_item ?? $item->caption ?? $alb->nama_album }}" 
                                  loading="lazy"
-                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                 style="{{ \App\Services\MediaService::getCropStyle($src) }}"
+                                 class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 z-20 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                 <span class="p-2.5 rounded-full bg-white/90 text-slate-900 shadow">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
                                 </span>

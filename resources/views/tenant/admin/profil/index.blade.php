@@ -38,7 +38,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6" 
      x-data="profilManager({
-         activeTab: '{{ request('tab', 'identitas') }}',
+         activeTab: '{{ request('tab', 'datadiri') }}',
          toastMsg: '{{ session('success') ?? '' }}',
          diagrams: {{ Js::from($diagrams ?? []) }}
      })"
@@ -77,13 +77,22 @@
 
     <!-- Tab Navigation Pills -->
     <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
+        <button type="button" @click="setTab('datadiri')"
+                :class="activeTab === 'datadiri' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            1. Data Diri Sekolah
+        </button>
+
         <button type="button" @click="setTab('identitas')"
                 :class="activeTab === 'identitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
                 class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            1. Profil Lengkap
+            2. Profil Lengkap
         </button>
 
         <button type="button" @click="setTab('sejarah')"
@@ -92,7 +101,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            2. Sejarah Sekolah
+            3. Sejarah Sekolah
         </button>
 
         <button type="button" @click="setTab('visimisi')"
@@ -101,7 +110,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            3. Visi, Misi &amp; Tujuan
+            4. Visi, Misi &amp; Tujuan
         </button>
 
         <button type="button" @click="setTab('struktur')"
@@ -110,7 +119,16 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            4. Struktur Organisasi
+            5. Struktur Organisasi
+        </button>
+
+        <button type="button" @click="setTab('guru')"
+                :class="activeTab === 'guru' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
+                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            6. Guru &amp; Tenaga Kependidikan
         </button>
 
         <button type="button" @click="setTab('visibilitas')"
@@ -120,35 +138,39 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-            5. Visibilitas Menu &amp; Rute
+            7. Visibilitas Menu &amp; Rute
         </button>
     </div>
 
-    <!-- TAB 1: IDENTITAS & SAMBUTAN -->
-    <div x-show="activeTab === 'identitas'" x-cloak class="space-y-6">
-        <form action="{{ route('tenant.admin.profil.identitas.update', ['tenant' => app('tenant')->slug]) }}" method="POST" @submit="submitLoading = true">
+    <!-- TAB 1: DATA DIRI SEKOLAH -->
+    <div x-show="activeTab === 'datadiri'" x-cloak class="space-y-6">
+        <form action="{{ route('tenant.admin.profil.identitas.update', ['tenant' => app('tenant')->slug]) }}" 
+              method="POST" 
+              @submit="submitLoading = true">
             @csrf
             @method('PUT')
+            <input type="hidden" name="form_type" value="datadiri">
+            <input type="hidden" name="current_tab" value="datadiri">
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Data Pokok Sekolah (Left 7 Cols) -->
+                <!-- Data Pokok Sekolah & Medsos (Left 7 Cols) -->
                 <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
                     <div class="border-b border-slate-100 pb-3">
                         <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">Data Pokok Satuan Pendidikan</h2>
-                        <p class="text-xs text-slate-500">Informasi resmi identitas sekolah dan header hero halaman profil.</p>
+                        <p class="text-xs text-slate-500">Informasi resmi identitas sekolah untuk header, footer, dan kartu profil.</p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nama Satuan Pendidikan <span class="text-rose-500">*</span></label>
                             <input type="text" name="nama_sekolah" value="{{ old('nama_sekolah', $pengaturan['nama_sekolah']) }}" required
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Slogan / Tagline Sekolah</label>
                             <input type="text" name="slogan" value="{{ old('slogan', $pengaturan['slogan']) }}"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div class="sm:col-span-2">
@@ -178,93 +200,88 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">NPSN <span class="text-rose-500">*</span></label>
                             <input type="text" name="npsn" value="{{ old('npsn', $pengaturan['npsn']) }}" required
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Peringkat Akreditasi <span class="text-rose-500">*</span></label>
                             <input type="text" name="akreditasi" value="{{ old('akreditasi', $pengaturan['akreditasi']) }}" required
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Tahun Berdiri <span class="text-rose-500">*</span></label>
                             <input type="text" name="tahun_berdiri" value="{{ old('tahun_berdiri', $pengaturan['tahun_berdiri']) }}" required
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Telepon Resmi</label>
                             <input type="text" name="no_telepon" value="{{ old('no_telepon', $pengaturan['no_telepon']) }}"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Lengkap</label>
                             <textarea name="alamat" rows="2"
-                                      class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">{{ old('alamat', $pengaturan['alamat']) }}</textarea>
+                                      class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">{{ old('alamat', $pengaturan['alamat']) }}</textarea>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Email Sekolah</label>
                             <input type="email" name="email_sekolah" value="{{ old('email_sekolah', $pengaturan['email_sekolah']) }}"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp Humas / SPMB</label>
                             <input type="text" name="whatsapp" value="{{ old('whatsapp', $pengaturan['whatsapp']) }}"
-                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         </div>
 
-                        <!-- Hero Banner Customization for Profil Overview -->
-                        <div class="sm:col-span-2 pt-4 border-t border-slate-100 space-y-4">
-                            <div class="border-b border-slate-100 pb-2">
-                                <h3 class="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    Kustomisasi Hero Banner (Halaman Profil Publik)
-                                </h3>
-                                <p class="text-[11px] text-slate-500">Atur judul utama, deskripsi, pola dekoratif, dan gambar latar hero.</p>
-                            </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Jam Layanan Sekolah</label>
+                            <input type="text" name="jam_layanan" value="{{ old('jam_layanan', $pengaturan['jam_layanan']) }}"
+                                   class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   placeholder="Contoh: Senin - Jumat: 07.00 - 16.00 WIB">
+                        </div>
 
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Judul Utama Hero Banner</label>
-                                <input type="text" name="judul_profil" value="{{ old('judul_profil', $halamanProfil->judul ?? ('Profil ' . $pengaturan['nama_sekolah'])) }}"
-                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
-                                       placeholder="Contoh: Profil Singkat & Nilai Budaya Sekolah">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas / Subjudul Hero</label>
-                                <textarea name="subjudul_profil" rows="2"
-                                          class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
-                                          placeholder="Contoh: Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.">{{ old('subjudul_profil', $halamanProfil->subjudul) }}</textarea>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Media Sosial Resmi Satuan Pendidikan -->
+                        <div class="sm:col-span-2 pt-3 border-t border-slate-100">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                Akun Media Sosial Resmi (Tampil di Footer)
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1">Pola Dekorasi Latar</label>
-                                    <select name="pola_latar_profil" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                                        <option value="dots" {{ ($halamanProfil->pola_latar ?? 'dots') === 'dots' ? 'selected' : '' }}>Titik-titik Aksial (Radial Dots)</option>
-                                        <option value="grid" {{ ($halamanProfil->pola_latar ?? '') === 'grid' ? 'selected' : '' }}>Kisi Garis Kotak (Grid Blueprint)</option>
-                                        <option value="mesh" {{ ($halamanProfil->pola_latar ?? '') === 'mesh' ? 'selected' : '' }}>Gradasi Aksen Halus (Soft Mesh)</option>
-                                        <option value="polos" {{ ($halamanProfil->pola_latar ?? '') === 'polos' ? 'selected' : '' }}>Polos Bersih (Tanpa Pola)</option>
-                                    </select>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Instagram URL</label>
+                                    <input type="url" name="instagram" value="{{ old('instagram', $pengaturan['instagram'] ?? '') }}"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                           placeholder="https://instagram.com/akunsekolah">
                                 </div>
-
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1">Gambar Latar Hero (Pusat Media)</label>
-                                    <div class="flex gap-2">
-                                        <input type="text" name="gambar_banner_profil" id="input_banner_profil" value="{{ old('gambar_banner_profil', $halamanProfil->gambar_banner) }}"
-                                               class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
-                                               placeholder="https://... atau pilih media">
-                                        <button type="button" @click="openMediaPicker('input_banner_profil')" 
-                                                class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1 cursor-pointer">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                            Pilih
-                                        </button>
-                                    </div>
-                                    <p class="text-[10px] text-slate-400 mt-1">Jika diisi, gambar akan tampil artistik di sisi kanan hero dengan efek gradual fade ke kiri &amp; drop-shadow teks.</p>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Facebook URL</label>
+                                    <input type="url" name="facebook" value="{{ old('facebook', $pengaturan['facebook'] ?? '') }}"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                           placeholder="https://facebook.com/akunsekolah">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">YouTube Channel URL</label>
+                                    <input type="url" name="youtube" value="{{ old('youtube', $pengaturan['youtube'] ?? '') }}"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                           placeholder="https://youtube.com/@akunsekolah">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">TikTok URL</label>
+                                    <input type="url" name="tiktok" value="{{ old('tiktok', $pengaturan['tiktok'] ?? '') }}"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                           placeholder="https://tiktok.com/@akunsekolah">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">X (Twitter) URL</label>
+                                    <input type="url" name="twitter" value="{{ old('twitter', $pengaturan['twitter'] ?? '') }}"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                           placeholder="https://x.com/akunsekolah">
                                 </div>
                             </div>
                         </div>
@@ -284,19 +301,31 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap &amp; Gelar</label>
                                 <input type="text" name="nama_kepsek" value="{{ old('nama_kepsek', $pengaturan['nama_kepsek']) }}"
-                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">NIP Kepala Sekolah</label>
                                 <input type="text" name="nip_kepsek" value="{{ old('nip_kepsek', $pengaturan['nip_kepsek']) }}"
-                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                                       class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1">Foto Kepala Sekolah (Pusat Media)</label>
-                                <div class="flex gap-2">
-                                    <input type="text" name="foto_kepsek" id="input_foto_kepsek" value="{{ old('foto_kepsek', $pengaturan['foto_kepsek']) }}"
+                                <div class="flex gap-2 items-center">
+                                    <div class="w-10 h-13 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                        <template x-if="fotoKepsekPreview">
+                                            <div class="w-full h-full relative flex items-center justify-center">
+                                                <img :src="fotoKepsekPreview" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                                                <img :src="fotoKepsekPreview" alt="Kepsek Preview" :style="fotoKepsekCropStyle || ''" class="relative z-10 w-full h-full object-cover">
+                                            </div>
+                                        </template>
+                                        <template x-if="!fotoKepsekPreview">
+                                            <span class="text-[9px] text-slate-500 font-mono">3:4</span>
+                                        </template>
+                                    </div>
+                                    <input type="text" name="foto_kepsek" id="input_foto_kepsek" 
+                                           x-model="fotoKepsekPreview"
                                            class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
                                            placeholder="https://... atau pilih dari pustaka media">
                                     <button type="button" @click="openMediaPicker('input_foto_kepsek')" 
@@ -305,6 +334,7 @@
                                         Pilih Media
                                     </button>
                                 </div>
+                                <p class="text-[10px] text-slate-400 mt-1">Rasio baku portrait 3:4. Otomatis membaca framing crop dari Pustaka Media.</p>
                             </div>
 
                             <div>
@@ -365,7 +395,108 @@
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                     </template>
-                    <span x-text="submitLoading ? 'Menyimpan ke Database...' : 'Simpan Identitas & Sambutan'"></span>
+                    <span x-text="submitLoading ? 'Menyimpan ke Database...' : 'Simpan Data Diri Sekolah'"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TAB 2: PROFIL LENGKAP & BUDAYA SEKOLAH -->
+    <div x-show="activeTab === 'identitas'" x-cloak class="space-y-6">
+        <form action="{{ route('tenant.admin.profil.identitas.update', ['tenant' => app('tenant')->slug]) }}" 
+              method="POST" 
+              @submit="syncEditor('editor_profil', 'isi_profil'); submitLoading = true">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="form_type" value="halaman_profil">
+            <input type="hidden" name="current_tab" value="identitas">
+
+            <!-- Hero Customization for Profil Page (Top Banner) -->
+            <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Kustomisasi Hero Banner (Halaman Profil Publik)
+                        </h2>
+                        <p class="text-xs text-slate-500">Atur judul utama, deskripsi ringkas, dan gambar latar hero pada halaman profil.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Judul Utama Hero Banner <span class="text-rose-500">*</span></label>
+                        <input type="text" name="judul_profil" value="{{ old('judul_profil', $halamanProfil->judul ?? ('Profil ' . $pengaturan['nama_sekolah'])) }}" required
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                               placeholder="Contoh: Profil Singkat & Nilai Budaya Sekolah">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas / Subjudul Hero</label>
+                        <textarea name="subjudul_profil" rows="2"
+                                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                  placeholder="Contoh: Mengenal lebih dekat sejarah, visi misi, budaya kerja, dan pimpinan satuan pendidikan kejuruan berprestasi.">{{ old('subjudul_profil', $halamanProfil->subjudul) }}</textarea>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Gambar Latar Hero (Pusat Media)</label>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-16 h-10 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                <template x-if="bannerProfilPreview">
+                                    <img :src="bannerProfilPreview" alt="Banner Preview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!bannerProfilPreview">
+                                    <span class="text-[9px] text-slate-500 font-mono">16:9</span>
+                                </template>
+                            </div>
+                            <input type="text" name="gambar_banner_profil" id="input_banner_profil" 
+                                   x-model="bannerProfilPreview"
+                                   class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   placeholder="https://... atau pilih dari Pusat Berkas Media">
+                            <button type="button" @click="openMediaPicker('input_banner_profil')" 
+                                    class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Pilih dari Media
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Rasio standar 16:9 / 21:9. Tampil artistik di hero dengan efek fade halus.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uraian Lengkap Profil Sekolah (WYSIWYG Editor) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Uraian Lengkap Profil &amp; Budaya Sekolah (WYSIWYG)
+                        </h2>
+                        <p class="text-xs text-slate-500">Teks bebas untuk menjelaskan nilai budaya, keunggulan, atau pengantar sekolah yang tampil di halaman profil publik.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <!-- Hidden textarea that gets submitted -->
+                    <textarea name="isi_konten_profil" id="isi_profil" class="hidden">{!! old('isi_konten_profil', $halamanProfil->isi_konten) !!}</textarea>
+                    
+                    <!-- Quill Editor Element -->
+                    <div id="editor_profil">{!! old('isi_konten_profil', $halamanProfil->isi_konten) !!}</div>
+                </div>
+            </div>
+
+            <!-- Submit Bottom Bar -->
+            <div class="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                <button type="submit" 
+                        :disabled="submitLoading"
+                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                    <template x-if="submitLoading">
+                        <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </template>
+                    <span x-text="submitLoading ? 'Menyimpan ke Database...' : 'Simpan Halaman Profil'"></span>
                 </button>
             </div>
         </form>
@@ -387,20 +518,10 @@
 
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
+                        <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Judul Halaman Sejarah <span class="text-rose-500">*</span></label>
                             <input type="text" name="judul" value="{{ old('judul', $halamanSejarah->judul) }}" required
                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Pola Dekorasi Latar Hero Banner</label>
-                            <select name="pola_latar" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                                <option value="dots" {{ ($halamanSejarah->pola_latar ?? 'dots') === 'dots' ? 'selected' : '' }}>Titik-titik Aksial (Radial Dots)</option>
-                                <option value="grid" {{ ($halamanSejarah->pola_latar ?? '') === 'grid' ? 'selected' : '' }}>Kisi Garis Kotak (Grid Blueprint)</option>
-                                <option value="mesh" {{ ($halamanSejarah->pola_latar ?? '') === 'mesh' ? 'selected' : '' }}>Gradasi Aksen Halus (Soft Mesh)</option>
-                                <option value="polos" {{ ($halamanSejarah->pola_latar ?? '') === 'polos' ? 'selected' : '' }}>Polos Bersih (Tanpa Pola)</option>
-                            </select>
                         </div>
 
                         <div class="sm:col-span-2">
@@ -428,7 +549,7 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-bold text-slate-700">Isi Teks Sejarah (WYSIWYG) <span class="text-rose-500">*</span></label>
-                            <span class="text-[11px] text-slate-400">Gunakan toolbar untuk format teks, list, heading &amp; kutipan</span>
+                            <span class="text-[10px] text-slate-400">Gunakan toolbar untuk format teks, list, heading &amp; kutipan</span>
                         </div>
                         
                         <!-- Hidden textarea that gets submitted -->
@@ -472,20 +593,10 @@
 
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
+                        <div class="sm:col-span-2">
                             <label class="block text-xs font-bold text-slate-700 mb-1">Judul Halaman Visi &amp; Misi <span class="text-rose-500">*</span></label>
                             <input type="text" name="judul" value="{{ old('judul', $halamanVisiMisi->judul) }}" required
                                    class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Pola Dekorasi Latar Hero Banner</label>
-                            <select name="pola_latar" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                                <option value="dots" {{ ($halamanVisiMisi->pola_latar ?? 'dots') === 'dots' ? 'selected' : '' }}>Titik-titik Aksial (Radial Dots)</option>
-                                <option value="grid" {{ ($halamanVisiMisi->pola_latar ?? '') === 'grid' ? 'selected' : '' }}>Kisi Garis Kotak (Grid Blueprint)</option>
-                                <option value="mesh" {{ ($halamanVisiMisi->pola_latar ?? '') === 'mesh' ? 'selected' : '' }}>Gradasi Aksen Halus (Soft Mesh)</option>
-                                <option value="polos" {{ ($halamanVisiMisi->pola_latar ?? '') === 'polos' ? 'selected' : '' }}>Polos Bersih (Tanpa Pola)</option>
-                            </select>
                         </div>
 
                         <div class="sm:col-span-2">
@@ -513,7 +624,7 @@
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
                             <label class="block text-xs font-bold text-slate-700">Isi Visi, Misi &amp; Sasaran Mutu (WYSIWYG) <span class="text-rose-500">*</span></label>
-                            <span class="text-[11px] text-slate-400">Dapat menyusun poin visi, misi, dan indikator sasaran dengan rapi</span>
+                            <span class="text-[10px] text-slate-400">Dapat menyusun poin visi, misi, dan indikator sasaran dengan rapi</span>
                         </div>
                         
                         <!-- Hidden textarea that gets submitted -->
@@ -544,146 +655,153 @@
     <!-- TAB 4: STRUKTUR ORGANISASI -->
     <div x-show="activeTab === 'struktur'" x-cloak class="space-y-6">
         
-        <!-- Pengaturan Mode Tampilan Halaman Struktur Publik & Hero Banner -->
-        <form action="{{ route('tenant.admin.profil.struktur.update', ['tenant' => app('tenant')->slug]) }}" method="POST" @submit="submitLoading = true">
+        <!-- Pengaturan Hero Banner & Bagan Diagram Struktur -->
+        <form action="{{ route('tenant.admin.profil.struktur.update', ['tenant' => app('tenant')->slug]) }}" method="POST" @submit="submitLoading = true" class="space-y-6">
             @csrf
             @method('PUT')
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-6">
-                
-                <!-- Pilihan Mode Tampilan Struktur di Publik -->
-                <div class="p-4 sm:p-5 bg-gradient-to-r from-blue-50/80 to-indigo-50/60 rounded-2xl border border-blue-100 space-y-3">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 font-heading flex items-center gap-2">
-                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                Mode Pilihan Tampilan Halaman Struktur Publik
-                            </h3>
-                            <p class="text-xs text-slate-600">Tentukan konten apa saja yang tampil di halaman publik <code>/profil/struktur</code>.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                        <label class="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-2xs">
-                            <input type="radio" name="mode_tampilan_struktur" value="semua" {{ ($pengaturan['mode_tampilan_struktur'] ?? 'semua') === 'semua' ? 'checked' : '' }} class="mt-0.5 text-blue-600 focus:ring-blue-500">
-                            <div>
-                                <span class="block text-xs font-bold text-slate-800">Tampilkan Keduanya</span>
-                                <span class="block text-[11px] text-slate-500 mt-0.5">Pengunjung dapat beralih antara Tab Jajaran Pejabat &amp; Bagan Diagram.</span>
-                            </div>
-                        </label>
-
-                        <label class="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-2xs">
-                            <input type="radio" name="mode_tampilan_struktur" value="pejabat" {{ ($pengaturan['mode_tampilan_struktur'] ?? 'semua') === 'pejabat' ? 'checked' : '' }} class="mt-0.5 text-blue-600 focus:ring-blue-500">
-                            <div>
-                                <span class="block text-xs font-bold text-slate-800">Hanya Jajaran Pejabat</span>
-                                <span class="block text-[11px] text-slate-500 mt-0.5">Hanya menampilkan kartu foto jajaran pimpinan &amp; pejabat struktural.</span>
-                            </div>
-                        </label>
-
-                        <label class="flex items-start gap-3 p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 cursor-pointer transition shadow-2xs">
-                            <input type="radio" name="mode_tampilan_struktur" value="diagram" {{ ($pengaturan['mode_tampilan_struktur'] ?? 'semua') === 'diagram' ? 'checked' : '' }} class="mt-0.5 text-blue-600 focus:ring-blue-500">
-                            <div>
-                                <span class="block text-xs font-bold text-slate-800">Hanya Bagan Diagram</span>
-                                <span class="block text-[11px] text-slate-500 mt-0.5">Hanya menampilkan gambar diagram alur bagan organisasi.</span>
-                            </div>
-                        </label>
+            <!-- Hero Customization for Struktur Page (Top Banner Card) -->
+            <div class="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Kelola Struktur Organisasi &amp; Kustomisasi Hero Banner
+                        </h2>
+                        <p class="text-xs text-slate-500">Atur judul utama, deskripsi ringkas, dan gambar latar hero pada halaman struktur organisasi publik.</p>
                     </div>
                 </div>
 
-                <!-- Hero Customization for Struktur Page -->
-                <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1">Pola Dekorasi Latar Hero Banner (Struktur)</label>
-                        <select name="pola_latar_struktur" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:border-blue-500 transition">
-                            <option value="dots" {{ ($halamanStruktur->pola_latar ?? 'dots') === 'dots' ? 'selected' : '' }}>Titik-titik Aksial (Radial Dots)</option>
-                            <option value="grid" {{ ($halamanStruktur->pola_latar ?? '') === 'grid' ? 'selected' : '' }}>Kisi Garis Kotak (Grid Blueprint)</option>
-                            <option value="mesh" {{ ($halamanStruktur->pola_latar ?? '') === 'mesh' ? 'selected' : '' }}>Gradasi Aksen Halus (Soft Mesh)</option>
-                            <option value="polos" {{ ($halamanStruktur->pola_latar ?? '') === 'polos' ? 'selected' : '' }}>Polos Bersih (Tanpa Pola)</option>
-                        </select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Judul Halaman Struktur Organisasi <span class="text-rose-500">*</span></label>
+                        <input type="text" name="judul_struktur" value="{{ old('judul_struktur', $halamanStruktur->judul ?? 'Struktur Organisasi Sekolah') }}" required
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                               placeholder="Contoh: Struktur Organisasi Sekolah">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-800 mb-1">Deskripsi Ringkas / Subjudul Hero (Struktur)</label>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas / Subjudul Hero (Struktur)</label>
                         <textarea name="subjudul_struktur" rows="2"
-                                  class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:border-blue-500 transition">{{ old('subjudul_struktur', $halamanStruktur->subjudul) }}</textarea>
+                                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                  placeholder="Contoh: Susunan hierarki kepemimpinan, jajaran manajerial, dan unit pelaksana teknis sekolah.">{{ old('subjudul_struktur', $halamanStruktur->subjudul) }}</textarea>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Foto Banner / Sampul Struktur (Pusat Media)</label>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-16 h-10 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                <template x-if="bannerStrukturPreview">
+                                    <img :src="bannerStrukturPreview" alt="Banner Struktur Preview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!bannerStrukturPreview">
+                                    <span class="text-[9px] text-slate-500 font-mono">16:9</span>
+                                </template>
+                            </div>
+                            <input type="text" name="gambar_banner_struktur" id="input_banner_struktur" 
+                                   x-model="bannerStrukturPreview"
+                                   class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   placeholder="https://... atau pilih dari Pusat Berkas Media">
+                            <button type="button" @click="openMediaPicker('input_banner_struktur')" 
+                                    class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Pilih dari Media
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Rasio baku 16:9 / 21:9. Tampil sebagai latar banner di bagian atas halaman publik struktur organisasi.</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Bagian A: Diagram Struktur Organisasi (Dynamic Repeater) -->
+            <!-- Card 2: Bagan Diagram Struktur Organisasi (Dynamic Repeater) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">1. Bagan Diagram Struktur Organisasi</h2>
+                        <p class="text-xs text-slate-500">Diagram gambar alur hierarki manajemen sekolah, TEFA/Hubin, dan Bengkel/Lab Praktik.</p>
+                    </div>
+                    <button type="button" 
+                            @click="tambahBagan()" 
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 self-start cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Tambah Bagan Baru
+                    </button>
+                </div>
+
+                <!-- Repeater List -->
                 <div class="space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                        <div>
-                            <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">1. Bagan Diagram Struktur Organisasi</h2>
-                            <p class="text-xs text-slate-500">Diagram gambar alur hierarki manajemen sekolah, TEFA/Hubin, dan Bengkel/Lab Praktik.</p>
-                        </div>
-                        <button type="button" 
-                                @click="tambahBagan()" 
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 self-start cursor-pointer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                            Tambah Bagan Baru
-                        </button>
-                    </div>
+                    <template x-for="(diag, index) in diagramList" :key="index">
+                        <div class="p-4 sm:p-5 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-3 relative group">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-bold text-blue-900 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-extrabold" x-text="index + 1"></span>
+                                    <span x-text="diag.judul ? diag.judul : `Bagan Diagram #${index + 1}`"></span>
+                                </h3>
+                                <button type="button" 
+                                        @click="hapusBagan(index)" 
+                                        class="px-2.5 py-1 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    Hapus Bagan
+                                </button>
+                            </div>
 
-                    <!-- Repeater List -->
-                    <div class="space-y-4">
-                        <template x-for="(diag, index) in diagramList" :key="index">
-                            <div class="p-4 sm:p-5 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-3 relative group">
-                                <div class="flex items-center justify-between">
-                                    <h3 class="text-xs font-bold text-blue-900 flex items-center gap-2">
-                                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-extrabold" x-text="index + 1"></span>
-                                        <span x-text="diag.judul ? diag.judul : `Bagan Diagram #${index + 1}`"></span>
-                                    </h3>
-                                    <button type="button" 
-                                            @click="hapusBagan(index)" 
-                                            class="px-2.5 py-1 text-xs font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-lg transition flex items-center gap-1 cursor-pointer">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                        Hapus Bagan
-                                    </button>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Judul Bagan <span class="text-rose-500">*</span></label>
+                                    <input type="text" :name="`diagrams[${index}][judul]`" x-model="diag.judul" required
+                                           placeholder="Contoh: Bagan Struktur Utama Manajemen Sekolah"
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Judul Bagan <span class="text-rose-500">*</span></label>
-                                        <input type="text" :name="`diagrams[${index}][judul]`" x-model="diag.judul" required
-                                               placeholder="Contoh: Bagan Struktur Utama Manajemen Sekolah"
-                                               class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:border-blue-500 transition">
-                                    </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas</label>
+                                    <input type="text" :name="`diagrams[${index}][deskripsi]`" x-model="diag.deskripsi"
+                                           placeholder="Contoh: Alur garis komando dan koordinasi Kepala Sekolah..."
+                                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                                </div>
 
-                                    <div>
-                                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Deskripsi Ringkas</label>
-                                        <input type="text" :name="`diagrams[${index}][deskripsi]`" x-model="diag.deskripsi"
-                                               placeholder="Contoh: Alur garis komando dan koordinasi Kepala Sekolah..."
-                                               class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:border-blue-500 transition">
-                                    </div>
-
-                                    <div class="sm:col-span-2">
-                                        <label class="block text-[11px] font-bold text-slate-700 mb-1">URL Gambar Diagram (Pusat Berkas Media) <span class="text-rose-500">*</span></label>
-                                        <div class="flex gap-2">
-                                            <input type="text" :name="`diagrams[${index}][gambar]`" :id="`input_diag_${index}`" x-model="diag.gambar" required
-                                                   placeholder="https://... atau pilih dari Pusat Media"
-                                                   class="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 focus:border-blue-500 transition">
-                                            <button type="button" @click="openMediaPicker(`input_diag_${index}`)" 
-                                                    class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1 cursor-pointer">
-                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                                Pilih Media
-                                            </button>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">URL Gambar Diagram (Pusat Berkas Media) <span class="text-rose-500">*</span></label>
+                                    <div class="flex gap-2 items-center">
+                                        <div class="w-16 h-10 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                            <template x-if="diag.gambar">
+                                                <img :src="diag.gambar" alt="Diagram Preview" class="w-full h-full object-cover">
+                                            </template>
+                                            <template x-if="!diag.gambar">
+                                                <span class="text-[9px] text-slate-500 font-mono">16:9</span>
+                                            </template>
                                         </div>
+                                        <input type="text" :name="`diagrams[${index}][gambar]`" :id="`input_diag_${index}`" x-model="diag.gambar" required
+                                               placeholder="https://... atau pilih dari Pusat Media"
+                                               class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                                        <button type="button" @click="openMediaPicker(`input_diag_${index}`)" 
+                                                class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            Pilih Media
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </template>
+                        </div>
+                    </template>
 
-                        <template x-if="diagramList.length === 0">
-                            <div class="py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 p-6">
-                                <p class="text-xs text-slate-500">Belum ada bagan diagram. Klik tombol <strong>"Tambah Bagan Baru"</strong> di atas.</p>
-                            </div>
-                        </template>
-                    </div>
+                    <template x-if="diagramList.length === 0">
+                        <div class="py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 p-6">
+                            <p class="text-xs text-slate-500">Belum ada bagan diagram. Klik tombol <strong>"Tambah Bagan Baru"</strong> di atas.</p>
+                        </div>
+                    </template>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
                     <button type="submit" 
                             :disabled="submitLoading"
                             class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                        <template x-if="submitLoading">
+                            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </template>
                         <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Bagan Diagram & Hero'"></span>
                     </button>
                 </div>
@@ -722,10 +840,13 @@
                         <tr class="hover:bg-slate-50/70 transition">
                             <td class="px-4 py-3 font-bold text-slate-500">{{ $pejabat->urutan }}</td>
                             <td class="px-4 py-3">
-                                <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-slate-200 relative flex items-center justify-center">
+                                    <img src="{{ !empty($pejabat->foto) ? $pejabat->foto : asset('images/logo-smkn2.svg') }}" 
+                                         alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-30 pointer-events-none">
                                     <img src="{{ !empty($pejabat->foto) ? $pejabat->foto : asset('images/logo-smkn2.svg') }}" 
                                          alt="{{ $pejabat->nama_lengkap }}" 
-                                         class="w-full h-full object-cover">
+                                         style="{{ $pejabat->foto_crop_style }}"
+                                         class="relative z-10 w-full h-full object-cover">
                                 </div>
                             </td>
                             <td class="px-4 py-3 font-bold text-slate-900">{{ $pejabat->nama_lengkap }}</td>
@@ -742,13 +863,14 @@
                             <td class="px-4 py-3 text-right space-x-1 whitespace-nowrap">
                                 <button type="button" 
                                         @click="editPejabat({
-                                            id: {{ $pejabat->id }},
-                                            nama: '{{ addslashes($pejabat->nama_lengkap) }}',
-                                            jabatan: '{{ addslashes($pejabat->jabatan) }}',
-                                            guru_id: '{{ $pejabat->guru_id }}',
-                                            foto: '{{ addslashes($pejabat->foto) }}',
-                                            urutan: {{ $pejabat->urutan }}
-                                        })"
+                                             id: {{ $pejabat->id }},
+                                             nama: '{{ addslashes($pejabat->nama_lengkap) }}',
+                                             jabatan: '{{ addslashes($pejabat->jabatan) }}',
+                                             guru_id: '{{ $pejabat->guru_id }}',
+                                             foto: '{{ addslashes($pejabat->foto) }}',
+                                             crop_style: '{{ addslashes($pejabat->foto_crop_style) }}',
+                                             urutan: {{ $pejabat->urutan }}
+                                         })"
                                         class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition cursor-pointer">
                                     Edit
                                 </button>
@@ -772,7 +894,212 @@
         </div>
     </div>
 
-    <!-- TAB 5: VISIBILITAS MENU & RUTE PUBLIK -->
+    <!-- TAB 6: GURU & TENAGA KEPENDIDIKAN -->
+    <div x-show="activeTab === 'guru'" x-cloak class="space-y-6">
+        <!-- Card 1: Kustomisasi Hero Banner (Halaman Guru & Staf Publik) -->
+        <form action="{{ route('tenant.admin.profil.guru.hero.update', ['tenant' => app('tenant')->slug]) }}" method="POST" @submit="submitLoading = true" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="p-5 sm:p-6 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            Kustomisasi Hero Banner (Halaman Guru &amp; Staf Publik)
+                        </h2>
+                        <p class="text-xs text-slate-500">Atur judul utama, deskripsi ringkas, dan gambar latar hero pada halaman direktori guru &amp; tenaga kependidikan publik.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Judul Halaman Guru &amp; Staf <span class="text-rose-500">*</span></label>
+                        <input type="text" name="judul_guru" value="{{ old('judul_guru', $halamanGuru->judul ?? 'Guru & Tenaga Kependidikan') }}" required
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                               placeholder="Contoh: Guru & Tenaga Kependidikan">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Ringkas / Subjudul Hero</label>
+                        <textarea name="subjudul_guru" rows="2"
+                                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                  placeholder="Contoh: Profil tenaga pendidik profesional dan staf tata usaha yang berdedikasi membentuk generasi unggul.">{{ old('subjudul_guru', $halamanGuru->subjudul) }}</textarea>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Foto Banner / Sampul Guru (Pusat Media)</label>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-16 h-10 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                <template x-if="bannerGuruPreview">
+                                    <img :src="bannerGuruPreview" alt="Banner Guru Preview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!bannerGuruPreview">
+                                    <span class="text-[9px] text-slate-500 font-mono">16:9</span>
+                                </template>
+                            </div>
+                            <input type="text" name="gambar_banner_guru" id="input_banner_guru" 
+                                   x-model="bannerGuruPreview"
+                                   class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   placeholder="https://... atau pilih dari Pusat Berkas Media">
+                            <button type="button" @click="openMediaPicker('input_banner_guru')" 
+                                    class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Pilih dari Media
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Rasio baku 16:9 / 21:9. Tampil sebagai latar banner di bagian atas halaman publik /guru-staf.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                    <button type="submit" 
+                            :disabled="submitLoading"
+                            class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                        <template x-if="submitLoading">
+                            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </template>
+                        <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Hero Banner Guru'"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Card 2: Direktori Guru & Tenaga Kependidikan (CRUD Tabel) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4" x-data="{
+            searchGuru: '',
+            filterJk: '',
+            filterStatus: ''
+        }">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <div>
+                    <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-2">
+                        <span>Direktori Guru &amp; Tenaga Kependidikan</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">{{ count($allGuru) }} Orang</span>
+                    </h2>
+                    <p class="text-xs text-slate-500">Kelola master data pendidik dan tenaga kependidikan sekolah secara lengkap.</p>
+                </div>
+                <button type="button" @click="openModalGuru()"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5 self-start cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    + Tambah Guru / Staf
+                </button>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </span>
+                    <input type="text" x-model="searchGuru"
+                           placeholder="Cari nama, NIP, mapel, jabatan..."
+                           class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 transition">
+                </div>
+
+                <div>
+                    <select x-model="filterJk" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                        <option value="">Semua Jenis Kelamin</option>
+                        <option value="L">Laki-laki (L)</option>
+                        <option value="P">Perempuan (P)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <select x-model="filterStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                        <option value="">Semua Status Keaktifan</option>
+                        <option value="1">Aktif Saja</option>
+                        <option value="0">Non-Aktif Saja</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tabel Guru & Staf -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3">Foto (3:4)</th>
+                            <th class="px-4 py-3">Nama Lengkap &amp; NIP</th>
+                            <th class="px-4 py-3">L/P</th>
+                            <th class="px-4 py-3">Jabatan</th>
+                            <th class="px-4 py-3">Mata Pelajaran</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse($allGuru as $guru)
+                        <tr class="hover:bg-slate-50/70 transition"
+                            x-show="(!searchGuru || '{{ strtolower(addslashes($guru->nama_lengkap . ' ' . $guru->nip . ' ' . $guru->jabatan . ' ' . $guru->mata_pelajaran)) }}'.includes(searchGuru.toLowerCase())) &&
+                                    (!filterJk || '{{ $guru->jenis_kelamin }}' === filterJk) &&
+                                    (filterStatus === '' || '{{ (int)$guru->status_aktif }}' === filterStatus)">
+                            <td class="px-4 py-3">
+                                <div class="w-10 h-13 rounded-lg overflow-hidden bg-slate-900 border border-slate-200 relative flex items-center justify-center shrink-0">
+                                    <img src="{{ !empty($guru->foto) ? $guru->foto : asset('images/logo-smkn2.svg') }}" 
+                                         alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-30 pointer-events-none">
+                                    <img src="{{ !empty($guru->foto) ? $guru->foto : asset('images/logo-smkn2.svg') }}" 
+                                         alt="{{ $guru->nama_lengkap }}" 
+                                         style="{{ $guru->foto_crop_style }}"
+                                         class="relative z-10 w-full h-full object-cover">
+                                </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <p class="font-bold text-slate-900">{{ $guru->nama_lengkap }}</p>
+                                <p class="text-[11px] font-mono text-slate-500 mt-0.5">NIP: {{ $guru->nip ?: '-' }}</p>
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $guru->jenis_kelamin === 'L' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700' }}">
+                                    {{ $guru->jenis_kelamin === 'L' ? 'L' : 'P' }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 font-semibold text-slate-800">{{ $guru->jabatan ?: '-' }}</td>
+                            <td class="px-4 py-3 text-slate-600">{{ $guru->mata_pelajaran ?: '-' }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold {{ $guru->status_aktif ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
+                                    {{ $guru->status_aktif ? 'Aktif' : 'Non-Aktif' }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-right space-x-1 whitespace-nowrap">
+                                <button type="button" 
+                                        @click="editGuru({
+                                             id: {{ $guru->id }},
+                                             nama: '{{ addslashes($guru->nama_lengkap) }}',
+                                             nip: '{{ addslashes($guru->nip ?? '') }}',
+                                             jenis_kelamin: '{{ $guru->jenis_kelamin }}',
+                                             jabatan: '{{ addslashes($guru->jabatan ?? '') }}',
+                                             mata_pelajaran: '{{ addslashes($guru->mata_pelajaran ?? '') }}',
+                                             foto: '{{ addslashes($guru->foto ?? '') }}',
+                                             crop_style: '{{ addslashes($guru->foto_crop_style) }}',
+                                             status_aktif: {{ $guru->status_aktif ? 'true' : 'false' }}
+                                         })"
+                                        class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold rounded-lg transition cursor-pointer">
+                                    Edit
+                                </button>
+                                <button type="button" 
+                                        @click="deleteGuruConfirm({{ $guru->id }}, '{{ addslashes($guru->nama_lengkap) }}')"
+                                        class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold rounded-lg transition cursor-pointer">
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="px-4 py-8 text-center text-slate-400 italic">
+                                Belum ada data guru &amp; tenaga kependidikan. Klik "+ Tambah Guru / Staf" untuk menambahkan.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 7: VISIBILITAS MENU & RUTE PUBLIK -->
     <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
             <div class="border-b border-slate-100 pb-3">
@@ -1003,7 +1330,7 @@
                             class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                         <option value="">-- Bukan dari direktori Guru/Staf --</option>
                         @foreach($guruList as $guru)
-                            <option value="{{ $guru->id }}" data-nama="{{ $guru->nama_lengkap }}" data-foto="{{ $guru->foto ?? '' }}">
+                            <option value="{{ $guru->id }}" data-nama="{{ $guru->nama_lengkap }}" data-foto="{{ $guru->foto ?? '' }}" data-crop-style="{{ $guru->foto_crop_style }}">
                                 {{ $guru->nama_lengkap }} (NIP: {{ $guru->nip ?? '-' }})
                             </option>
                         @endforeach
@@ -1025,16 +1352,28 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Foto Pejabat (Pusat Media)</label>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 items-center">
+                        <div class="w-10 h-13 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                            <template x-if="pejabatForm.foto">
+                                <div class="w-full h-full relative flex items-center justify-center">
+                                    <img :src="pejabatForm.foto" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                                    <img :src="pejabatForm.foto" alt="Pejabat Preview" :style="pejabatForm.crop_style || ''" class="relative z-10 w-full h-full object-cover">
+                                </div>
+                            </template>
+                            <template x-if="!pejabatForm.foto">
+                                <span class="text-[9px] text-slate-500 font-mono">3:4</span>
+                            </template>
+                        </div>
                         <input type="text" name="foto" id="input_foto_pejabat_modal" x-model="pejabatForm.foto"
                                class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
-                               placeholder="https://...">
+                               placeholder="https://... atau pilih dari Pusat Media">
                         <button type="button" @click="openMediaPicker('input_foto_pejabat_modal')" 
                                 class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             Pilih Media
                         </button>
                     </div>
+                    <p class="text-[10px] text-slate-400 mt-1">Rasio baku portrait 3:4. Otomatis presisi di bagan struktur.</p>
                 </div>
 
                 <div>
@@ -1136,7 +1475,7 @@
                     <div class="h-64 flex flex-col items-center justify-center text-slate-400 text-center p-6">
                         <svg class="w-12 h-12 text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         <p class="text-xs font-semibold text-slate-600">Belum ada media yang cocok</p>
-                        <p class="text-[11px] text-slate-400 mt-1">Unggah berkas baru atau ubah kata kunci pencarian.</p>
+                        <p class="text-[10px] text-slate-400 mt-1">Unggah berkas baru atau ubah kata kunci pencarian.</p>
                     </div>
                 </template>
 
@@ -1149,7 +1488,7 @@
                                     
                                     <!-- 1. Gambar -->
                                     <template x-if="item.tipe_media === 'gambar'">
-                                        <img :src="item.url" :alt="item.judul" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                        <img :src="item.url" :alt="item.judul" :style="item.smart_crop_style || ''" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                     </template>
 
                                     <!-- 2. Video YouTube (Thumbnail Otomatis) -->
@@ -1271,6 +1610,141 @@
         </div>
     </div>
 
+    <!-- MODAL TAMBAH / EDIT GURU & STAF -->
+    <div x-show="modalGuruOpen" x-cloak 
+         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200"
+             @click.outside="modalGuruOpen = false">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="font-bold text-sm text-slate-900 font-heading" 
+                    x-text="guruForm.id ? 'Edit Data Guru / Tenaga Kependidikan' : 'Tambah Guru / Tenaga Kependidikan'"></h3>
+                <button type="button" @click="modalGuruOpen = false" class="text-slate-400 hover:text-slate-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form :action="guruForm.id ? `{{ url(app('tenant')->slug . '/admin/profil/guru') }}/${guruForm.id}` : `{{ route('tenant.admin.profil.guru.store', ['tenant' => app('tenant')->slug]) }}`" 
+                  method="POST" class="p-5 space-y-4">
+                @csrf
+                <template x-if="guruForm.id">
+                    @method('PUT')
+                </template>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap &amp; Gelar <span class="text-rose-500">*</span></label>
+                        <input type="text" name="nama_lengkap" x-model="guruForm.nama" required
+                               placeholder="Contoh: Drs. H. Ahmad Dahlan, M.Pd."
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">NIP (Opsional)</label>
+                        <input type="text" name="nip" x-model="guruForm.nip"
+                               placeholder="19800101 200501 1 001"
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
+                        <select name="jenis_kelamin" x-model="guruForm.jenis_kelamin" required
+                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                            <option value="L">Laki-laki (L)</option>
+                            <option value="P">Perempuan (P)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jabatan / Tugas</label>
+                        <input type="text" name="jabatan" x-model="guruForm.jabatan"
+                               placeholder="Contoh: Guru Produktif / Ka. Bengkel"
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Mata Pelajaran (Mapel)</label>
+                        <input type="text" name="mata_pelajaran" x-model="guruForm.mata_pelajaran"
+                               placeholder="Contoh: Pemrograman Web & Perangkat Bergerak"
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Foto Guru / Staf (Pusat Berkas Media)</label>
+                        <div class="flex gap-2 items-center">
+                            <div class="w-10 h-13 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
+                                <template x-if="guruForm.foto">
+                                    <div class="w-full h-full relative flex items-center justify-center">
+                                        <img :src="guruForm.foto" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                                        <img :src="guruForm.foto" alt="Guru Preview" :style="guruForm.crop_style || ''" class="relative z-10 w-full h-full object-cover">
+                                    </div>
+                                </template>
+                                <template x-if="!guruForm.foto">
+                                    <span class="text-[9px] text-slate-500 font-mono">3:4</span>
+                                </template>
+                            </div>
+                            <input type="text" name="foto" id="input_foto_guru_modal" x-model="guruForm.foto"
+                                   class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   placeholder="https://... atau pilih dari Pusat Media">
+                            <button type="button" @click="openMediaPicker('input_foto_guru_modal')" 
+                                    class="px-3.5 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Pilih Media
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">Rasio baku portrait 3:4. Otomatis membaca framing crop dari Pustaka Media.</p>
+                    </div>
+
+                    <div class="sm:col-span-2 flex items-center gap-2 pt-1">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="status_aktif" value="1" x-model="guruForm.status_aktif" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ml-2.5 text-xs font-semibold text-slate-700">Status Guru Aktif</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                    <button type="button" @click="modalGuruOpen = false"
+                            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" 
+                            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer">
+                        Simpan Data Guru
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI HAPUS GURU -->
+    <div x-show="modalDeleteGuruOpen" x-cloak 
+         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-slate-200"
+             @click.outside="modalDeleteGuruOpen = false">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-slate-900 font-heading">Hapus Data Guru / Staf?</h3>
+                    <p class="text-xs text-slate-500 mt-0.5" x-text="`Apakah Anda yakin ingin menghapus '${deleteTargetGuruNama}'?`"></p>
+                </div>
+            </div>
+
+            <form :action="`{{ url(app('tenant')->slug . '/admin/profil/guru') }}/${deleteTargetGuruId}`" method="POST" class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                @csrf
+                @method('DELETE')
+                <button type="button" @click="modalDeleteGuruOpen = false" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer">
+                    Ya, Hapus
+                </button>
+            </form>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -1280,20 +1754,26 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('profilManager', (config) => ({
-            activeTab: config.activeTab || 'identitas',
+            activeTab: config.activeTab || 'datadiri',
             showToast: !!config.toastMsg,
             toastMessage: config.toastMsg || '',
             submitLoading: false,
             logoPreview: '{{ old('logo', $pengaturan['logo'] ?? '') }}',
+            fotoKepsekPreview: '{{ old('foto_kepsek', $pengaturan['foto_kepsek'] ?? '') }}',
+            fotoKepsekCropStyle: '{{ \App\Services\MediaService::getCropStyle($pengaturan['foto_kepsek'] ?? '') }}',
+            bannerProfilPreview: '{{ old('gambar_banner_profil', $halamanProfil->gambar_banner ?? '') }}',
+            bannerStrukturPreview: '{{ old('gambar_banner_struktur', $halamanStruktur->gambar_banner ?? '') }}',
+            bannerGuruPreview: '{{ old('gambar_banner_guru', $halamanGuru->gambar_banner ?? '') }}',
 
             // Quill Editors
+            quillProfil: null,
             quillSejarah: null,
             quillVisiMisi: null,
 
             // Diagram Repeater List
             diagramList: Array.isArray(config.diagrams) ? JSON.parse(JSON.stringify(config.diagrams)) : [],
 
-            // Modals
+            // Modals Pejabat
             modalPejabatOpen: false,
             modalDeleteOpen: false,
             deleteTargetId: null,
@@ -1304,7 +1784,25 @@
                 jabatan: '',
                 guru_id: '',
                 foto: '',
+                crop_style: '',
                 urutan: 1
+            },
+
+            // Modals Guru & Staf
+            modalGuruOpen: false,
+            modalDeleteGuruOpen: false,
+            deleteTargetGuruId: null,
+            deleteTargetGuruNama: '',
+            guruForm: {
+                id: null,
+                nama: '',
+                nip: '',
+                jenis_kelamin: 'L',
+                jabatan: '',
+                mata_pelajaran: '',
+                foto: '',
+                crop_style: '',
+                status_aktif: true
             },
 
             // Dynamic Diagram Repeater Actions
@@ -1374,6 +1872,9 @@
                 url.searchParams.set('tab', tab);
                 window.history.replaceState({}, '', url);
 
+                if (tab === 'identitas' && !this.quillProfil) {
+                    this.$nextTick(() => this.initQuillEditors());
+                }
                 if (tab === 'sejarah' && !this.quillSejarah) {
                     this.$nextTick(() => this.initQuillEditors());
                 }
@@ -1390,6 +1891,15 @@
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     ['link', 'clean']
                 ];
+
+                const elProfil = document.getElementById('editor_profil');
+                if (elProfil && !this.quillProfil) {
+                    this.quillProfil = new Quill(elProfil, {
+                        theme: 'snow',
+                        placeholder: 'Tuliskan uraian profil sekolah, budaya kerja, atau pengantar umum...',
+                        modules: { toolbar: toolbarOptions }
+                    });
+                }
 
                 const elSejarah = document.getElementById('editor_sejarah');
                 if (elSejarah && !this.quillSejarah) {
@@ -1411,7 +1921,11 @@
             },
 
             syncEditor(editorId, textareaId) {
-                const quill = editorId === 'editor_sejarah' ? this.quillSejarah : this.quillVisiMisi;
+                let quill = null;
+                if (editorId === 'editor_profil') quill = this.quillProfil;
+                else if (editorId === 'editor_sejarah') quill = this.quillSejarah;
+                else if (editorId === 'editor_visimisi') quill = this.quillVisiMisi;
+
                 if (quill) {
                     document.getElementById(textareaId).value = quill.root.innerHTML;
                 }
@@ -1470,9 +1984,33 @@
                     }
                     if (this.mediaPickerTargetInput === 'input_foto_pejabat_modal') {
                         this.pejabatForm.foto = item.url;
+                        this.pejabatForm.crop_style = item.smart_crop_style || '';
+                    }
+                    if (this.mediaPickerTargetInput === 'input_foto_guru_modal') {
+                        this.guruForm.foto = item.url;
+                        this.guruForm.crop_style = item.smart_crop_style || '';
                     }
                     if (this.mediaPickerTargetInput === 'input_logo_sekolah') {
                         this.logoPreview = item.url;
+                    }
+                    if (this.mediaPickerTargetInput === 'input_foto_kepsek') {
+                        this.fotoKepsekPreview = item.url;
+                        this.fotoKepsekCropStyle = item.smart_crop_style || '';
+                    }
+                    if (this.mediaPickerTargetInput === 'input_banner_profil') {
+                        this.bannerProfilPreview = item.url;
+                    }
+                    if (this.mediaPickerTargetInput === 'input_banner_struktur') {
+                        this.bannerStrukturPreview = item.url;
+                    }
+                    if (this.mediaPickerTargetInput === 'input_banner_guru') {
+                        this.bannerGuruPreview = item.url;
+                    }
+                    if (this.mediaPickerTargetInput.startsWith('input_diag_')) {
+                        const idx = parseInt(this.mediaPickerTargetInput.replace('input_diag_', ''));
+                        if (!isNaN(idx) && this.diagramList[idx]) {
+                            this.diagramList[idx].gambar = item.url;
+                        }
                     }
                 }
                 this.mediaPickerOpen = false;
@@ -1537,6 +2075,7 @@
                     jabatan: '',
                     guru_id: '',
                     foto: '',
+                    crop_style: '',
                     urutan: {{ $pejabatList->count() + 1 }}
                 };
                 this.modalPejabatOpen = true;
@@ -1549,6 +2088,7 @@
                     jabatan: data.jabatan,
                     guru_id: data.guru_id || '',
                     foto: data.foto || '',
+                    crop_style: data.crop_style || '',
                     urutan: data.urutan || 1
                 };
                 this.modalPejabatOpen = true;
@@ -1560,6 +2100,7 @@
                     this.pejabatForm.nama = selectedOption.dataset.nama || '';
                     if (selectedOption.dataset.foto) {
                         this.pejabatForm.foto = selectedOption.dataset.foto;
+                        this.pejabatForm.crop_style = selectedOption.dataset.cropStyle || '';
                     }
                 }
             },
@@ -1568,6 +2109,43 @@
                 this.deleteTargetId = id;
                 this.deleteTargetNama = nama;
                 this.modalDeleteOpen = true;
+            },
+
+            // Guru Modal Handlers
+            openModalGuru() {
+                this.guruForm = {
+                    id: null,
+                    nama: '',
+                    nip: '',
+                    jenis_kelamin: 'L',
+                    jabatan: '',
+                    mata_pelajaran: '',
+                    foto: '',
+                    crop_style: '',
+                    status_aktif: true
+                };
+                this.modalGuruOpen = true;
+            },
+
+            editGuru(data) {
+                this.guruForm = {
+                    id: data.id,
+                    nama: data.nama,
+                    nip: data.nip || '',
+                    jenis_kelamin: data.jenis_kelamin || 'L',
+                    jabatan: data.jabatan || '',
+                    mata_pelajaran: data.mata_pelajaran || '',
+                    foto: data.foto || '',
+                    crop_style: data.crop_style || '',
+                    status_aktif: !!data.status_aktif
+                };
+                this.modalGuruOpen = true;
+            },
+
+            deleteGuruConfirm(id, nama) {
+                this.deleteTargetGuruId = id;
+                this.deleteTargetGuruNama = nama;
+                this.modalDeleteGuruOpen = true;
             },
 
             // Confirmation Pop-up Before Visibility Toggle

@@ -161,6 +161,7 @@ Route::prefix('{tenant}')
             Route::get('/berita', [PageController::class, 'berita'])->name('berita');
             Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
             Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+            Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
         });
 
         // 15. Panel Admin Sekolah (CMS)
@@ -194,6 +195,10 @@ Route::prefix('{tenant}')
                     Route::post('/pejabat', [ProfilController::class, 'storePejabat'])->name('pejabat.store');
                     Route::put('/pejabat/{pejabat}', [ProfilController::class, 'updatePejabat'])->name('pejabat.update');
                     Route::delete('/pejabat/{pejabat}', [ProfilController::class, 'destroyPejabat'])->name('pejabat.destroy');
+                    Route::put('/guru-hero', [ProfilController::class, 'updateGuruHero'])->name('guru.hero.update');
+                    Route::post('/guru', [ProfilController::class, 'storeGuru'])->name('guru.store');
+                    Route::put('/guru/{guru}', [ProfilController::class, 'updateGuru'])->name('guru.update');
+                    Route::delete('/guru/{guru}', [ProfilController::class, 'destroyGuru'])->name('guru.destroy');
                     Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
                 });
 

@@ -34,7 +34,7 @@ Untuk mencegah broken link pada rute sebelumnya, alias berikut tetap didukung da
 - `/{tenant}/ppdb` -> `tenant.spmb`
 - `/{tenant}/profil/sejarah`, `/visi-misi`, `/struktur`, `/guru`, `/fasilitas`
 - `/{tenant}/akademik/jurusan` -> `tenant.program-keahlian`
-- `/{tenant}/informasi/berita` -> `tenant.berita`
+- `/{tenant}/informasi/berita`, `/pengumuman`, `/galeri`, `/fasilitas` -> `tenant.fasilitas` / `tenant.*`
 - `/{tenant}/kesiswaan/ekstrakurikuler` -> `tenant.ekstrakurikuler`
 - `/{tenant}/kesiswaan/prestasi` -> `tenant.prestasi`
 
@@ -62,11 +62,15 @@ Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media,
 | 8 | `/{tenant}/admin/profil/pejabat` | `tenant.admin.profil.pejabat.store` | POST | `auth:tenant_admin` | Tambah data pejabat struktural (FK `guru_id` ke `guru_staf`). |
 | 9 | `/{tenant}/admin/profil/pejabat/{pejabat}` | `tenant.admin.profil.pejabat.update` | PUT | `auth:tenant_admin` | Perbarui data pejabat struktural. |
 | 10 | `/{tenant}/admin/profil/pejabat/{pejabat}` | `tenant.admin.profil.pejabat.destroy` | DELETE | `auth:tenant_admin` | Hapus data pejabat struktural. |
-| 11 | `/{tenant}/admin/profil/toggle-menu` | `tenant.admin.profil.toggle-menu` | POST | `auth:tenant_admin` | Sakelar AJAX untuk sembunyikan/tampilkan menu/rute profil di publik (`menus` & `pengaturan_fitur`). |
-| 12 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
-| 13 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
-| 14 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
-| 15 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
+| 11 | `/{tenant}/admin/profil/guru-hero` | `tenant.admin.profil.guru.hero.update` | PUT | `auth:tenant_admin` | Simpan kustomisasi hero banner (judul, subjudul, foto sampul 16:9) halaman direktori `/guru-staf`. |
+| 12 | `/{tenant}/admin/profil/guru` | `tenant.admin.profil.guru.store` | POST | `auth:tenant_admin` | Tambah data master Guru & Tenaga Kependidikan ke tabel `guru_staf`. |
+| 13 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.update` | PUT | `auth:tenant_admin` | Perbarui data Guru & Tenaga Kependidikan. |
+| 14 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.destroy` | DELETE | `auth:tenant_admin` | Hapus data Guru & Tenaga Kependidikan. |
+| 15 | `/{tenant}/admin/profil/toggle-menu` | `tenant.admin.profil.toggle-menu` | POST | `auth:tenant_admin` | Sakelar AJAX untuk sembunyikan/tampilkan menu/rute profil di publik (`menus` & `pengaturan_fitur`). |
+| 16 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
+| 17 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
+| 18 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
+| 19 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
 
 ### 4.1 Shortcut Global
 
