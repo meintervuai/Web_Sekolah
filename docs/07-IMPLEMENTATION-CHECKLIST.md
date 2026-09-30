@@ -215,15 +215,22 @@
 
 ---
 
-## Tahap 15: Tab 6 Pengaturan Guru & Tenaga Kependidikan pada Admin Profil
+---
+
+## Tahap 16: Pengaturan Program Keahlian / Jurusan CMS & Manajemen Hero
 **Status:** Selesai
 
-- [x] Menambahkan Tab 6 `?tab=guru` ("6. Guru & Tenaga Kependidikan") pada panel CMS Admin Profil (`resources/views/tenant/admin/profil/index.blade.php`).
-- [x] **Kustomisasi Hero Banner `/guru-staf`**: Pengaturan Judul Halaman (`judul_guru`), Subjudul/Deskripsi Hero (`subjudul_guru`), dan Foto Latar Banner (`gambar_banner_guru`) dengan preview box 16:9 (`bannerGuruPreview`) serta integrasi pemilih berkas Pusat Media.
-- [x] **Direktori Master Guru & Tenaga Kependidikan**: Tabel interaktif Tailgrids lengkap dengan live search, filter jenis kelamin (L/P), filter keaktifan (Aktif/Non-aktif), avatar portrait 3:4, modal Tambah/Edit Guru, dan modal konfirmasi Hapus Guru.
-- [x] Controller & Rute: `ProfilController::updateGuruHero`, `storeGuru`, `updateGuru`, `destroyGuru` terdaftar di `routes/web.php` dan `PageController::guruStaf` menyuplai model `Page` slug `guru-staf` ke `public.pages.guru`.
-- [x] Rendering publik `guru.blade.php`: Tampil dinamis dengan banner artistik sisi kanan, judul kustom, dan subjudul bersyarat `@if(!empty($subjudulGuru))`.
-- [x] Verifikasi: Full suite Pest **75 test / 489 assertions PASSED**; `vendor/bin/pint --dirty` passed; `php artisan view:clear` sukses.
+- [x] Membuat modul mandiri Pengaturan Program Keahlian Admin CMS (`resources/views/tenant/admin/jurusan/`) dengan struktur 3 tab terpadu:
+  - **Tab 1: Daftar Konsentrasi & Program Keahlian** (`tab-jurusan.blade.php`) - Tabel interaktif, thumbnail rasio baku 4:3, tombol toggle status publikasi instan (AJAX), tombol edit modal & hapus modal kustom.
+  - **Tab 2: Hero Banner Publik** (`tab-hero.blade.php`) - Kustomisasi judul, subjudul, dan foto sampul 16:9 yang terhubung dengan Pusat Media.
+  - **Tab 3: Visibilitas Menu & Rute** (`tab-visibilitas.blade.php`) - Sakelar feature flag `program_keahlian` yang otomatis menyinkronkan navbar, katalog beranda, dan proteksi rute 404 publik.
+  - **Modal Tambah/Edit Jurusan** (`modals.blade.php`) - Form input dengan auto-slug generator, integrasi WYSIWYG editor Quill.js, dropdown relasi kepala program keahlian (`guru_id` FK ke `guru_staf`), dan pemilih berkas Pustaka Media.
+- [x] Controller `JurusanController` (`App\Http\Controllers\Tenant\Admin\JurusanController`): Mengelola `index`, `updateHero`, `store`, `update`, `destroy`, dan `toggleStatus` dengan auto-sinkronisasi `MediaService`.
+- [x] Model `Jurusan` (`App\Models\Tenant\Jurusan`): Menambahkan helper `$jurusan->foto_crop_style` dan `$jurusan->foto_focal_position`.
+- [x] Sidebar Admin (`resources/views/layouts/tenant_admin.blade.php`): Menambahkan link menu navigasi "Program Keahlian" di bawah "Profil Sekolah".
+- [x] Halaman Publik `jurusan.blade.php` & `jurusan_detail.blade.php`: Terhubung dinamis dengan data hero banner yang disimpan admin serta rasio baku media 4:3 dengan double-layer ambient backdrop.
+- [x] Automated Feature Test: `tests/Feature/TenantAdminJurusanTest.php` mencakup pengujian aksesibilitas tab admin, update hero banner, CRUD jurusan, dan sakelar visibilitas fitur publik.
+- [x] Verifikasi: Full suite Pest **79 test / 525 assertions PASSED** (100% Green).
 
 
 

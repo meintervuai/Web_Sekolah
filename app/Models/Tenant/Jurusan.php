@@ -40,4 +40,20 @@ class Jurusan extends Model
     {
         return $this->hasMany(PrestasiSiswa::class, 'jurusan_id');
     }
+
+    /**
+     * Helper CSS object-position dari media library.
+     */
+    public function getFotoFocalPositionAttribute(): string
+    {
+        return \App\Services\MediaService::getFocalPosition($this->ikon_atau_foto);
+    }
+
+    /**
+     * Helper CSS Style lengkap untuk Smart Box Cropping (Zoom & Clip).
+     */
+    public function getFotoCropStyleAttribute(): string
+    {
+        return \App\Services\MediaService::getCropStyle($this->ikon_atau_foto);
+    }
 }

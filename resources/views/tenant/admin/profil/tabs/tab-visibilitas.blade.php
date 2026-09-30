@@ -316,33 +316,6 @@
                         </td>
                     </tr>
 
-                    <!-- ---------------------------------------------------------
-                         SUB VII: FASILITAS SEKOLAH
-                    ---------------------------------------------------------- -->
-                    <tr class="hover:bg-slate-50 transition" :class="!menuToggles['menu_profil'] ? 'opacity-40 pointer-events-none bg-slate-50/50' : ''">
-                        <td class="px-4 py-3 font-bold text-slate-800 pl-7 flex items-center gap-2">
-                            <span class="text-blue-500 font-mono">VII.</span>
-                            Fasilitas &amp; Sarana Prasarana
-                        </td>
-                        <td class="px-4 py-3 font-mono text-slate-500">/fasilitas</td>
-                        <td class="px-4 py-3 font-mono text-xs text-blue-600">fasilitas</td>
-                        <td class="px-4 py-3">
-                            <span :class="(menuToggles['menu_profil'] && menuToggles['fasilitas']) ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'"
-                                  class="px-2.5 py-1 rounded-full text-[10px] font-bold">
-                                <span x-text="(menuToggles['menu_profil'] && menuToggles['fasilitas']) ? 'Tampil di Publik' : 'Disembunyikan'"></span>
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <button type="button" 
-                                    @click="askToggleConfirmation(null, 'fasilitas', 'Fasilitas Sekolah', !menuToggles['fasilitas'])"
-                                    :class="(menuToggles['menu_profil'] && menuToggles['fasilitas']) ? 'bg-blue-600' : 'bg-slate-300'"
-                                    class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
-                                <span :style="(menuToggles['menu_profil'] && menuToggles['fasilitas']) ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
-                                      class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
-                            </button>
-                        </td>
-                    </tr>
-
                 </tbody>
             </table>
         </div>

@@ -171,7 +171,6 @@ class ProfilController extends Controller
             'struktur_diagram' => PengaturanFitur::isAktif('struktur_diagram', true),
             'struktur_pejabat' => PengaturanFitur::isAktif('struktur_pejabat', true),
             'guru_staf' => PengaturanFitur::isAktif('guru_staf', true),
-            'fasilitas' => PengaturanFitur::isAktif('fasilitas', true),
         ];
 
         return view('tenant.admin.profil.index', compact(
@@ -638,7 +637,6 @@ class ProfilController extends Controller
                         '/profil/visi-misi' => 'visi_misi',
                         '/profil/struktur' => 'struktur_organisasi',
                         '/guru-staf' => 'guru_staf',
-                        '/fasilitas' => 'fasilitas',
                     ];
 
                     $urlClean = '/'.ltrim($menu->url, '/');
@@ -670,7 +668,6 @@ class ProfilController extends Controller
                     'struktur_diagram' => 'Bagan Diagram Struktur',
                     'struktur_pejabat' => 'Daftar Pejabat Struktural',
                     'guru_staf' => 'Guru & Tenaga Kependidikan',
-                    'fasilitas' => 'Fasilitas Sekolah',
                 ];
 
                 $menuName = $namaMap[$kode] ?? ucfirst(str_replace('_', ' ', $kode));
@@ -692,7 +689,6 @@ class ProfilController extends Controller
                     'visi_misi' => '/profil/visi-misi',
                     'struktur_organisasi' => '/profil/struktur',
                     'guru_staf' => '/guru-staf',
-                    'fasilitas' => '/fasilitas',
                 ];
 
                 if (isset($urlMap[$kode])) {

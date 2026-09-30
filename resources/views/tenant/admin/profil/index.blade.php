@@ -54,20 +54,19 @@
              mediaImportUrl: @js(route('tenant.admin.media.import-url', ['tenant' => app('tenant')->slug])),
              toggleMenu: @js(route('tenant.admin.profil.toggle-menu', ['tenant' => app('tenant')->slug]))
          },
-         menuToggles: @js([
-             'menu_profil' => (bool) ($fiturProfil['menu_profil'] ?? true),
-             'profil' => (bool) ($fiturProfil['profil'] ?? true),
-             'profil_data_pokok' => (bool) ($fiturProfil['profil_data_pokok'] ?? true),
-             'profil_sambutan_kepsek' => (bool) ($fiturProfil['profil_sambutan_kepsek'] ?? true),
-             'profil_video' => (bool) ($fiturProfil['profil_video'] ?? true),
-             'sejarah' => (bool) ($fiturProfil['sejarah'] ?? true),
-             'visi_misi' => (bool) ($fiturProfil['visi_misi'] ?? true),
-             'struktur_organisasi' => (bool) ($fiturProfil['struktur_organisasi'] ?? true),
-             'struktur_diagram' => (bool) ($fiturProfil['struktur_diagram'] ?? true),
-             'struktur_pejabat' => (bool) ($fiturProfil['struktur_pejabat'] ?? true),
-             'guru_staf' => (bool) ($fiturProfil['guru_staf'] ?? true),
-             'fasilitas' => (bool) ($fiturProfil['fasilitas'] ?? true),
-         ])
+          menuToggles: @js([
+              'menu_profil' => (bool) ($fiturProfil['menu_profil'] ?? true),
+              'profil' => (bool) ($fiturProfil['profil'] ?? true),
+              'profil_data_pokok' => (bool) ($fiturProfil['profil_data_pokok'] ?? true),
+              'profil_sambutan_kepsek' => (bool) ($fiturProfil['profil_sambutan_kepsek'] ?? true),
+              'profil_video' => (bool) ($fiturProfil['profil_video'] ?? true),
+              'sejarah' => (bool) ($fiturProfil['sejarah'] ?? true),
+              'visi_misi' => (bool) ($fiturProfil['visi_misi'] ?? true),
+              'struktur_organisasi' => (bool) ($fiturProfil['struktur_organisasi'] ?? true),
+              'struktur_diagram' => (bool) ($fiturProfil['struktur_diagram'] ?? true),
+              'struktur_pejabat' => (bool) ($fiturProfil['struktur_pejabat'] ?? true),
+              'guru_staf' => (bool) ($fiturProfil['guru_staf'] ?? true),
+          ])
      })"
      x-init="init()">
 
@@ -673,9 +672,9 @@
 
                         // Cascade sync di sisi frontend (Alpine.js)
                         if (kodeFitur === 'menu_profil') {
-                            ['profil', 'profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video',
-                             'sejarah', 'visi_misi', 'struktur_organisasi', 'struktur_diagram',
-                             'struktur_pejabat', 'guru_staf', 'fasilitas'].forEach(k => {
+                        ['profil', 'profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video',
+                            'sejarah', 'visi_misi', 'struktur_organisasi', 'struktur_diagram',
+                            'struktur_pejabat', 'guru_staf'].forEach(k => {
                                 if (this.menuToggles.hasOwnProperty(k)) this.menuToggles[k] = targetState;
                             });
                         }

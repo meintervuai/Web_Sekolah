@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Pengaturan Program Keahlian / Jurusan CMS & Manajemen Hero] - 2026-09-30
+
+### Added
+- **Modul Pengaturan Program Keahlian Admin CMS ([resources/views/tenant/admin/jurusan/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/))**: Tab Katalog Program Keahlian (CRUD + FK `guru_staf`), Tab Hero Banner, Tab Visibilitas Menu & Rute, serta integrasi Media Picker.
+- **Controller Admin Jurusan ([JurusanController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/JurusanController.php))**: Manajemen CRUD, upload media, dan toggle status aktif jurusan & feature flag.
+- **Sidebar Admin Link ([tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php))**: Menambahkan link menu Program Keahlian.
+- **Automated Feature Testing ([TenantAdminJurusanTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminJurusanTest.php))**: 4 skenario test lengkap (100% Passed).
+
 ## [Layout Adaptif Halaman Profil Publik & Sinkronisasi Cascade 2 Arah] - 2026-09-30
 
 ### Fixed

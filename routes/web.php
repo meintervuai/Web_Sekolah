@@ -3,6 +3,7 @@
 use App\Http\Controllers\Central\AuthController;
 use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
+use App\Http\Controllers\Tenant\Admin\JurusanController;
 use App\Http\Controllers\Tenant\Admin\MediaController;
 use App\Http\Controllers\Tenant\Admin\PengaturanController;
 use App\Http\Controllers\Tenant\Admin\ProfilController;
@@ -121,17 +122,17 @@ Route::prefix('{tenant}')
         // 10. Guru & Staf
         Route::get('/guru-staf', [PageController::class, 'guruStaf'])->name('tenant.guru-staf');
 
-        // 11. Fasilitas
+        // 10.5 Fasilitas / Sarana Prasarana
         Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('tenant.fasilitas');
 
-        // 12. Galeri
+        // 11. Galeri
         Route::get('/galeri', [PageController::class, 'galeri'])->name('tenant.galeri');
 
-        // 13. SPMB / PPDB
+        // 12. SPMB / PPDB
         Route::get('/spmb', [PageController::class, 'spmb'])->name('tenant.spmb');
         Route::get('/ppdb', [PageController::class, 'spmb'])->name('ppdb');
 
-        // 14. Kontak
+        // 13. Kontak
         Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak');
         Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim');
 
@@ -140,7 +141,6 @@ Route::prefix('{tenant}')
             Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah');
             Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi');
             Route::get('/struktur', [PageController::class, 'struktur'])->name('struktur');
-            Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
             Route::get('/guru', [PageController::class, 'guruStaf'])->name('guru');
         });
 
@@ -161,7 +161,6 @@ Route::prefix('{tenant}')
             Route::get('/berita', [PageController::class, 'berita'])->name('berita');
             Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
             Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
-            Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('fasilitas');
         });
 
         // 15. Panel Admin Sekolah (CMS)
@@ -200,6 +199,16 @@ Route::prefix('{tenant}')
                     Route::put('/guru/{guru}', [ProfilController::class, 'updateGuru'])->name('guru.update');
                     Route::delete('/guru/{guru}', [ProfilController::class, 'destroyGuru'])->name('guru.destroy');
                     Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
+                });
+
+                // Pengaturan Program Keahlian / Jurusan CMS
+                Route::prefix('program-keahlian')->name('jurusan.')->group(function () {
+                    Route::get('/', [JurusanController::class, 'index'])->name('index');
+                    Route::put('/hero', [JurusanController::class, 'updateHero'])->name('hero.update');
+                    Route::post('/', [JurusanController::class, 'store'])->name('store');
+                    Route::put('/{jurusan}', [JurusanController::class, 'update'])->name('update');
+                    Route::delete('/{jurusan}', [JurusanController::class, 'destroy'])->name('destroy');
+                    Route::post('/toggle-status', [JurusanController::class, 'toggleStatus'])->name('toggle-status');
                 });
 
                 // Manajemen Media & File Manager Induk

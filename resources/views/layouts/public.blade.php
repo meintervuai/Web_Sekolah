@@ -190,12 +190,10 @@
 
             // URL to Feature Flag map
             $menuFeatureMap = [
-                '/profil' => 'profil',
                 '/profil/sejarah' => 'sejarah',
                 '/profil/visi-misi' => 'visi_misi',
                 '/profil/struktur' => 'struktur_organisasi',
                 '/guru-staf' => 'guru_staf',
-                '/fasilitas' => 'fasilitas',
                 '/program-keahlian' => 'program_keahlian',
                 '/berita' => 'berita',
                 '/agenda' => 'agenda',
@@ -547,7 +545,6 @@
                         <li><a href="{{ url($tenantSlug . '/program-keahlian/teknik-jaringan-komputer-dan-telekomunikasi') }}" class="hover:text-white transition">TJKT (Jaringan Komputer)</a></li>
                         <li><a href="{{ url($tenantSlug . '/program-keahlian/desain-komunikasi-visual') }}" class="hover:text-white transition">Desain Komunikasi Visual</a></li>
                         <li><a href="{{ url($tenantSlug . '/program-keahlian/animasi') }}" class="hover:text-white transition">Animasi 2D/3D</a></li>
-                        <li><a href="{{ url($tenantSlug . '/fasilitas') }}" class="hover:text-white transition">Fasilitas Bengkel & Lab</a></li>
                     </ul>
                 </div>
 

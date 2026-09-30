@@ -159,9 +159,14 @@ class PageController extends Controller
     public function programKeahlian()
     {
         $this->checkFitur('program_keahlian');
+        $halaman = Page::where('slug', 'program-keahlian')->first();
         $jurusan = Jurusan::where('is_aktif', true)->orderBy('urutan')->get();
 
-        return view('public.pages.jurusan', ['sekolah' => $this->getSekolahData(), 'jurusan' => $jurusan]);
+        return view('public.pages.jurusan', [
+            'sekolah' => $this->getSekolahData(),
+            'halaman' => $halaman,
+            'jurusan' => $jurusan,
+        ]);
     }
 
     public function detailProgramKeahlian(string $slug)
@@ -434,13 +439,18 @@ class PageController extends Controller
         ]);
     }
 
-    // 10. FASILITAS
+    // 10.5 FASILITAS / SARANA PRASARANA
     public function fasilitas()
     {
         $this->checkFitur('fasilitas');
-        $fasilitas = Fasilitas::aktif()->with('fotoLainnya')->get();
+        $fasilitas = Fasilitas::aktif()->get();
+        $halaman = Page::where('slug', 'fasilitas')->first();
 
-        return view('public.pages.fasilitas', ['sekolah' => $this->getSekolahData(), 'fasilitas' => $fasilitas]);
+        return view('public.pages.fasilitas', [
+            'sekolah' => $this->getSekolahData(),
+            'halaman' => $halaman,
+            'fasilitas' => $fasilitas,
+        ]);
     }
 
     // 11. GALERI

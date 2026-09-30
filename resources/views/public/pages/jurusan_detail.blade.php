@@ -47,11 +47,21 @@
             <div class="lg:col-span-2 space-y-8">
                 
                 <!-- Hero Image with Aspect Ratio -->
+                @php
+                    $detailFoto = $jurusan->foto_utama ?? ($jurusan->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop');
+                @endphp
                 <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80">
-                    <div class="aspect-video w-full overflow-hidden bg-slate-100 relative">
-                        <img src="{{ $jurusan->foto_utama ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1200&auto=format&fit=crop' }}" 
+                    <div class="aspect-video w-full overflow-hidden bg-slate-900 relative flex items-center justify-center">
+                        <!-- Ambient Blurred Backdrop -->
+                        <img src="{{ $detailFoto }}" 
+                             alt="" 
+                             aria-hidden="true" 
+                             class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+                        <!-- Main Image with Smart Crop -->
+                        <img src="{{ $detailFoto }}" 
                              alt="{{ $jurusan->nama_jurusan }}" 
-                             class="w-full h-full object-cover">
+                             style="{{ \App\Services\MediaService::getCropStyle($detailFoto) }}"
+                             class="relative z-10 w-full h-full object-cover">
                     </div>
                     <div class="p-6 md:p-8">
                         <div class="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-100">

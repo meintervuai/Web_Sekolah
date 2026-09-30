@@ -7,10 +7,15 @@
 <!-- Page Header -->
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
-    @if(!empty($gambarBanner ?? $banner ?? null))
+    @php
+        $heroBanner = $halaman->gambar_banner ?? ($gambarBanner ?? ($banner ?? null));
+        $heroJudul = $halaman->judul ?? 'Program Keahlian Unggulan';
+        $heroSubjudul = $halaman->subjudul ?? 'SMK Negeri 2 Bandung menyelenggarakan 7 konsentrasi keahlian di bidang teknologi dan rekayasa dengan fasilitas modern dan kemitraan puluhan industri terkemuka.';
+    @endphp
+    @if(!empty($heroBanner))
         <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
         <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
-            <img src="{{ $gambarBanner ?? $banner }}" alt="Program Keahlian Unggulan" 
+            <img src="{{ $heroBanner }}" alt="{{ $heroJudul }}" 
                  class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
             <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
         </div>
@@ -25,10 +30,10 @@
         </nav>
         <div class="max-w-4xl lg:max-w-5xl">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight font-heading mb-3 drop-shadow-sm">
-                Program Keahlian Unggulan
+                {{ $heroJudul }}
             </h1>
             <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl drop-shadow-xs">
-                SMK Negeri 2 Bandung menyelenggarakan 7 konsentrasi keahlian di bidang teknologi dan rekayasa dengan fasilitas modern dan kemitraan puluhan industri terkemuka.
+                {{ $heroSubjudul }}
             </p>
         </div>
     </div>

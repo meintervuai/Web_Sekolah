@@ -67,10 +67,16 @@ Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media,
 | 13 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.update` | PUT | `auth:tenant_admin` | Perbarui data Guru & Tenaga Kependidikan. |
 | 14 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.destroy` | DELETE | `auth:tenant_admin` | Hapus data Guru & Tenaga Kependidikan. |
 | 15 | `/{tenant}/admin/profil/toggle-menu` | `tenant.admin.profil.toggle-menu` | POST | `auth:tenant_admin` | Sakelar AJAX untuk sembunyikan/tampilkan menu/rute profil di publik (`menus` & `pengaturan_fitur`). |
-| 16 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
-| 17 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
-| 18 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
-| 19 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
+| 16 | `/{tenant}/admin/program-keahlian` | `tenant.admin.jurusan.index` | GET | `auth:tenant_admin` | Manajemen Program Keahlian CMS (Katalog Jurusan, Hero Banner Publik, Visibilitas). |
+| 17 | `/{tenant}/admin/program-keahlian/hero` | `tenant.admin.jurusan.hero.update` | PUT | `auth:tenant_admin` | Simpan hero banner (judul, subjudul, gambar latar 16:9) halaman katalog jurusan. |
+| 18 | `/{tenant}/admin/program-keahlian` | `tenant.admin.jurusan.store` | POST | `auth:tenant_admin` | Tambah program keahlian baru (FK `guru_id`, sinkronisasi Media, slug). |
+| 19 | `/{tenant}/admin/program-keahlian/{jurusan}` | `tenant.admin.jurusan.update` | PUT | `auth:tenant_admin` | Perbarui data program keahlian. |
+| 20 | `/{tenant}/admin/program-keahlian/{jurusan}` | `tenant.admin.jurusan.destroy` | DELETE | `auth:tenant_admin` | Hapus program keahlian. |
+| 21 | `/{tenant}/admin/program-keahlian/toggle-status` | `tenant.admin.jurusan.toggle-status` | POST | `auth:tenant_admin` | Sakelar AJAX status per jurusan atau feature flag global `program_keahlian`. |
+| 22 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
+| 23 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
+| 24 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
+| 25 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
 
 ### 4.1 Shortcut Global
 

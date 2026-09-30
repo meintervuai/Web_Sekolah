@@ -2,6 +2,29 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Pengaturan Program Keahlian / Jurusan CMS & Manajemen Hero] - 2026-09-30
+
+### Added
+- **Modul Pengaturan Program Keahlian Admin CMS ([resources/views/tenant/admin/jurusan/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/))**:
+  - Menyediakan panel manajemen lengkap berbasis tab independen:
+    - `tab-jurusan.blade.php`: Tabel interaktif daftar konsentrasi keahlian, relasi kepala program keahlian (`guru_id` berelasi 100% dengan `guru_staf`), urutan tampil, sakelar status publikasi instan (AJAX), tombol edit & hapus dengan konfirmasi modal kustom.
+    - `tab-form-jurusan.blade.php`: Tab form dedikasi luas mandiri untuk tambah & edit jurusan (bukan modal pop-up sempit), dilengkapi auto-slug generator, integrasi WYSIWYG Quill.js editor, dropdown relasi guru pembina, live preview rasio 4:3 ambient background, dan Media Picker terpadu.
+    - `tab-hero.blade.php`: Kustomisasi judul halaman, subjudul/deskripsi pengantar hero publik, dan foto latar hero (16:9) dengan pemilih media terpadu.
+    - `tab-visibilitas.blade.php`: Sakelar feature flag `program_keahlian` yang otomatis menyinkronkan ketersediaan menu navbar, katalog beranda, dan proteksi rute publik.
+    - `modals.blade.php`: Modal konfirmasi hapus data dan integrasi pemilih berkas media terpusat.
+- **Controller Admin Jurusan ([JurusanController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/JurusanController.php))**:
+  - Menangani aksi `index`, `updateHero`, `store`, `update`, `destroy`, dan `toggleStatus`.
+  - Otomatis melakukan sinkronisasi gambar/foto ke pustaka media terpusat via `MediaService`.
+- **Integrasi Model Eloquent & Media Service ([Jurusan.php](file:///d:/databaru/Magang/website_sekolah/app/Models/Tenant/Jurusan.php))**:
+  - Menambahkan accessor `$jurusan->foto_crop_style` dan `$jurusan->foto_focal_position` untuk mendukung smart cropping & ambient backdrop pada kartu listing dan detail.
+- **Sidebar Navigation Link ([tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php))**:
+  - Menambahkan tautan navigasi **Program Keahlian** (`tenant.admin.jurusan.*`) pada section Konten Portal di sidebar admin.
+- **Halaman Publik Dinamis ([jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php) & [jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php))**:
+  - Halaman katalog publik kini membaca judul dan hero banner dinamis dari `halaman_statis` (`slug: program-keahlian`).
+  - Halaman detail jurusan menerapkan framing rasio standar 4:3/16:9 dengan double-layer ambient blurred backdrop.
+- **Automated Feature Testing ([TenantAdminJurusanTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminJurusanTest.php))**:
+  - Menguji aksesibilitas tab admin, update hero banner, CRUD jurusan, dan sakelar visibilitas fitur publik (100% Passed).
+
 ## [Layout Adaptif Halaman Profil Publik & Sinkronisasi Cascade 2 Arah] - 2026-09-30
 
 ### Fixed
