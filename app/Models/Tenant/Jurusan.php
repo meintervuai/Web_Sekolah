@@ -13,10 +13,15 @@ class Jurusan extends Model
     protected $fillable = [
         'nama_jurusan',
         'singkatan',
+        'logo',
         'slug',
         'deskripsi_singkat',
         'deskripsi_lengkap',
+        'informasi_tambahan',
         'ikon_atau_foto',
+        'jenjang',
+        'peluang_kerja',
+        'sertifikasi',
         'urutan',
         'guru_id',
         'is_aktif',
@@ -29,6 +34,11 @@ class Jurusan extends Model
     public function kepalaProgram()
     {
         return $this->belongsTo(GuruStaf::class, 'guru_id');
+    }
+
+    public function fotos()
+    {
+        return $this->hasMany(FotoJurusan::class, 'jurusan_id')->orderBy('urutan');
     }
 
     public function pendaftar()

@@ -39,7 +39,11 @@
                             </td>
                             <td class="px-3 py-3 text-center">
                                 <div class="w-14 h-10 mx-auto rounded-lg border border-slate-200 bg-slate-900 overflow-hidden relative flex items-center justify-center">
-                                    @if($item->ikon_atau_foto)
+                                    @if($item->logo)
+                                        <div class="w-full h-full bg-white flex items-center justify-center p-1">
+                                            <img src="{{ $item->logo }}" alt="{{ $item->nama_jurusan }}" class="w-full h-full object-contain">
+                                        </div>
+                                    @elseif($item->ikon_atau_foto)
                                         <!-- Ambient Blur Background -->
                                         <img src="{{ $item->ikon_atau_foto }}" alt="" aria-hidden="true" 
                                              class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-40 pointer-events-none">
@@ -69,9 +73,15 @@
                                         <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                     </a>
                                 </div>
-                                @if($item->deskripsi_singkat)
-                                    <p class="text-[11px] text-slate-400 line-clamp-1 mt-1">{{ $item->deskripsi_singkat }}</p>
-                                @endif
+                                <div class="flex items-center gap-3 text-[10px] text-slate-400 mt-1">
+                                    <span>Jenjang: <strong class="text-slate-600">{{ $item->jenjang ?? 'SMK (3 Tahun)' }}</strong></span>
+                                    @if($item->fotos->count() > 0)
+                                        <span class="text-blue-600 font-medium flex items-center gap-0.5">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            {{ $item->fotos->count() }} Foto Galeri
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-4 py-3">
                                 @if($item->kepalaProgram)
@@ -110,14 +120,20 @@
                                                 id: {{ $item->id }},
                                                 nama_jurusan: '{{ addslashes($item->nama_jurusan) }}',
                                                 singkatan: '{{ addslashes($item->singkatan ?? '') }}',
+                                                logo: '{{ addslashes($item->logo ?? '') }}',
                                                 slug: '{{ addslashes($item->slug) }}',
                                                 guru_id: '{{ $item->guru_id ?? '' }}',
                                                 deskripsi_singkat: '{{ addslashes($item->deskripsi_singkat ?? '') }}',
                                                 deskripsi_lengkap: @js($item->deskripsi_lengkap ?? ''),
+                                                informasi_tambahan: @js($item->informasi_tambahan ?? ''),
                                                 ikon_atau_foto: '{{ addslashes($item->ikon_atau_foto ?? '') }}',
                                                 foto_crop_style: '{{ addslashes($item->foto_crop_style ?? '') }}',
+                                                jenjang: '{{ addslashes($item->jenjang ?? 'SMK (3 Tahun)') }}',
+                                                peluang_kerja: '{{ addslashes($item->peluang_kerja ?? 'Industri & Wirausaha') }}',
+                                                sertifikasi: '{{ addslashes($item->sertifikasi ?? 'LSP-P1 / BNSP') }}',
                                                 urutan: {{ $item->urutan ?? 1 }},
-                                                is_aktif: {{ $item->is_aktif ? 'true' : 'false' }}
+                                                is_aktif: {{ $item->is_aktif ? 'true' : 'false' }},
+                                                galeri_fotos: @js($item->fotos->map(fn($f) => ['url' => $f->file_foto, 'judul' => $f->judul]))
                                             })"
                                             class="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition cursor-pointer"
                                             title="Edit Program Keahlian">

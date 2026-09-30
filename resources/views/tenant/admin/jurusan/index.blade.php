@@ -94,16 +94,14 @@
             1. Daftar Program Keahlian
         </button>
 
-        <!-- Tab Form (Edit / Tambah) -->
+        <!-- Tab Form (Edit / Tambah) - Permanen Aktif -->
         <button type="button" @click="setTab('form_jurusan')"
-                x-show="activeTab === 'form_jurusan' || jurusanForm.id"
-                x-cloak
                 :class="activeTab === 'form_jurusan' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
                 class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            <span x-text="jurusanForm.id ? '2. Edit: ' + (jurusanForm.singkatan || jurusanForm.nama_jurusan) : '2. Form Tambah Program Keahlian'"></span>
+            <span x-text="jurusanForm.id ? '2. Edit: ' + (jurusanForm.singkatan || jurusanForm.nama_jurusan) : '2. Form Program Keahlian'"></span>
         </button>
 
         <button type="button" @click="setTab('hero')"
@@ -153,19 +151,14 @@
             bannerHeroPreview: config.bannerHeroPreview || '',
             isFiturAktif: !!config.isFiturAktif,
 
-            quillJurusan: null,
-            jurusanForm: {
-                id: null,
-                nama_jurusan: '',
-                singkatan: '',
-                slug: '',
-                guru_id: '',
-                deskripsi_singkat: '',
-                deskripsi_lengkap: '',
-                ikon_atau_foto: '',
-                foto_crop_style: '',
-                urutan: config.nextUrutan || 1,
-                is_aktif: true
+            totalJurusan: @js($jurusanList->count()),
+            get maxUrutanOptions() {
+                const total = Math.max(this.totalJurusan + (this.jurusanForm.id ? 0 : 1), 1);
+                const opts = [];
+                for (let i = 1; i <= Math.max(total, this.jurusanForm.urutan || 1); i++) {
+                    opts.push(i);
+                }
+                return opts;
             },
 
             // Modal Delete State
@@ -173,13 +166,14 @@
             deleteTargetId: null,
             deleteTargetNama: '',
 
-            // Media Picker State
+            // Media Picker State (Sinkron dengan picker-modal.blade.php)
             mediaPickerOpen: false,
             mediaPickerTargetInput: '',
             pickerLoading: false,
-            pickerSearch: '',
+            pickerSearchQuery: '',
             pickerFilterType: 'semua',
-            pickerItems: [],
+            pickerPerPage: 12,
+            mediaItems: [],
             pickerCurrentPage: 1,
             pickerLastPage: 1,
             pickerTotal: 0,
@@ -199,6 +193,7 @@
                     if (val === 'form_jurusan') {
                         this.$nextTick(() => {
                             this.initQuillEditor('editor_jurusan', this.jurusanForm.deskripsi_lengkap || '');
+                            this.initQuillInfoEditor('editor_informasi_program', this.jurusanForm.informasi_tambahan || '');
                         });
                     }
                 });
@@ -206,6 +201,7 @@
                 if (this.activeTab === 'form_jurusan') {
                     this.$nextTick(() => {
                         this.initQuillEditor('editor_jurusan', this.jurusanForm.deskripsi_lengkap || '');
+                        this.initQuillInfoEditor('editor_informasi_program', this.jurusanForm.informasi_tambahan || '');
                     });
                 }
             },
@@ -242,12 +238,36 @@
                 return this.quillJurusan;
             },
 
-            syncEditor(editorId, textareaId) {
+            initQuillInfoEditor(elementId, initialContent) {
+                const el = document.getElementById(elementId);
+                if (!el) return null;
+                if (!this.quillInfoProgram) {
+                    this.quillInfoProgram = new Quill('#' + elementId, {
+                        theme: 'snow',
+                        placeholder: 'Tulis informasi program keahlian: jenjang, sertifikasi LSP/BNSP, peluang kerja, akreditasi...',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [3, false] }],
+                                ['bold', 'italic', 'underline'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['link'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                }
+                this.quillInfoProgram.root.innerHTML = initialContent || '';
+                return this.quillInfoProgram;
+            },
+
+            syncEditors() {
                 if (this.quillJurusan) {
-                    const ta = document.getElementById(textareaId);
-                    if (ta) {
-                        ta.value = this.quillJurusan.root.innerHTML;
-                    }
+                    const ta = document.getElementById('deskripsi_lengkap');
+                    if (ta) ta.value = this.quillJurusan.root.innerHTML;
+                }
+                if (this.quillInfoProgram) {
+                    const ta2 = document.getElementById('informasi_tambahan');
+                    if (ta2) ta2.value = this.quillInfoProgram.root.innerHTML;
                 }
             },
 
@@ -262,23 +282,41 @@
                 }
             },
 
+            tambahGaleriFoto() {
+                this.jurusanForm.galeri_fotos.push({
+                    url: '',
+                    judul: ''
+                });
+            },
+
+            hapusGaleriFoto(index) {
+                this.jurusanForm.galeri_fotos.splice(index, 1);
+            },
+
             openFormJurusan() {
                 this.jurusanForm = {
                     id: null,
                     nama_jurusan: '',
                     singkatan: '',
+                    logo: '',
                     slug: '',
                     guru_id: '',
                     deskripsi_singkat: '',
                     deskripsi_lengkap: '',
+                    informasi_tambahan: '',
                     ikon_atau_foto: '',
                     foto_crop_style: '',
+                    jenjang: 'SMK (3 Tahun)',
+                    peluang_kerja: 'Industri & Wirausaha',
+                    sertifikasi: 'LSP-P1 / BNSP',
                     urutan: config.nextUrutan || 1,
-                    is_aktif: true
+                    is_aktif: true,
+                    galeri_fotos: []
                 };
                 this.activeTab = 'form_jurusan';
                 this.$nextTick(() => {
                     this.initQuillEditor('editor_jurusan', '');
+                    this.initQuillInfoEditor('editor_informasi_program', '');
                 });
             },
 
@@ -287,18 +325,25 @@
                     id: data.id,
                     nama_jurusan: data.nama_jurusan,
                     singkatan: data.singkatan || '',
+                    logo: data.logo || '',
                     slug: data.slug,
                     guru_id: data.guru_id || '',
                     deskripsi_singkat: data.deskripsi_singkat || '',
                     deskripsi_lengkap: data.deskripsi_lengkap || '',
+                    informasi_tambahan: data.informasi_tambahan || '',
                     ikon_atau_foto: data.ikon_atau_foto || '',
                     foto_crop_style: data.foto_crop_style || '',
+                    jenjang: data.jenjang || 'SMK (3 Tahun)',
+                    peluang_kerja: data.peluang_kerja || 'Industri & Wirausaha',
+                    sertifikasi: data.sertifikasi || 'LSP-P1 / BNSP',
                     urutan: data.urutan || 1,
-                    is_aktif: !!data.is_aktif
+                    is_aktif: !!data.is_aktif,
+                    galeri_fotos: Array.isArray(data.galeri_fotos) ? JSON.parse(JSON.stringify(data.galeri_fotos)) : []
                 };
                 this.activeTab = 'form_jurusan';
                 this.$nextTick(() => {
                     this.initQuillEditor('editor_jurusan', data.deskripsi_lengkap || '');
+                    this.initQuillInfoEditor('editor_informasi_program', data.informasi_tambahan || '');
                 });
             },
 
@@ -367,32 +412,42 @@
                 }
             },
 
-            // Media Picker Functions
-            openMediaPicker(targetInputId) {
+            // Media Picker Handlers (Sinkron 100% dengan komponen picker-modal.blade.php)
+            openMediaPicker(targetInputId, defaultType = 'semua') {
                 this.mediaPickerTargetInput = targetInputId;
+                this.pickerFilterType = defaultType;
+                this.pickerCurrentPage = 1;
                 this.mediaPickerOpen = true;
                 this.pickerShowImportForm = false;
                 this.fetchMedia(1);
+            },
+
+            getYoutubeThumbnail(url) {
+                if (!url) return null;
+                const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+                const match = url.match(regExp);
+                return match && match[1] ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
             },
 
             async fetchMedia(page = 1) {
                 this.pickerLoading = true;
                 this.pickerCurrentPage = page;
                 try {
-                    let url = `${config.routes.mediaIndex}?page=${page}&per_page=12`;
-                    if (this.pickerSearch) url += `&q=${encodeURIComponent(this.pickerSearch)}`;
-                    if (this.pickerFilterType && this.pickerFilterType !== 'semua') url += `&tipe=${this.pickerFilterType}`;
-
-                    const res = await fetch(url, {
+                    const params = new URLSearchParams({
+                        tipe: this.pickerFilterType,
+                        q: this.pickerSearchQuery,
+                        page: page,
+                        per_page: this.pickerPerPage
+                    });
+                    const url = config.routes && config.routes.mediaIndex ? config.routes.mediaIndex : `/${@js(app('tenant')->slug)}/admin/media`;
+                    const res = await fetch(`${url}?${params}`, {
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
                     const json = await res.json();
-                    if (json.data) {
-                        this.pickerItems = json.data;
-                        this.pickerCurrentPage = json.current_page || 1;
-                        this.pickerLastPage = json.last_page || 1;
-                        this.pickerTotal = json.total || 0;
-                    }
+                    this.mediaItems = json.data || [];
+                    this.pickerCurrentPage = json.current_page || 1;
+                    this.pickerLastPage = json.last_page || 1;
+                    this.pickerTotal = json.total || 0;
                 } catch (e) {
                     console.error(e);
                 } finally {
@@ -401,52 +456,74 @@
             },
 
             selectMediaItem(item) {
-                if (this.mediaPickerTargetInput === 'input_banner_jurusan') {
-                    this.bannerHeroPreview = item.url;
-                } else if (this.mediaPickerTargetInput === 'input_foto_jurusan') {
-                    this.jurusanForm.ikon_atau_foto = item.url;
-                    this.jurusanForm.foto_crop_style = item.smart_crop_style || '';
-                }
-                const inputEl = document.getElementById(this.mediaPickerTargetInput);
-                if (inputEl) {
-                    inputEl.value = item.url;
-                    inputEl.dispatchEvent(new Event('input'));
+                if (this.mediaPickerTargetInput) {
+                    const inputEl = document.getElementById(this.mediaPickerTargetInput);
+                    if (inputEl) {
+                        inputEl.value = item.url;
+                        inputEl.dispatchEvent(new Event('input'));
+                    }
+                    if (this.mediaPickerTargetInput === 'input_banner_jurusan') {
+                        this.bannerHeroPreview = item.url;
+                    } else if (this.mediaPickerTargetInput === 'input_foto_jurusan') {
+                        this.jurusanForm.ikon_atau_foto = item.url;
+                        this.jurusanForm.foto_crop_style = item.smart_crop_style || '';
+                    } else if (this.mediaPickerTargetInput === 'input_logo_jurusan') {
+                        this.jurusanForm.logo = item.url;
+                    } else if (this.mediaPickerTargetInput.startsWith('input_galeri_foto_')) {
+                        const idx = parseInt(this.mediaPickerTargetInput.replace('input_galeri_foto_', ''));
+                        if (!isNaN(idx) && this.jurusanForm.galeri_fotos[idx]) {
+                            this.jurusanForm.galeri_fotos[idx].url = item.url;
+                        }
+                    }
                 }
                 this.mediaPickerOpen = false;
+                this.triggerToast(`Media '${item.judul}' terpilih.`);
             },
 
-            async handlePickerUpload(e) {
-                const files = e.target.files;
-                if (!files || files.length === 0) return;
+            async uploadNewMedia(event) {
+                const fileInput = event.target;
+                const file = fileInput.files ? fileInput.files[0] : null;
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('kategori', 'jurusan');
+                formData.append('judul', file.name.replace(/\.[^/.]+$/, ''));
 
                 this.pickerLoading = true;
-                const formData = new FormData();
-                formData.append('berkas', files[0]);
-                formData.append('kategori', 'jurusan');
-
                 try {
                     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const res = await fetch(config.routes.mediaUpload, {
+                    const url = config.routes && config.routes.mediaUpload ? config.routes.mediaUpload : `/${@js(app('tenant')->slug)}/admin/media/upload`;
+                    const res = await fetch(url, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': csrf,
                             'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
                             'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: formData
                     });
-                    const json = await res.json();
-                    if (res.ok && json.data) {
+
+                    if (res.status === 413) {
+                        this.triggerToast('Ukuran berkas terlalu besar. Batas maksimal unggah di server adalah 64MB.');
+                        return;
+                    }
+
+                    let result = {};
+                    try { result = await res.json(); } catch (err) { result = {}; }
+
+                    if (res.ok && result.sukses && result.data) {
                         await this.fetchMedia(1);
-                        this.selectMediaItem(json.data);
+                        this.selectMediaItem(result.data);
                     } else {
-                        this.triggerToast(json.pesan || 'Gagal mengunggah berkas.');
+                        const errMsg = result.pesan || result.message || (result.errors ? Object.values(result.errors).flat().join(' ') : 'Gagal mengunggah berkas.');
+                        this.triggerToast(errMsg);
                     }
                 } catch (err) {
                     this.triggerToast('Terjadi kesalahan saat mengunggah.');
                 } finally {
+                    fileInput.value = '';
                     this.pickerLoading = false;
-                    e.target.value = '';
                 }
             },
 
@@ -456,7 +533,8 @@
                 this.pickerLoading = true;
                 try {
                     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const res = await fetch(config.routes.mediaImportUrl, {
+                    const url = config.routes && config.routes.mediaImportUrl ? config.routes.mediaImportUrl : `/${@js(app('tenant')->slug)}/admin/media/import-url`;
+                    const res = await fetch(url, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -481,7 +559,8 @@
                         await this.fetchMedia(1);
                         this.selectMediaItem(result.data);
                     } else {
-                        this.triggerToast(result.pesan || 'Gagal mengimpor media dari URL.');
+                        const errMsg = result.pesan || result.message || (result.errors ? Object.values(result.errors).flat().join(' ') : 'Gagal mengimpor media dari URL.');
+                        this.triggerToast(errMsg);
                     }
                 } catch (e) {
                     this.triggerToast('Terjadi gangguan saat mengimpor media.');

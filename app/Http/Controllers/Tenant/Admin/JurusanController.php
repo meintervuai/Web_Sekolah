@@ -37,8 +37,8 @@ class JurusanController extends Controller
             ]
         );
 
-        // 2. Daftar Program Keahlian / Jurusan dengan Relasi Kepala Program (Guru & Staf)
-        $jurusanList = Jurusan::with('kepalaProgram')
+        // 2. Daftar Program Keahlian / Jurusan dengan Relasi Kepala Program (Guru & Staf) dan Galeri Foto
+        $jurusanList = Jurusan::with(['kepalaProgram', 'fotos'])
             ->orderBy('urutan')
             ->get();
 
@@ -103,13 +103,22 @@ class JurusanController extends Controller
         $validated = $request->validate([
             'nama_jurusan' => ['required', 'string', 'max:150'],
             'singkatan' => ['nullable', 'string', 'max:20'],
+            'logo' => ['nullable', 'string', 'max:500'],
             'slug' => ['nullable', 'string', 'max:150', 'unique:tenant.jurusan,slug'],
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
             'deskripsi_singkat' => ['nullable', 'string', 'max:500'],
             'deskripsi_lengkap' => ['nullable', 'string'],
+            'informasi_tambahan' => ['nullable', 'string'],
             'ikon_atau_foto' => ['nullable', 'string', 'max:500'],
+            'jenjang' => ['nullable', 'string', 'max:50'],
+            'peluang_kerja' => ['nullable', 'string', 'max:255'],
+            'sertifikasi' => ['nullable', 'string', 'max:255'],
             'urutan' => ['nullable', 'integer', 'min:0'],
             'is_aktif' => ['nullable', 'boolean'],
+            'galeri_foto' => ['nullable', 'array'],
+            'galeri_foto.*' => ['nullable', 'string', 'max:500'],
+            'galeri_judul' => ['nullable', 'array'],
+            'galeri_judul.*' => ['nullable', 'string', 'max:150'],
         ]);
 
         $adminId = auth('tenant_admin')->id();
@@ -126,6 +135,15 @@ class JurusanController extends Controller
             $count++;
         }
 
+        if (! empty($validated['logo'])) {
+            $validated['logo'] = $mediaService->sinkronisasiOtomatisUrl(
+                $validated['logo'],
+                $adminId,
+                'jurusan',
+                'Logo ' . $validated['nama_jurusan']
+            );
+        }
+
         if (! empty($validated['ikon_atau_foto'])) {
             $validated['ikon_atau_foto'] = $mediaService->sinkronisasiOtomatisUrl(
                 $validated['ikon_atau_foto'],
@@ -138,7 +156,27 @@ class JurusanController extends Controller
         $validated['urutan'] = $validated['urutan'] ?? (Jurusan::max('urutan') + 1);
         $validated['is_aktif'] = $request->boolean('is_aktif', true);
 
-        Jurusan::create($validated);
+        $jurusan = Jurusan::create($validated);
+
+        // Simpan galeri multi-foto
+        if ($request->has('galeri_foto') && is_array($request->input('galeri_foto'))) {
+            foreach ($request->input('galeri_foto') as $idx => $fotoUrl) {
+                if (! empty($fotoUrl)) {
+                    $fotoClean = $mediaService->sinkronisasiOtomatisUrl(
+                        $fotoUrl,
+                        $adminId,
+                        'jurusan',
+                        'Dokumentasi ' . $validated['nama_jurusan']
+                    );
+                    $judulFoto = $request->input("galeri_judul.{$idx}") ?? null;
+                    $jurusan->fotos()->create([
+                        'file_foto' => $fotoClean,
+                        'judul' => $judulFoto,
+                        'urutan' => $idx + 1,
+                    ]);
+                }
+            }
+        }
 
         return redirect()
             ->route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug, 'tab' => 'jurusan'])
@@ -153,19 +191,37 @@ class JurusanController extends Controller
         $validated = $request->validate([
             'nama_jurusan' => ['required', 'string', 'max:150'],
             'singkatan' => ['nullable', 'string', 'max:20'],
+            'logo' => ['nullable', 'string', 'max:500'],
             'slug' => ['nullable', 'string', 'max:150', 'unique:tenant.jurusan,slug,' . $jurusan->id],
             'guru_id' => ['nullable', 'exists:tenant.guru_staf,id'],
             'deskripsi_singkat' => ['nullable', 'string', 'max:500'],
             'deskripsi_lengkap' => ['nullable', 'string'],
+            'informasi_tambahan' => ['nullable', 'string'],
             'ikon_atau_foto' => ['nullable', 'string', 'max:500'],
+            'jenjang' => ['nullable', 'string', 'max:50'],
+            'peluang_kerja' => ['nullable', 'string', 'max:255'],
+            'sertifikasi' => ['nullable', 'string', 'max:255'],
             'urutan' => ['nullable', 'integer', 'min:0'],
             'is_aktif' => ['nullable', 'boolean'],
+            'galeri_foto' => ['nullable', 'array'],
+            'galeri_foto.*' => ['nullable', 'string', 'max:500'],
+            'galeri_judul' => ['nullable', 'array'],
+            'galeri_judul.*' => ['nullable', 'string', 'max:150'],
         ]);
 
         $adminId = auth('tenant_admin')->id();
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['nama_jurusan']);
+        }
+
+        if (! empty($validated['logo'])) {
+            $validated['logo'] = $mediaService->sinkronisasiOtomatisUrl(
+                $validated['logo'],
+                $adminId,
+                'jurusan',
+                'Logo ' . $validated['nama_jurusan']
+            );
         }
 
         if (! empty($validated['ikon_atau_foto'])) {
@@ -180,6 +236,27 @@ class JurusanController extends Controller
         $validated['is_aktif'] = $request->boolean('is_aktif', true);
 
         $jurusan->update($validated);
+
+        // Sinkronisasi galeri multi-foto
+        $jurusan->fotos()->delete();
+        if ($request->has('galeri_foto') && is_array($request->input('galeri_foto'))) {
+            foreach ($request->input('galeri_foto') as $idx => $fotoUrl) {
+                if (! empty($fotoUrl)) {
+                    $fotoClean = $mediaService->sinkronisasiOtomatisUrl(
+                        $fotoUrl,
+                        $adminId,
+                        'jurusan',
+                        'Dokumentasi ' . $validated['nama_jurusan']
+                    );
+                    $judulFoto = $request->input("galeri_judul.{$idx}") ?? null;
+                    $jurusan->fotos()->create([
+                        'file_foto' => $fotoClean,
+                        'judul' => $judulFoto,
+                        'urutan' => $idx + 1,
+                    ]);
+                }
+            }
+        }
 
         return redirect()
             ->route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug, 'tab' => 'jurusan'])

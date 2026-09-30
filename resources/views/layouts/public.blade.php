@@ -205,6 +205,7 @@
             ];
 
             $isMenuProfilAktif = \App\Models\Tenant\PengaturanFitur::isAktif('menu_profil', true);
+            $jurusanAktifSlugs = \App\Models\Tenant\Jurusan::where('is_aktif', true)->pluck('slug')->toArray();
 
             $navMenus = $navMenus->reject(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
                 // Reject SPMB dari dropdown
@@ -224,8 +225,8 @@
 
                 return false;
             })
-            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
-                $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $isMenuProfilAktif) {
+            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif, $jurusanAktifSlugs) {
+                $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $isMenuProfilAktif, $jurusanAktifSlugs) {
                     if (str_contains(strtolower($child->name), 'spmb')) return true;
                     if (strtolower(trim($child->name)) === 'profil lengkap') return true;
                     if (strtolower(trim($child->name)) === 'semua program keahlian') return true;
@@ -234,6 +235,14 @@
                     $childUrl = '/' . ltrim($child->url, '/');
                     if (isset($menuFeatureMap[$childUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$childUrl], true)) {
                         return true;
+                    }
+
+                    // Periksa apakah ini submenu jurusan/program keahlian dan status is_aktif-nya false
+                    if (str_starts_with($childUrl, '/program-keahlian/')) {
+                        $slug = \Illuminate\Support\Str::after($childUrl, '/program-keahlian/');
+                        if (!in_array($slug, $jurusanAktifSlugs)) {
+                            return true;
+                        }
                     }
 
                     return false;
@@ -537,16 +546,19 @@
                 </div>
 
                 <!-- Col 3: Programs & Facilities -->
+                @php
+                $footerJurusan = \App\Models\Tenant\Jurusan::where('is_aktif', true)->orderBy('urutan')->take(5)->get();
+                @endphp
+                @if($footerJurusan->isNotEmpty())
                 <div>
                     <h3 class="font-heading font-bold text-white text-base mb-4 tracking-wide uppercase">Program Unggulan</h3>
                     <ul class="space-y-2 text-sm text-blue-200">
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian/teknik-mesin') }}" class="hover:text-white transition">Teknik Mesin (TM)</a></li>
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian/pengembangan-perangkat-lunak-dan-gim') }}" class="hover:text-white transition">PPLG (Software & Game)</a></li>
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian/teknik-jaringan-komputer-dan-telekomunikasi') }}" class="hover:text-white transition">TJKT (Jaringan Komputer)</a></li>
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian/desain-komunikasi-visual') }}" class="hover:text-white transition">Desain Komunikasi Visual</a></li>
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian/animasi') }}" class="hover:text-white transition">Animasi 2D/3D</a></li>
+                        @foreach($footerJurusan as $fj)
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian/' . $fj->slug) }}" class="hover:text-white transition">{{ $fj->nama_jurusan }} {{ $fj->singkatan ? '(' . $fj->singkatan . ')' : '' }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
+                @endif
 
                 <!-- Col 4: Contact & Service Hours -->
                 <div>

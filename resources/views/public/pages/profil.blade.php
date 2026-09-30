@@ -6,29 +6,29 @@
 @section('content')
 <!-- Header & Breadcrumb -->
 @php
-    $polaProfil = $profil->pola_latar ?? 'dots';
-    $bannerProfil = $profil->gambar_banner ?? null;
-    $showVideoProfil = \App\Models\Tenant\PengaturanFitur::isAktif('profil_video', true);
-    $showDataPokok = \App\Models\Tenant\PengaturanFitur::isAktif('profil_data_pokok', true);
-    $showSejarah = \App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && !empty($sejarah?->isi_konten);
-    $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) && !empty($visiMisi?->isi_konten);
+$polaProfil = $profil->pola_latar ?? 'dots';
+$bannerProfil = $profil->gambar_banner ?? null;
+$showVideoProfil = \App\Models\Tenant\PengaturanFitur::isAktif('profil_video', true);
+$showDataPokok = \App\Models\Tenant\PengaturanFitur::isAktif('profil_data_pokok', true);
+$showSejarah = \App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && !empty($sejarah?->isi_konten);
+$showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) && !empty($visiMisi?->isi_konten);
 @endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     @if($polaProfil === 'dots')
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
     @elseif($polaProfil === 'grid')
-        <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,var(--theme-accent)_1px,transparent_1px),linear-gradient(to_bottom,var(--theme-accent)_1px,transparent_1px)] [background-size:24px_24px]"></div>
     @elseif($polaProfil === 'mesh')
-        <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
+    <div class="absolute inset-0 opacity-20 bg-gradient-to-tr from-transparent via-blue-500/10 to-transparent"></div>
     @endif
 
     @if($bannerProfil)
-        <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
-        <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
-            <img src="{{ $bannerProfil }}" alt="{{ $profil->judul ?? 'Profil Sekolah' }}" 
-                 class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
-            <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
-        </div>
+    <!-- Right-Side Artistic Banner Image with Gradual Mask/Fade to Left & Theme Dark Overlay -->
+    <div class="absolute inset-y-0 right-0 w-full md:w-3/5 lg:w-1/2 pointer-events-none z-0">
+        <img src="{{ $bannerProfil }}" alt="{{ $profil->judul ?? 'Profil Sekolah' }}"
+            class="w-full h-full object-cover object-center opacity-40 lg:opacity-60 [mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,rgba(0,0,0,1)_20%,rgba(0,0,0,0.6)_60%,transparent_100%)]">
+        <div class="absolute inset-0 bg-gradient-to-r from-[var(--theme-header,#0f172a)] via-transparent to-transparent opacity-80"></div>
+    </div>
     @endif
 
     <div class="container-custom relative z-10">
@@ -57,10 +57,10 @@
         @if($showVideoProfil)
         <!-- Mode 2 Kolom (Konten Utama 8 Kolom + Sticky Video Sidebar 4 Kolom) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-            
+
             <!-- Left Main Content -->
             <div class="lg:col-span-8 space-y-8 w-full">
-                
+
                 @if(!empty($profil->isi_konten))
                 <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
                 <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="profil-sekolah">
@@ -76,8 +76,8 @@
                     </h2>
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
                         <div class="shrink-0 flex items-center justify-center bg-transparent">
-                            <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
-                                 alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
+                            <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}"
+                                alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700 flex-1 w-full">
                             <div class="space-y-2.5">
@@ -135,52 +135,52 @@
                     </div>
 
                     @php
-                        $videoUrl = $sekolah['video_profil'] ?? '';
-                        $isYouTube = Str::contains($videoUrl, ['youtube.com', 'youtu.be']);
-                        $ytEmbed = '';
-                        if ($isYouTube) {
-                            if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
-                                $ytEmbed = 'https://www.youtube-nocookie.com/embed/' . $match[1] . '?rel=0&modestbranding=1&playsinline=1';
-                            }
-                        }
-                        $videoExt = strtolower(pathinfo(parse_url($videoUrl, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
-                        $mimeType = match($videoExt) {
-                            'webm' => 'video/webm',
-                            'ogg', 'ogv' => 'video/ogg',
-                            default => 'video/mp4',
-                        };
+                    $videoUrl = $sekolah['video_profil'] ?? '';
+                    $isYouTube = Str::contains($videoUrl, ['youtube.com', 'youtu.be']);
+                    $ytEmbed = '';
+                    if ($isYouTube) {
+                    if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $videoUrl, $match)) {
+                    $ytEmbed = 'https://www.youtube-nocookie.com/embed/' . $match[1] . '?rel=0&modestbranding=1&playsinline=1';
+                    }
+                    }
+                    $videoExt = strtolower(pathinfo(parse_url($videoUrl, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+                    $mimeType = match($videoExt) {
+                    'webm' => 'video/webm',
+                    'ogg', 'ogv' => 'video/ogg',
+                    default => 'video/mp4',
+                    };
                     @endphp
 
                     <div class="rounded-xl overflow-hidden bg-slate-950 aspect-video shadow-md border border-slate-200 relative mb-4 flex items-center justify-center">
                         @if($ytEmbed)
-                            <iframe
-                                src="{{ $ytEmbed }}"
-                                title="{{ $sekolah['video_profil_judul'] ?? 'Video Profil Sekolah' }}"
-                                class="w-full h-full border-0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen></iframe>
+                        <iframe
+                            src="{{ $ytEmbed }}"
+                            title="{{ $sekolah['video_profil_judul'] ?? 'Video Profil Sekolah' }}"
+                            class="w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
                         @elseif(!empty($videoUrl))
-                            <video controls preload="metadata" playsinline class="w-full h-full object-cover">
-                                <source src="{{ $videoUrl }}" type="{{ $mimeType }}">
-                                <source src="{{ $videoUrl }}" type="video/mp4">
-                                Browser Anda tidak mendukung pemutar video HTML5.
-                            </video>
+                        <video controls preload="metadata" playsinline class="w-full h-full object-cover">
+                            <source src="{{ $videoUrl }}" type="{{ $mimeType }}">
+                            <source src="{{ $videoUrl }}" type="video/mp4">
+                            Browser Anda tidak mendukung pemutar video HTML5.
+                        </video>
                         @else
-                            <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 p-4 text-center">
-                                <svg class="w-12 h-12 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span class="text-xs text-slate-400 font-medium">Video profil belum tersedia</span>
-                            </div>
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400 p-4 text-center">
+                            <svg class="w-12 h-12 text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="text-xs text-slate-400 font-medium">Video profil belum tersedia</span>
+                        </div>
                         @endif
                     </div>
 
                     @if(!empty($sekolah['video_profil_deskripsi']))
-                        <p class="text-xs text-slate-600 leading-relaxed">
-                            {{ $sekolah['video_profil_deskripsi'] }}
-                        </p>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        {{ $sekolah['video_profil_deskripsi'] }}
+                    </p>
                     @endif
                 </div>
             </div>
@@ -189,7 +189,7 @@
         @else
         <!-- Mode 1 Kolom Terpusat (Elegan & Rapi Saat Video Disembunyikan) -->
         <div class="max-w-4xl mx-auto space-y-8">
-            
+
             @if(!empty($profil->isi_konten))
             <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
             <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="profil-sekolah">
@@ -205,8 +205,8 @@
                 </h2>
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
                     <div class="shrink-0 flex items-center justify-center bg-transparent">
-                        <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
-                             alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
+                        <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}"
+                            alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700 flex-1 w-full">
                         <div class="space-y-3">

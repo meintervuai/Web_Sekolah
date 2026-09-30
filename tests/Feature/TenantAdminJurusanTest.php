@@ -81,13 +81,23 @@ test('admin can perform CRUD operations on program keahlian / jurusan', function
     $storePayload = [
         'nama_jurusan' => 'Teknik Mekatronika Industri',
         'singkatan' => 'TMI',
+        'logo' => 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9',
         'slug' => 'teknik-mekatronika-industri',
         'guru_id' => $this->guru->id,
         'deskripsi_singkat' => 'Mempelajari otomasi industri, PLC, robotika, dan pneumatik.',
         'deskripsi_lengkap' => '<p>Uraian lengkap kompetensi keahlian teknik mekatronika.</p>',
         'ikon_atau_foto' => 'https://images.unsplash.com/photo-1581092160607-ee22621dd758',
+        'jenjang' => 'SMK (3 Tahun)',
+        'peluang_kerja' => 'Industri Manufaktur, Automation Engineer',
+        'sertifikasi' => 'LSP-P1 Mekatronika / BNSP',
         'urutan' => 8,
         'is_aktif' => 1,
+        'galeri_foto' => [
+            'https://images.unsplash.com/photo-1581092335397-9583fe92d232',
+        ],
+        'galeri_judul' => [
+            'Bengkel CNC & Lab PLC',
+        ],
     ];
 
     $responseStore = $this->actingAs($this->admin, 'tenant_admin')
@@ -96,22 +106,28 @@ test('admin can perform CRUD operations on program keahlian / jurusan', function
     $responseStore->assertRedirect('/smk-negeri-2-bandung/admin/program-keahlian?tab=jurusan');
     $responseStore->assertSessionHas('success');
 
-    $jurusan = Jurusan::where('slug', 'teknik-mekatronika-industri')->first();
+    $jurusan = Jurusan::with('fotos')->where('slug', 'teknik-mekatronika-industri')->first();
     expect($jurusan)->not->toBeNull()
         ->and($jurusan->nama_jurusan)->toBe('Teknik Mekatronika Industri')
         ->and($jurusan->singkatan)->toBe('TMI')
+        ->and($jurusan->logo)->not->toBeEmpty()
         ->and($jurusan->guru_id)->toBe($this->guru->id)
-        ->and($jurusan->is_aktif)->toBeTrue();
+        ->and($jurusan->is_aktif)->toBeTrue()
+        ->and($jurusan->fotos->count())->toBe(1);
 
     // 2. Update Jurusan
     $updatePayload = [
         'nama_jurusan' => 'Teknik Mekatronika & Otomasi Industri',
         'singkatan' => 'TMOI',
+        'logo' => 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9',
         'slug' => 'teknik-mekatronika-industri',
         'guru_id' => $this->guru->id,
         'deskripsi_singkat' => 'Mempelajari otomasi industri, PLC, robotika modern, sensorik dan pneumatik.',
         'deskripsi_lengkap' => '<p>Uraian lengkap kompetensi mekatronika revisi.</p>',
         'ikon_atau_foto' => 'https://images.unsplash.com/photo-1581092160607-ee22621dd758',
+        'jenjang' => 'SMK (4 Tahun)',
+        'peluang_kerja' => 'Industri Otomasi & Robotika Global',
+        'sertifikasi' => 'BNSP / Festo Certified',
         'urutan' => 8,
         'is_aktif' => 1,
     ];

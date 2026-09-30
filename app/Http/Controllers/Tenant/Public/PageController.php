@@ -160,7 +160,7 @@ class PageController extends Controller
     {
         $this->checkFitur('program_keahlian');
         $halaman = Page::where('slug', 'program-keahlian')->first();
-        $jurusan = Jurusan::where('is_aktif', true)->orderBy('urutan')->get();
+        $jurusan = Jurusan::where('is_aktif', true)->with('kepalaProgram')->orderBy('urutan')->get();
 
         return view('public.pages.jurusan', [
             'sekolah' => $this->getSekolahData(),
@@ -172,7 +172,7 @@ class PageController extends Controller
     public function detailProgramKeahlian(string $slug)
     {
         $this->checkFitur('program_keahlian');
-        $jurusan = Jurusan::where('slug', $slug)->firstOrFail();
+        $jurusan = Jurusan::where('slug', $slug)->where('is_aktif', true)->with(['kepalaProgram', 'fotos'])->firstOrFail();
         $jurusanLainnya = Jurusan::where('id', '!=', $jurusan->id)->where('is_aktif', true)->orderBy('urutan')->get();
 
         return view('public.pages.jurusan_detail', [

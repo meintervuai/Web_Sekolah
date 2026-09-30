@@ -53,17 +53,37 @@
                 @foreach($jurusan as $j)
                     <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover-card flex flex-col justify-between h-full">
                         <div class="relative aspect-[4/3] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
-                            <!-- Ambient Blurred Backdrop -->
-                            <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}" 
-                                 alt="" 
-                                 aria-hidden="true" 
-                                 class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
-                            <!-- Main Image -->
-                            <img src="{{ $j->ikon_atau_foto ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800' }}" 
-                                 alt="{{ $j->nama_jurusan }}" 
-                                 style="{{ \App\Services\MediaService::getCropStyle($j->ikon_atau_foto ?? '') }}"
-                                 class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                            <div class="absolute inset-0 z-20 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+                            @if(!empty($j->ikon_atau_foto))
+                                <!-- Ambient Blurred Backdrop -->
+                                <img src="{{ $j->ikon_atau_foto }}" 
+                                     alt="" 
+                                     aria-hidden="true" 
+                                     class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
+                                <!-- Main Image -->
+                                <img src="{{ $j->ikon_atau_foto }}" 
+                                     alt="{{ $j->nama_jurusan }}" 
+                                     style="{{ \App\Services\MediaService::getCropStyle($j->ikon_atau_foto) }}"
+                                     class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                <div class="absolute inset-0 z-20 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
+                            @else
+                                <!-- Clean Gradient Background for No Image State -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center">
+                                    <div class="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white text-2xl font-bold font-heading shadow-inner backdrop-blur-xs">
+                                        {{ $j->singkatan ?? substr($j->nama_jurusan, 0, 2) }}
+                                    </div>
+                                </div>
+                                <div class="absolute inset-0 z-20 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent pointer-events-none"></div>
+                            @endif
+
+                            @if(!empty($j->logo))
+                                <div class="absolute top-3 left-3 z-30 w-10 h-10 rounded-xl bg-white/95 p-1 shadow-md border border-white/40 flex items-center justify-center backdrop-blur-xs">
+                                    <img src="{{ $j->logo }}" alt="{{ $j->nama_jurusan }}" class="w-full h-full object-contain">
+                                </div>
+                            @elseif(!empty($j->singkatan) && !empty($j->ikon_atau_foto))
+                                <div class="absolute top-3 left-3 z-30 px-2.5 py-1 rounded-lg bg-blue-600/90 text-white text-[11px] font-bold font-heading shadow-md backdrop-blur-xs">
+                                    {{ $j->singkatan }}
+                                </div>
+                            @endif
                             <div class="absolute bottom-3 left-4 right-4 z-30">
                                 <h2 class="font-heading font-bold text-lg text-white leading-tight">
                                     {{ $j->nama_jurusan }}
@@ -71,10 +91,20 @@
                             </div>
                         </div>
                         <div class="p-5 flex-1 flex flex-col justify-between">
-                            <p class="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed">
-                                {{ $j->deskripsi_singkat }}
-                            </p>
-                            <div class="pt-5 mt-4 border-t border-slate-100">
+                            <div>
+                                <p class="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed mb-3">
+                                    {{ $j->deskripsi_singkat }}
+                                </p>
+                                <div class="flex items-center gap-2 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 font-medium text-slate-700">
+                                        {{ $j->jenjang ?? 'SMK (3 Tahun)' }}
+                                    </span>
+                                    @if($j->kepalaProgram)
+                                        <span class="truncate text-slate-500">• Kaprog: {{ $j->kepalaProgram->nama_lengkap }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="pt-4 mt-3 border-t border-slate-100">
                                 <a href="{{ url(app('tenant')->slug . '/program-keahlian/' . $j->slug) }}" 
                                    class="w-full py-2.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs btn-radius flex items-center justify-center transition shadow-sm">
                                     <span>Pelajari Kompetensi & Prospek</span>
