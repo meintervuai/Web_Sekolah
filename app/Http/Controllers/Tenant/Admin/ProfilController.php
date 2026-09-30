@@ -158,12 +158,18 @@ class ProfilController extends Controller
             }])
             ->first();
 
-        // 6. Feature Flags
+        // 6. Feature Flags (Tingkat Menu & Sub-Section)
         $fiturProfil = [
+            'menu_profil' => PengaturanFitur::isAktif('menu_profil', true),
             'profil' => PengaturanFitur::isAktif('profil', true),
+            'profil_data_pokok' => PengaturanFitur::isAktif('profil_data_pokok', true),
+            'profil_sambutan_kepsek' => PengaturanFitur::isAktif('profil_sambutan_kepsek', true),
+            'profil_video' => PengaturanFitur::isAktif('profil_video', true),
             'sejarah' => PengaturanFitur::isAktif('sejarah', true),
             'visi_misi' => PengaturanFitur::isAktif('visi_misi', true),
             'struktur_organisasi' => PengaturanFitur::isAktif('struktur_organisasi', true),
+            'struktur_diagram' => PengaturanFitur::isAktif('struktur_diagram', true),
+            'struktur_pejabat' => PengaturanFitur::isAktif('struktur_pejabat', true),
             'guru_staf' => PengaturanFitur::isAktif('guru_staf', true),
             'fasilitas' => PengaturanFitur::isAktif('fasilitas', true),
         ];
@@ -653,24 +659,34 @@ class ProfilController extends Controller
             if (! empty($validated['kode_fitur'])) {
                 $kode = $validated['kode_fitur'];
                 $namaMap = [
-                    'profil' => 'Profil Sekolah',
+                    'menu_profil' => 'Menu Induk Profil Sekolah',
+                    'profil' => 'Halaman Profil Sekolah',
+                    'profil_data_pokok' => 'Section Data Pokok Sekolah',
+                    'profil_sambutan_kepsek' => 'Section Kepala Sekolah & Sambutan',
+                    'profil_video' => 'Section Video Profil Sekolah',
                     'sejarah' => 'Sejarah Sekolah',
                     'visi_misi' => 'Visi & Misi',
                     'struktur_organisasi' => 'Struktur Organisasi',
-                    'guru_staf' => 'Guru & Staf',
+                    'struktur_diagram' => 'Bagan Diagram Struktur',
+                    'struktur_pejabat' => 'Daftar Pejabat Struktural',
+                    'guru_staf' => 'Guru & Tenaga Kependidikan',
                     'fasilitas' => 'Fasilitas Sekolah',
                 ];
+
+                $menuName = $namaMap[$kode] ?? ucfirst(str_replace('_', ' ', $kode));
 
                 PengaturanFitur::updateOrCreate(
                     ['kode_fitur' => $kode],
                     [
-                        'nama_fitur' => $namaMap[$kode] ?? ucfirst(str_replace('_', ' ', $kode)),
+                        'nama_fitur' => $menuName,
                         'is_aktif' => $isAktif,
                         'pengguna_id' => $adminId,
                     ]
                 );
 
+                // Jika parent dinonaktifkan / diaktifkan, sesuaikan juga menu navbar
                 $urlMap = [
+                    'menu_profil' => '/profil',
                     'profil' => '/profil',
                     'sejarah' => '/profil/sejarah',
                     'visi_misi' => '/profil/visi-misi',
@@ -681,6 +697,59 @@ class ProfilController extends Controller
 
                 if (isset($urlMap[$kode])) {
                     Menu::where('url', $urlMap[$kode])->update(['is_aktif' => $isAktif]);
+                }
+
+                // Logika Cascade Menu Profil Induk:
+                // Jika parent 'menu_profil' diubah (baik dihidupkan atau dimatikan), sesuaikan seluruh sub-fitur & menu di bawahnya
+                if ($kode === 'menu_profil') {
+                    $subFeatures = [
+                        'profil', 'profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video',
+                        'sejarah', 'visi_misi', 'struktur_organisasi', 'struktur_diagram',
+                        'struktur_pejabat', 'guru_staf',
+                    ];
+                    foreach ($subFeatures as $sub) {
+                        PengaturanFitur::updateOrCreate(
+                            ['kode_fitur' => $sub],
+                            [
+                                'nama_fitur' => $namaMap[$sub] ?? $sub,
+                                'is_aktif' => $isAktif,
+                                'pengguna_id' => $adminId,
+                            ]
+                        );
+                        if (isset($urlMap[$sub])) {
+                            Menu::where('url', $urlMap[$sub])->update(['is_aktif' => $isAktif]);
+                        }
+                    }
+                }
+
+                // Logika Cascade Halaman Profil:
+                if ($kode === 'profil') {
+                    $subSections = ['profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video'];
+                    foreach ($subSections as $sub) {
+                        PengaturanFitur::updateOrCreate(
+                            ['kode_fitur' => $sub],
+                            [
+                                'nama_fitur' => $namaMap[$sub] ?? $sub,
+                                'is_aktif' => $isAktif,
+                                'pengguna_id' => $adminId,
+                            ]
+                        );
+                    }
+                }
+
+                // Logika Cascade Struktur Organisasi:
+                if ($kode === 'struktur_organisasi') {
+                    $subStruktur = ['struktur_diagram', 'struktur_pejabat'];
+                    foreach ($subStruktur as $sub) {
+                        PengaturanFitur::updateOrCreate(
+                            ['kode_fitur' => $sub],
+                            [
+                                'nama_fitur' => $namaMap[$sub] ?? $sub,
+                                'is_aktif' => $isAktif,
+                                'pengguna_id' => $adminId,
+                            ]
+                        );
+                    }
                 }
             }
         });

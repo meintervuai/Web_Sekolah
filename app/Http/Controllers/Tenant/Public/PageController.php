@@ -106,7 +106,6 @@ class PageController extends Controller
 
     public function sejarah()
     {
-        $this->checkFitur('profil');
         $this->checkFitur('sejarah');
         $halaman = Page::where('slug', 'sejarah')->first();
 
@@ -115,7 +114,6 @@ class PageController extends Controller
 
     public function visiMisi()
     {
-        $this->checkFitur('profil');
         $this->checkFitur('visi_misi');
         $halaman = Page::where('slug', 'visi-misi')->first();
 
@@ -124,7 +122,6 @@ class PageController extends Controller
 
     public function struktur()
     {
-        $this->checkFitur('profil');
         $this->checkFitur('struktur_organisasi');
         $struktur = StrukturOrganisasi::orderBy('urutan')->get();
 

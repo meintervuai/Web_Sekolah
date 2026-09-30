@@ -188,22 +188,67 @@
             ->orderBy('urutan')
             ->get() : collect());
 
-            $navMenus = $navMenus->reject(fn($menu) => str_contains(strtolower($menu->name), 'spmb'))
-            ->map(function($menu) {
-            $menu->setRelation('children', $menu->children->reject(fn($child) =>
-            str_contains(strtolower($child->name), 'spmb') ||
-            strtolower(trim($child->name)) === 'profil lengkap' ||
-            strtolower(trim($child->name)) === 'semua program keahlian'
-            ));
+            // URL to Feature Flag map
+            $menuFeatureMap = [
+                '/profil' => 'profil',
+                '/profil/sejarah' => 'sejarah',
+                '/profil/visi-misi' => 'visi_misi',
+                '/profil/struktur' => 'struktur_organisasi',
+                '/guru-staf' => 'guru_staf',
+                '/fasilitas' => 'fasilitas',
+                '/program-keahlian' => 'program_keahlian',
+                '/berita' => 'berita',
+                '/agenda' => 'agenda',
+                '/pengumuman' => 'pengumuman',
+                '/prestasi' => 'prestasi',
+                '/ekstrakurikuler' => 'ekstrakurikuler',
+                '/galeri' => 'galeri',
+                '/kontak' => 'kontak',
+            ];
 
-            // Override URL if it's the parent of Profil or Jurusan
-            if (strtolower(trim($menu->name)) === 'profil sekolah' || strtolower(trim($menu->name)) === 'profil') {
-            $menu->url = '/profil';
-            } elseif (strtolower(trim($menu->name)) === 'program keahlian') {
-            $menu->url = '/program-keahlian';
-            }
+            $isMenuProfilAktif = \App\Models\Tenant\PengaturanFitur::isAktif('menu_profil', true);
 
-            return $menu;
+            $navMenus = $navMenus->reject(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
+                // Reject SPMB dari dropdown
+                if (str_contains(strtolower($menu->name), 'spmb')) return true;
+
+                $menuNameLower = strtolower(trim($menu->name));
+                // Jika induk profil dimatikan
+                if (($menuNameLower === 'profil' || $menuNameLower === 'profil sekolah') && !$isMenuProfilAktif) {
+                    return true;
+                }
+
+                // Periksa status fitur
+                $cleanUrl = '/' . ltrim($menu->url, '/');
+                if (isset($menuFeatureMap[$cleanUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$cleanUrl], true)) {
+                    return true;
+                }
+
+                return false;
+            })
+            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
+                $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $isMenuProfilAktif) {
+                    if (str_contains(strtolower($child->name), 'spmb')) return true;
+                    if (strtolower(trim($child->name)) === 'profil lengkap') return true;
+                    if (strtolower(trim($child->name)) === 'semua program keahlian') return true;
+
+                    // Periksa apakah sub-fitur dinonaktifkan
+                    $childUrl = '/' . ltrim($child->url, '/');
+                    if (isset($menuFeatureMap[$childUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$childUrl], true)) {
+                        return true;
+                    }
+
+                    return false;
+                }));
+
+                // Override URL if it's the parent of Profil or Jurusan
+                if (strtolower(trim($menu->name)) === 'profil sekolah' || strtolower(trim($menu->name)) === 'profil') {
+                    $menu->url = '/profil';
+                } elseif (strtolower(trim($menu->name)) === 'program keahlian') {
+                    $menu->url = '/program-keahlian';
+                }
+
+                return $menu;
             });
             $currentPath = trim(request()->path(), '/');
             $relativePath = trim(\Illuminate\Support\Str::after($currentPath, $tenantSlug), '/');

@@ -9,6 +9,10 @@ use App\Models\Tenant\PengaturanUmum;
 use App\Models\Tenant\Pengguna;
 use App\Models\Tenant\StrukturOrganisasi;
 
+/**
+ * @property \App\Models\Central\Sekolah $sekolah
+ * @property \App\Models\Tenant\Pengguna $admin
+ */
 beforeEach(function () {
     // Setup Tenant Context
     $this->sekolah = Sekolah::firstOrCreate(

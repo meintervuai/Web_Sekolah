@@ -8,6 +8,10 @@
 @php
     $polaProfil = $profil->pola_latar ?? 'dots';
     $bannerProfil = $profil->gambar_banner ?? null;
+    $showVideoProfil = \App\Models\Tenant\PengaturanFitur::isAktif('profil_video', true);
+    $showDataPokok = \App\Models\Tenant\PengaturanFitur::isAktif('profil_data_pokok', true);
+    $showSejarah = \App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && !empty($sejarah?->isi_konten);
+    $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) && !empty($visiMisi?->isi_konten);
 @endphp
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     @if($polaProfil === 'dots')
@@ -50,28 +54,30 @@
 
 <div class="section-py bg-slate-50">
     <div class="container-custom">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        @if($showVideoProfil)
+        <!-- Mode 2 Kolom (Konten Utama 8 Kolom + Sticky Video Sidebar 4 Kolom) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             
-            <!-- Left Main Content (8 cols) -->
-            <div class="lg:col-span-8 space-y-10">
+            <!-- Left Main Content -->
+            <div class="lg:col-span-8 space-y-8 w-full">
                 
                 @if(!empty($profil->isi_konten))
                 <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
-                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="profil-sekolah">
-                    <div class="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-3">
+                <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="profil-sekolah">
+                    <div class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
                         {!! $profil->isi_konten !!}
                     </div>
                 </div>
-                @else
+                @elseif($showDataPokok)
                 <!-- Fallback Identitas Satuan Pendidikan jika WYSIWYG belum diisi -->
-                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="identitas-sekolah">
+                <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="identitas-sekolah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-6 pb-2 border-b border-slate-100">
                         Identitas Satuan Pendidikan
                     </h2>
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
                         <div class="shrink-0 flex items-center justify-center bg-transparent">
-<img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
-           alt="Logo {{ $sekolah['nama'] }}">
+                            <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
+                                 alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-700 flex-1 w-full">
                             <div class="space-y-2.5">
@@ -92,24 +98,24 @@
                 @endif
 
                 <!-- Sejarah -->
-                @if(\App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true) && $sejarah)
-                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="sejarah">
+                @if($showSejarah)
+                <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="sejarah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
                         Sejarah Singkat
                     </h2>
-                    <div class="prose max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-3">
+                    <div class="prose prose-slate max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
                         {!! $sejarah->isi_konten !!}
                     </div>
                 </div>
                 @endif
 
                 <!-- Visi & Misi -->
-                @if(\App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) && $visiMisi)
-                <div class="theme-card rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm" id="visi-misi">
+                @if($showVisiMisi)
+                <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="visi-misi">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-4 pb-2 border-b border-slate-100">
-                        Visi, Misi & Tujuan
+                        Visi, Misi &amp; Tujuan
                     </h2>
-                    <div class="prose max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-3">
+                    <div class="prose prose-slate max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
                         {!! $visiMisi->isi_konten !!}
                     </div>
                 </div>
@@ -118,9 +124,9 @@
             </div>
 
             <!-- Right Column / Video Player (4 cols) -->
-            <div class="lg:col-span-4 space-y-6">
+            <div class="lg:col-span-4 space-y-6 w-full lg:sticky lg:top-24">
                 <!-- Video Media Player Card -->
-                <div class="theme-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <div class="theme-card bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
                     <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
                         <div class="w-2 h-5 bg-blue-600 rounded-full"></div>
                         <h3 class="font-heading font-bold text-base text-slate-900">
@@ -180,6 +186,72 @@
             </div>
 
         </div>
+        @else
+        <!-- Mode 1 Kolom Terpusat (Elegan & Rapi Saat Video Disembunyikan) -->
+        <div class="max-w-4xl mx-auto space-y-8">
+            
+            @if(!empty($profil->isi_konten))
+            <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
+            <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="profil-sekolah">
+                <div class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
+                    {!! $profil->isi_konten !!}
+                </div>
+            </div>
+            @elseif($showDataPokok)
+            <!-- Fallback Identitas Satuan Pendidikan jika WYSIWYG belum diisi -->
+            <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="identitas-sekolah">
+                <h2 class="font-heading font-bold text-xl sm:text-2xl text-slate-900 mb-6 pb-3 border-b border-slate-100">
+                    Identitas Satuan Pendidikan
+                </h2>
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+                    <div class="shrink-0 flex items-center justify-center bg-transparent">
+                        <img src="{{ !empty($sekolah['logo']) ? $sekolah['logo'] : asset('images/logo-smkn2.svg') }}" 
+                             alt="Logo {{ $sekolah['nama'] }}" class="w-24 h-24 object-contain">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-700 flex-1 w-full">
+                        <div class="space-y-3">
+                            <p><strong class="text-slate-900">Nama Sekolah:</strong> {{ $sekolah['nama'] }}</p>
+                            <p><strong class="text-slate-900">NPSN:</strong> {{ $sekolah['npsn'] }}</p>
+                            <p><strong class="text-slate-900">Bentuk Pendidikan:</strong> SMK</p>
+                            <p><strong class="text-slate-900">Status Akreditasi:</strong> <span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded text-xs">Peringkat {{ $sekolah['akreditasi'] ?? 'A' }}</span></p>
+                        </div>
+                        <div class="space-y-3">
+                            <p><strong class="text-slate-900">Tahun Berdiri:</strong> {{ $sekolah['tahun_berdiri'] }}</p>
+                            <p><strong class="text-slate-900">Alamat:</strong> {{ $sekolah['alamat'] }}</p>
+                            <p><strong class="text-slate-900">Telepon:</strong> {{ $sekolah['telepon'] }}</p>
+                            <p><strong class="text-slate-900">Email Resmi:</strong> {{ $sekolah['email'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Sejarah -->
+            @if($showSejarah)
+            <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="sejarah">
+                <h2 class="font-heading font-bold text-xl sm:text-2xl text-slate-900 mb-4 pb-3 border-b border-slate-100">
+                    Sejarah Singkat
+                </h2>
+                <div class="prose prose-slate max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
+                    {!! $sejarah->isi_konten !!}
+                </div>
+            </div>
+            @endif
+
+            <!-- Visi & Misi -->
+            @if($showVisiMisi)
+            <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="visi-misi">
+                <h2 class="font-heading font-bold text-xl sm:text-2xl text-slate-900 mb-4 pb-3 border-b border-slate-100">
+                    Visi, Misi &amp; Tujuan
+                </h2>
+                <div class="prose prose-slate max-w-none text-slate-600 text-sm sm:text-base leading-relaxed space-y-4">
+                    {!! $visiMisi->isi_konten !!}
+                </div>
+            </div>
+            @endif
+
+        </div>
+        @endif
     </div>
 </div>
 @endsection

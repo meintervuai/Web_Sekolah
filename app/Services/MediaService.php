@@ -332,7 +332,7 @@ class MediaService
             \App\Models\Tenant\FotoFasilitas::where('file_foto', $oldUrl)->update(['file_foto' => $newUrl]);
             \App\Models\Tenant\SliderBeranda::where('gambar', $oldUrl)->update(['gambar' => $newUrl]);
             \App\Models\Tenant\GaleriItem::where('file_path', $oldUrl)->update(['file_path' => $newUrl]);
-            \App\Models\Tenant\BeritaArtikel::where('gambar_sampul', $oldUrl)->update(['gambar_sampul' => $newUrl]);
+            \App\Models\Tenant\Post::where('gambar_sampul', $oldUrl)->update(['gambar_sampul' => $newUrl]);
         } catch (\Throwable $e) {
             // Silently continue if any table doesn't have the column
         }

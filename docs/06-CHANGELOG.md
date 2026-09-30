@@ -2,6 +2,51 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Layout Adaptif Halaman Profil Publik & Sinkronisasi Cascade 2 Arah] - 2026-09-30
+
+### Fixed
+- **Layout Adaptif Halaman Profil Publik ([resources/views/public/pages/profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php))**:
+  - Mengatasi masalah tampilan berantakan / teks menyempit saat fitur *Video Profil Sekolah* dinonaktifkan di admin.
+  - Menerapkan layout adaptif elegan: saat video aktif menggunakan 2 kolom responsif (`8 : 4`), dan saat video dinonaktifkan otomatis beralih ke format 1 kolom terpusat (`max-w-4xl mx-auto`) dengan tipografi dan kontainer simetris.
+
+### Added
+- **Cascade Toggle Dua Arah (Bidirectional)**:
+  - Mengaktifkan kembali sakelar induk (misal: `menu_profil`, `profil`, `struktur_organisasi`) kini otomatis ikut mengaktifkan seluruh sub-menu dan sub-section di bawahnya baik di backend maupun antarmuka reaktif frontend (Alpine.js).
+- **Penyelarasan Navigasi Publik dengan Pengaturan Fitur ([layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php))**:
+  - Navbar desktop & mobile drawer kini secara otomatis memeriksa status `PengaturanFitur` (`menu_profil`, `profil`, `sejarah`, `visi_misi`, `struktur_organisasi`, `guru_staf`, `fasilitas`, dll).
+  - Jika sakelar **Menu Utama Profil Sekolah (`menu_profil`)** dinonaktifkan di admin, menu navigasi Profil di header/drawer publik otomatis hilang dan tidak dapat diakses.
+  - Sub-menu yang dinonaktifkan juga otomatis disaring keluar dari dropdown.
+- **Komponen Parsial Media Picker Reusable ([resources/views/tenant/admin/media/picker-modal.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/picker-modal.blade.php))**:
+  - Mengekstrak modal Media Picker dari Blade admin profil menjadi komponen terisolasi dan reusable sehingga dapat dipanggil kapan saja di seluruh modul admin via `@include('tenant.admin.media.picker-modal')`.
+  - Filter kategori berkas lengkap (`Semua`, `Gambar`, `Video Lokal`, `YouTube`, `Dokumen`) dan fitur impor cepat URL YouTube/Gambar langsung di dalam modal.
+
+## [Modularisasi Blade Tab Profil & Hierarki Bertingkat Visibilitas Menu] - 2026-09-30
+
+### Added
+- **Modularisasi Berkas Blade Admin Profil ([resources/views/tenant/admin/profil/tabs/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/))**:
+  - Memisahkan seluruh konten per-tab yang sebelumnya menumpuk 2.200 baris menjadi berkas parsial independen:
+    - `tab-datadiri.blade.php`: Data Pokok, Medsos, Kepala Sekolah & Sambutan, serta Video Profil.
+    - `tab-profil.blade.php`: Kustomisasi Hero Banner & Uraian Lengkap Profil (WYSIWYG).
+    - `tab-sejarah.blade.php`: Judul, Subjudul, Banner & Konten Sejarah (WYSIWYG).
+    - `tab-visimisi.blade.php`: Judul, Subjudul, Banner & Konten Visi, Misi & Sasaran Mutu (WYSIWYG).
+    - `tab-struktur.blade.php`: Hero Banner, Bagan Diagram Dinamis (Repeater), dan Tabel Pejabat Struktural.
+    - `tab-guru.blade.php`: Hero Banner dan Direktori Master Guru & Tenaga Kependidikan.
+    - `tab-visibilitas.blade.php`: Tabel sakelar visibilitas bertingkat (*cascade*).
+    - `modals.blade.php`: Dialog pop-up Pejabat, Guru, Konfirmasi Hapus, Konfirmasi Visibilitas, dan Media Picker.
+- **Hierarki Visibilitas Bertingkat (Cascade Visibility)**:
+  - Tab 7 Visibilitas dirinci dari level tertinggi hingga level sub-section:
+    - `1. Menu Utama Profil Sekolah` (`menu_profil`) -> jika dinonaktifkan, mematikan seluruh sub-halaman & sub-section di bawahnya.
+    - `I. Data Diri Sekolah` (`profil_data_pokok`) -> memiliki sub-sakelar `Kepala Sekolah & Sambutan` (`profil_sambutan_kepsek`) dan `Video Profil` (`profil_video`).
+    - `II. Profil Lengkap` (`profil`).
+    - `III. Sejarah Sekolah` (`sejarah`).
+    - `IV. Visi, Misi & Sasaran Mutu` (`visi_misi`).
+    - `V. Struktur Organisasi` (`struktur_organisasi`) -> memiliki sub-sakelar `Bagan Diagram Struktur` (`struktur_diagram`) dan `Daftar Pejabat Struktural` (`struktur_pejabat`).
+    - `VI. Guru & Tenaga Kependidikan` (`guru_staf`).
+    - `VII. Fasilitas Sekolah` (`fasilitas`).
+  - Halaman publik (`profil.blade.php`, `struktur.blade.php`, `home.blade.php`) kini memeriksa flag sub-section ini secara dinamis.
+- **Verifikasi**:
+  - Full Pest Suite: **75 passed (489 assertions)**.
+
 ## [Penambahan Tab 6 Guru & Tenaga Kependidikan di Admin Profil] - 2026-09-30
 
 ### Added

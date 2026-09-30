@@ -9,6 +9,9 @@ use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\Post;
 use App\Models\Tenant\PrestasiSiswa;
 
+/**
+ * @property string $tenantSlug
+ */
 beforeEach(function () {
     // Tenant slug for SMK Negeri 2 Bandung
     $this->tenantSlug = 'smk-negeri-2-bandung';
@@ -50,6 +53,8 @@ test('1. beranda sekolah dapat diakses dan menampilkan identitas smkn 2 bandung'
 });
 
 test('2. halaman profil sekolah lengkap dapat diakses', function () {
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'profil')->update(['is_aktif' => true]);
+
     Page::updateOrCreate(
         ['slug' => 'profil'],
         [
@@ -69,7 +74,7 @@ test('2. halaman profil sekolah lengkap dapat diakses', function () {
 
 test('2b. halaman struktur organisasi publik dapat diakses dan menampilkan kedua mode tampilan', function () {
     // Regression: view publik struktur pernah gagal kompilasi (500) karena @if tidak tertutup.
-    PengaturanFitur::on('tenant')->where('kode_fitur', 'struktur_organisasi')->update(['is_aktif' => true]);
+    PengaturanFitur::on('tenant')->whereIn('kode_fitur', ['struktur_organisasi', 'struktur_pejabat', 'struktur_diagram'])->update(['is_aktif' => true]);
 
     $response = $this->get('/'.$this->tenantSlug.'/profil/struktur');
     $response->assertStatus(200);

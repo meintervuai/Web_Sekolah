@@ -378,7 +378,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 <!-- ==========================================
      2. SAMBUTAN KEPALA SEKOLAH & PROFIL SINGKAT
 =========================================== -->
-@if($fiturList['profil'] ?? true)
+@if(($fiturList['profil'] ?? true) && \App\Models\Tenant\PengaturanFitur::isAktif('profil_sambutan_kepsek', true))
 <section class="section-py bg-white border-b border-slate-200">
   <div class="container-custom">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">

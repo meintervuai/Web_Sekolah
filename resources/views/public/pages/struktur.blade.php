@@ -49,9 +49,15 @@
     </div>
 </section>
 
+@php
+    $showPejabat = \App\Models\Tenant\PengaturanFitur::isAktif('struktur_pejabat', true);
+    $showDiagram = \App\Models\Tenant\PengaturanFitur::isAktif('struktur_diagram', true);
+    $defaultTab = $showPejabat ? 'pejabat' : ($showDiagram ? 'diagram' : 'none');
+@endphp
+
 <!-- Content Section -->
 <section class="section-py bg-slate-50" x-data="{ 
-    activeTab: 'pejabat', 
+    activeTab: '{{ $defaultTab }}', 
     activeDiagram: 0,
     diagrams: {{ Js::from($diagrams ?? []) }}
 }">
@@ -64,6 +70,7 @@
         </div>
         @endif
 
+        @if($showPejabat && $showDiagram)
         <!-- Pilihan Tampilan Struktur (Jajaran Pejabat & Bagan Diagram) -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200">
             <div>
@@ -88,7 +95,9 @@
                 </button>
             </div>
         </div>
+        @endif
 
+        @if($showPejabat)
         <!-- TAB 1: JAJARAN PEJABAT & PIMPINAN (GRID FOTO) -->
         <div x-show="activeTab === 'pejabat'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -104,7 +113,7 @@
                         <!-- Main Fit Photo -->
                         <img src="{{ $s->foto ?? 'https://ui-avatars.com/api/?name='.urlencode($s->nama_lengkap).'&background=1E3A8A&color=fff&size=200' }}" 
                              alt="{{ $s->nama_lengkap }}" 
-                             style="{{ $s->foto_crop_style }}"
+                             @if($s->foto_crop_style) style="{!! e($s->foto_crop_style) !!}" @endif
                              class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     <h2 class="text-base font-bold text-slate-900 font-heading mb-1 leading-snug">
@@ -126,7 +135,9 @@
                 @endforelse
             </div>
         </div>
+        @endif
 
+        @if($showDiagram)
         <!-- TAB 2: BAGAN DIAGRAM STRUKTUR (1 ATAU BEBERAPA GAMBAR) -->
         <div x-show="activeTab === 'diagram'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" style="display: none;">
             <template x-if="diagrams.length > 0">
@@ -199,6 +210,7 @@
                 </div>
             </template>
         </div>
+        @endif
 
         <div class="mt-10 text-center">
             <a href="{{ url(app('tenant')->slug . '/profil') }}" class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 transition">
