@@ -55,7 +55,24 @@ class MediaController extends Controller
         // Daftar kategori unik untuk filter
         $daftarKategori = Media::select('kategori')->distinct()->pluck('kategori')->filter()->values();
 
-        $medias = $query->orderBy('urutan', 'asc')->latest()->paginate(24)->withQueryString();
+        $perPage = (int) $request->get('per_page', 24);
+        if ($perPage < 1 || $perPage > 100) {
+            $perPage = 24;
+        }
+
+        $medias = $query->orderBy('urutan', 'asc')->latest()->paginate($perPage)->withQueryString();
+
+        // Peta penggunaan berkas media di seluruh database
+        $mediaService = app(MediaService::class);
+        $usedMediaMap = $mediaService->getUsedMediaMap();
+
+        // Hitung statistik berkas digunakan
+        $medias->getCollection()->transform(function ($media) use ($usedMediaMap) {
+            $url = $media->url;
+            $media->is_digunakan = isset($usedMediaMap[$url]) && count($usedMediaMap[$url]) > 0;
+            $media->penggunaan = $usedMediaMap[$url] ?? [];
+            return $media;
+        });
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
@@ -67,7 +84,7 @@ class MediaController extends Controller
             ]);
         }
 
-        return view('tenant.admin.media.index', compact('tenant', 'medias', 'stats', 'daftarKategori', 'tipe'));
+        return view('tenant.admin.media.index', compact('tenant', 'medias', 'stats', 'daftarKategori', 'tipe', 'usedMediaMap'));
     }
 
     /**
@@ -251,42 +268,57 @@ class MediaController extends Controller
     }
 
     /**
-     * Edit gambar interaktif (Crop & Rotate) dan perbarui file WebP.
+     * Simpan pengaturan Framing / Crop & Focal Point (CSS Object-Position) non-destruktif.
      */
-    public function editImage(Request $request, Media $media, MediaService $mediaService): JsonResponse|RedirectResponse
+    public function editImage(Request $request, Media $media): JsonResponse|RedirectResponse
     {
         $request->validate([
             'crop_x' => ['nullable', 'numeric'],
             'crop_y' => ['nullable', 'numeric'],
             'crop_w' => ['nullable', 'numeric'],
             'crop_h' => ['nullable', 'numeric'],
+            'box_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'box_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'box_w' => ['nullable', 'numeric', 'min:1', 'max:100'],
+            'box_h' => ['nullable', 'numeric', 'min:1', 'max:100'],
+            'focal_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'focal_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'ratio' => ['nullable', 'string', 'max:20'],
             'rotate' => ['nullable', 'integer', 'in:0,90,180,270'],
         ]);
 
-        $cropData = null;
-        if ($request->filled('crop_w') && $request->filled('crop_h') && $request->crop_w > 0 && $request->crop_h > 0) {
-            $cropData = [
-                'x' => (int) $request->crop_x,
-                'y' => (int) $request->crop_y,
-                'width' => (int) $request->crop_w,
-                'height' => (int) $request->crop_h,
-            ];
-        }
-
-        $rotateAngle = (int) $request->get('rotate', 0);
-
         try {
-            $croppedMedia = $mediaService->prosesEditGambar($media, $cropData, $rotateAngle);
+            $focalX = $request->filled('focal_x') ? (float) $request->focal_x : 50;
+            $focalY = $request->filled('focal_y') ? (float) $request->focal_y : 50;
+
+            $cropSettings = [
+                'focal_x' => round($focalX, 2),
+                'focal_y' => round($focalY, 2),
+                'box_x' => $request->filled('box_x') ? round((float) $request->box_x, 2) : 0,
+                'box_y' => $request->filled('box_y') ? round((float) $request->box_y, 2) : 0,
+                'box_w' => $request->filled('box_w') ? round((float) $request->box_w, 2) : 100,
+                'box_h' => $request->filled('box_h') ? round((float) $request->box_h, 2) : 100,
+                'crop_x' => $request->filled('crop_x') ? (float) $request->crop_x : null,
+                'crop_y' => $request->filled('crop_y') ? (float) $request->crop_y : null,
+                'crop_w' => $request->filled('crop_w') ? (float) $request->crop_w : null,
+                'crop_h' => $request->filled('crop_h') ? (float) $request->crop_h : null,
+                'ratio' => $request->get('ratio'),
+                'rotate' => (int) $request->get('rotate', 0),
+            ];
+
+            $media->update([
+                'crop_settings' => $cropSettings,
+            ]);
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'sukses' => true,
-                    'pesan' => 'Versi potong (crop) WebP baru berhasil dibuat tanpa mengubah berkas master asli.',
-                    'data' => $croppedMedia,
+                    'pesan' => 'Pengaturan crop dan titik fokus (focal point) berhasil disimpan.',
+                    'data' => $media->fresh(),
                 ]);
             }
 
-            return back()->with('sukses', "Versi potong (crop) baru untuk \"{$media->judul}\" berhasil disimpan ke pustaka media.");
+            return back()->with('sukses', "Pengaturan crop / titik fokus untuk \"{$media->judul}\" berhasil disimpan.");
         } catch (\Throwable $e) {
             if ($request->wantsJson()) {
                 return response()->json([

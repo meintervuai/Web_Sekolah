@@ -140,53 +140,32 @@ class MediaService
             return $this->daftarkanYouTube($url, $penggunaId, $kategori, $judulCustom, $altTeks);
         }
 
-        // Unduh gambar/file dari URL dengan timeout wajar & alokasi waktu aman
-        @set_time_limit(120);
-        $response = Http::timeout(8)->connectTimeout(4)->get($url);
-
-        if (! $response->successful()) {
-            throw new \RuntimeException("Gagal mengunduh file dari URL (Status: {$response->status()}).");
-        }
-
-        $contentType = $response->header('Content-Type') ?: '';
-        $body = $response->body();
+        // Cek ekstensi / nama file dari path URL
         $pathUrl = parse_url($url, PHP_URL_PATH) ?: '';
-        $namaAsli = pathinfo($pathUrl, PATHINFO_FILENAME) ?: 'impor-media-' . time();
+        $namaAsli = pathinfo($pathUrl, PATHINFO_FILENAME) ?: 'media-url-' . time();
+        $ekstensi = strtolower(pathinfo($pathUrl, PATHINFO_EXTENSION) ?: 'jpg');
         $judul = $judulCustom ?: Str::headline(str_replace(['-', '_'], ' ', $namaAsli));
 
-        // Jika konten adalah gambar -> Konversi ke WebP
-        if (str_starts_with($contentType, 'image/') || preg_match('/\.(jpg|jpeg|png|webp|bmp|gif)$/i', $pathUrl)) {
-            return $this->prosesDanSimpanGambarWebp(
-                $body,
-                $namaAsli,
-                $penggunaId,
-                $kategori,
-                $judul,
-                $altTeks,
-                'url_eksternal'
-            );
+        // Tentukan tipe media berdasarkan ekstensi atau URL
+        $tipeMedia = 'gambar';
+        if (in_array($ekstensi, ['mp4', 'webm', 'ogg', 'mov', 'm4v'])) {
+            $tipeMedia = 'video';
+        } elseif (in_array($ekstensi, ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip'])) {
+            $tipeMedia = 'dokumen';
         }
 
-        // Jika non-gambar (misal video mp4 direct URL)
-        $ekstensi = pathinfo($pathUrl, PATHINFO_EXTENSION) ?: 'bin';
-        $filename = Str::slug($namaAsli) . '-' . time() . '.' . $ekstensi;
-        $tipeMedia = str_starts_with($contentType, 'video/') ? 'video' : 'dokumen';
-        $folder = $tipeMedia === 'video' ? 'video' : 'dokumen';
-
-        Storage::disk($this->disk)->put($this->folderMedia . "/{$folder}/{$filename}", $body);
-        $path = $this->folderMedia . "/{$folder}/{$filename}";
-
+        // Simpan langsung ke entitas Media database sebagai URL eksternal (tanpa download fisik)
         return Media::create([
             'pengguna_id' => $penggunaId,
             'judul' => $judul,
-            'nama_file_asli' => basename($pathUrl) ?: $filename,
-            'nama_file_disimpan' => $filename,
-            'path' => $path,
-            'url' => $this->getStorageUrl($path),
+            'nama_file_asli' => basename($pathUrl) ?: $namaAsli,
+            'nama_file_disimpan' => $namaAsli,
+            'path' => null, // Tidak ada file lokal, murni rujukan URL
+            'url' => $url,
             'tipe_media' => $tipeMedia,
-            'mime_type' => $contentType ?: 'application/octet-stream',
+            'mime_type' => $tipeMedia === 'video' ? 'video/' . $ekstensi : ($tipeMedia === 'dokumen' ? 'application/' . $ekstensi : 'image/' . $ekstensi),
             'ekstensi' => $ekstensi,
-            'ukuran_bytes' => strlen($body),
+            'ukuran_bytes' => 0,
             'dimensi' => null,
             'kategori' => $kategori,
             'alt_teks' => $altTeks ?: $judul,
@@ -332,117 +311,31 @@ class MediaService
             throw new \InvalidArgumentException('Hanya berkas gambar yang dapat diedit.');
         }
 
-        // Jika path belum ada (misal data awal/URL), unduh dan simpan lokal dulu
-        if (empty($media->path)) {
-            $binary = @file_get_contents($media->url);
-            if (! $binary) {
-                $resp = Http::timeout(10)->get($media->url);
-                $binary = $resp->successful() ? $resp->body() : null;
-            }
-            if (! $binary) {
-                throw new \RuntimeException('Gagal memuat sumber gambar untuk diedit.');
-            }
-            $filename = Str::slug($media->judul ?: 'media') . '-' . time() . '.webp';
-            $relativePath = $this->folderMedia . '/gambar/' . $filename;
-            $fullStoragePath = Storage::disk($this->disk)->path($relativePath);
-            $dir = dirname($fullStoragePath);
-            if (! is_dir($dir)) {
-                mkdir($dir, 0755, true);
-            }
-            $res = @imagecreatefromstring($binary);
-            if (! $res) {
-                throw new \RuntimeException('Format gambar tidak valid.');
-            }
-            if (! imageistruecolor($res)) {
-                imagepalettetotruecolor($res);
-            }
-            imagealphablending($res, true);
-            imagesavealpha($res, true);
-            imagewebp($res, $fullStoragePath, 85);
-            imagedestroy($res);
-            $media->update([
-                'path' => $relativePath,
-                'url' => $this->getStorageUrl($relativePath),
-                'nama_file_disimpan' => $filename,
-                'ekstensi' => 'webp',
-            ]);
+        // Mode Pratinjau: Berkas asli tetap utuh di database & storage server tanpa menimpa berkas master
+        return $media;
+    }
+
+    /**
+     * Update URL lama ke URL baru di seluruh tabel entitas website sekolah.
+     */
+    public function sinkronisasiPerubahanUrlKeSemuaEntitas(string $oldUrl, string $newUrl): void
+    {
+        try {
+            \App\Models\Tenant\PengaturanUmum::where('nilai', $oldUrl)->update(['nilai' => $newUrl]);
+            \App\Models\Tenant\Page::where('gambar_banner', $oldUrl)->update(['gambar_banner' => $newUrl]);
+            \App\Models\Tenant\StrukturOrganisasi::where('foto', $oldUrl)->update(['foto' => $newUrl]);
+            \App\Models\Tenant\GuruStaf::where('foto', $oldUrl)->update(['foto' => $newUrl]);
+            \App\Models\Tenant\Jurusan::where('ikon_atau_foto', $oldUrl)->update(['ikon_atau_foto' => $newUrl]);
+            \App\Models\Tenant\Ekstrakurikuler::where('foto', $oldUrl)->update(['foto' => $newUrl]);
+            \App\Models\Tenant\PrestasiSiswa::where('foto', $oldUrl)->update(['foto' => $newUrl]);
+            \App\Models\Tenant\Fasilitas::where('foto_utama', $oldUrl)->update(['foto_utama' => $newUrl]);
+            \App\Models\Tenant\FotoFasilitas::where('file_foto', $oldUrl)->update(['file_foto' => $newUrl]);
+            \App\Models\Tenant\SliderBeranda::where('gambar', $oldUrl)->update(['gambar' => $newUrl]);
+            \App\Models\Tenant\GaleriItem::where('file_path', $oldUrl)->update(['file_path' => $newUrl]);
+            \App\Models\Tenant\BeritaArtikel::where('gambar_sampul', $oldUrl)->update(['gambar_sampul' => $newUrl]);
+        } catch (\Throwable $e) {
+            // Silently continue if any table doesn't have the column
         }
-
-        $sourceFullPath = Storage::disk($this->disk)->path($media->path);
-        if (! file_exists($sourceFullPath)) {
-            throw new \RuntimeException('File gambar master tidak ditemukan di storage.');
-        }
-
-        $imageResource = @imagecreatefromstring(file_get_contents($sourceFullPath));
-        if (! $imageResource) {
-            throw new \RuntimeException('Gagal memuat gambar untuk proses edit.');
-        }
-
-        if (! imageistruecolor($imageResource)) {
-            imagepalettetotruecolor($imageResource);
-        }
-        imagealphablending($imageResource, true);
-        imagesavealpha($imageResource, true);
-
-        // 1. Rotasi jika ada
-        if (in_array($rotateAngle, [90, 180, 270])) {
-            // GD imagerotate berlawanan arah, 360 - angle untuk searah jarum jam
-            $rotated = imagerotate($imageResource, 360 - $rotateAngle, 0);
-            imagedestroy($imageResource);
-            $imageResource = $rotated;
-        }
-
-        // 2. Crop jika ada koordinat
-        if ($cropData && ! empty($cropData['width']) && ! empty($cropData['height'])) {
-            $x = max(0, (int) ($cropData['x'] ?? 0));
-            $y = max(0, (int) ($cropData['y'] ?? 0));
-            $w = (int) $cropData['width'];
-            $h = (int) $cropData['height'];
-
-            $cropped = imagecrop($imageResource, ['x' => $x, 'y' => $y, 'width' => $w, 'height' => $h]);
-            if ($cropped !== false) {
-                imagedestroy($imageResource);
-                $imageResource = $cropped;
-            }
-        }
-
-        $finalWidth = imagesx($imageResource);
-        $finalHeight = imagesy($imageResource);
-
-        // Simpan sebagai berkas WebP BARU (Non-Destruktif, jangan menimpa file master asli)
-        $cleanBaseName = Str::slug(pathinfo($media->nama_file_disimpan ?: $media->judul, PATHINFO_FILENAME));
-        $newFilename = $cleanBaseName . '-crop-' . time() . '.webp';
-        $newRelativePath = $this->folderMedia . '/gambar/' . $newFilename;
-        $newFullStoragePath = Storage::disk($this->disk)->path($newRelativePath);
-
-        $dir = dirname($newFullStoragePath);
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        imagewebp($imageResource, $newFullStoragePath, 85);
-        imagedestroy($imageResource);
-
-        $fileSize = file_exists($newFullStoragePath) ? filesize($newFullStoragePath) : 0;
-
-        // Buat record media baru untuk versi cropped teroptimasi
-        return Media::create([
-            'pengguna_id' => $media->pengguna_id,
-            'judul' => $media->judul . ' (Versi Crop)',
-            'nama_file_asli' => $newFilename,
-            'nama_file_disimpan' => $newFilename,
-            'path' => $newRelativePath,
-            'url' => $this->getStorageUrl($newRelativePath),
-            'tipe_media' => 'gambar',
-            'mime_type' => 'image/webp',
-            'ekstensi' => 'webp',
-            'ukuran_bytes' => $fileSize,
-            'dimensi' => "{$finalWidth}x{$finalHeight}",
-            'kategori' => $media->kategori,
-            'alt_teks' => $media->alt_teks ?: $media->judul,
-            'sumber' => $media->sumber,
-            'urutan' => $media->urutan,
-        ]);
     }
 
     /**
@@ -521,6 +414,115 @@ class MediaService
     }
 
     /**
+     * Dapatkan peta penggunaan berkas media di seluruh entitas database website sekolah.
+     * Mengembalikan array yang memetakan URL / path berkas media ke daftar nama entitas pemakainya.
+     *
+     * @return array<string, array<int, string>>
+     */
+    public function getUsedMediaMap(): array
+    {
+        $usedMap = [];
+
+        $recordUsage = function (?string $url, string $entityLabel) use (&$usedMap) {
+            if (empty($url)) {
+                return;
+            }
+            $cleanUrl = trim($url);
+            if (! isset($usedMap[$cleanUrl])) {
+                $usedMap[$cleanUrl] = [];
+            }
+            if (! in_array($entityLabel, $usedMap[$cleanUrl])) {
+                $usedMap[$cleanUrl][] = $entityLabel;
+            }
+        };
+
+        // 1. Pengaturan Umum (Logo, Favicon, Video Profil, dsb)
+        $pengaturan = \App\Models\Tenant\PengaturanUmum::whereIn('kunci', [
+            'logo', 'logo_aplikasi', 'favicon', 'video_profil', 'gambar_profil_utama', 'foto_kepala_sekolah'
+        ])->get();
+        foreach ($pengaturan as $p) {
+            $label = match($p->kunci) {
+                'logo', 'logo_aplikasi' => 'Logo Sekolah',
+                'favicon' => 'Favicon Website',
+                'video_profil' => 'Video Profil Utama',
+                'gambar_profil_utama' => 'Banner Profil Utama',
+                'foto_kepala_sekolah' => 'Foto Kepala Sekolah',
+                default => 'Pengaturan Umum: ' . Str::headline($p->kunci),
+            };
+            $recordUsage($p->nilai, $label);
+        }
+
+        // 2. Halaman Statis (Sejarah, Visi Misi, Struktur, Profil)
+        $halaman = \App\Models\Tenant\Page::all();
+        foreach ($halaman as $page) {
+            $recordUsage($page->gambar_banner, 'Banner: ' . $page->judul);
+        }
+
+        // 3. Struktur Organisasi
+        $pejabat = \App\Models\Tenant\StrukturOrganisasi::all();
+        foreach ($pejabat as $st) {
+            $recordUsage($st->foto, 'Pejabat: ' . $st->nama_lengkap);
+        }
+
+        // 4. Guru & Staf
+        $guruStaf = \App\Models\Tenant\GuruStaf::all();
+        foreach ($guruStaf as $gs) {
+            $recordUsage($gs->foto, 'Guru/Staf: ' . $gs->nama_lengkap);
+        }
+
+        // 5. Jurusan
+        $jurusan = \App\Models\Tenant\Jurusan::all();
+        foreach ($jurusan as $j) {
+            $recordUsage($j->ikon_atau_foto, 'Jurusan: ' . $j->nama_jurusan);
+        }
+
+        // 6. Ekstrakurikuler
+        $ekskul = \App\Models\Tenant\Ekstrakurikuler::all();
+        foreach ($ekskul as $e) {
+            $recordUsage($e->foto, 'Ekskul: ' . $e->nama_ekstrakurikuler);
+        }
+
+        // 7. Prestasi Siswa
+        $prestasi = \App\Models\Tenant\PrestasiSiswa::all();
+        foreach ($prestasi as $pr) {
+            $recordUsage($pr->foto, 'Prestasi: ' . $pr->nama_prestasi);
+        }
+
+        // 8. Fasilitas & Foto Fasilitas
+        $fasilitas = \App\Models\Tenant\Fasilitas::all();
+        foreach ($fasilitas as $f) {
+            $recordUsage($f->foto_utama, 'Fasilitas: ' . $f->nama_fasilitas);
+        }
+        $fotoFasilitas = \App\Models\Tenant\FotoFasilitas::with('fasilitas')->get();
+        foreach ($fotoFasilitas as $ff) {
+            $fasName = $ff->fasilitas?->nama_fasilitas ?: 'Fasilitas';
+            $recordUsage($ff->file_foto, 'Galeri Fasilitas: ' . $fasName);
+        }
+
+        // 9. Slider Beranda
+        $sliders = \App\Models\Tenant\SliderBeranda::all();
+        foreach ($sliders as $sl) {
+            $recordUsage($sl->gambar, 'Slider: ' . ($sl->judul ?: 'Beranda'));
+            $recordUsage($sl->video, 'Video Slider: ' . ($sl->judul ?: 'Beranda'));
+        }
+
+        // 10. Galeri Album & Galeri Item
+        $galeriItem = \App\Models\Tenant\GaleriItem::with('album')->get();
+        foreach ($galeriItem as $gi) {
+            $albName = $gi->album?->nama_album ?: 'Galeri';
+            $recordUsage($gi->file_media_atau_link, 'Item Galeri: ' . $albName);
+        }
+
+        // 11. Artikel / Berita (Gambar Sampul)
+        $artikel = \App\Models\Tenant\Post::all();
+        foreach ($artikel as $art) {
+            $recordUsage($art->gambar_sampul, 'Sampul Artikel: ' . Str::limit($art->judul, 25));
+        }
+
+        return $usedMap;
+    }
+
+    /**
      * Hapus berkas media dari database dan storage fisik.
      */
     public function hapusMedia(Media $media): bool
@@ -530,5 +532,52 @@ class MediaService
         }
 
         return $media->delete();
+    }
+
+    /**
+     * Dapatkan CSS object-position dari tabel media untuk sembarang URL gambar.
+     * Mengembalikan nilai seperti '50% 30%' jika media memiliki focal point / crop_settings.
+     */
+    public static function getFocalPosition(?string $url): string
+    {
+        if (empty($url)) {
+            return 'center center';
+        }
+
+        static $cache = [];
+        $cleanUrl = trim($url);
+
+        if (isset($cache[$cleanUrl])) {
+            return $cache[$cleanUrl];
+        }
+
+        $media = Media::where('url', $cleanUrl)->first();
+        $pos = $media ? $media->focal_position_css : 'center center';
+        $cache[$cleanUrl] = $pos;
+
+        return $pos;
+    }
+
+    /**
+     * Dapatkan CSS inline style lengkap (Smart Box Crop Zoom & Clip) untuk sembarang URL gambar.
+     */
+    public static function getCropStyle(?string $url): string
+    {
+        if (empty($url)) {
+            return 'object-position: center center; object-fit: cover;';
+        }
+
+        static $cacheStyle = [];
+        $cleanUrl = trim($url);
+
+        if (isset($cacheStyle[$cleanUrl])) {
+            return $cacheStyle[$cleanUrl];
+        }
+
+        $media = Media::where('url', $cleanUrl)->first();
+        $style = $media ? $media->smart_crop_style : 'object-position: center center; object-fit: cover;';
+        $cacheStyle[$cleanUrl] = $style;
+
+        return $style;
     }
 }

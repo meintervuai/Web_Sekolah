@@ -85,6 +85,7 @@
                     <div class="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
                         <img src="{{ $s->foto ?? 'https://ui-avatars.com/api/?name='.urlencode($s->nama_lengkap).'&background=1E3A8A&color=fff&size=200' }}" 
                              alt="{{ $s->nama_lengkap }}" 
+                             style="{{ $s->foto_crop_style }}"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     <h2 class="text-base font-bold text-slate-900 font-heading mb-1 leading-snug">

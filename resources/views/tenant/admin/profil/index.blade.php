@@ -1059,56 +1059,69 @@
 
     <!-- MODAL INTEGRASI PUSAT MEDIA (MEDIA PICKER) -->
     <div x-show="mediaPickerOpen" x-cloak 
-         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full h-[85vh] flex flex-col overflow-hidden border border-slate-200"
+         class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full h-[92vh] sm:h-[85vh] flex flex-col overflow-hidden border border-slate-200"
              @click.outside="mediaPickerOpen = false">
             
             <!-- Modal Header -->
-            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+            <div class="p-3 sm:p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm text-slate-900 font-heading">Pusat Berkas Media (Pustaka Media Sekolah)</h3>
-                        <p class="text-[11px] text-slate-500">Pilih berkas yang sudah tersimpan di database atau unggah langsung.</p>
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 font-heading">Pusat Berkas Media (Pustaka Media Sekolah)</h3>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500">Pilih berkas dari database (12 per halaman) atau unggah baru.</p>
                     </div>
                 </div>
-                <button type="button" @click="mediaPickerOpen = false" class="text-slate-400 hover:text-slate-700 p-1">
+                <button type="button" @click="mediaPickerOpen = false" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-200/60 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
-            <!-- Filter & Search Bar inside Picker -->
-            <div class="p-3 border-b border-slate-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-2 shrink-0">
-                <div class="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
-                    <button type="button" @click="pickerFilterType = 'semua'; fetchMedia()"
-                            :class="pickerFilterType === 'semua' ? 'bg-blue-50 text-blue-700 font-bold border-blue-200' : 'text-slate-600 border-transparent'"
-                            class="px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer">Semua</button>
-                    <button type="button" @click="pickerFilterType = 'gambar'; fetchMedia()"
-                            :class="pickerFilterType === 'gambar' ? 'bg-blue-50 text-blue-700 font-bold border-blue-200' : 'text-slate-600 border-transparent'"
-                            class="px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer">Gambar</button>
-                    <button type="button" @click="pickerFilterType = 'video'; fetchMedia()"
-                            :class="pickerFilterType === 'video' ? 'bg-blue-50 text-blue-700 font-bold border-blue-200' : 'text-slate-600 border-transparent'"
-                            class="px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer">Video</button>
+            <!-- Filter, Search & Upload Bar inside Picker -->
+            <div class="px-3.5 py-3 border-b border-slate-200 bg-white flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 shrink-0">
+                <!-- Tab Kategori Filter -->
+                <div class="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl border border-slate-200/80 w-full sm:w-auto shrink-0">
+                    <button type="button" @click="pickerFilterType = 'semua'; fetchMedia(1)"
+                            :class="pickerFilterType === 'semua' ? 'bg-white text-blue-600 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs transition cursor-pointer text-center">
+                        Semua
+                    </button>
+                    <button type="button" @click="pickerFilterType = 'gambar'; fetchMedia(1)"
+                            :class="pickerFilterType === 'gambar' ? 'bg-white text-blue-600 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs transition cursor-pointer text-center">
+                        Gambar
+                    </button>
+                    <button type="button" @click="pickerFilterType = 'video'; fetchMedia(1)"
+                            :class="pickerFilterType === 'video' ? 'bg-white text-blue-600 font-bold shadow-2xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs transition cursor-pointer text-center">
+                        Video
+                    </button>
                 </div>
 
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <input type="text" x-model="pickerSearchQuery" @keyup.debounce.300ms="fetchMedia()"
-                           placeholder="Cari berkas media..."
-                           class="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-blue-500 w-full sm:w-48 transition">
+                <!-- Input Pencarian & Tombol Unggah Baru -->
+                <div class="flex items-center gap-2 w-full md:w-auto">
+                    <div class="relative flex-1 sm:w-64">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </span>
+                        <input type="text" x-model="pickerSearchQuery" @keyup.debounce.300ms="fetchMedia(1)"
+                               placeholder="Cari nama berkas..."
+                               class="w-full pl-9 pr-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-300 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition">
+                    </div>
                     
-                    <!-- Direct Upload Form inside Modal -->
-                    <label class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer shrink-0">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                        <span>Unggah Baru</span>
+                    <!-- Direct Upload Button inside Modal -->
+                    <label class="h-9 px-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-xs active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        <span class="whitespace-nowrap">Unggah Baru</span>
                         <input type="file" @change="uploadNewMedia($event)" class="hidden" accept="image/*,video/*">
                     </label>
                 </div>
             </div>
 
             <!-- Media Grid Content -->
-            <div class="flex-1 overflow-y-auto p-4 taildash-scrollbar">
+            <div class="flex-1 overflow-y-auto p-3 sm:p-4 taildash-scrollbar bg-slate-50/50">
                 <template x-if="pickerLoading">
                     <div class="h-64 flex flex-col items-center justify-center text-slate-400 gap-2">
                         <svg class="animate-spin w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24">
@@ -1128,27 +1141,62 @@
                 </template>
 
                 <template x-if="!pickerLoading && mediaItems.length > 0">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
                         <template x-for="item in mediaItems" :key="item.id">
-                            <div class="group relative rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs hover:border-blue-500 hover:shadow-md transition cursor-pointer flex flex-col"
+                            <div class="group relative rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xs hover:border-blue-500 hover:shadow-md transition cursor-pointer flex flex-col justify-between"
                                  @click="selectMediaItem(item)">
-                                <div class="aspect-square bg-slate-100 overflow-hidden relative flex items-center justify-center">
+                                <div class="aspect-square bg-slate-900 overflow-hidden relative flex items-center justify-center">
+                                    
+                                    <!-- 1. Gambar -->
                                     <template x-if="item.tipe_media === 'gambar'">
-                                        <img :src="item.url" :alt="item.judul" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                        <img :src="item.url" :alt="item.judul" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
                                     </template>
-                                    <template x-if="item.tipe_media === 'video'">
-                                        <div class="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-white p-2 text-center">
-                                            <svg class="w-8 h-8 text-blue-400 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            <span class="text-[9px] text-slate-300 font-mono">Video MP4</span>
+
+                                    <!-- 2. Video YouTube (Thumbnail Otomatis) -->
+                                    <template x-if="item.tipe_media === 'youtube'">
+                                        <div class="w-full h-full relative overflow-hidden bg-slate-900">
+                                            <template x-if="getYoutubeThumbnail(item.url)">
+                                                <img :src="getYoutubeThumbnail(item.url)" :alt="item.judul" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+                                            </template>
+                                            <template x-if="!getYoutubeThumbnail(item.url)">
+                                                <div class="w-full h-full flex items-center justify-center bg-red-950 text-white p-2">
+                                                    <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                                                </div>
+                                            </template>
+                                            <!-- YouTube Badge Overlay -->
+                                            <div class="absolute bottom-1 right-1 bg-red-600/90 text-white text-[8px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 shadow-sm">
+                                                <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                                                <span>YouTube</span>
+                                            </div>
                                         </div>
                                     </template>
-                                    <div class="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <span class="px-2.5 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-lg shadow-sm">Pilih Media</span>
+
+                                    <!-- 3. Video Lokal / MP4 (Thumbnail Live Video Preview) -->
+                                    <template x-if="item.tipe_media === 'video'">
+                                        <div class="w-full h-full relative overflow-hidden bg-slate-950 flex items-center justify-center">
+                                            <video :src="item.url" preload="metadata" muted playsinline class="w-full h-full object-cover pointer-events-none opacity-80 group-hover:scale-105 transition-transform duration-200"></video>
+                                            <div class="absolute inset-0 flex items-center justify-center bg-black/25">
+                                                <div class="w-7 h-7 rounded-full bg-blue-600/90 text-white flex items-center justify-center shadow-md">
+                                                    <svg class="w-3.5 h-3.5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                                </div>
+                                            </div>
+                                            <div class="absolute bottom-1 right-1 bg-slate-900/80 backdrop-blur-xs text-white text-[8px] font-mono font-bold px-1.5 py-0.5 rounded shadow-sm">
+                                                MP4
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Hover Select Button Overlay -->
+                                    <div class="absolute inset-0 bg-blue-600/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <span class="px-2 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-md shadow-sm">Pilih</span>
                                     </div>
                                 </div>
                                 <div class="p-2 bg-white">
                                     <p class="text-[11px] font-semibold text-slate-800 truncate" :title="item.judul" x-text="item.judul"></p>
-                                    <p class="text-[9px] text-slate-400 capitalize" x-text="item.tipe_media"></p>
+                                    <div class="flex items-center justify-between text-[9px] text-slate-400 mt-0.5">
+                                        <span class="capitalize" x-text="item.tipe_media"></span>
+                                        <span class="text-blue-600 font-medium group-hover:underline">Pilih &rarr;</span>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -1156,13 +1204,41 @@
                 </template>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
-                <span x-text="`Total ${mediaItems.length} berkas media tersedia`"></span>
-                <button type="button" @click="mediaPickerOpen = false" 
-                        class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition cursor-pointer">
-                    Tutup
-                </button>
+            <!-- Modal Footer & Pagination -->
+            <div class="p-2.5 sm:p-3 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-600 shrink-0">
+                <div class="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-3 text-[11px] sm:text-xs">
+                    <span class="font-medium text-slate-600" x-text="`Total ${pickerTotal} berkas (12/hal)`"></span>
+                    <span class="text-slate-400 hidden sm:inline">&bull;</span>
+                    <span class="text-slate-500" x-text="`Hal ${pickerCurrentPage} dari ${pickerLastPage}`"></span>
+                </div>
+
+                <!-- Pagination Buttons -->
+                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-1">
+                        <button type="button" 
+                                @click="fetchMedia(pickerCurrentPage - 1)" 
+                                :disabled="pickerCurrentPage <= 1 || pickerLoading"
+                                class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            <span>Sebelumnya</span>
+                        </button>
+                        
+                        <span class="px-2 py-1 bg-blue-50 text-blue-700 font-bold border border-blue-200 rounded-lg text-xs" x-text="pickerCurrentPage"></span>
+
+                        <button type="button" 
+                                @click="fetchMedia(pickerCurrentPage + 1)" 
+                                :disabled="pickerCurrentPage >= pickerLastPage || pickerLoading"
+                                class="px-2.5 py-1 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+                            <span>Selanjutnya</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+
+                    <button type="button" @click="mediaPickerOpen = false" 
+                            class="px-3.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs transition cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1264,6 +1340,10 @@
             pickerFilterType: 'semua',
             pickerSearchQuery: '',
             pickerLoading: false,
+            pickerCurrentPage: 1,
+            pickerLastPage: 1,
+            pickerTotal: 0,
+            pickerPerPage: 12,
             mediaItems: [],
 
             // Menu toggles
@@ -1341,16 +1421,27 @@
             openMediaPicker(targetInputId, defaultType = 'semua') {
                 this.mediaPickerTargetInput = targetInputId;
                 this.pickerFilterType = defaultType;
+                this.pickerCurrentPage = 1;
                 this.mediaPickerOpen = true;
-                this.fetchMedia();
+                this.fetchMedia(1);
             },
 
-            async fetchMedia() {
+            getYoutubeThumbnail(url) {
+                if (!url) return null;
+                const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+                const match = url.match(regExp);
+                return match && match[1] ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+            },
+
+            async fetchMedia(page = 1) {
                 this.pickerLoading = true;
+                this.pickerCurrentPage = page;
                 try {
                     const params = new URLSearchParams({
                         tipe: this.pickerFilterType,
-                        q: this.pickerSearchQuery
+                        q: this.pickerSearchQuery,
+                        page: page,
+                        per_page: this.pickerPerPage
                     });
                     const res = await fetch(`{{ route('tenant.admin.media.index', ['tenant' => app('tenant')->slug]) }}?${params}`, {
                         headers: {
@@ -1360,6 +1451,9 @@
                     });
                     const data = await res.json();
                     this.mediaItems = data.data || [];
+                    this.pickerCurrentPage = data.current_page || 1;
+                    this.pickerLastPage = data.last_page || 1;
+                    this.pickerTotal = data.total || 0;
                 } catch (e) {
                     console.error(e);
                 } finally {

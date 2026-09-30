@@ -54,6 +54,7 @@
                 <div class="w-28 h-28 rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-4 ring-slate-100 group-hover:ring-blue-100 transition shadow-inner">
                     <img src="{{ $g->foto ?? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop' }}" 
                          alt="{{ $g->nama_lengkap }}" 
+                         style="{{ $g->foto_crop_style }}"
                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 </div>
 

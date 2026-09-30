@@ -43,4 +43,20 @@ class GuruStaf extends Model
     {
         return $this->hasMany(StrukturOrganisasi::class, 'guru_id');
     }
+
+    /**
+     * Helper CSS object-position dari media library.
+     */
+    public function getFotoFocalPositionAttribute(): string
+    {
+        return \App\Services\MediaService::getFocalPosition($this->foto);
+    }
+
+    /**
+     * Helper CSS Style lengkap untuk Smart Box Cropping (Zoom & Clip).
+     */
+    public function getFotoCropStyleAttribute(): string
+    {
+        return \App\Services\MediaService::getCropStyle($this->foto);
+    }
 }

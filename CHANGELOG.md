@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Crop & Focal Point Non-Destruktif Universal (CSS Object-Position)] - 2026-09-30
+
+### Added & Improved
+- **Crop & Focal Point Non-Destruktif Universal ([Media.php](file:///d:/databaru/Magang/website_sekolah/app/Models/Tenant/Media.php), [MediaController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/MediaController.php), [media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php))**:
+  - Menyelesaikan kendala gambar URL eksternal dan file upload tanpa merusak atau menimpa berkas master asli.
+  - Menambahkan kolom `crop_settings` JSON pada tabel `media` tenant untuk menyimpan koordinat crop, rotasi, rasio, dan titik fokus persentase (`focal_x`, `focal_y`).
+  - Menyediakan tombol **"Simpan Fokus Crop"** pada modal editor media yang menghitung pusat crop dan menyimpannya secara instan via API non-destruktif.
+- **Penerapan Otomatis CSS Object-Position di Seluruh Web ([guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php), [struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php), [home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php))**:
+  - Gambar kartu Guru & Staf, Pejabat Struktur Organisasi, Foto Kepala Sekolah, dan thumbnail media library otomatis membaca koordinat fokus crop dengan helper `style="object-position: {{ $media->focal_position_css }};"`.
+
+- **Live Thumbnail untuk Video Upload (MP4 / WebM / Lokal)**:
+  - Tampilan grid dan list media memuat cuplikan visual video secara instan via `<video preload="metadata">` dengan overlay tombol putar dan tag MP4.
+- **Penanda Status Penggunaan Media di Seluruh Website ([MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php), [MediaController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/MediaController.php))**:
+  - Sistem mendeteksi otomatis penggunaan setiap berkas media di seluruh database (Pengaturan Umum, Logo, Banner Halaman, Pejabat Struktur, Guru & Staf, Jurusan, Ekskul, Prestasi, Fasilitas, Slider, Galeri, dan Artikel Berita).
+  - Badge hijau **"Digunakan"** dengan animasi pulse dan tooltip lokasi pemakaian serta badge **"Bebas"** untuk berkas yang belum disematkan.
+
+## [Pagination 12 Items, Layout Mobile & Thumbnail Video di Media Picker Modal] - 2026-09-29
+
+### Added & Improved
+- **Pagination 12 Item per Halaman ([profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php), [MediaController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/MediaController.php))**: Media Picker modal sekarang melayani pagination 12 item per halaman lengkap dengan kontrol tombol *Sebelumnya*, nomor halaman aktif, tombol *Selanjutnya*, dan indikator total berkas.
+- **Thumbnail Otomatis untuk Semua Video**:
+  - Video YouTube otomatis menampilkan thumbnail resmi resolusi tinggi (`hqdefault.jpg`) beserta badge YouTube.
+  - Video MP4 / lokal otomatis me-render frame `<video preload="metadata">` dengan ikon pemutar dan tag MP4 agar pengguna tahu isi video sebelum memilih.
+- **Responsivitas Layar Mobile**: Penyesuaian modal height (`92vh`), grid 2-kolom mobile yang rapi, tombol filter/search responsif, dan touch target ramah smartphone.
+
 ## [Auto-Sinkronisasi URL Eksternal ke Pusat Media & Smart Video Player Profil] - 2026-09-29
 
 ### Added

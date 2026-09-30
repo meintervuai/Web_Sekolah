@@ -1,6 +1,6 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
   "commit_message": {
-    "prompt": "gunakan bahasa indonesia"
+    "prompt": "# PERATURAN KOMENTAR COMMIT\n\n## Prinsip Utama\n\n- Gunakan bahasa Indonesia\n- Hindari simbol **\n- Fokus pada tujuan perubahan, bukan detail teknis yang tidak penting\n- Komentar harus singkat namun jelas\n\n## Struktur Komentar\n"
   }
 }
