@@ -145,6 +145,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('gtkManager', (config) => ({
             activeTab: config.activeTab || 'struktur',
+            viewMode: 'list',
             showToast: !!config.toastMsg,
             toastMessage: config.toastMsg || '',
             submitLoading: false,

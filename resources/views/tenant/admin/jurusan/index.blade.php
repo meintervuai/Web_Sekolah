@@ -182,6 +182,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('jurusanManager', (config) => ({
             activeTab: config.activeTab || 'jurusan',
+            viewMode: 'list',
             showToast: !!config.toastMsg,
             toastMessage: config.toastMsg || '',
             submitLoading: false,

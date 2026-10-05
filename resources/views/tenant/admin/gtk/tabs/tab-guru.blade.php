@@ -68,18 +68,48 @@
                 </h2>
                 <p class="admin-card-subtitle">Kelola master data seluruh guru mata pelajaran, kepala jurusan, teknisi, dan staf tata usaha.</p>
             </div>
-            <button type="button" @click="openModalGuru()"
-                    class="admin-btn-action self-start">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Tambah Guru / Staf
-            </button>
+            <div class="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+                <!-- Toggle Grid vs List -->
+                <div class="flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200">
+                    <button 
+                        type="button" 
+                        @click="viewMode = 'list'" 
+                        :class="viewMode === 'list' ? 'bg-white text-slate-900 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        title="Tampilan Tabel / Daftar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <span class="text-xs font-semibold">Tabel</span>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="viewMode = 'grid'" 
+                        :class="viewMode === 'grid' ? 'bg-white text-slate-900 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        title="Tampilan Grid / Kartu">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        <span class="text-xs font-semibold">Grid</span>
+                    </button>
+                </div>
+
+                <button type="button" @click="openModalGuru()"
+                        class="admin-btn-action">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Tambah Guru / Staf
+                </button>
+            </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- TAMPILAN 1: Table List -->
+        <div x-show="viewMode === 'list'" class="overflow-x-auto">
             <table class="admin-table">
                 <thead class="admin-table-thead">
                     <tr>
-                        <th class="admin-table-th">Foto</th>
+                        <th class="admin-table-th w-12 text-center">No</th>
+                        <th class="admin-table-th w-16 text-center">Foto</th>
                         <th class="admin-table-th">Nama Lengkap &amp; NIP</th>
                         <th class="admin-table-th">L/P</th>
                         <th class="admin-table-th">Jabatan / Tugas</th>
@@ -89,9 +119,12 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse($allGuru as $guru)
+                    @forelse($allGuru as $idx => $guru)
                     <tr class="admin-table-row">
-                        <td class="admin-table-td">
+                        <td class="admin-table-td text-center text-slate-400 font-medium">
+                            {{ $idx + 1 }}
+                        </td>
+                        <td class="admin-table-td text-center">
                             <div class="w-10 h-13 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden relative flex items-center justify-center">
                                 @if($guru->foto)
                                     <div class="w-full h-full relative flex items-center justify-center">
@@ -155,6 +188,82 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- TAMPILAN 2: Grid Card Cards -->
+        <div x-show="viewMode === 'grid'" x-cloak class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            @forelse($allGuru as $guru)
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-slate-300 hover:shadow-xs transition duration-200">
+                    <div>
+                        <!-- Foto 3:4 -->
+                        <div class="relative bg-slate-900 aspect-3/4 overflow-hidden flex items-center justify-center">
+                            @if($guru->foto)
+                                <img src="{{ $guru->foto }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                                <img src="{{ $guru->foto }}" alt="{{ $guru->nama_lengkap }}" style="{{ $guru->foto_crop_style }}" loading="lazy" class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                                    <svg class="w-10 h-10 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                </div>
+                            @endif
+
+                            <div class="absolute top-2 left-2 z-20">
+                                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-bold {{ $guru->jenis_kelamin === 'L' ? 'bg-blue-600/90 text-white' : 'bg-pink-600/90 text-white' }}">
+                                    {{ $guru->jenis_kelamin === 'L' ? 'L' : 'P' }}
+                                </span>
+                            </div>
+
+                            <div class="absolute top-2 right-2 z-20">
+                                <span class="px-1.5 py-0.5 rounded-md text-[9px] font-bold {{ $guru->status_aktif ? 'bg-emerald-600/90 text-white' : 'bg-slate-700/90 text-white' }}">
+                                    {{ $guru->status_aktif ? 'Aktif' : 'Off' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="p-3 space-y-1 text-center">
+                            <h3 class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-blue-600 transition" title="{{ $guru->nama_lengkap }}">
+                                {{ $guru->nama_lengkap }}
+                            </h3>
+                            <p class="text-[10px] text-blue-600 font-medium line-clamp-1">
+                                {{ $guru->jabatan ?: 'Staf PTK' }}
+                            </p>
+                            @if($guru->mata_pelajaran)
+                                <p class="text-[10px] text-slate-400 line-clamp-1">
+                                    {{ $guru->mata_pelajaran }}
+                                </p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="px-2.5 py-2 bg-slate-50/80 border-t border-slate-100 flex items-center justify-center gap-1.5">
+                        <button type="button" 
+                                @click="editGuru({
+                                     id: {{ $guru->id }},
+                                     nama: '{{ addslashes($guru->nama_lengkap) }}',
+                                     nip: '{{ addslashes($guru->nip ?? '') }}',
+                                     jenis_kelamin: '{{ $guru->jenis_kelamin }}',
+                                     jabatan: '{{ addslashes($guru->jabatan ?? '') }}',
+                                     mata_pelajaran: '{{ addslashes($guru->mata_pelajaran ?? '') }}',
+                                     foto: '{{ addslashes($guru->foto ?? '') }}',
+                                     crop_style: '{{ addslashes($guru->foto_crop_style ?? '') }}',
+                                     status_aktif: {{ $guru->status_aktif ? 1 : 0 }}
+                                 })"
+                                class="px-2 py-1 bg-white hover:bg-blue-50 text-blue-600 border border-slate-200 rounded-lg text-[10px] font-bold transition cursor-pointer">
+                            Edit
+                        </button>
+                        <button type="button" 
+                                @click="deleteGuruConfirm({{ $guru->id }}, '{{ addslashes($guru->nama_lengkap) }}')"
+                                class="px-2 py-1 bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 rounded-lg text-[10px] font-bold transition cursor-pointer">
+                            Hapus
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full py-8 text-center text-slate-400 italic">
+                    Belum ada data Guru &amp; Tenaga Kependidikan. Klik tombol di atas untuk menambahkan.
+                </div>
+            @endforelse
         </div>
     </div>
 </div>

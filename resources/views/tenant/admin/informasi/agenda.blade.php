@@ -225,28 +225,56 @@
                 </div>
             </div>
 
-            <!-- Search & Filter Bar -->
-            <form action="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug]) }}" method="GET" class="flex flex-col sm:flex-row items-center gap-3 pt-1">
-                <input type="hidden" name="tab" value="agenda">
-                <div class="relative flex-1 w-full">
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul, lokasi, atau penyelenggara agenda..." 
-                           class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
-                </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <button type="submit" class="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer">
-                        Cari
-                    </button>
-                    @if(request()->filled('q'))
-                        <a href="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug, 'tab' => 'agenda']) }}" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
-                            Reset
-                        </a>
-                    @endif
-                </div>
-            </form>
+            <!-- Search & Filter Bar with View Mode Toggle -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                <form action="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug]) }}" method="GET" class="flex-1 flex flex-col sm:flex-row items-center gap-3 w-full">
+                    <input type="hidden" name="tab" value="agenda">
+                    <div class="relative flex-1 w-full">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari judul, lokasi, atau penyelenggara agenda..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button type="submit" class="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer">
+                            Cari
+                        </button>
+                        @if(request()->filled('q'))
+                            <a href="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug, 'tab' => 'agenda']) }}" class="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
+                </form>
 
-            <!-- Table Card -->
-            <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                <!-- Switcher Toggle Grid vs List -->
+                <div class="flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200 shrink-0 self-end sm:self-center">
+                    <button 
+                        type="button" 
+                        @click="viewMode = 'list'" 
+                        :class="viewMode === 'list' ? 'bg-white text-slate-900 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        title="Tampilan Tabel / Daftar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <span class="text-xs font-semibold">Tabel</span>
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="viewMode = 'grid'" 
+                        :class="viewMode === 'grid' ? 'bg-white text-slate-900 font-bold shadow-2xs' : 'text-slate-500 hover:text-slate-800'"
+                        class="px-3 py-1.5 rounded-lg text-xs transition cursor-pointer flex items-center gap-1.5"
+                        title="Tampilan Grid / Kartu">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        <span class="text-xs font-semibold">Grid</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAMPILAN 1: Table Card -->
+            <div x-show="viewMode === 'list'" class="overflow-x-auto border border-slate-200 rounded-xl">
                 <table class="w-full text-left text-xs text-slate-700">
                     <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                         <tr>
@@ -353,6 +381,86 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- TAMPILAN 2: Grid Card Cards -->
+            <div x-show="viewMode === 'grid'" x-cloak class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @forelse($agendaList as $agenda)
+                    @php
+                        $tglM = \Carbon\Carbon::parse($agenda->tgl_mulai);
+                        $isUpcoming = $tglM->isFuture() || $tglM->isToday();
+                    @endphp
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col justify-between group hover:border-slate-300 hover:shadow-xs transition duration-200">
+                        <div>
+                            <!-- Cover Image Header -->
+                            <div class="relative bg-slate-900 aspect-16/9 overflow-hidden flex items-center justify-center">
+                                @if($agenda->gambar_sampul)
+                                    <img src="{{ $agenda->gambar_sampul }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                                    <img src="{{ $agenda->gambar_sampul }}" alt="{{ $agenda->judul }}" loading="lazy" class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <div class="w-full h-full flex flex-col items-center justify-center bg-sky-900 text-white">
+                                        <span class="text-xs uppercase font-bold tracking-wider text-sky-300">{{ $tglM->translatedFormat('F Y') }}</span>
+                                        <span class="text-2xl font-black">{{ $tglM->translatedFormat('d') }}</span>
+                                    </div>
+                                @endif
+
+                                <div class="absolute top-2 left-2 z-20">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 backdrop-blur-xs text-white border border-white/20">
+                                        {{ $tglM->translatedFormat('d M Y') }}
+                                    </span>
+                                </div>
+                                <div class="absolute top-2 right-2 z-20">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold backdrop-blur-xs {{ $isUpcoming ? 'bg-emerald-600/90 text-white' : 'bg-slate-700/90 text-white' }}">
+                                        {{ $isUpcoming ? 'Mendatang' : 'Selesai' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Body -->
+                            <div class="p-3.5 space-y-2">
+                                <h3 class="font-bold text-xs text-slate-900 line-clamp-2 leading-snug group-hover:text-blue-600 transition" title="{{ $agenda->judul }}">
+                                    {{ $agenda->judul }}
+                                </h3>
+                                <div class="text-[11px] text-slate-500 space-y-1">
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span>{{ $agenda->jam_mulai ? substr($agenda->jam_mulai, 0, 5) : '00:00' }} WIB</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        <span class="truncate">{{ $agenda->lokasi ?? 'Kampus Sekolah' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Actions -->
+                        <div class="px-3.5 py-2 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-1">
+                            <a href="{{ url(app('tenant')->slug . '/agenda/' . $agenda->slug) }}" target="_blank" 
+                               class="text-[11px] font-semibold text-slate-600 hover:text-blue-600 flex items-center gap-1 transition"
+                               title="Lihat Halaman Publik">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                <span>Lihat</span>
+                            </a>
+                            <div class="flex items-center gap-1">
+                                <button type="button" @click="editAgendaItem({{ Js::from($agenda) }})" 
+                                        class="p-1 rounded-lg hover:bg-blue-50 text-slate-600 hover:text-blue-600 transition cursor-pointer"
+                                        title="Edit Agenda">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                                <button type="button" @click="konfirmasiHapusAgenda({{ Js::from($agenda->id) }}, {{ Js::from($agenda->judul) }})" 
+                                        class="p-1 rounded-lg hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer"
+                                        title="Hapus Agenda">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-full py-8 text-center text-slate-400">
+                        Belum ada agenda kegiatan yang terdaftar.
+                    </div>
+                @endforelse
             </div>
 
             @if($agendaList->hasPages())
@@ -638,6 +746,7 @@ document.addEventListener('alpine:init', () => {
         showToast: false,
         toastText: config.toastMsg,
         isToastError: config.isError,
+        viewMode: 'list',
         bannerHeroPreview: config.bannerHeroPreview,
         isFiturAktif: config.isFiturAktif,
         isToggling: false,

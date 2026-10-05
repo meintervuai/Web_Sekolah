@@ -373,6 +373,7 @@
                                     class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
                                 >
                             </th>
+                            <th class="admin-table-th w-12 text-center">No</th>
                             <th class="admin-table-th w-16">Preview</th>
                             <th class="admin-table-th">Nama / Judul Berkas</th>
                             <th class="admin-table-th">Status Pakai</th>
@@ -384,7 +385,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-700">
-                        @foreach($medias as $media)
+                        @foreach($medias as $idx => $media)
                             <tr class="admin-table-row" :class="selectedIds.includes({{ $media->id }}) ? 'bg-blue-50/40' : ''">
                                 <!-- Checkbox Baris -->
                                 <td class="admin-table-td text-center">
@@ -394,6 +395,11 @@
                                         x-model="selectedIds"
                                         class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
                                     >
+                                </td>
+
+                                <!-- No Urut -->
+                                <td class="admin-table-td text-center text-slate-400 font-medium">
+                                    {{ $medias->firstItem() + $idx }}
                                 </td>
 
                                 <!-- Thumbnail -->

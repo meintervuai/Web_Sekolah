@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Standarisasi Tombol Pencarian & Fitur Toggle Mode Tampilan Tabel / Grid di Admin (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Added
+- **Fitur Switcher Tampilan Tabel & Grid (`viewMode: 'list' | 'grid'`) di Seluruh Modul Admin**:
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menambahkan switcher mode tampilan Grid 6-kolom vs Tabel terstruktur lengkap dengan kolom Nomor, thumbnail cover, statistik media, tanggal kegiatan, status visibilitas, dan menu aksi cepat.
+  - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php): Menambahkan switcher mode tampilan Grid 6-kolom vs Tabel terstruktur sarpras fasilitas pembelajaran lengkap dengan kolom Nomor, thumbnail, kapasitas, lokasi/gedung, status kondisi, dan menu aksi cepat.
+  - [resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php): Menambahkan tombol switcher mode tampilan Tabel vs Grid serta kolom Nomor, kartu grid artikel berita lengkap dengan badge kategori, ambient blur backdrop, status publikasi, dan menu aksi cepat.
+  - [resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php): Menambahkan switcher mode tampilan Tabel vs Grid serta kolom Nomor dan thumbnail gambar sampul/surat resmi pada tabel dan kartu grid edaran resmi.
+  - [resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php): Menambahkan switcher mode tampilan Tabel vs Grid serta kartu grid jadwal kegiatan/agenda sekolah.
+  - [resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php): Menambahkan switcher mode tampilan Tabel vs Grid serta kolom Nomor urut dan kartu grid katalog program keahlian dengan info kaprog.
+  - [resources/views/tenant/admin/gtk/tabs/tab-guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/gtk/tabs/tab-guru.blade.php): Menambahkan switcher mode tampilan Tabel vs Grid 6-kolom serta kolom Nomor untuk direktori guru & tenaga kependidikan.
+  - [resources/views/tenant/admin/media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php): Menambahkan kolom Nomor urut pada tabel daftar berkas pustaka media.
+
+### Fixed
+- **Konsistensi Tombol Pencarian & Kolom Nomor Seluruh Modul Admin (Anti-Slop Vibecoding)**:
+  - [resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php): Menyelaraskan tombol pencarian dengan teks baku "Cari" dan tombol "Reset" serta menyertakan kolom Nomor pada tabel.
+  - [resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php): Menyelaraskan tombol pencarian dengan teks baku "Cari", tombol "Reset", serta menampilkan thumbnail gambar surat resmi dan kolom Nomor pada tabel dan grid.
+  - [resources/views/tenant/admin/gtk/tabs/tab-guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/gtk/tabs/tab-guru.blade.php): Menyeragamkan kolom Nomor urut pada tabel data guru & PTK.
+  - [resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php): Menyeragamkan header kolom Nomor urut pada tabel program keahlian.
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menyeragamkan kolom Nomor pada tabel daftar album.
+  - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php): Menyeragamkan kolom Nomor pada tabel daftar sarana prasarana.
+  - [resources/views/tenant/admin/media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php): Menyeragamkan kolom Nomor pada tabel pustaka media.
+
 ## [Penyeragaman Rasio & Ukuran Grid Foto Galeri & Fasilitas 100% Identik Manajemen Media] - 2026-10-05
 
 ### Changed
