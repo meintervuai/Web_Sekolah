@@ -35,13 +35,13 @@ test('halaman pengaturan tampilan sekolah dilindungi middleware auth', function 
     $response->assertRedirect('/smk-negeri-2-bandung/admin/login');
 });
 
-test('admin sekolah dapat login dan langsung diarahkan ke halaman pengaturan tema', function () {
+test('admin sekolah dapat login dan langsung diarahkan ke profil sekolah', function () {
     $response = $this->post('/smk-negeri-2-bandung/admin/login', [
         'email' => 'admin@smkn2bdg.test',
         'password' => 'password',
     ]);
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/profil');
     $this->assertAuthenticatedAs(Pengguna::first(), 'tenant_admin');
 });
 
@@ -54,7 +54,7 @@ test('login admin dengan remember me menyetel cookie dan session lifetime 1 ming
         'remember' => '1',
     ]);
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/profil');
     $this->assertAuthenticatedAs(Pengguna::first(), 'tenant_admin');
 
     // Memastikan guard remember cookie terkirim
@@ -62,32 +62,26 @@ test('login admin dengan remember me menyetel cookie dan session lifetime 1 ming
     expect($user->getRememberToken())->not()->toBeEmpty();
 });
 
-test('admin yang sudah login dan membuka halaman login diarahkan ke pengaturan tema', function () {
+test('admin yang sudah login dan membuka halaman login diarahkan ke profil sekolah', function () {
     $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
         ->get('/smk-negeri-2-bandung/admin/login');
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/profil');
 });
 
-test('halaman pengaturan tema dapat dibuka oleh admin sekolah', function () {
+test('halaman pengaturan tema dialihkan karena dikelola eksklusif oleh super admin', function () {
     $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
         ->get('/smk-negeri-2-bandung/admin/pengaturan');
 
-    $response->assertStatus(200);
-    $response->assertSee('Tema & Warna');
-    $response->assertSee('Pengaturan Tema & Warna Portal Sekolah', false);
-    $response->assertSee('Rincian Warna per Bagian Tampilan', false);
-    $response->assertDontSee('Identitas Pokok & Logo Sekolah', false);
-    $response->assertDontSee('Statistik Sekolah (Tampil di Beranda)');
-    $response->assertDontSee('Video Profil Sekolah (Publik)');
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/profil');
 });
 
-test('sidebar admin memuat menu pengaturan tema dan manajemen media', function () {
+test('sidebar admin memuat menu profil sekolah dan manajemen media', function () {
     $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
-        ->get('/smk-negeri-2-bandung/admin/pengaturan');
+        ->get('/smk-negeri-2-bandung/admin/profil');
 
     $response->assertStatus(200);
-    $response->assertSee('Tema & Warna');
+    $response->assertSee('Profil Sekolah');
     $response->assertSee('Manajemen Media');
     $response->assertDontSee('Slider Banner Hero');
     $response->assertDontSee('Pesan Pengunjung');
@@ -119,19 +113,15 @@ test('seluruh route modul admin lama sudah dihapus dari sistem', function () {
     }
 });
 
-test('penyimpanan palet tema portal sekolah tetap berjalan', function () {
+test('upaya pembaruan tema oleh admin sekolah ditolak dan dialihkan', function () {
     $user = Pengguna::first();
 
-    $warnaTema = PengaturanUmum::ambil('warna_tema') ?: '#1E3A8A';
-    $skemaTema = PengaturanUmum::ambil('skema_tema') ?: 'navy_classic';
-
     $response = $this->actingAs($user, 'tenant_admin')->put('/smk-negeri-2-bandung/admin/pengaturan', [
-        'skema_tema' => $skemaTema,
-        'warna_tema' => $warnaTema,
+        'skema_tema' => 'emerald_nature',
+        'warna_tema' => '#065F46',
     ]);
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
-    expect(PengaturanUmum::ambil('warna_tema'))->toBe($warnaTema);
+    $response->assertRedirect('/smk-negeri-2-bandung/admin/profil');
 });
 
 test('data konten sekolah tetap utuh di database tenant setelah modul admin dihapus', function () {

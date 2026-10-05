@@ -923,11 +923,11 @@ class InformasiController extends Controller
     public function toggleStatus(Request $request): JsonResponse|RedirectResponse
     {
         $adminId = auth('tenant_admin')->id();
-        $targetType = $request->input('target_type', 'fitur'); // 'fitur', 'berita', 'agenda', 'fasilitas'
+        $targetType = $request->input('target_type', 'fitur'); // 'fitur', 'item', 'berita', 'agenda', 'fasilitas'
         $kodeFitur = $request->input('kode_fitur', $request->input('fitur', 'berita'));
 
-        if ($targetType === 'item') {
-            $modelType = $request->input('model_type');
+        if ($targetType === 'item' || in_array($targetType, ['agenda', 'fasilitas', 'berita'], true) || $request->filled('id')) {
+            $modelType = $request->input('model_type', $targetType);
             $id = $request->input('id');
 
             if ($modelType === 'agenda') {
@@ -955,55 +955,14 @@ class InformasiController extends Controller
             }
         }
 
-        // Toggle Feature Flag
-        $isAktif = $request->has('is_aktif')
-            ? $request->boolean('is_aktif')
-            : ! PengaturanFitur::isAktif($kodeFitur, true);
-
-        $namaMap = [
-            'berita' => 'Berita & Artikel',
-            'pengumuman' => 'Pengumuman Resmi',
-            'agenda' => 'Agenda & Event',
-            'galeri' => 'Galeri Foto & Video',
-            'kegiatan' => 'Dokumentasi Kegiatan',
-            'fasilitas' => 'Fasilitas & Sarpras',
-        ];
-
-        $urlMap = [
-            'berita' => '/berita',
-            'pengumuman' => '/pengumuman',
-            'agenda' => '/agenda',
-            'galeri' => '/galeri',
-            'kegiatan' => '/kegiatan',
-            'fasilitas' => '/fasilitas',
-        ];
-
-        DB::connection('tenant')->transaction(function () use ($kodeFitur, $isAktif, $adminId, $namaMap, $urlMap) {
-            PengaturanFitur::updateOrCreate(
-                ['kode_fitur' => $kodeFitur],
-                [
-                    'nama_fitur' => $namaMap[$kodeFitur] ?? ucfirst($kodeFitur),
-                    'is_aktif' => $isAktif,
-                    'pengguna_id' => $adminId,
-                ]
-            );
-
-            if (isset($urlMap[$kodeFitur])) {
-                Menu::where(function ($q) use ($urlMap, $kodeFitur) {
-                    $q->where('url', $urlMap[$kodeFitur])
-                        ->orWhere('url', ltrim($urlMap[$kodeFitur], '/'));
-                })->update(['is_aktif' => $isAktif]);
-            }
-        });
-
+        // Toggle Feature Flag dilarang untuk Admin Sekolah (Hanya Super Admin yang berwenang)
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Visibilitas '.($namaMap[$kodeFitur] ?? $kodeFitur).' berhasil diubah menjadi '.($isAktif ? 'Aktif (Tampil)' : 'Nonaktif (Sembunyi)'),
-                'is_aktif' => $isAktif,
-            ]);
+                'success' => false,
+                'message' => 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.',
+            ], 403);
         }
 
-        return back()->with('success', 'Status visibilitas berhasil diperbarui.');
+        return back()->with('error', 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.');
     }
 }

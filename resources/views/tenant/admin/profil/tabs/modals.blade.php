@@ -1,30 +1,4 @@
-<!-- POP-UP MODAL KONFIRMASI UBAH VISIBILITAS -->
-<div x-show="modalConfirmToggleOpen" x-cloak 
-     class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 space-y-4 border border-slate-200"
-         @click.outside="modalConfirmToggleOpen = false">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div>
-                <h3 class="font-bold text-sm text-slate-900 font-heading">Konfirmasi Visibilitas Menu</h3>
-                <p class="text-xs text-slate-500 mt-0.5" x-html="toggleConfirmMessage"></p>
-            </div>
-        </div>
 
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-            <button type="button" @click="modalConfirmToggleOpen = false" 
-                    class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
-                Batal
-            </button>
-            <button type="button" @click="executeConfirmedToggle()" 
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer">
-                Ya, Ubah Status
-            </button>
-        </div>
-    </div>
-</div>
 
 <!-- MODAL PEJABAT STRUKTURAL (ADD / EDIT) -->
 <div x-show="modalPejabatOpen" x-cloak 

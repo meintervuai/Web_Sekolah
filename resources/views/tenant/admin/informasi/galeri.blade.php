@@ -88,16 +88,6 @@
                     </svg>
                     <span x-text="editMode ? 'Edit: ' + (formNamaAlbum ? formNamaAlbum.substring(0,18) + '...' : 'Album') : '2. Buat Album Baru'"></span>
                 </button>
-
-                <button type="button" @click="activeTab = 'visibilitas'"
-                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Visibilitas Menu
-                </button>
             </div>
 
             <!-- Sticky Right Actions -->
@@ -655,36 +645,7 @@
         </form>
     </div>
 
-    <!-- =========================================================================
-         TAB 4: VISIBILITAS MENU PUBLIK
-    ========================================================================== -->
-    <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4 max-w-2xl">
-            <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">Visibilitas Fitur Galeri Foto &amp; Video</h2>
-                    <p class="text-xs text-slate-500">Kontrol apakah menu Galeri Dokumentasi ditampilkan pada navigasi publik website sekolah.</p>
-                </div>
-            </div>
 
-            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                <div>
-                    <span class="text-xs font-bold text-slate-800 block">Status Fitur Menu Galeri</span>
-                    <span class="text-[11px] text-slate-500 block mt-0.5" x-text="isFiturAktif ? 'Aktif - Menu dan halaman galeri dapat diakses oleh publik.' : 'Nonaktif - Menu disembunyikan dari navbar publik.'"></span>
-                </div>
-                
-                <button type="button" 
-                        @click="toggleStatusFitur('galeri')" 
-                        :disabled="isToggling"
-                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden"
-                        :class="isFiturAktif ? 'bg-blue-600' : 'bg-slate-300'">
-                    <span class="sr-only">Toggle Status</span>
-                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out"
-                          :class="isFiturAktif ? 'translate-x-5' : 'translate-x-0'"></span>
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- MODAL KONFIRMASI HAPUS ALBUM -->
     <div x-show="modalHapus" x-cloak 

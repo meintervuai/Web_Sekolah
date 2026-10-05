@@ -47,7 +47,7 @@ test('admin can access profil index page with tabs', function () {
     $response->assertSee('Data Pokok Satuan Pendidikan');
     $response->assertSee('Sejarah Sekolah');
     $response->assertSee('Visi, Misi &amp; Sasaran Mutu', false);
-    $response->assertSee('Visibilitas Menu &amp; Rute', false);
+    $response->assertDontSee('5. Visibilitas Menu &amp; Rute', false);
 
     // Kontrol yang sudah dihapus tidak boleh muncul lagi di form admin
     $response->assertDontSee('pola_latar_profil');
@@ -263,37 +263,15 @@ test('admin can update struktur hero title, description, and banner and it appea
     $public->assertSee($halaman->gambar_banner, false);
 });
 
-test('admin can toggle visibility of sub-menu and public route is protected', function () {
-    // 1. Matikan fitur Sejarah via toggle-menu endpoint
+test('admin cannot toggle visibility of sub-menu and is rejected', function () {
+    // 1. Percobaan mematikan fitur Sejarah via toggle-menu endpoint oleh Admin Sekolah harus ditolak (403)
     $response = $this->actingAs($this->admin, 'tenant_admin')
         ->postJson('/smk-negeri-2-bandung/admin/profil/toggle-menu', [
             'kode_fitur' => 'sejarah',
             'is_aktif' => false,
         ]);
 
-    $response->assertStatus(200);
-    $response->assertJson(['success' => true, 'is_aktif' => false]);
-
-    // Verifikasi di database
-    expect(PengaturanFitur::isAktif('sejarah'))->toBeFalse();
-
-    // 2. Coba akses rute publik Sejarah saat nonaktif -> Wajib 404
-    $publicResponse = $this->get('/smk-negeri-2-bandung/profil/sejarah');
-    $publicResponse->assertStatus(404);
-
-    // 3. Aktifkan kembali fitur Sejarah
-    $this->actingAs($this->admin, 'tenant_admin')
-        ->postJson('/smk-negeri-2-bandung/admin/profil/toggle-menu', [
-            'kode_fitur' => 'sejarah',
-            'is_aktif' => true,
-        ]);
-
-    expect(PengaturanFitur::isAktif('sejarah'))->toBeTrue();
-
-    // Rute publik Sejarah dapat diakses kembali
-    $publicResponseActive = $this->get('/smk-negeri-2-bandung/profil/sejarah');
-    $publicResponseActive->assertStatus(200);
-    $publicResponseActive->assertSee('Sejarah');
+    $response->assertStatus(403);
 });
 
 test('admin can fetch media list via json ajax and access admin root redirect', function () {

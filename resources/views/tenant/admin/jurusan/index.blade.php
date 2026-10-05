@@ -89,16 +89,6 @@
                     </svg>
                     <span>3. Hero Banner Publik</span>
                 </button>
-
-                <button type="button" @click="setTab('visibilitas')"
-                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    <span>4. Visibilitas Menu &amp; Rute</span>
-                </button>
             </div>
 
             <!-- Sticky Top Action Buttons -->
@@ -167,7 +157,6 @@
     @include('tenant.admin.jurusan.tabs.tab-jurusan')
     @include('tenant.admin.jurusan.tabs.tab-form-jurusan')
     @include('tenant.admin.jurusan.tabs.tab-hero')
-    @include('tenant.admin.jurusan.tabs.tab-visibilitas')
 
     <!-- MODALS -->
     @include('tenant.admin.jurusan.tabs.modals')
@@ -453,35 +442,6 @@
                         setTimeout(() => { window.location.reload(); }, 600);
                     } else {
                         this.triggerToast('Gagal mengubah status program keahlian.');
-                    }
-                } catch (e) {
-                    this.triggerToast('Terjadi kesalahan jaringan.');
-                }
-            },
-
-            async toggleFeatureFlag(newStatus) {
-                try {
-                    const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const url = config.routes.toggleStatus;
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrf,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({
-                            target_type: 'fitur',
-                            is_aktif: newStatus
-                        })
-                    });
-                    const data = await res.json();
-                    if (res.ok && data.success) {
-                        this.isFiturAktif = newStatus;
-                        this.triggerToast(data.message);
-                    } else {
-                        this.triggerToast('Gagal mengubah visibilitas fitur.');
                     }
                 } catch (e) {
                     this.triggerToast('Terjadi kesalahan jaringan.');

@@ -46,15 +46,18 @@ $paletUji = [
 ];
 
 beforeEach(function () use ($paletUji) {
-    Sekolah::firstOrCreate(
-        ['slug' => 'smk-negeri-2-bandung'],
-        [
+    $sekolah = Sekolah::where('slug', 'smk-negeri-2-bandung')->first();
+    if ($sekolah) {
+        $sekolah->update(['status_aktif' => true]);
+    } else {
+        Sekolah::create([
             'id' => (string) Str::uuid(),
             'nama_sekolah' => 'SMK Negeri 2 Bandung',
+            'slug' => 'smk-negeri-2-bandung',
             'jenjang' => 'SMK',
             'status_aktif' => true,
-        ]
-    );
+        ]);
+    }
 
     // Simpan nilai awal agar dikembalikan setelah pengujian
     $this->nilaiAwalTema = PengaturanUmum::whereIn('kunci', array_keys($paletUji))
@@ -136,35 +139,56 @@ test('stylesheet publik memuat kelas global warna dan pemetaan warna netral', fu
         ->toContain('.theme-input');
 });
 
-test('panel tema menampilkan 6 kelompok dan 13 pengaturan warna', function () {
-    $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
-        ->get('/smk-negeri-2-bandung/admin/pengaturan');
+test('panel tema di central super admin menampilkan formulir 13 warna dan preset', function () {
+    $superadmin = \App\Models\Central\SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin@admin.com'],
+        ['nama' => 'Super Administrator', 'password' => \Illuminate\Support\Facades\Hash::make('password123')]
+    );
+    $tenant = Sekolah::where('slug', 'smk-negeri-2-bandung')->first();
+
+    $response = $this->actingAs($superadmin, 'superadmin')
+        ->get("/superadmin/tenants/{$tenant->id}/edit");
 
     $response->assertStatus(200);
-    $response->assertSee('Preset Cepat (7 Skema Terverifikasi)');
-    $response->assertSee('Rincian Warna per Bagian Tampilan', false);
-
-    foreach ([
-        'Warna Identitas',
-        'Tipografi & Teks',
-        'Latar & Permukaan',
-        'Garis & Batas',
-        'Tombol & Aksi',
-        'Header, Navigasi & Footer',
-    ] as $judulKelompok) {
-        $response->assertSee($judulKelompok, false);
-    }
+    $response->assertSee('4. Konfigurasi Tema', false);
+    $response->assertSee('Pilih Skema / Preset Cepat', false);
+    $response->assertSee('Rincian 13 Palet Warna Presisi', false);
 
     foreach (kunciTemaWarna() as $kunci) {
         $response->assertSee('name="'.$kunci.'"', false);
     }
 });
 
-test('menyimpan 13 warna melalui panel admin tersimpan ke pengaturan umum', function () use ($paletUji) {
-    $response = $this->actingAs(Pengguna::first(), 'tenant_admin')
-        ->put('/smk-negeri-2-bandung/admin/pengaturan', $paletUji);
+test('admin tenant dialihkan saat mencoba mengakses atau memperbarui tema secara langsung', function () use ($paletUji) {
+    $adminTenant = Pengguna::first();
 
-    $response->assertRedirect('/smk-negeri-2-bandung/admin/pengaturan');
+    $responseIndex = $this->actingAs($adminTenant, 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/pengaturan');
+    $responseIndex->assertRedirect('/smk-negeri-2-bandung/admin/profil');
+
+    $responseUpdate = $this->actingAs($adminTenant, 'tenant_admin')
+        ->put('/smk-negeri-2-bandung/admin/pengaturan', $paletUji);
+    $responseUpdate->assertRedirect('/smk-negeri-2-bandung/admin/profil');
+});
+
+test('super admin berhasil menyimpan 13 warna tema ke database tenant', function () use ($paletUji) {
+    $superadmin = \App\Models\Central\SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin@admin.com'],
+        ['nama' => 'Super Administrator', 'password' => \Illuminate\Support\Facades\Hash::make('password123')]
+    );
+    $tenant = Sekolah::where('slug', 'smk-negeri-2-bandung')->first();
+
+    $payload = array_merge([
+        'nama_sekolah' => $tenant->nama_sekolah,
+        'jenjang' => $tenant->jenjang,
+        'domain' => 'smkn2bdg.sch.id',
+        'status_aktif' => true,
+    ], $paletUji);
+
+    $response = $this->actingAs($superadmin, 'superadmin')
+        ->put("/superadmin/tenants/{$tenant->id}", $payload);
+
+    $response->assertRedirect("/superadmin/tenants/{$tenant->id}");
 
     foreach ($paletUji as $kunci => $nilai) {
         expect(PengaturanUmum::ambil($kunci))->toBe($nilai);

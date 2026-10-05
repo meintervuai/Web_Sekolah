@@ -2,6 +2,99 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Proteksi Ketat Rute Admin Sekolah & Penegakan Otoritas Master Super Admin] - 2026-10-05
+
+### Added
+- **Middleware Proteksi Fitur Tenant `EnsureTenantFeatureEnabled`**:
+  - [app/Http/Middleware/EnsureTenantFeatureEnabled.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Middleware/EnsureTenantFeatureEnabled.php): Memvalidasi status keaktifan modul di `pengaturan_fitur`. Jika nonaktif, rute publik menghasilkan 404 Not Found, rute Admin Sekolah dialihkan ke `tenant.admin.profil.index` dengan notifikasi error penolakan hak akses, dan API AJAX menghasilkan 403 Forbidden.
+  - [bootstrap/app.php](file:///d:/databaru/Magang/website_sekolah/bootstrap/app.php): Mendaftarkan alias `tenant.feature`.
+
+### Security & Fixed
+- **Penguncian Rute Admin Sekolah Terhadap Modul yang Dinonaktifkan**:
+  - [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php): Memasang middleware `tenant.feature` pada seluruh grup rute Admin Sekolah (`/gtk`, `/program-keahlian`, `/informasi/berita`, `/informasi/pengumuman`, `/informasi/agenda`, `/informasi/galeri`, `/informasi/fasilitas`).
+  - [app/Http/Controllers/Tenant/Admin/InformasiController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/InformasiController.php) & [app/Http/Controllers/Tenant/Admin/JurusanController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/JurusanController.php) & [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php): Memblokir manipulasi master feature flag dari panel admin sekolah.
+  - [tests/Feature/TenantRouteVisibilityTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantRouteVisibilityTest.php): Automated feature test penolakan akses rute admin sekolah ketika modul dinonaktifkan oleh Super Admin.
+
+## [Sentralisasi Pengaturan Tema & Warna Eksklusif Super Admin] - 2026-10-05
+
+### Added
+- **Konfigurasi Tema & Palet Warna di Panel Super Admin**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menambahkan integrasi 13 nilai warna (`pengaturan_umum`) pada formulir edit dan penyimpanan dinamis tenant di panel Super Admin.
+  - [resources/views/central/tenants/edit.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/central/tenants/edit.blade.php): Menambahkan *Section 4: Konfigurasi Tema & Palet Warna Sekolah (Super Admin Only)* lengkap dengan 7 preset tema (*Navy Classic, Emerald Nature, Maroon Prestige, Royal Purple, Slate Dark, Amber Sunset, Teal Modern*), 13 color picker presisi, dan input hex.
+
+### Changed
+- **Pencabutan Hak Akses Tema & Warna dari Admin Sekolah (Tenant Admin)**:
+  - [resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php): Menghapus menu navigasi *Tema & Warna* dari sidebar admin sekolah dan mengubah tautan logo header agar mengarah ke *Profil Sekolah*.
+  - [app/Http/Controllers/Tenant/Admin/PengaturanController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/PengaturanController.php): Mengunci rute `tenant.admin.pengaturan.index` dan `tenant.admin.pengaturan.update` dengan auto-redirect ke halaman profil.
+  - [app/Http/Controllers/Tenant/Admin/AuthController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/AuthController.php): Mengarahkan rute login berhasil langsung ke dashboard *Profil Sekolah*.
+
+## [Perbaikan Navigasi Beranda, Penyelarasan Sambutan Kepala Sekolah & Verifikasi Rute Publik] - 2026-10-05
+
+### Fixed
+- **Perbaikan Tautan Menu Beranda di Navbar Publik**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Memperbaiki resolusi URL rute Beranda (`url === '/'`) pada navbar desktop dan drawer navigasi mobile agar menghasilkan URL beranda sekolah yang valid (`/{tenant}`) dan bukan link kosong (`#`), sehingga menu Beranda dapat diklik normal dari halaman mana pun.
+- **Penambahan Sakelar Video Profil Sekolah di Panel Super Admin**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Mendaftarkan kembali sub-section `profil_video` (*Video Profil Sekolah - Sidebar / Pemutar*) pada sub-bagian Menu Profil di panel Super Admin lengkap dengan cascading logic, sehingga Super Admin dapat secara granular menentukan apakah suatu tenant sekolah diizinkan menampilkan pemutar video profil atau tidak pada halaman `/profil` publik.
+- **Pemulihan Permanen Kartu Video Profil & Kepala Sekolah di Panel Admin**:
+  - [resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php): Memastikan kartu formulir *Kepala Satuan Pendidikan* (Nama, NIP, Foto Media, Sambutan) dan kartu formulir *Video Profil Sekolah* (Judul, URL YouTube/Media MP4, Deskripsi) **selalu tersedia permanen** di kolom kanan Tab 1 Data Pokok Sekolah agar Admin Sekolah dapat sewaktu-waktu mengisi dan mengelola media profil tanpa terblokir kondisi apa pun.
+- **Penyelarasan & Pemulihan Section Sambutan Kepala Sekolah di Beranda & Halaman Profil Sesuai Manajemen Media**:
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php): Memperbaiki evaluasi field foto, nama, gelar, NIP, dan teks ringkasan sambutan kepala sekolah dengan menerapkan `\App\Services\MediaService::getCropStyle()` agar selalu patuh pada konfigurasi rasio dan titik fokus (smart crop) dari Pusat Media.
+  - [resources/views/public/pages/profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php): Menambahkan kartu *Sambutan Kepala Sekolah* resmi (Foto Kepala Sekolah dengan integrasi `MediaService::getCropStyle()`, Nama, NIP, dan Teks Sambutan) di halaman publik `/profil` baik pada layout 2-kolom (dengan video profil) maupun layout 1-kolom terpusat.
+- **Penjelasan Struktur Menu Agenda & Kegiatan pada Portal Publik**:
+  - Halaman dan rute publik Agenda & Kegiatan tetap aktif dan terdaftar di rute `/{tenant}/agenda`. Pada struktur menu navigasi portal, item *Agenda Kegiatan* dikelompokkan ke dalam dropdown **Informasi** (`Informasi -> Agenda & Kegiatan`) bersama *Berita*, *Pengumuman*, *Galeri*, dan *Fasilitas*.
+
+## [Penyempurnaan Animasi Toggle Switch & Sinkronisasi Menu Super Admin] - 2026-10-05
+
+### Fixed
+- **Penegakan Proteksi Rute Publik (HTTP 404) Saat Fitur Dinonaktifkan Super Admin**:
+  - [app/Http/Controllers/Tenant/Public/PageController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/PageController.php): Memastikan metode `checkFitur()` mengeksekusi `abort(404)` pada semua rute publik (`/profil`, `/profil/sejarah`, `/profil/visi-misi`, `/profil/struktur`, `/program-keahlian`, `/berita`, `/agenda`, `/pengumuman`, `/guru-staf`, `/fasilitas`, `/galeri`, `/spmb`, `/kontak`) jika fiturnya dinonaktifkan di `pengaturan_fitur`.
+  - [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php): Menghapus override `is_aktif` saat Admin Sekolah menyimpan konten halaman statis agar tidak menimpa status visibilitas yang telah diatur oleh Super Admin.
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php): Mengkondisikan seluruh tombol dan link terkait (Profil di slider hero dan tombol Profil Lengkap / Visi Misi di sambutan) agar otomatis disembunyikan ketika fiturnya nonaktif.
+  - [tests/Feature/TenantRouteVisibilityTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantRouteVisibilityTest.php): Menambahkan automated feature test untuk memverifikasi bahwa penonaktifan via Super Admin langsung menghasilkan status `404 Not Found` pada rute publik yang bersangkutan.
+- **Pembersihan Sub-Section Mikro Profil di Panel Super Admin**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menghapus sakelar sub-bagian mikro yang tidak relevan (`profil_data_pokok`, `profil_sambutan_kepsek`, `profil_video`, `struktur_diagram`, `struktur_pejabat`) dari panel visibilitas Super Admin sehingga daftar sub-bagian menu Profil bersih dan hanya berfokus pada halaman nyata (*Halaman Utama Profil*, *Halaman Sejarah*, *Halaman Visi & Misi*, *Halaman Struktur Organisasi*, dan *Halaman Direktori Guru & GTK*).
+- **Penyelarasan Label Tab & Header Data Pokok Satuan Pendidikan**:
+  - [resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php): Menyeragamkan label Tab 1 menjadi `1. Data Pokok Satuan Pendidikan` agar selaras 100% dengan judul kartu formulir.
+- **Penyesuaian Tampilan Halaman Profil Sekolah di Panel Admin**:
+  - [resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php): Membungkus tab *2. Profil Lengkap* dengan `\App\Models\Tenant\PengaturanFitur::isAktif('profil')` sehingga ketika Super Admin menonaktifkan fitur profil publik, tab profil panjang otomatis tersembunyi dan admin hanya fokus pada *Data Pokok Satuan Pendidikan*.
+  - [resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php): Menyesuaikan layout kartu *Data Pokok Satuan Pendidikan* menjadi **lebar penuh (col-span-12)** secara otomatis serta menyembunyikan box Kepala Sekolah & Video Profil jika modul publiknya dimatikan oleh Super Admin.
+- **Ketersediaan Menu Profil Sekolah (Data Pokok & Identitas) di Sidebar Admin**:
+  - [resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php): Memastikan menu *Profil Sekolah* (Tab Data Diri Sekolah, Logo, Kontak, NPSN, Akreditasi, dan Media Sosial) selalu dapat diakses oleh Admin Sekolah sekalipun menu publik Profil dinonaktifkan oleh Super Admin, karena data pokok tersebut merupakan identitas esensial satuan pendidikan untuk header, footer, dan dokumen resmi.
+- **Penanganan Link Induk Dropdown Navigasi Publik Saat Halaman Dinonaktifkan**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Memperbaiki navigasi desktop dan mobile drawer agar ketika sub-fitur `profil` (Halaman Utama Profil) dinonaktifkan tetapi menu induk `menu_profil` masih aktif untuk menaungi sub-halaman lain (Sejarah, Visi Misi, Struktur, GTK), tautan induk `Profil` otomatis menjadi toggle dropdown non-link (`#` / button toggle) sehingga pengguna tidak dapat mengklik atau diarahkan ke rute `404` `/profil`.
+- **Perapihan Visual & Animasi Sakelar Toggle Switch Super Admin**:
+  - [resources/views/central/tenants/show.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/central/tenants/show.blade.php): Memperbaiki struktur kontainer track dan thumb toggle switch dengan padding `p-0.5`, ukuran proporsional `w-11 h-6` (menu induk) dan `w-9 h-5` (sub-bagian), serta pergeseran `translate-x-5` / `translate-x-4` sehingga indikator thumb berada **rapi dan presisi di dalam batas track** tanpa offset/overflow keluar saat aktif (`bg-emerald-600` di kanan) maupun nonaktif (`bg-slate-300` di kiri).
+- **Penghapusan Modul yang Tidak Ada (Prestasi Siswa & Ekstrakurikuler) dari Super Admin**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menghapus modul `prestasi` dan `ekstrakurikuler` dari daftar visibilitas Super Admin sesuai changelog pembersihan menu kesiswaan terdahulu (seluruh dokumentasi aktivitas kesiswaan & OSIS telah dilebur ke modul Berita, Agenda, dan Galeri Dokumentasi Resmi).
+
+## [Pemindahan Pengaturan Visibilitas Menu & Rute ke Super Admin (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Added
+- **Panel Kontrol Visibilitas Menu & Rute Terpusat di Super Admin**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menambahkan method `show()` yang memuat konfigurasi `pengaturan_fitur` & `menus` database tenant, serta method `toggleMenu()` dengan dynamic tenant connection switcher dan cascading sub-sections (profil, sejarah, visi misi, struktur, guru/staf, program keahlian, berita, agenda, pengumuman, galeri, fasilitas, prestasi, ekskul, spmb, kontak).
+  - [resources/views/central/tenants/show.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/central/tenants/show.blade.php): Menambahkan kartu kontrol visibilitas menu interaktif dengan Alpine.js toggle switch, indikator loading spinner (anti-freeze), feedback status, dan sub-komponen cascading.
+  - [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php): Mendaftarkan rute `PATCH /superadmin/tenants/{tenant}/toggle-menu` (`superadmin.tenants.toggle-menu`).
+  - [tests/Feature/SuperAdminAuthTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/SuperAdminAuthTest.php): Menambahkan feature test komprehensif untuk pengujian kontrol visibilitas menu tenant oleh Super Admin.
+
+### Changed
+- **Sinkronisasi Otomatis Panel Admin Sekolah dengan Kontrol Visibilitas Super Admin**:
+  - [resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php): Seluruh menu navigasi sidebar admin sekolah (Profil, GTK, Program Keahlian, Berita, Pengumuman, Agenda, Galeri, Fasilitas) kini otomatis disembunyikan jika dimatikan oleh Super Admin melalui `\App\Models\Tenant\PengaturanFitur::isAktif()`. Accordion "Informasi Sekolah" dan header "Konten Portal" otomatis disembunyikan jika semua sub-menunya nonaktif.
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Menyelaraskan seluruh 5 sub-menu Informasi (`/berita`, `/pengumuman`, `/agenda`, `/galeri`, `/fasilitas`) pada `menuFeatureMap` navbar publik sehingga otomatis muncul atau disembunyikan sesuai status sakelar Super Admin.
+  - [resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php): Tab sub-halaman *Sejarah* dan *Visi, Misi & Tujuan* otomatis disembunyikan jika dimatikan oleh Super Admin.
+  - [resources/views/tenant/admin/gtk/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/gtk/index.blade.php): Tab sub-halaman *Struktur Organisasi* dan *Guru & GTK* otomatis disembunyikan jika dimatikan oleh Super Admin.
+
+### Removed
+- **Pembersihan Modul Visibilitas dari Panel Admin Sekolah**:
+  - [resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php): Menghapus tombol tab `5. Visibilitas Menu & Rute`, modal konfirmasi, dan method JS toggle.
+  - [resources/views/tenant/admin/jurusan/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/index.blade.php): Menghapus tombol tab `4. Visibilitas Menu & Rute`, include partial blade, dan method JS toggle.
+  - [resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php): Menghapus tab & container `4. Visibilitas Menu`.
+  - [resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php): Menghapus tab & container `3. Visibilitas Menu`.
+  - [resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php): Menghapus tab & container `3. Visibilitas Menu`.
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menghapus tab & container `Visibilitas Menu`.
+  - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php): Menghapus tab & container `4. Visibilitas Menu`.
+  - Menghapus berkas view usang `resources/views/tenant/admin/profil/tabs/tab-visibilitas.blade.php` dan `resources/views/tenant/admin/jurusan/tabs/tab-visibilitas.blade.php`.
+
+
 ## [Standarisasi Tombol Pencarian & Fitur Toggle Mode Tampilan Tabel / Grid di Admin (Anti-Slop Vibecoding)] - 2026-10-05
 
 ### Added

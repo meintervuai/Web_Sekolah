@@ -9,31 +9,41 @@
         <input type="hidden" name="form_type" value="datadiri">
         <input type="hidden" name="current_tab" value="datadiri">
 
+        @php
+            $showKepsek = \App\Models\Tenant\PengaturanFitur::isAktif('profil_sambutan_kepsek', true);
+            $showVideo = \App\Models\Tenant\PengaturanFitur::isAktif('profil_video', true);
+            $hasRightCol = $showKepsek || $showVideo;
+        @endphp
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Data Pokok Sekolah & Medsos (Left 7 Cols) -->
-            <div class="lg:col-span-7 admin-card space-y-4">
-                <div class="admin-card-header">
-                    <h2 class="admin-card-title">Data Pokok Satuan Pendidikan</h2>
-                    <p class="admin-card-subtitle">Informasi resmi identitas sekolah untuk header, footer, dan kartu profil.</p>
+            <!-- Data Pokok Sekolah & Medsos -->
+            <div class="{{ $hasRightCol ? 'lg:col-span-7' : 'lg:col-span-12' }} admin-card space-y-6">
+                <div class="admin-card-header border-b border-slate-100 pb-4">
+                    <h2 class="admin-card-title text-base font-bold text-slate-800">Data Pokok Satuan Pendidikan</h2>
+                    <p class="admin-card-subtitle text-xs text-slate-500 mt-0.5">Informasi resmi identitas sekolah untuk header, footer, topbar kontak, dan kartu profil.</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2">
-                        <label class="admin-form-label">Nama Satuan Pendidikan <span class="text-rose-500">*</span></label>
-                        <input type="text" name="nama_sekolah" value="{{ old('nama_sekolah', $pengaturan['nama_sekolah']) }}" required
-                               class="admin-form-input">
+                <!-- Bagian 1: Identitas & Branding -->
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="admin-form-label">Nama Satuan Pendidikan <span class="text-rose-500">*</span></label>
+                            <input type="text" name="nama_sekolah" value="{{ old('nama_sekolah', $pengaturan['nama_sekolah']) }}" required
+                                   class="admin-form-input placeholder:text-slate-400">
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label">Slogan / Tagline Sekolah</label>
+                            <input type="text" name="slogan" value="{{ old('slogan', $pengaturan['slogan']) }}"
+                                   class="admin-form-input placeholder:text-slate-400"
+                                   placeholder="Contoh: Vokasi Kuat Menguatkan Indonesia">
+                        </div>
                     </div>
 
-                    <div class="sm:col-span-2">
-                        <label class="admin-form-label">Slogan / Tagline Sekolah</label>
-                        <input type="text" name="slogan" value="{{ old('slogan', $pengaturan['slogan']) }}"
-                               class="admin-form-input">
-                    </div>
-
-                    <div class="sm:col-span-2">
+                    <div>
                         <label class="admin-form-label">Logo Satuan Pendidikan (Pusat Media / URL)</label>
-                        <div class="flex gap-2 items-center">
-                            <div class="w-10 h-10 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden p-1">
+                        <div class="flex gap-2.5 items-center">
+                            <div class="w-11 h-11 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden p-1 shadow-sm">
                                 <template x-if="logoPreview">
                                     <img :src="logoPreview" alt="Logo Preview" class="w-full h-full object-contain">
                                 </template>
@@ -46,98 +56,133 @@
                                    class="admin-form-input flex-1"
                                    placeholder="https://... atau pilih dari Pusat Media">
                             <button type="button" @click="openMediaPicker('input_logo_sekolah')" 
-                                    class="admin-btn-action shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Pilih Media
+                                    class="admin-btn-action shrink-0 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span>Pilih Media</span>
                             </button>
                         </div>
-                        <p class="admin-form-helper">Logo resmi sekolah (format PNG transparan / SVG direkomendasikan).</p>
+                        <p class="admin-form-helper text-[11px] text-slate-500 mt-1.5">Rekomendasi format PNG transparan atau SVG dengan proporsi seimbang.</p>
+                    </div>
+                </div>
+
+                <!-- Bagian 2: Legalitas & Kontak Resmi -->
+                <div class="pt-4 border-t border-slate-100 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="admin-form-label">NPSN <span class="text-rose-500">*</span></label>
+                            <input type="text" name="npsn" value="{{ old('npsn', $pengaturan['npsn']) }}" required
+                                   class="admin-form-input font-mono text-sm">
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label">Peringkat Akreditasi <span class="text-rose-500">*</span></label>
+                            <input type="text" name="akreditasi" value="{{ old('akreditasi', $pengaturan['akreditasi']) }}" required
+                                   class="admin-form-input uppercase"
+                                   placeholder="Contoh: A (Unggul)">
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label">Tahun Berdiri <span class="text-rose-500">*</span></label>
+                            <input type="text" name="tahun_berdiri" value="{{ old('tahun_berdiri', $pengaturan['tahun_berdiri']) }}" required
+                                   class="admin-form-input font-mono text-sm"
+                                   placeholder="Contoh: 1951">
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="admin-form-label">NPSN <span class="text-rose-500">*</span></label>
-                        <input type="text" name="npsn" value="{{ old('npsn', $pengaturan['npsn']) }}" required
-                               class="admin-form-input">
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="admin-form-label">Nomor Telepon Resmi</label>
+                            <input type="text" name="no_telepon" value="{{ old('no_telepon', $pengaturan['no_telepon']) }}"
+                                   class="admin-form-input"
+                                   placeholder="Contoh: 022-7234285">
+                        </div>
 
-                    <div>
-                        <label class="admin-form-label">Peringkat Akreditasi <span class="text-rose-500">*</span></label>
-                        <input type="text" name="akreditasi" value="{{ old('akreditasi', $pengaturan['akreditasi']) }}" required
-                               class="admin-form-input">
-                    </div>
+                        <div>
+                            <label class="admin-form-label">Email Sekolah</label>
+                            <input type="email" name="email_sekolah" value="{{ old('email_sekolah', $pengaturan['email_sekolah']) }}"
+                                   class="admin-form-input"
+                                   placeholder="info@sekolah.sch.id">
+                        </div>
 
-                    <div>
-                        <label class="admin-form-label">Tahun Berdiri <span class="text-rose-500">*</span></label>
-                        <input type="text" name="tahun_berdiri" value="{{ old('tahun_berdiri', $pengaturan['tahun_berdiri']) }}" required
-                               class="admin-form-input">
+                        <div>
+                            <label class="admin-form-label">Nomor WhatsApp Humas / SPMB</label>
+                            <input type="text" name="whatsapp" value="{{ old('whatsapp', $pengaturan['whatsapp']) }}"
+                                   class="admin-form-input"
+                                   placeholder="Contoh: 081222333444">
+                        </div>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="admin-form-label">Nomor Telepon Resmi</label>
-                        <input type="text" name="no_telepon" value="{{ old('no_telepon', $pengaturan['no_telepon']) }}"
-                               class="admin-form-input">
+                <!-- Bagian 3: Alamat & Jam Layanan -->
+                <div class="pt-4 border-t border-slate-100 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="admin-form-label">Alamat Lengkap Satuan Pendidikan</label>
+                            <textarea name="alamat" rows="2"
+                                      class="admin-form-input resize-none"
+                                      placeholder="Nama jalan, nomor gedung, kelurahan, kecamatan, kota/kabupaten...">{{ old('alamat', $pengaturan['alamat']) }}</textarea>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="admin-form-label">Jam Layanan Sekolah</label>
+                            <input type="text" name="jam_layanan" value="{{ old('jam_layanan', $pengaturan['jam_layanan']) }}"
+                                   class="admin-form-input"
+                                   placeholder="Contoh: Senin - Jumat: 07.00 - 16.00 WIB">
+                        </div>
                     </div>
+                </div>
 
-                    <div class="sm:col-span-2">
-                        <label class="admin-form-label">Alamat Lengkap</label>
-                        <textarea name="alamat" rows="2"
-                                  class="admin-form-input">{{ old('alamat', $pengaturan['alamat']) }}</textarea>
-                    </div>
-
-                    <div>
-                        <label class="admin-form-label">Email Sekolah</label>
-                        <input type="email" name="email_sekolah" value="{{ old('email_sekolah', $pengaturan['email_sekolah']) }}"
-                               class="admin-form-input">
-                    </div>
-
-                    <div>
-                        <label class="admin-form-label">Nomor WhatsApp Humas / SPMB</label>
-                        <input type="text" name="whatsapp" value="{{ old('whatsapp', $pengaturan['whatsapp']) }}"
-                               class="admin-form-input">
-                    </div>
-
-                    <div class="sm:col-span-2">
-                        <label class="admin-form-label">Jam Layanan Sekolah</label>
-                        <input type="text" name="jam_layanan" value="{{ old('jam_layanan', $pengaturan['jam_layanan']) }}"
-                               class="admin-form-input"
-                               placeholder="Contoh: Senin - Jumat: 07.00 - 16.00 WIB">
-                    </div>
-
-                    <!-- Media Sosial Resmi Satuan Pendidikan -->
-                    <div class="sm:col-span-2 pt-3 border-t border-slate-100">
-                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <!-- Bagian 4: Media Sosial Resmi Satuan Pendidikan -->
+                <div class="pt-4 border-t border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                            Akun Media Sosial Resmi (Tampil di Footer)
+                            Akun Media Sosial Resmi (Tampil di Footer Portal)
                         </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="admin-form-label">Instagram URL</label>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="admin-form-label text-slate-600">Instagram URL</label>
+                            <div class="relative">
                                 <input type="url" name="instagram" value="{{ old('instagram', $pengaturan['instagram'] ?? '') }}"
-                                       class="admin-form-input"
+                                       class="admin-form-input text-xs"
                                        placeholder="https://instagram.com/akunsekolah">
                             </div>
-                            <div>
-                                <label class="admin-form-label">Facebook URL</label>
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label text-slate-600">Facebook URL</label>
+                            <div class="relative">
                                 <input type="url" name="facebook" value="{{ old('facebook', $pengaturan['facebook'] ?? '') }}"
-                                       class="admin-form-input"
+                                       class="admin-form-input text-xs"
                                        placeholder="https://facebook.com/akunsekolah">
                             </div>
-                            <div>
-                                <label class="admin-form-label">YouTube Channel URL</label>
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label text-slate-600">YouTube Channel URL</label>
+                            <div class="relative">
                                 <input type="url" name="youtube" value="{{ old('youtube', $pengaturan['youtube'] ?? '') }}"
-                                       class="admin-form-input"
+                                       class="admin-form-input text-xs"
                                        placeholder="https://youtube.com/@akunsekolah">
                             </div>
-                            <div>
-                                <label class="admin-form-label">TikTok URL</label>
+                        </div>
+
+                        <div>
+                            <label class="admin-form-label text-slate-600">TikTok URL</label>
+                            <div class="relative">
                                 <input type="url" name="tiktok" value="{{ old('tiktok', $pengaturan['tiktok'] ?? '') }}"
-                                       class="admin-form-input"
+                                       class="admin-form-input text-xs"
                                        placeholder="https://tiktok.com/@akunsekolah">
                             </div>
-                            <div class="sm:col-span-2">
-                                <label class="admin-form-label">X (Twitter) URL</label>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="admin-form-label text-slate-600">X (Twitter) URL</label>
+                            <div class="relative">
                                 <input type="url" name="twitter" value="{{ old('twitter', $pengaturan['twitter'] ?? '') }}"
-                                       class="admin-form-input"
+                                       class="admin-form-input text-xs"
                                        placeholder="https://x.com/akunsekolah">
                             </div>
                         </div>
@@ -146,7 +191,9 @@
             </div>
 
             <!-- Kepala Sekolah & Media Profil (Right 5 Cols) -->
+            @if ($hasRightCol)
             <div class="lg:col-span-5 space-y-6">
+                @if ($showKepsek)
                 <!-- Card Kepala Sekolah -->
                 <div class="admin-card space-y-4">
                     <div class="admin-card-header">
@@ -202,7 +249,9 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
+                @if ($showVideo)
                 <!-- Card Video Profil -->
                 <div class="admin-card space-y-4">
                     <div class="admin-card-header">
@@ -238,7 +287,9 @@
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
+            @endif
         </div>
     </form>
 </div>

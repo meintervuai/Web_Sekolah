@@ -190,6 +190,7 @@
 
             // URL to Feature Flag map
             $menuFeatureMap = [
+                '/profil' => 'profil',
                 '/profil/sejarah' => 'sejarah',
                 '/profil/visi-misi' => 'visi_misi',
                 '/profil/struktur' => 'struktur_organisasi',
@@ -201,10 +202,14 @@
                 '/prestasi' => 'prestasi',
                 '/ekstrakurikuler' => 'ekstrakurikuler',
                 '/galeri' => 'galeri',
+                '/fasilitas' => 'fasilitas',
+                '/kegiatan' => 'galeri',
                 '/kontak' => 'kontak',
             ];
 
             $isMenuProfilAktif = \App\Models\Tenant\PengaturanFitur::isAktif('menu_profil', true);
+            $isProfilPageAktif = \App\Models\Tenant\PengaturanFitur::isAktif('profil', true);
+            $isJurusanPageAktif = \App\Models\Tenant\PengaturanFitur::isAktif('program_keahlian', true);
             $jurusanAktifSlugs = \App\Models\Tenant\Jurusan::where('is_aktif', true)->pluck('slug')->toArray();
 
             $navMenus = $navMenus->reject(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
@@ -219,19 +224,19 @@
 
                 // Periksa status fitur
                 $cleanUrl = '/' . ltrim($menu->url, '/');
-                if (isset($menuFeatureMap[$cleanUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$cleanUrl], true)) {
+                if (isset($menuFeatureMap[$cleanUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$cleanUrl], true) && $menu->children->isEmpty()) {
                     return true;
                 }
 
                 return false;
             })
-            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif, $jurusanAktifSlugs) {
+            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif, $isProfilPageAktif, $isJurusanPageAktif, $jurusanAktifSlugs) {
                 $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $isMenuProfilAktif, $jurusanAktifSlugs) {
                     if (str_contains(strtolower($child->name), 'spmb')) return true;
                     if (strtolower(trim($child->name)) === 'profil lengkap') return true;
                     if (strtolower(trim($child->name)) === 'semua program keahlian') return true;
 
-                    // Periksa apakah sub-fitur dinonaktifkan
+                    // Periksa apakah sub-fitur dinonaktifkan di pengaturan_fitur
                     $childUrl = '/' . ltrim($child->url, '/');
                     if (isset($menuFeatureMap[$childUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$childUrl], true)) {
                         return true;
@@ -250,9 +255,9 @@
 
                 // Override URL if it's the parent of Profil or Jurusan
                 if (strtolower(trim($menu->name)) === 'profil sekolah' || strtolower(trim($menu->name)) === 'profil') {
-                    $menu->url = '/profil';
+                    $menu->url = $isProfilPageAktif ? '/profil' : '#';
                 } elseif (strtolower(trim($menu->name)) === 'program keahlian') {
-                    $menu->url = '/program-keahlian';
+                    $menu->url = $isJurusanPageAktif ? '/program-keahlian' : '#';
                 }
 
                 return $menu;
@@ -270,9 +275,9 @@
             <div class="hidden lg:flex items-center space-x-1">
                 @foreach($navMenus as $menu)
                 @php
-                $path = ltrim($menu->url, '/');
-                $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path ? '/' . $path : ''));
-                $menuIsActive = $isPathActive($path) || $menu->children->contains(fn ($child) => $isPathActive($child->url));
+                $path = trim($menu->url, '/');
+                $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path !== '' ? '/' . $path : ''));
+                $menuIsActive = ($menu->url !== '#' && $isPathActive($path)) || $menu->children->contains(fn ($child) => $isPathActive($child->url));
                 @endphp
 
                 @if($menu->children->isEmpty())
@@ -282,7 +287,9 @@
                 </a>
                 @else
                 <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                    <a href="{{ $menuUrl }}" @class(['flex items-center px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none', 'bg-blue-900 text-white shadow-sm hover:bg-blue-800'=> $menuIsActive, 'text-blue-800 hover:text-blue-950 hover:bg-blue-50' => !$menuIsActive])>
+                    <a href="{{ $menuUrl }}" 
+                        @if($menuUrl === '#') @click.prevent="open = !open" @endif
+                        @class(['flex items-center px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors focus:outline-none cursor-pointer', 'bg-blue-900 text-white shadow-sm hover:bg-blue-800'=> $menuIsActive, 'text-blue-800 hover:text-blue-950 hover:bg-blue-50' => !$menuIsActive])>
                         <span>{{ $menu->name }}</span>
                         <svg class="w-4 h-4 ml-1 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -301,7 +308,7 @@
                             @foreach($menu->children as $child)
                             @php
                             $childPath = ltrim($child->url, '/');
-                            $childUrl = $child->url === '#' ? '#' : url($tenantSlug . ($childPath ? '/' . $childPath : ''));
+                            $childUrl = ($child->url === '#' || empty($childPath)) ? '#' : url($tenantSlug . '/' . $childPath);
                             @endphp
                             <a href="{{ $childUrl }}" @class(['block px-4 py-2.5 text-sm font-medium transition-colors', 'bg-blue-50 text-blue-950 font-bold'=> $isPathActive($childPath), 'text-blue-700 hover:bg-blue-50 hover:text-blue-950' => !$isPathActive($childPath)])>
                                 {{ $child->name }}
@@ -386,8 +393,9 @@
             <div class="p-5 space-y-2 flex-1">
                 @foreach($navMenus as $menu)
                 @php
-                $path = ltrim($menu->url, '/');
-                $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path ? '/' . $path : ''));
+                $path = trim($menu->url, '/');
+                $menuUrl = $menu->url === '#' ? '#' : url($tenantSlug . ($path !== '' ? '/' . $path : ''));
+                $menuIsActive = ($menu->url !== '#' && $isPathActive($path)) || $menu->children->contains(fn ($child) => $isPathActive($child->url));
                 @endphp
                 @if($menu->children->isEmpty())
                 <a href="{{ $menuUrl }}"
@@ -398,10 +406,16 @@
                 @else
                 <div x-data="{ expanded: false }" class="rounded-xl overflow-hidden border border-blue-100">
                     <div class="w-full flex justify-between items-center text-blue-800 hover:bg-blue-50 transition">
+                        @if($menuUrl === '#')
+                        <button type="button" @click="expanded = !expanded" class="flex-1 text-left px-3.5 py-2.5 text-sm font-semibold">
+                            {{ $menu->name }}
+                        </button>
+                        @else
                         <a href="{{ $menuUrl }}" @click="mobileNav = false" class="flex-1 px-3.5 py-2.5 text-sm font-semibold">
                             {{ $menu->name }}
                         </a>
-                        <button @click="expanded = !expanded" class="p-2.5">
+                        @endif
+                        <button type="button" @click="expanded = !expanded" class="p-2.5" aria-label="Buka Submenu">
                             <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
@@ -411,7 +425,7 @@
                         @foreach($menu->children as $child)
                         @php
                         $childPath = ltrim($child->url, '/');
-                        $childUrl = $child->url === '#' ? '#' : url($tenantSlug . ($childPath ? '/' . $childPath : ''));
+                        $childUrl = ($child->url === '#' || empty($childPath)) ? '#' : url($tenantSlug . '/' . $childPath);
                         @endphp
                         <a href="{{ $childUrl }}"
                             @click="mobileNav = false"

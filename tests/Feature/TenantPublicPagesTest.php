@@ -41,8 +41,9 @@ test('0. root url menampilkan portal direktori sekolah dan tidak redirect otomat
 });
 
 test('0b. shortcut admin mengarahkan ke tenant admin login', function () {
+    $firstActive = Sekolah::where('status_aktif', true)->first();
     $response = $this->get('/admin');
-    $response->assertRedirect('/'.$this->tenantSlug.'/admin/login');
+    $response->assertRedirect('/'.($firstActive?->slug ?? $this->tenantSlug).'/admin/login');
 });
 
 test('1. beranda sekolah dapat diakses dan menampilkan identitas smkn 2 bandung', function () {

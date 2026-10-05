@@ -150,7 +150,235 @@
             </div>
         </div>
 
+        <!-- Visibilitas Menu & Rute Publik (Super Admin Controller) -->
+        <div 
+            class="md:col-span-2 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-2xs space-y-6"
+            x-data="menuVisibilityController({
+                toggleUrl: '{{ route('superadmin.tenants.toggle-menu', $tenant) }}',
+                csrfToken: '{{ csrf_token() }}',
+                initialItems: {{ json_encode($menuItems ?? []) }}
+            })"
+        >
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-5">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Kontrol Visibilitas Menu & Rute Tenant
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Pengaturan master status tayang menu navigasi navbar dan akses rute publik sekolah. Hanya Super Admin yang berwenang mengaktifkan atau menonaktifkan modul.
+                    </p>
+                </div>
+
+                <!-- Status Feedback Badge -->
+                <div class="flex items-center gap-2" x-cloak>
+                    <div x-show="isSaving" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 animate-pulse">
+                        <svg class="w-3.5 h-3.5 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>Menyinkronkan...</span>
+                    </div>
+                    <div x-show="saveSuccess" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 transition-all duration-300">
+                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Perubahan tersimpan!</span>
+                    </div>
+                    <div x-show="errorMessage" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                        <span x-text="errorMessage"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Menu & Sub-menu -->
+            <div class="divide-y divide-slate-100">
+                <template x-for="item in items" :key="item.key">
+                    <div class="py-4 first:pt-0 last:pb-0">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-bold text-slate-800" x-text="item.label"></span>
+                                    <span 
+                                        class="px-2 py-0.5 rounded text-[11px] font-mono"
+                                        :class="item.type === 'menu' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-slate-100 text-slate-700 border border-slate-200'"
+                                        x-text="item.type === 'menu' ? 'Menu Navbar' : 'Sub-Bagian'"
+                                    ></span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed" x-text="item.description"></p>
+                            </div>
+
+                            <!-- Switch Button -->
+                            <div class="flex items-center shrink-0 pt-0.5">
+                                <button 
+                                    type="button" 
+                                    role="switch" 
+                                    :aria-checked="item.aktif ? 'true' : 'false'"
+                                    @click="toggleItem(item)"
+                                    :disabled="isSaving"
+                                    class="relative inline-flex h-6 w-11 p-0.5 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    :class="item.aktif ? 'bg-emerald-600' : 'bg-slate-300'"
+                                >
+                                    <span class="sr-only" x-text="'Ubah visibilitas ' + item.label"></span>
+                                    <span 
+                                        aria-hidden="true" 
+                                        class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-xs ring-0 transition-transform duration-200 ease-in-out"
+                                        :class="item.aktif ? 'translate-x-5' : 'translate-x-0'"
+                                    ></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Sub-Sections List jika ada -->
+                        <template x-if="item.sub_sections && item.sub_sections.length > 0">
+                            <div class="mt-3.5 pl-4 sm:pl-6 border-l-2 border-slate-100 space-y-3">
+                                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                    Sub-Komponen / Bagian Terkait
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <template x-for="sub in item.sub_sections" :key="sub.key">
+                                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <div class="text-xs font-semibold text-slate-700 truncate" x-text="sub.label"></div>
+                                                <div class="text-[11px] text-slate-400 truncate font-mono" x-text="sub.key"></div>
+                                            </div>
+                                            <button 
+                                                type="button" 
+                                                role="switch" 
+                                                :aria-checked="sub.aktif ? 'true' : 'false'"
+                                                @click="toggleSubSection(sub, item)"
+                                                :disabled="isSaving"
+                                                class="relative inline-flex h-5 w-9 p-0.5 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-1 disabled:opacity-50"
+                                                :class="sub.aktif ? 'bg-emerald-600' : 'bg-slate-300'"
+                                            >
+                                                <span class="sr-only" x-text="'Ubah ' + sub.label"></span>
+                                                <span 
+                                                    aria-hidden="true" 
+                                                    class="pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-xs ring-0 transition-transform duration-200 ease-in-out"
+                                                    :class="sub.aktif ? 'translate-x-4' : 'translate-x-0'"
+                                                ></span>
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
     </div>
+
+    <!-- Script Controller Alpine.js -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('menuVisibilityController', (config) => ({
+                items: config.initialItems,
+                isSaving: false,
+                saveSuccess: false,
+                errorMessage: '',
+
+                async toggleItem(item) {
+                    const newState = !item.aktif;
+                    this.isSaving = true;
+                    this.errorMessage = '';
+                    this.saveSuccess = false;
+
+                    try {
+                        const response = await fetch(config.toggleUrl, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': config.csrfToken,
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                key: item.key,
+                                type: item.type,
+                                aktif: newState
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Gagal memperbarui visibilitas menu');
+                        }
+
+                        // Update state lokal
+                        item.aktif = newState;
+
+                        // Jika cascade otomatis dari controller
+                        if (item.sub_sections && item.sub_sections.length > 0) {
+                            item.sub_sections.forEach(sub => {
+                                sub.aktif = newState;
+                            });
+                        }
+
+                        this.saveSuccess = true;
+                        setTimeout(() => {
+                            this.saveSuccess = false;
+                        }, 3000);
+                    } catch (err) {
+                        console.error('Error toggling menu:', err);
+                        this.errorMessage = err.message || 'Terjadi kesalahan sistem';
+                        setTimeout(() => {
+                            this.errorMessage = '';
+                        }, 5000);
+                    } finally {
+                        this.isSaving = false;
+                    }
+                },
+
+                async toggleSubSection(sub, parentItem) {
+                    const newState = !sub.aktif;
+                    this.isSaving = true;
+                    this.errorMessage = '';
+                    this.saveSuccess = false;
+
+                    try {
+                        const response = await fetch(config.toggleUrl, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': config.csrfToken,
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                key: sub.key,
+                                type: sub.type,
+                                aktif: newState
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Gagal memperbarui status sub-bagian');
+                        }
+
+                        sub.aktif = newState;
+
+                        // Jika sub-bagian diaktifkan, pastikan parent juga aktif di UI jika sebelumnya mati
+                        if (newState && !parentItem.aktif) {
+                            parentItem.aktif = true;
+                        }
+
+                        this.saveSuccess = true;
+                        setTimeout(() => {
+                            this.saveSuccess = false;
+                        }, 3000);
+                    } catch (err) {
+                        console.error('Error toggling subsection:', err);
+                        this.errorMessage = err.message || 'Terjadi kesalahan sistem';
+                        setTimeout(() => {
+                            this.errorMessage = '';
+                        }, 5000);
+                    } finally {
+                        this.isSaving = false;
+                    }
+                }
+            }));
+        });
+    </script>
 
     <!-- Danger Zone Delete -->
     <div class="p-6 rounded-2xl border border-rose-200 bg-rose-50/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

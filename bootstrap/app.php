@@ -45,6 +45,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Authorize::class,
         ]);
 
+        $middleware->alias([
+            'tenant.feature' => \App\Http\Middleware\EnsureTenantFeatureEnabled::class,
+        ]);
+
         $middleware->web(append: [
             // \App\Http\Middleware\TenantMiddleware::class,
         ]);

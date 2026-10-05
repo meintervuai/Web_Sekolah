@@ -45,6 +45,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
             Route::get('/{tenant}/edit', [TenantController::class, 'edit'])->name('edit');
             Route::put('/{tenant}', [TenantController::class, 'update'])->name('update');
             Route::patch('/{tenant}/toggle-status', [TenantController::class, 'toggleStatus'])->name('toggle-status');
+            Route::patch('/{tenant}/toggle-menu', [TenantController::class, 'toggleMenu'])->name('toggle-menu');
             Route::delete('/{tenant}', [TenantController::class, 'destroy'])->name('destroy');
         });
     });
@@ -89,74 +90,74 @@ Route::prefix('{tenant}')
         Route::get('/home', [HomeController::class, 'index'])->name('home');
 
         // 2. Profil Sekolah
-        Route::get('/profil', [PageController::class, 'profil'])->name('tenant.profil');
-        Route::get('/profil/sejarah', [PageController::class, 'sejarah'])->name('tenant.profil.sejarah');
-        Route::get('/profil/visi-misi', [PageController::class, 'visiMisi'])->name('tenant.profil.visi-misi');
-        Route::get('/profil/struktur', [PageController::class, 'struktur'])->name('tenant.profil.struktur');
+        Route::get('/profil', [PageController::class, 'profil'])->name('tenant.profil')->middleware('tenant.feature:profil,menu_profil');
+        Route::get('/profil/sejarah', [PageController::class, 'sejarah'])->name('tenant.profil.sejarah')->middleware('tenant.feature:sejarah,menu_profil');
+        Route::get('/profil/visi-misi', [PageController::class, 'visiMisi'])->name('tenant.profil.visi-misi')->middleware('tenant.feature:visi_misi,menu_profil');
+        Route::get('/profil/struktur', [PageController::class, 'struktur'])->name('tenant.profil.struktur')->middleware('tenant.feature:struktur_organisasi,menu_profil');
 
         // 3. Program Keahlian / Jurusan
-        Route::get('/program-keahlian', [PageController::class, 'programKeahlian'])->name('tenant.program-keahlian');
-        Route::get('/program-keahlian/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('tenant.program-keahlian.detail');
+        Route::get('/program-keahlian', [PageController::class, 'programKeahlian'])->name('tenant.program-keahlian')->middleware('tenant.feature:program_keahlian');
+        Route::get('/program-keahlian/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('tenant.program-keahlian.detail')->middleware('tenant.feature:program_keahlian');
 
         // 4. Berita
-        Route::get('/berita', [PageController::class, 'berita'])->name('tenant.berita');
-        Route::get('/berita/{slug}', [PageController::class, 'detailBerita'])->name('tenant.berita.detail');
+        Route::get('/berita', [PageController::class, 'berita'])->name('tenant.berita')->middleware('tenant.feature:berita');
+        Route::get('/berita/{slug}', [PageController::class, 'detailBerita'])->name('tenant.berita.detail')->middleware('tenant.feature:berita');
 
         // 5. Agenda
-        Route::get('/agenda', [PageController::class, 'agenda'])->name('tenant.agenda');
-        Route::get('/agenda/{slug}', [PageController::class, 'detailAgenda'])->name('tenant.agenda.detail');
+        Route::get('/agenda', [PageController::class, 'agenda'])->name('tenant.agenda')->middleware('tenant.feature:agenda');
+        Route::get('/agenda/{slug}', [PageController::class, 'detailAgenda'])->name('tenant.agenda.detail')->middleware('tenant.feature:agenda');
 
         // 6. Pengumuman
-        Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('tenant.pengumuman');
-        Route::get('/pengumuman/{slug}', [PageController::class, 'detailPengumuman'])->name('tenant.pengumuman.detail');
+        Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('tenant.pengumuman')->middleware('tenant.feature:pengumuman');
+        Route::get('/pengumuman/{slug}', [PageController::class, 'detailPengumuman'])->name('tenant.pengumuman.detail')->middleware('tenant.feature:pengumuman');
 
         // 7. Prestasi
-        Route::get('/prestasi', [PageController::class, 'prestasi'])->name('tenant.prestasi');
-        Route::get('/prestasi/{slug}', [PageController::class, 'detailPrestasi'])->name('tenant.prestasi.detail');
+        Route::get('/prestasi', [PageController::class, 'prestasi'])->name('tenant.prestasi')->middleware('tenant.feature:prestasi');
+        Route::get('/prestasi/{slug}', [PageController::class, 'detailPrestasi'])->name('tenant.prestasi.detail')->middleware('tenant.feature:prestasi');
 
         // 8. Kegiatan
-        Route::get('/kegiatan', [PageController::class, 'kegiatan'])->name('tenant.kegiatan');
+        Route::get('/kegiatan', [PageController::class, 'kegiatan'])->name('tenant.kegiatan')->middleware('tenant.feature:agenda,kegiatan');
 
         // 9. Ekstrakurikuler
-        Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('tenant.ekstrakurikuler');
-        Route::get('/ekstrakurikuler/{slug}', [PageController::class, 'detailEkstrakurikuler'])->name('tenant.ekstrakurikuler.detail');
+        Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('tenant.ekstrakurikuler')->middleware('tenant.feature:ekstrakurikuler');
+        Route::get('/ekstrakurikuler/{slug}', [PageController::class, 'detailEkstrakurikuler'])->name('tenant.ekstrakurikuler.detail')->middleware('tenant.feature:ekstrakurikuler');
 
         // 10. Guru & Staf
-        Route::get('/guru-staf', [PageController::class, 'guruStaf'])->name('tenant.guru-staf');
+        Route::get('/guru-staf', [PageController::class, 'guruStaf'])->name('tenant.guru-staf')->middleware('tenant.feature:guru_staf,menu_profil');
 
         // 10.5 Fasilitas / Sarana Prasarana
-        Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('tenant.fasilitas');
+        Route::get('/fasilitas', [PageController::class, 'fasilitas'])->name('tenant.fasilitas')->middleware('tenant.feature:fasilitas');
 
         // 11. Galeri
-        Route::get('/galeri', [PageController::class, 'galeri'])->name('tenant.galeri');
+        Route::get('/galeri', [PageController::class, 'galeri'])->name('tenant.galeri')->middleware('tenant.feature:galeri');
 
         // 12. SPMB / PPDB
-        Route::get('/spmb', [PageController::class, 'spmb'])->name('tenant.spmb');
-        Route::get('/ppdb', [PageController::class, 'spmb'])->name('ppdb');
+        Route::get('/spmb', [PageController::class, 'spmb'])->name('tenant.spmb')->middleware('tenant.feature:spmb');
+        Route::get('/ppdb', [PageController::class, 'spmb'])->name('ppdb')->middleware('tenant.feature:spmb');
 
         // 13. Kontak
-        Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak');
-        Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim');
+        Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak')->middleware('tenant.feature:kontak');
+        Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim')->middleware('tenant.feature:kontak');
 
         // Backward Compatibility Sub-prefix Aliases
         Route::prefix('profil')->name('profil.')->group(function () {
-            Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah');
-            Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi');
-            Route::get('/struktur', [PageController::class, 'struktur'])->name('struktur');
-            Route::get('/guru', [PageController::class, 'guruStaf'])->name('guru');
+            Route::get('/sejarah', [PageController::class, 'sejarah'])->name('sejarah')->middleware('tenant.feature:sejarah,menu_profil');
+            Route::get('/visi-misi', [PageController::class, 'visiMisi'])->name('visi-misi')->middleware('tenant.feature:visi_misi,menu_profil');
+            Route::get('/struktur', [PageController::class, 'struktur'])->name('struktur')->middleware('tenant.feature:struktur_organisasi,menu_profil');
+            Route::get('/guru', [PageController::class, 'guruStaf'])->name('guru')->middleware('tenant.feature:guru_staf,menu_profil');
         });
 
         Route::prefix('akademik')->name('akademik.')->group(function () {
-            Route::get('/jurusan', [PageController::class, 'programKeahlian'])->name('jurusan');
-            Route::get('/jurusan/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('jurusan.detail');
+            Route::get('/jurusan', [PageController::class, 'programKeahlian'])->name('jurusan')->middleware('tenant.feature:program_keahlian');
+            Route::get('/jurusan/{slug}', [PageController::class, 'detailProgramKeahlian'])->name('jurusan.detail')->middleware('tenant.feature:program_keahlian');
             Route::get('/kurikulum', [PageController::class, 'kurikulum'])->name('kurikulum');
-            Route::get('/kalender', [PageController::class, 'agenda'])->name('kalender');
+            Route::get('/kalender', [PageController::class, 'agenda'])->name('kalender')->middleware('tenant.feature:agenda');
         });
 
         Route::prefix('informasi')->name('informasi.')->group(function () {
-            Route::get('/berita', [PageController::class, 'berita'])->name('berita');
-            Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
-            Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri');
+            Route::get('/berita', [PageController::class, 'berita'])->name('berita')->middleware('tenant.feature:berita');
+            Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman')->middleware('tenant.feature:pengumuman');
+            Route::get('/galeri', [PageController::class, 'galeri'])->name('galeri')->middleware('tenant.feature:galeri');
         });
 
         // 15. Panel Admin Sekolah (CMS)
@@ -177,7 +178,7 @@ Route::prefix('{tenant}')
 
                 Route::post('/logout', [App\Http\Controllers\Tenant\Admin\AuthController::class, 'logout'])->name('logout');
 
-                // Pengaturan Tampilan Sekolah (Tema & Warna)
+                // Pengaturan Tampilan Sekolah (Tema & Warna - Super Admin Only)
                 Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
                 Route::put('/pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
 
@@ -186,32 +187,32 @@ Route::prefix('{tenant}')
                     Route::get('/', [ProfilController::class, 'index'])->name('index');
                     Route::put('/identitas', [ProfilController::class, 'updateIdentitas'])->name('identitas.update');
                     Route::put('/halaman/{slug}', [ProfilController::class, 'updateHalaman'])->name('halaman.update');
-                    Route::put('/struktur', [ProfilController::class, 'updateStruktur'])->name('struktur.update');
-                    Route::post('/pejabat', [ProfilController::class, 'storePejabat'])->name('pejabat.store');
-                    Route::put('/pejabat/{pejabat}', [ProfilController::class, 'updatePejabat'])->name('pejabat.update');
-                    Route::delete('/pejabat/{pejabat}', [ProfilController::class, 'destroyPejabat'])->name('pejabat.destroy');
-                    Route::put('/guru-hero', [ProfilController::class, 'updateGuruHero'])->name('guru.hero.update');
-                    Route::post('/guru', [ProfilController::class, 'storeGuru'])->name('guru.store');
-                    Route::put('/guru/{guru}', [ProfilController::class, 'updateGuru'])->name('guru.update');
-                    Route::delete('/guru/{guru}', [ProfilController::class, 'destroyGuru'])->name('guru.destroy');
+                    Route::put('/struktur', [ProfilController::class, 'updateStruktur'])->name('struktur.update')->middleware('tenant.feature:struktur_organisasi');
+                    Route::post('/pejabat', [ProfilController::class, 'storePejabat'])->name('pejabat.store')->middleware('tenant.feature:struktur_organisasi');
+                    Route::put('/pejabat/{pejabat}', [ProfilController::class, 'updatePejabat'])->name('pejabat.update')->middleware('tenant.feature:struktur_organisasi');
+                    Route::delete('/pejabat/{pejabat}', [ProfilController::class, 'destroyPejabat'])->name('pejabat.destroy')->middleware('tenant.feature:struktur_organisasi');
+                    Route::put('/guru-hero', [ProfilController::class, 'updateGuruHero'])->name('guru.hero.update')->middleware('tenant.feature:guru_staf');
+                    Route::post('/guru', [ProfilController::class, 'storeGuru'])->name('guru.store')->middleware('tenant.feature:guru_staf');
+                    Route::put('/guru/{guru}', [ProfilController::class, 'updateGuru'])->name('guru.update')->middleware('tenant.feature:guru_staf');
+                    Route::delete('/guru/{guru}', [ProfilController::class, 'destroyGuru'])->name('guru.destroy')->middleware('tenant.feature:guru_staf');
                     Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
                 });
 
                 // Pengaturan Struktur Organisasi & Guru Tenaga Kependidikan (GTK) CMS
-                Route::prefix('gtk')->name('gtk.')->group(function () {
+                Route::prefix('gtk')->name('gtk.')->middleware('tenant.feature:guru_staf,struktur_organisasi')->group(function () {
                     Route::get('/', [GtkController::class, 'index'])->name('index');
-                    Route::put('/struktur', [GtkController::class, 'updateStruktur'])->name('struktur.update');
-                    Route::post('/pejabat', [GtkController::class, 'storePejabat'])->name('pejabat.store');
-                    Route::put('/pejabat/{pejabat}', [GtkController::class, 'updatePejabat'])->name('pejabat.update');
-                    Route::delete('/pejabat/{pejabat}', [GtkController::class, 'destroyPejabat'])->name('pejabat.destroy');
-                    Route::put('/guru-hero', [GtkController::class, 'updateGuruHero'])->name('guru.hero.update');
-                    Route::post('/guru', [GtkController::class, 'storeGuru'])->name('guru.store');
-                    Route::put('/guru/{guru}', [GtkController::class, 'updateGuru'])->name('guru.update');
-                    Route::delete('/guru/{guru}', [GtkController::class, 'destroyGuru'])->name('guru.destroy');
+                    Route::put('/struktur', [GtkController::class, 'updateStruktur'])->name('struktur.update')->middleware('tenant.feature:struktur_organisasi');
+                    Route::post('/pejabat', [GtkController::class, 'storePejabat'])->name('pejabat.store')->middleware('tenant.feature:struktur_organisasi');
+                    Route::put('/pejabat/{pejabat}', [GtkController::class, 'updatePejabat'])->name('pejabat.update')->middleware('tenant.feature:struktur_organisasi');
+                    Route::delete('/pejabat/{pejabat}', [GtkController::class, 'destroyPejabat'])->name('pejabat.destroy')->middleware('tenant.feature:struktur_organisasi');
+                    Route::put('/guru-hero', [GtkController::class, 'updateGuruHero'])->name('guru.hero.update')->middleware('tenant.feature:guru_staf');
+                    Route::post('/guru', [GtkController::class, 'storeGuru'])->name('guru.store')->middleware('tenant.feature:guru_staf');
+                    Route::put('/guru/{guru}', [GtkController::class, 'updateGuru'])->name('guru.update')->middleware('tenant.feature:guru_staf');
+                    Route::delete('/guru/{guru}', [GtkController::class, 'destroyGuru'])->name('guru.destroy')->middleware('tenant.feature:guru_staf');
                 });
 
                 // Pengaturan Program Keahlian / Jurusan CMS
-                Route::prefix('program-keahlian')->name('jurusan.')->group(function () {
+                Route::prefix('program-keahlian')->name('jurusan.')->middleware('tenant.feature:program_keahlian')->group(function () {
                     Route::get('/', [JurusanController::class, 'index'])->name('index');
                     Route::put('/hero', [JurusanController::class, 'updateHero'])->name('hero.update');
                     Route::post('/', [JurusanController::class, 'store'])->name('store');
@@ -223,41 +224,51 @@ Route::prefix('{tenant}')
                 // Pengaturan Informasi Sekolah CMS (Berita, Pengumuman, Agenda, Galeri, Fasilitas)
                 Route::prefix('informasi')->name('informasi.')->group(function () {
                     // 1. Berita
-                    Route::get('/berita', [InformasiController::class, 'berita'])->name('berita');
-                    Route::post('/berita', [InformasiController::class, 'storeBerita'])->name('berita.store');
-                    Route::put('/berita/{berita}', [InformasiController::class, 'updateBerita'])->name('berita.update');
-                    Route::delete('/berita/{berita}', [InformasiController::class, 'destroyBerita'])->name('berita.destroy');
-                    Route::post('/kategori', [InformasiController::class, 'storeKategori'])->name('kategori.store');
-                    Route::put('/kategori/{kategori}', [InformasiController::class, 'updateKategori'])->name('kategori.update');
-                    Route::delete('/kategori/{kategori}', [InformasiController::class, 'destroyKategori'])->name('kategori.destroy');
+                    Route::prefix('berita')->name('berita')->middleware('tenant.feature:berita')->group(function () {
+                        Route::get('/', [InformasiController::class, 'berita']);
+                        Route::post('/', [InformasiController::class, 'storeBerita'])->name('.store');
+                        Route::put('/{berita}', [InformasiController::class, 'updateBerita'])->name('.update');
+                        Route::delete('/{berita}', [InformasiController::class, 'destroyBerita'])->name('.destroy');
+                    });
+                    Route::post('/kategori', [InformasiController::class, 'storeKategori'])->name('kategori.store')->middleware('tenant.feature:berita');
+                    Route::put('/kategori/{kategori}', [InformasiController::class, 'updateKategori'])->name('kategori.update')->middleware('tenant.feature:berita');
+                    Route::delete('/kategori/{kategori}', [InformasiController::class, 'destroyKategori'])->name('kategori.destroy')->middleware('tenant.feature:berita');
 
                     // 2. Pengumuman
-                    Route::get('/pengumuman', [InformasiController::class, 'pengumuman'])->name('pengumuman');
-                    Route::post('/pengumuman', [InformasiController::class, 'storePengumuman'])->name('pengumuman.store');
-                    Route::put('/pengumuman/{pengumuman}', [InformasiController::class, 'updatePengumuman'])->name('pengumuman.update');
-                    Route::delete('/pengumuman/{pengumuman}', [InformasiController::class, 'destroyPengumuman'])->name('pengumuman.destroy');
+                    Route::prefix('pengumuman')->name('pengumuman')->middleware('tenant.feature:pengumuman')->group(function () {
+                        Route::get('/', [InformasiController::class, 'pengumuman']);
+                        Route::post('/', [InformasiController::class, 'storePengumuman'])->name('.store');
+                        Route::put('/{pengumuman}', [InformasiController::class, 'updatePengumuman'])->name('.update');
+                        Route::delete('/{pengumuman}', [InformasiController::class, 'destroyPengumuman'])->name('.destroy');
+                    });
 
                     // 3. Agenda
-                    Route::get('/agenda', [InformasiController::class, 'agenda'])->name('agenda');
-                    Route::post('/agenda', [InformasiController::class, 'storeAgenda'])->name('agenda.store');
-                    Route::put('/agenda/{agenda}', [InformasiController::class, 'updateAgenda'])->name('agenda.update');
-                    Route::delete('/agenda/{agenda}', [InformasiController::class, 'destroyAgenda'])->name('agenda.destroy');
+                    Route::prefix('agenda')->name('agenda')->middleware('tenant.feature:agenda')->group(function () {
+                        Route::get('/', [InformasiController::class, 'agenda']);
+                        Route::post('/', [InformasiController::class, 'storeAgenda'])->name('.store');
+                        Route::put('/{agenda}', [InformasiController::class, 'updateAgenda'])->name('.update');
+                        Route::delete('/{agenda}', [InformasiController::class, 'destroyAgenda'])->name('.destroy');
+                    });
 
                     // 4. Galeri
-                    Route::get('/galeri', [InformasiController::class, 'galeri'])->name('galeri');
-                    Route::post('/galeri/album', [InformasiController::class, 'storeAlbum'])->name('galeri.album.store');
-                    Route::put('/galeri/album/{album}', [InformasiController::class, 'updateAlbum'])->name('galeri.album.update');
-                    Route::delete('/galeri/album/{album}', [InformasiController::class, 'destroyAlbum'])->name('galeri.album.destroy');
-                    Route::post('/galeri/album/{album}/item', [InformasiController::class, 'storeItem'])->name('galeri.item.store');
-                    Route::delete('/galeri/item/{item}', [InformasiController::class, 'destroyItem'])->name('galeri.item.destroy');
+                    Route::prefix('galeri')->name('galeri')->middleware('tenant.feature:galeri')->group(function () {
+                        Route::get('/', [InformasiController::class, 'galeri']);
+                        Route::post('/album', [InformasiController::class, 'storeAlbum'])->name('.album.store');
+                        Route::put('/album/{album}', [InformasiController::class, 'updateAlbum'])->name('.album.update');
+                        Route::delete('/album/{album}', [InformasiController::class, 'destroyAlbum'])->name('.album.destroy');
+                        Route::post('/album/{album}/item', [InformasiController::class, 'storeItem'])->name('.item.store');
+                        Route::delete('/item/{item}', [InformasiController::class, 'destroyItem'])->name('.item.destroy');
+                    });
 
                     // 5. Fasilitas
-                    Route::get('/fasilitas', [InformasiController::class, 'fasilitas'])->name('fasilitas');
-                    Route::post('/fasilitas', [InformasiController::class, 'storeFasilitas'])->name('fasilitas.store');
-                    Route::put('/fasilitas/{fasilitas}', [InformasiController::class, 'updateFasilitas'])->name('fasilitas.update');
-                    Route::delete('/fasilitas/{fasilitas}', [InformasiController::class, 'destroyFasilitas'])->name('fasilitas.destroy');
-                    Route::delete('/fasilitas/foto/{foto}', [InformasiController::class, 'destroyFotoFasilitas'])->name('fasilitas.foto.destroy');
-                    Route::match(['post', 'put'], '/fasilitas/stats/update', [InformasiController::class, 'updateStatsFasilitas'])->name('fasilitas.stats.update');
+                    Route::prefix('fasilitas')->name('fasilitas')->middleware('tenant.feature:fasilitas')->group(function () {
+                        Route::get('/', [InformasiController::class, 'fasilitas']);
+                        Route::post('/', [InformasiController::class, 'storeFasilitas'])->name('.store');
+                        Route::put('/{fasilitas}', [InformasiController::class, 'updateFasilitas'])->name('.update');
+                        Route::delete('/{fasilitas}', [InformasiController::class, 'destroyFasilitas'])->name('.destroy');
+                        Route::delete('/foto/{foto}', [InformasiController::class, 'destroyFotoFasilitas'])->name('.foto.destroy');
+                        Route::match(['post', 'put'], '/stats/update', [InformasiController::class, 'updateStatsFasilitas'])->name('.stats.update');
+                    });
 
                     // Global Hero & Feature Toggle
                     Route::match(['post', 'put'], '/hero/{modul}', [InformasiController::class, 'updateHero'])->name('hero');

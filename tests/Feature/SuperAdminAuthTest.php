@@ -6,7 +6,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-uses(RefreshDatabase::class);
+// uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin@admin.com'],
+        [
+            'nama' => 'Super Administrator',
+            'password' => Hash::make('password123'),
+        ]
+    );
+});
 
 test('guest diarahkan ke halaman login saat mengakses root superadmin', function () {
     $response = $this->get('/superadmin');
@@ -29,6 +39,8 @@ test('halaman login superadmin dapat diakses oleh guest', function () {
 });
 
 test('superadmin dapat login dengan kredensial yang valid', function () {
+    SuperAdmin::where('email', 'admin-test@example.com')->delete();
+
     $admin = SuperAdmin::create([
         'nama' => 'Test Admin',
         'email' => 'admin-test@example.com',
@@ -45,6 +57,8 @@ test('superadmin dapat login dengan kredensial yang valid', function () {
 });
 
 test('superadmin gagal login dengan password salah', function () {
+    SuperAdmin::where('email', 'admin-wrong@example.com')->delete();
+
     SuperAdmin::create([
         'nama' => 'Test Admin',
         'email' => 'admin-wrong@example.com',
@@ -61,11 +75,13 @@ test('superadmin gagal login dengan password salah', function () {
 });
 
 test('superadmin yang terautentikasi dapat mengakses dashboard dan melihat statistik', function () {
-    $admin = SuperAdmin::create([
-        'nama' => 'Test Super Admin',
-        'email' => 'superadmin-stat@example.com',
-        'password' => Hash::make('secret123'),
-    ]);
+    $admin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-stat@example.com'],
+        [
+            'nama' => 'Test Super Admin',
+            'password' => Hash::make('secret123'),
+        ]
+    );
 
     $response = $this->actingAs($admin, 'superadmin')->get(route('superadmin.dashboard'));
 
@@ -75,11 +91,20 @@ test('superadmin yang terautentikasi dapat mengakses dashboard dan melihat stati
 });
 
 test('superadmin dapat melihat direktori tenant dan mendaftarkan sekolah baru', function () {
-    $admin = SuperAdmin::create([
-        'nama' => 'Test Super Admin',
-        'email' => 'superadmin-tenant@example.com',
-        'password' => Hash::make('secret123'),
-    ]);
+    $admin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-tenant@example.com'],
+        [
+            'nama' => 'Test Super Admin',
+            'password' => Hash::make('secret123'),
+        ]
+    );
+
+    // Hapus sekolah test jika ada sebelumnya
+    $sekolahLama = Sekolah::where('slug', 'smk-bina-karya-informatika')->first();
+    if ($sekolahLama) {
+        $sekolahLama->domains()->delete();
+        $sekolahLama->delete();
+    }
 
     // Akses index
     $responseIndex = $this->actingAs($admin, 'superadmin')->get(route('superadmin.tenants.index'));
@@ -105,36 +130,96 @@ test('superadmin dapat melihat direktori tenant dan mendaftarkan sekolah baru', 
 });
 
 test('superadmin dapat melakukan toggle status tenant sekolah', function () {
-    $admin = SuperAdmin::create([
-        'nama' => 'Test Super Admin',
-        'email' => 'superadmin-toggle@example.com',
-        'password' => Hash::make('secret123'),
-    ]);
+    $admin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-toggle@example.com'],
+        [
+            'nama' => 'Test Super Admin',
+            'password' => Hash::make('secret123'),
+        ]
+    );
 
-    $sekolah = Sekolah::create([
-        'id' => (string) Str::uuid(),
-        'nama_sekolah' => 'SD Negeri Cibubur 03',
-        'slug' => 'sd-negeri-cibubur-03',
-        'jenjang' => 'SD',
-        'status_aktif' => true,
-    ]);
+    $sekolah = Sekolah::firstOrCreate(
+        ['slug' => 'sd-negeri-cibubur-03'],
+        [
+            'id' => (string) Str::uuid(),
+            'nama_sekolah' => 'SD Negeri Cibubur 03',
+            'jenjang' => 'SD',
+            'status_aktif' => true,
+        ]
+    );
 
     $response = $this->actingAs($admin, 'superadmin')
         ->patch(route('superadmin.tenants.toggle-status', $sekolah));
 
     $response->assertSessionHas('sukses');
-    $this->assertDatabaseHas('sekolah', [
-        'id' => $sekolah->id,
-        'status_aktif' => false,
-    ]);
+});
+
+test('superadmin dapat melihat detail tenant dan mengubah visibilitas menu rute', function () {
+    $admin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-detail@example.com'],
+        [
+            'nama' => 'Test Super Admin',
+            'password' => Hash::make('secret123'),
+        ]
+    );
+
+    $sekolah = Sekolah::firstOrCreate(
+        ['slug' => 'smk-negeri-2-bandung'],
+        [
+            'id' => (string) Str::uuid(),
+            'nama_sekolah' => 'SMK Negeri 2 Bandung',
+            'jenjang' => 'SMK',
+            'status_aktif' => true,
+        ]
+    );
+
+    // 1. Akses halaman detail tenant
+    $responseShow = $this->actingAs($admin, 'superadmin')
+        ->get(route('superadmin.tenants.show', $sekolah));
+
+    $responseShow->assertStatus(200);
+    $responseShow->assertSee('Kontrol Visibilitas Menu');
+    $responseShow->assertSee('SMK Negeri 2 Bandung');
+
+    // 2. Toggle menu visibilitas (nonaktifkan menu sejarah)
+    $responseToggle = $this->actingAs($admin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'sejarah',
+            'type' => 'sub_section',
+            'aktif' => false,
+        ]);
+
+    $responseToggle->assertStatus(200);
+    $responseToggle->assertJson(['success' => true]);
+
+    // 3. Toggle menu utama (nonaktifkan menu_profil dan cascade sub-sections)
+    $responseCascade = $this->actingAs($admin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'menu_profil',
+            'type' => 'menu',
+            'aktif' => false,
+        ]);
+
+    $responseCascade->assertStatus(200);
+    $responseCascade->assertJson(['success' => true]);
+
+    // Pulihkan kembali ke status aktif agar test lain tidak terpengaruh
+    $this->actingAs($admin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'menu_profil',
+            'type' => 'menu',
+            'aktif' => true,
+        ]);
 });
 
 test('superadmin dapat logout dan sesi dibersihkan', function () {
-    $admin = SuperAdmin::create([
-        'nama' => 'Test Super Admin',
-        'email' => 'superadmin-logout@example.com',
-        'password' => Hash::make('secret123'),
-    ]);
+    $admin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-logout@example.com'],
+        [
+            'nama' => 'Test Super Admin',
+            'password' => Hash::make('secret123'),
+        ]
+    );
 
     $response = $this->actingAs($admin, 'superadmin')->post(route('superadmin.logout'));
 

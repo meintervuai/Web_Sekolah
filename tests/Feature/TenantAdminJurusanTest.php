@@ -51,7 +51,7 @@ test('admin can access program keahlian index page with tabs', function () {
     $response->assertSee('Pengaturan Program Keahlian / Jurusan');
     $response->assertSee('Daftar Konsentrasi &amp; Program Keahlian', false);
     $response->assertSee('Kustomisasi Hero Banner (Halaman Program Keahlian Publik)');
-    $response->assertSee('Sakelar Visibilitas Menu &amp; Rute Program Keahlian', false);
+    $response->assertDontSee('4. Visibilitas Menu &amp; Rute', false);
 });
 
 test('admin can update hero banner configuration for program keahlian', function () {
@@ -164,32 +164,13 @@ test('admin can perform CRUD operations on program keahlian / jurusan', function
     expect(Jurusan::find($jurusan->id))->toBeNull();
 });
 
-test('admin can toggle global feature flag for program keahlian', function () {
-    // Nonaktifkan fitur program_keahlian
+test('admin cannot toggle global feature flag for program keahlian', function () {
+    // Percobaan admin sekolah menonaktifkan fitur master program_keahlian harus ditolak (403)
     $responseOff = $this->actingAs($this->admin, 'tenant_admin')
         ->postJson('/smk-negeri-2-bandung/admin/program-keahlian/toggle-status', [
             'target_type' => 'fitur',
             'is_aktif' => false,
         ]);
 
-    $responseOff->assertStatus(200);
-    expect(PengaturanFitur::isAktif('program_keahlian'))->toBeFalse();
-
-    // Publik 404 saat fitur mati
-    $responsePublic = $this->get('/smk-negeri-2-bandung/program-keahlian');
-    $responsePublic->assertStatus(404);
-
-    // Aktifkan kembali fitur
-    $responseOn = $this->actingAs($this->admin, 'tenant_admin')
-        ->postJson('/smk-negeri-2-bandung/admin/program-keahlian/toggle-status', [
-            'target_type' => 'fitur',
-            'is_aktif' => true,
-        ]);
-
-    $responseOn->assertStatus(200);
-    expect(PengaturanFitur::isAktif('program_keahlian'))->toBeTrue();
-
-    // Publik kembali 200
-    $responsePublicOk = $this->get('/smk-negeri-2-bandung/program-keahlian');
-    $responsePublicOk->assertStatus(200);
+    $responseOff->assertStatus(403);
 });

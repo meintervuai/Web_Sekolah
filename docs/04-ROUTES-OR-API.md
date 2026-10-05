@@ -119,3 +119,23 @@ Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media,
 | `/admin` | `admin.shortcut` | Mengarah ke `/{tenant}/admin/profil` bila tenant terikat & sesi admin aktif, selain itu ke `/{tenant}/admin/login`. |
 | `/admin/login` | `admin.login.shortcut` | Mengarah ke halaman login admin sekolah aktif pertama. |
 
+## 5. Rute Platform Super Admin (Central - Prefix: `/superadmin`)
+
+Platform Super Admin mengelola direktori sekolah multi-tenant, aktivasi domain, suspend/aktifkan tenant, serta pengaturan master **Visibilitas Menu & Rute** tenant secara terpusat.
+
+| No | URL Path | Route Name | Method | Middleware | Deskripsi |
+|---|---|---|---|---|---|
+| 1 | `/superadmin/login` | `superadmin.login` | GET | `guest:superadmin` | Halaman login Super Admin platform. |
+| 2 | `/superadmin/login` | `superadmin.login.submit` | POST | `guest:superadmin` | Proses autentikasi Super Admin. |
+| 3 | `/superadmin/dashboard` | `superadmin.dashboard` | GET | `auth:superadmin` | Dashboard analitik statistik seluruh sekolah & status operasional. |
+| 4 | `/superadmin/tenants` | `superadmin.tenants.index` | GET | `auth:superadmin` | Daftar direktori seluruh sekolah / tenant. |
+| 5 | `/superadmin/tenants/create` | `superadmin.tenants.create` | GET | `auth:superadmin` | Formulir pendaftaran tenant sekolah baru. |
+| 6 | `/superadmin/tenants` | `superadmin.tenants.store` | POST | `auth:superadmin` | Simpan pendaftaran tenant & inisialisasi database tenant. |
+| 7 | `/superadmin/tenants/{tenant}` | `superadmin.tenants.show` | GET | `auth:superadmin` | Detail tenant, status domain, masa operasional, dan **Kontrol Visibilitas Menu & Rute**. |
+| 8 | `/superadmin/tenants/{tenant}/edit` | `superadmin.tenants.edit` | GET | `auth:superadmin` | Formulir edit konfigurasi tenant. |
+| 9 | `/superadmin/tenants/{tenant}` | `superadmin.tenants.update` | PUT | `auth:superadmin` | Perbarui data konfigurasi tenant. |
+| 10 | `/superadmin/tenants/{tenant}/toggle-status` | `superadmin.tenants.toggle-status` | PATCH | `auth:superadmin` | Sakelar aktif / suspend operasional tenant. |
+| 11 | `/superadmin/tenants/{tenant}/toggle-menu` | `superadmin.tenants.toggle-menu` | PATCH | `auth:superadmin` | Sakelar AJAX terpusat untuk kontrol visibilitas menu navbar & rute publik tenant (`menus` & `pengaturan_fitur`). |
+| 12 | `/superadmin/tenants/{tenant}` | `superadmin.tenants.destroy` | DELETE | `auth:superadmin` | Hapus permanen tenant dan data terkait. |
+
+

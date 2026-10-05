@@ -68,7 +68,7 @@
 
             <!-- TailDash Brand Header -->
             <div class="h-18 shrink-0 flex items-center justify-between px-6 border-b border-slate-100 bg-white">
-                <a href="{{ route('tenant.admin.pengaturan.index', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
+                <a href="{{ route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug]) }}" class="flex items-center gap-3 group min-w-0">
                     <div class="w-9 h-9 rounded-xl bg-slate-50 p-1 border border-slate-200 flex items-center justify-center shrink-0 group-hover:border-primary transition-colors overflow-hidden">
                         <img src="{{ !empty($adminLogo) ? $adminLogo : asset('images/logo-smkn2.svg') }}" alt="Logo {{ app('tenant')->nama_sekolah }}" class="w-full h-full object-contain">
                     </div>
@@ -92,11 +92,25 @@
             <!-- TailDash Menu Navigation -->
             <nav id="adminSidebarNav" class="flex-1 px-4 py-4 space-y-1 overflow-y-auto overscroll-contain taildash-scrollbar text-xs">
                 
+                @php
+                    $fiturGtkAktif = \App\Models\Tenant\PengaturanFitur::isAktif('guru_staf', true) || \App\Models\Tenant\PengaturanFitur::isAktif('struktur_organisasi', true);
+                    $fiturJurusanAktif = \App\Models\Tenant\PengaturanFitur::isAktif('program_keahlian', true);
+                    
+                    $fiturBeritaAktif = \App\Models\Tenant\PengaturanFitur::isAktif('berita', true);
+                    $fiturPengumumanAktif = \App\Models\Tenant\PengaturanFitur::isAktif('pengumuman', true);
+                    $fiturAgendaAktif = \App\Models\Tenant\PengaturanFitur::isAktif('agenda', true);
+                    $fiturGaleriAktif = \App\Models\Tenant\PengaturanFitur::isAktif('galeri', true);
+                    $fiturFasilitasAktif = \App\Models\Tenant\PengaturanFitur::isAktif('fasilitas', true);
+                    
+                    $adaFiturInformasiAktif = $fiturBeritaAktif || $fiturPengumumanAktif || $fiturAgendaAktif || $fiturGaleriAktif || $fiturFasilitasAktif;
+                @endphp
+
                 <!-- Section: KONTEN PORTAL -->
                 <div class="px-3 pt-2 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                     Konten Portal
                 </div>
 
+                <!-- Profil Sekolah (Selalu tersedia untuk kelola Data Pokok & Identitas) -->
                 <a
                     href="{{ route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug]) }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.profil.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
@@ -107,106 +121,105 @@
                     <span>Profil Sekolah</span>
                 </a>
 
-                <a
-                    href="{{ route('tenant.admin.gtk.index', ['tenant' => app('tenant')->slug]) }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.gtk.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.gtk.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    <span>Struktur &amp; GTK</span>
-                </a>
-
-                <a
-                    href="{{ route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug]) }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.jurusan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.jurusan.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
-                    <span>Program Keahlian</span>
-                </a>
-
-                <!-- Informasi Sekolah (Collapsible Sub-Navigation) -->
-                @php
-                    $isInformasiActive = request()->routeIs('tenant.admin.informasi.*');
-                @endphp
-                <div x-data="{ open: @js($isInformasiActive) }" class="space-y-1">
-                    <button
-                        type="button"
-                        @click="open = !open"
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isInformasiActive ? 'bg-blue-50/70 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                    >
-                        <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 shrink-0 {{ $isInformasiActive ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                @if ($fiturGtkAktif)
+                        <a
+                            href="{{ route('tenant.admin.gtk.index', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.gtk.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.gtk.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
-                            <span>Informasi Sekolah</span>
+                            <span>Struktur &amp; GTK</span>
+                        </a>
+                    @endif
+
+                    @if ($fiturJurusanAktif)
+                        <a
+                            href="{{ route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.jurusan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.jurusan.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            <span>Program Keahlian</span>
+                        </a>
+                    @endif
+
+                    @if ($adaFiturInformasiAktif)
+                        <!-- Informasi Sekolah (Collapsible Sub-Navigation) -->
+                        @php
+                            $isInformasiActive = request()->routeIs('tenant.admin.informasi.*');
+                        @endphp
+                        <div x-data="{ open: @js($isInformasiActive) }" class="space-y-1">
+                            <button
+                                type="button"
+                                @click="open = !open"
+                                class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isInformasiActive ? 'bg-blue-50/70 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 shrink-0 {{ $isInformasiActive ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                    </svg>
+                                    <span>Informasi Sekolah</span>
+                                </div>
+                                <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="open ? 'rotate-180 text-blue-600' : 'text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" x-collapse class="pl-4 pr-1 space-y-1 pt-1 border-l-2 border-blue-100 ml-5">
+                                @if ($fiturBeritaAktif)
+                                    <a
+                                        href="{{ route('tenant.admin.informasi.berita', ['tenant' => app('tenant')->slug]) }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                                        <span>Berita &amp; Artikel</span>
+                                    </a>
+                                @endif
+
+                                @if ($fiturPengumumanAktif)
+                                    <a
+                                        href="{{ route('tenant.admin.informasi.pengumuman', ['tenant' => app('tenant')->slug]) }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                                        <span>Pengumuman Resmi</span>
+                                    </a>
+                                @endif
+
+                                @if ($fiturAgendaAktif)
+                                    <a
+                                        href="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug]) }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                                        <span>Agenda &amp; Kegiatan</span>
+                                    </a>
+                                @endif
+
+                                @if ($fiturGaleriAktif)
+                                    <a
+                                        href="{{ route('tenant.admin.informasi.galeri', ['tenant' => app('tenant')->slug]) }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                                        <span>Galeri Foto &amp; Video</span>
+                                    </a>
+                                @endif
+
+                                @if ($fiturFasilitasAktif)
+                                    <a
+                                        href="{{ route('tenant.admin.informasi.fasilitas', ['tenant' => app('tenant')->slug]) }}"
+                                        class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                                    >
+                                        <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                                        <span>Fasilitas &amp; Sarpras</span>
+                                    </a>
+                                @endif
+                            </div>
                         </div>
-                        <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="open ? 'rotate-180 text-blue-600' : 'text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-
-                    <div x-show="open" x-collapse class="pl-4 pr-1 space-y-1 pt-1 border-l-2 border-blue-100 ml-5">
-                        <a
-                            href="{{ route('tenant.admin.informasi.berita', ['tenant' => app('tenant')->slug]) }}"
-                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
-                            <span>Berita &amp; Artikel</span>
-                        </a>
-
-                        <a
-                            href="{{ route('tenant.admin.informasi.pengumuman', ['tenant' => app('tenant')->slug]) }}"
-                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
-                            <span>Pengumuman Resmi</span>
-                        </a>
-
-                        <a
-                            href="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug]) }}"
-                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
-                            <span>Agenda &amp; Kegiatan</span>
-                        </a>
-
-                        <a
-                            href="{{ route('tenant.admin.informasi.galeri', ['tenant' => app('tenant')->slug]) }}"
-                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
-                            <span>Galeri Foto &amp; Video</span>
-                        </a>
-
-                        <a
-                            href="{{ route('tenant.admin.informasi.fasilitas', ['tenant' => app('tenant')->slug]) }}"
-                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                        >
-                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
-                            <span>Fasilitas &amp; Sarpras</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Section: PENGATURAN TAMPILAN -->
-                <div class="px-3 pt-3 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Pengaturan
-                </div>
-
-                <a
-                    href="{{ route('tenant.admin.pengaturan.index', ['tenant' => app('tenant')->slug]) }}"
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.pengaturan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
-                >
-                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.pengaturan.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 4 4 0 014-4c2 0 3-1 3-3a5 5 0 0110 0c0 2.2-1.8 4-4 4h-2a2 2 0 00-2 2v1a2 2 0 01-2 2h-3z"/>
-                        <circle cx="9" cy="8.5" r="1.5"/>
-                        <circle cx="15" cy="8.5" r="1.5"/>
-                    </svg>
-                    <span>Tema &amp; Warna</span>
-                </a>
+                    @endif
 
                 <!-- Section: PUSAT MEDIA -->
                 <div class="px-3 pt-3 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">

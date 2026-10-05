@@ -335,7 +335,7 @@ class ProfilController extends Controller
             $validated['gambar_banner'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner'], $adminId, 'profil', 'Banner '.$validated['judul']);
         }
 
-        DB::connection('tenant')->transaction(function () use ($slug, $validated, $adminId, $isAktif) {
+        DB::connection('tenant')->transaction(function () use ($slug, $validated, $adminId) {
             Page::updateOrCreate(
                 ['slug' => $slug],
                 [
@@ -346,23 +346,6 @@ class ProfilController extends Controller
                     'pengguna_id' => $adminId,
                 ]
             );
-
-            // Sinkronkan status aktif ke pengaturan_fitur dan menus
-            $kodeFitur = $slug === 'sejarah' ? 'sejarah' : ($slug === 'visi-misi' ? 'visi_misi' : 'profil');
-            $namaFitur = $slug === 'sejarah' ? 'Sejarah Sekolah' : ($slug === 'visi-misi' ? 'Visi & Misi' : 'Profil Sekolah');
-
-            PengaturanFitur::updateOrCreate(
-                ['kode_fitur' => $kodeFitur],
-                [
-                    'nama_fitur' => $namaFitur,
-                    'is_aktif' => $isAktif,
-                    'pengguna_id' => $adminId,
-                ]
-            );
-
-            // Update status menu yang bersangkutan
-            $targetUrl = $slug === 'sejarah' ? '/profil/sejarah' : ($slug === 'visi-misi' ? '/profil/visi-misi' : '/profil');
-            Menu::where('url', $targetUrl)->update(['is_aktif' => $isAktif]);
         });
 
         $tab = $slug === 'sejarah' ? 'sejarah' : ($slug === 'visi-misi' ? 'visimisi' : 'identitas');
@@ -608,158 +591,19 @@ class ProfilController extends Controller
     }
 
     /**
-     * Toggle visibilitas menu atau sub-menu secara asinkron / form.
+     * Sakelar visibilitas menu/modul eksklusif kewenangan Super Admin.
      */
     public function toggleMenu(Request $request): JsonResponse|RedirectResponse
     {
-        $validated = $request->validate([
-            'menu_id' => ['nullable', 'integer', 'exists:tenant.menus,id'],
-            'kode_fitur' => ['nullable', 'string', 'max:50'],
-            'is_aktif' => ['required', 'boolean'],
-        ]);
-
-        $adminId = auth('tenant_admin')->id();
-        $isAktif = (bool) $validated['is_aktif'];
-        $menuName = 'Menu';
-
-        DB::connection('tenant')->transaction(function () use ($validated, $isAktif, $adminId, &$menuName) {
-            // 1. Jika diberikan menu_id
-            if (! empty($validated['menu_id'])) {
-                $menu = Menu::find($validated['menu_id']);
-                if ($menu) {
-                    $menu->update(['is_aktif' => $isAktif]);
-                    $menuName = $menu->name;
-
-                    // Petakan URL menu ke kode_fitur
-                    $mapping = [
-                        '/profil' => 'profil',
-                        '/profil/sejarah' => 'sejarah',
-                        '/profil/visi-misi' => 'visi_misi',
-                        '/profil/struktur' => 'struktur_organisasi',
-                        '/guru-staf' => 'guru_staf',
-                    ];
-
-                    $urlClean = '/'.ltrim($menu->url, '/');
-                    if (isset($mapping[$urlClean])) {
-                        PengaturanFitur::updateOrCreate(
-                            ['kode_fitur' => $mapping[$urlClean]],
-                            [
-                                'nama_fitur' => $menu->name,
-                                'is_aktif' => $isAktif,
-                                'pengguna_id' => $adminId,
-                            ]
-                        );
-                    }
-                }
-            }
-
-            // 2. Jika diberikan kode_fitur langsung
-            if (! empty($validated['kode_fitur'])) {
-                $kode = $validated['kode_fitur'];
-                $namaMap = [
-                    'menu_profil' => 'Menu Induk Profil Sekolah',
-                    'profil' => 'Halaman Profil Sekolah',
-                    'profil_data_pokok' => 'Section Data Pokok Sekolah',
-                    'profil_sambutan_kepsek' => 'Section Kepala Sekolah & Sambutan',
-                    'profil_video' => 'Section Video Profil Sekolah',
-                    'sejarah' => 'Sejarah Sekolah',
-                    'visi_misi' => 'Visi & Misi',
-                    'struktur_organisasi' => 'Struktur Organisasi',
-                    'struktur_diagram' => 'Bagan Diagram Struktur',
-                    'struktur_pejabat' => 'Daftar Pejabat Struktural',
-                    'guru_staf' => 'Guru & Tenaga Kependidikan',
-                ];
-
-                $menuName = $namaMap[$kode] ?? ucfirst(str_replace('_', ' ', $kode));
-
-                PengaturanFitur::updateOrCreate(
-                    ['kode_fitur' => $kode],
-                    [
-                        'nama_fitur' => $menuName,
-                        'is_aktif' => $isAktif,
-                        'pengguna_id' => $adminId,
-                    ]
-                );
-
-                // Jika parent dinonaktifkan / diaktifkan, sesuaikan juga menu navbar
-                $urlMap = [
-                    'menu_profil' => '/profil',
-                    'profil' => '/profil',
-                    'sejarah' => '/profil/sejarah',
-                    'visi_misi' => '/profil/visi-misi',
-                    'struktur_organisasi' => '/profil/struktur',
-                    'guru_staf' => '/guru-staf',
-                ];
-
-                if (isset($urlMap[$kode])) {
-                    Menu::where('url', $urlMap[$kode])->update(['is_aktif' => $isAktif]);
-                }
-
-                // Logika Cascade Menu Profil Induk:
-                // Jika parent 'menu_profil' diubah (baik dihidupkan atau dimatikan), sesuaikan seluruh sub-fitur & menu di bawahnya
-                if ($kode === 'menu_profil') {
-                    $subFeatures = [
-                        'profil', 'profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video',
-                        'sejarah', 'visi_misi', 'struktur_organisasi', 'struktur_diagram',
-                        'struktur_pejabat', 'guru_staf',
-                    ];
-                    foreach ($subFeatures as $sub) {
-                        PengaturanFitur::updateOrCreate(
-                            ['kode_fitur' => $sub],
-                            [
-                                'nama_fitur' => $namaMap[$sub] ?? $sub,
-                                'is_aktif' => $isAktif,
-                                'pengguna_id' => $adminId,
-                            ]
-                        );
-                        if (isset($urlMap[$sub])) {
-                            Menu::where('url', $urlMap[$sub])->update(['is_aktif' => $isAktif]);
-                        }
-                    }
-                }
-
-                // Logika Cascade Halaman Profil:
-                if ($kode === 'profil') {
-                    $subSections = ['profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video'];
-                    foreach ($subSections as $sub) {
-                        PengaturanFitur::updateOrCreate(
-                            ['kode_fitur' => $sub],
-                            [
-                                'nama_fitur' => $namaMap[$sub] ?? $sub,
-                                'is_aktif' => $isAktif,
-                                'pengguna_id' => $adminId,
-                            ]
-                        );
-                    }
-                }
-
-                // Logika Cascade Struktur Organisasi:
-                if ($kode === 'struktur_organisasi') {
-                    $subStruktur = ['struktur_diagram', 'struktur_pejabat'];
-                    foreach ($subStruktur as $sub) {
-                        PengaturanFitur::updateOrCreate(
-                            ['kode_fitur' => $sub],
-                            [
-                                'nama_fitur' => $namaMap[$sub] ?? $sub,
-                                'is_aktif' => $isAktif,
-                                'pengguna_id' => $adminId,
-                            ]
-                        );
-                    }
-                }
-            }
-        });
-
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
-                'success' => true,
-                'message' => "Visibilitas {$menuName} berhasil diubah menjadi ".($isAktif ? 'Aktif (Tampil)' : 'Nonaktif (Sembunyi)'),
-                'is_aktif' => $isAktif,
-            ]);
+                'success' => false,
+                'message' => 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.',
+            ], 403);
         }
 
         return redirect()
-            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'visibilitas'])
-            ->with('success', "Status visibilitas {$menuName} berhasil diperbarui.");
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'datadiri'])
+            ->with('error', 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.');
     }
 }

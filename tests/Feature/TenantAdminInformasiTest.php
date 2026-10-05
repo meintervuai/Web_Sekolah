@@ -257,11 +257,28 @@ test('admin dapat mengupdate hero banner dan toggle status fitur via AJAX', func
     $page = Page::where('slug', 'agenda')->first();
     expect($page->judul)->toBe('Agenda Resmi Sekolah Terupdate');
 
-    // Toggle Status AJAX
-    $toggleResponse = $this->actingAs($this->admin, 'tenant_admin')
+    // Toggle Status Agenda Item (Published/Draft/Aktif)
+    $agenda = \App\Models\Tenant\Agenda::create([
+        'pengguna_id' => $this->admin->id,
+        'judul' => 'Agenda Test Status ' . Str::random(5),
+        'slug' => 'agenda-test-status-' . Str::random(8),
+        'tgl_mulai' => now()->toDateString(),
+        'is_aktif' => true,
+    ]);
+
+    $toggleItemResponse = $this->actingAs($this->admin, 'tenant_admin')
+        ->postJson(route('tenant.admin.informasi.toggle-status', ['tenant' => $this->tenantSlug]), [
+            'target_type' => 'agenda',
+            'model_type' => 'agenda',
+            'id' => $agenda->id,
+        ]);
+    $toggleItemResponse->assertStatus(200);
+    $toggleItemResponse->assertJson(['success' => true, 'is_aktif' => false]);
+
+    // Percobaan mengubah master feature flag modul oleh Admin Sekolah harus ditolak (403)
+    $toggleFeatureResponse = $this->actingAs($this->admin, 'tenant_admin')
         ->postJson(route('tenant.admin.informasi.toggle-status', ['tenant' => $this->tenantSlug]), [
             'fitur' => 'agenda',
         ]);
-    $toggleResponse->assertStatus(200);
-    $toggleResponse->assertJsonStructure(['success', 'is_aktif', 'message']);
+    $toggleFeatureResponse->assertStatus(403);
 });

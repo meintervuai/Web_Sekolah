@@ -85,45 +85,41 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span>1. Data Diri Sekolah</span>
+                    <span>1. Data Pokok Satuan Pendidikan</span>
                 </button>
 
-                <button type="button" @click="setTab('identitas')"
-                        :class="activeTab === 'identitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>2. Profil Lengkap</span>
-                </button>
+                @if (\App\Models\Tenant\PengaturanFitur::isAktif('profil', true))
+                    <button type="button" @click="setTab('identitas')"
+                            :class="activeTab === 'identitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                            class="admin-tab-pill">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>2. Profil Lengkap</span>
+                    </button>
+                @endif
 
-                <button type="button" @click="setTab('sejarah')"
-                        :class="activeTab === 'sejarah' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>3. Sejarah Sekolah</span>
-                </button>
+                @if (\App\Models\Tenant\PengaturanFitur::isAktif('sejarah', true))
+                    <button type="button" @click="setTab('sejarah')"
+                            :class="activeTab === 'sejarah' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                            class="admin-tab-pill">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>3. Sejarah Sekolah</span>
+                    </button>
+                @endif
 
-                <button type="button" @click="setTab('visimisi')"
-                        :class="activeTab === 'visimisi' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                    <span>4. Visi, Misi &amp; Tujuan</span>
-                </button>
-
-                <button type="button" @click="setTab('visibilitas')"
-                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    <span>5. Visibilitas Menu &amp; Rute</span>
-                </button>
+                @if (\App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true))
+                    <button type="button" @click="setTab('visimisi')"
+                            :class="activeTab === 'visimisi' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                            class="admin-tab-pill">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <span>4. Visi, Misi &amp; Tujuan</span>
+                    </button>
+                @endif
             </div>
 
             <!-- Sticky Top Save Button (Dispatched to active form) -->
@@ -208,7 +204,6 @@
     @include('tenant.admin.profil.tabs.tab-profil')
     @include('tenant.admin.profil.tabs.tab-sejarah')
     @include('tenant.admin.profil.tabs.tab-visimisi')
-    @include('tenant.admin.profil.tabs.tab-visibilitas')
 
     <!-- MODALS (MEDIA PICKER, CONFIRM TOGGLE) -->
     @include('tenant.admin.profil.tabs.modals')
@@ -679,82 +674,6 @@
                 this.deleteTargetGuruId = id;
                 this.deleteTargetGuruNama = nama;
                 this.modalDeleteGuruOpen = true;
-            },
-
-            // Confirmation Pop-up Before Visibility Toggle
-            askToggleConfirmation(menuId, kodeFitur, labelNama, targetState) {
-                this.pendingToggleMenuId = menuId;
-                this.pendingToggleKodeFitur = kodeFitur;
-                this.pendingToggleLabel = labelNama;
-                this.pendingToggleTargetState = targetState;
-
-                const statusText = targetState ? '<strong class="text-blue-600">MENAMPILKAN (AKTIF)</strong>' : '<strong class="text-rose-600">MENYEMBUNYIKAN (NONAKTIF)</strong>';
-                const dampakText = targetState 
-                    ? 'Menu akan kembali tampil di navbar publik dan rutenya dapat diakses oleh pengunjung.' 
-                    : 'Menu akan otomatis hilang dari navbar publik dan rutenya akan mengembalikan 404 (Not Found).';
-
-                this.toggleConfirmMessage = `Apakah Anda yakin ingin ${statusText} halaman/menu <strong>${labelNama}</strong>?<br><span class="text-slate-400 mt-1 block">${dampakText}</span>`;
-                this.modalConfirmToggleOpen = true;
-            },
-
-            async executeConfirmedToggle() {
-                this.modalConfirmToggleOpen = false;
-                const menuId = this.pendingToggleMenuId;
-                const kodeFitur = this.pendingToggleKodeFitur;
-                const targetState = this.pendingToggleTargetState;
-
-                try {
-                    const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const url = config.routes && config.routes.toggleMenu ? config.routes.toggleMenu : '/admin/profil/toggle-menu';
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': csrf,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({
-                            menu_id: menuId,
-                            kode_fitur: kodeFitur,
-                            is_aktif: targetState
-                        })
-                    });
-                    const result = await res.json();
-                    if (result.success) {
-                        if (kodeFitur && this.menuToggles.hasOwnProperty(kodeFitur)) {
-                            this.menuToggles[kodeFitur] = targetState;
-                        }
-
-                        // Cascade sync di sisi frontend (Alpine.js)
-                        if (kodeFitur === 'menu_profil') {
-                        ['profil', 'profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video',
-                            'sejarah', 'visi_misi', 'struktur_organisasi', 'struktur_diagram',
-                            'struktur_pejabat', 'guru_staf'].forEach(k => {
-                                if (this.menuToggles.hasOwnProperty(k)) this.menuToggles[k] = targetState;
-                            });
-                        }
-                        if (kodeFitur === 'profil') {
-                            ['profil_data_pokok', 'profil_sambutan_kepsek', 'profil_video'].forEach(k => {
-                                if (this.menuToggles.hasOwnProperty(k)) this.menuToggles[k] = targetState;
-                            });
-                        }
-                        if (kodeFitur === 'profil_data_pokok' && !targetState) {
-                            ['profil_sambutan_kepsek', 'profil_video'].forEach(k => {
-                                if (this.menuToggles.hasOwnProperty(k)) this.menuToggles[k] = false;
-                            });
-                        }
-                        if (kodeFitur === 'struktur_organisasi') {
-                            ['struktur_diagram', 'struktur_pejabat'].forEach(k => {
-                                if (this.menuToggles.hasOwnProperty(k)) this.menuToggles[k] = targetState;
-                            });
-                        }
-
-                        this.triggerToast(result.message);
-                    }
-                } catch (e) {
-                    alert('Gagal memperbarui status visibilitas.');
-                }
             },
 
             triggerToast(msg) {

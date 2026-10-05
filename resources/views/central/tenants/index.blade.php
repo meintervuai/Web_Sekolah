@@ -153,20 +153,21 @@
                             </td>
                             <td class="py-4 px-5 text-right">
                                 <div class="inline-flex items-center gap-1.5">
-                                    <!-- Detail -->
+                                    <!-- Kontrol Visibilitas Menu & Rute -->
                                     <a 
                                         href="{{ route('superadmin.tenants.show', $item) }}" 
-                                        class="p-2 rounded-lg text-slate-600 hover:text-indigo-600 hover:bg-slate-100 min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors"
-                                        title="Lihat Detail Sekolah"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 min-h-[34px] transition-colors"
+                                        title="Kelola Visibilitas Menu & Rute Sekolah"
                                     >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        <span>Visibilitas Menu</span>
                                     </a>
 
                                     <!-- Edit -->
                                     <a 
                                         href="{{ route('superadmin.tenants.edit', $item) }}" 
                                         class="p-2 rounded-lg text-slate-600 hover:text-amber-600 hover:bg-slate-100 min-h-[36px] min-w-[36px] flex items-center justify-center transition-colors"
-                                        title="Edit Data"
+                                        title="Edit Konfigurasi"
                                     >
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </a>

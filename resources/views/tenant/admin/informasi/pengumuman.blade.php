@@ -79,16 +79,6 @@
                     </svg>
                     <span x-text="pengumumanForm.id ? '2. Edit Pengumuman' : '2. Buat Pengumuman Baru'"></span>
                 </button>
-
-                <button type="button" @click="setTab('visibilitas')"
-                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
-                        class="admin-tab-pill">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    3. Visibilitas Menu
-                </button>
             </div>
 
             <!-- Sticky Right Actions -->
@@ -510,62 +500,7 @@
         </form>
     </div>
 
-    <!-- =========================================================================
-         TAB 3: VISIBILITAS MENU & RUTE
-    ========================================================================== -->
-    <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
-            <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">Sakelar Visibilitas Modul Pengumuman</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Kontrol ketersediaan rute publik (<code>/pengumuman</code>) dan menu navigasi pengumuman di navbar portal.</p>
-                </div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 self-start">
-                    <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-                    Feature Flag Protection
-                </span>
-            </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-700">
-                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
-                        <tr>
-                            <th class="px-4 py-3">Komponen / Fitur</th>
-                            <th class="px-4 py-3">Rute / Endpoint</th>
-                            <th class="px-4 py-3">Kode Fitur</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3 text-right">Sakelar</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        <tr class="bg-blue-50/60 font-bold text-slate-900 border-t-2 border-blue-200">
-                            <td class="px-4 py-3.5 flex items-center gap-2">
-                                <div class="w-3 h-3 rounded-md bg-blue-600 flex items-center justify-center text-[9px] text-white">★</div>
-                                <span class="text-xs sm:text-sm text-blue-950">Modul Pengumuman Resmi</span>
-                            </td>
-                            <td class="px-4 py-3.5 font-mono text-xs text-blue-800">/pengumuman &amp; /pengumuman/{slug}</td>
-                            <td class="px-4 py-3.5 font-mono text-xs text-blue-700 font-semibold">pengumuman</td>
-                            <td class="px-4 py-3.5">
-                                <span :class="isFiturAktif ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
-                                      class="px-2.5 py-1 rounded-full text-[10px] font-bold">
-                                    <span x-text="isFiturAktif ? 'Aktif (Tampil di Publik)' : 'Nonaktif (Disembunyikan)'"></span>
-                                </span>
-                            </td>
-                            <td class="px-4 py-3.5 text-right">
-                                <button type="button" 
-                                        @click="toggleFeatureFlag('pengumuman', !isFiturAktif)"
-                                        :class="isFiturAktif ? 'bg-blue-600' : 'bg-slate-300'"
-                                        class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none">
-                                    <span :style="isFiturAktif ? 'transform: translateX(20px);' : 'transform: translateX(0px);'"
-                                          class="pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform duration-300 ease-in-out"></span>
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal Konfirmasi Hapus Data -->
     <div x-show="showDeleteModal" style="display: none;" 

@@ -303,40 +303,16 @@ class JurusanController extends Controller
                 ->with('success', "Status {$jurusan->nama_jurusan} berhasil diubah.");
         }
 
-        // Toggle Feature Flag 'program_keahlian'
-        $isAktif = $request->has('is_aktif')
-            ? $request->boolean('is_aktif')
-            : ! PengaturanFitur::isAktif('program_keahlian', true);
-
-        DB::connection('tenant')->transaction(function () use ($isAktif, $adminId) {
-            PengaturanFitur::updateOrCreate(
-                ['kode_fitur' => 'program_keahlian'],
-                [
-                    'nama_fitur' => 'Program Keahlian / Jurusan',
-                    'is_aktif' => $isAktif,
-                    'pengguna_id' => $adminId,
-                ]
-            );
-
-            // Sinkronkan status menu navigasi Program Keahlian di tabel menus
-            Menu::where(function ($q) {
-                $q->where('url', '/program-keahlian')
-                    ->orWhere('url', 'program-keahlian')
-                    ->orWhere('name', 'like', '%Program Keahlian%')
-                    ->orWhere('name', 'like', '%Jurusan%');
-            })->update(['is_aktif' => $isAktif]);
-        });
-
+        // Toggle Feature Flag dilarang untuk Admin Sekolah (Hanya Super Admin yang berwenang)
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Visibilitas Menu & Rute Program Keahlian berhasil diubah menjadi ' . ($isAktif ? 'Aktif (Tampil)' : 'Nonaktif (Sembunyi)'),
-                'is_aktif' => $isAktif,
-            ]);
+                'success' => false,
+                'message' => 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.',
+            ], 403);
         }
 
         return redirect()
-            ->route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug, 'tab' => 'visibilitas'])
-            ->with('success', 'Status visibilitas Program Keahlian berhasil diperbarui.');
+            ->route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug, 'tab' => 'jurusan'])
+            ->with('error', 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.');
     }
 }

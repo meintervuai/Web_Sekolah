@@ -125,10 +125,12 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
                 </svg>
               </a>
               @endif
+              @if($fiturList['profil'] ?? true)
               <a href="{{ url(app('tenant')->slug . '/profil') }}"
                 class="inline-flex items-center px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm rounded-lg transition-colors">
                 Profil Sekolah
               </a>
+              @endif
             </div>
           </div>
         </div>
@@ -378,7 +380,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 <!-- ==========================================
      2. SAMBUTAN KEPALA SEKOLAH & PROFIL SINGKAT
 =========================================== -->
-@if(($fiturList['profil'] ?? true) && \App\Models\Tenant\PengaturanFitur::isAktif('profil_sambutan_kepsek', true))
+@if($fiturList['profil'] ?? true)
 <section class="section-py bg-white border-b border-slate-200">
   <div class="container-custom">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -387,20 +389,20 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       <div class="lg:col-span-5 flex justify-center">
         <div class="w-full max-w-sm rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-sm relative">
           <!-- Ambient Blurred Backdrop -->
-          <img src="{{ $sekolahData['foto_kepsek'] }}"
+          <img src="{{ !empty($sekolahData['foto_kepsek']) ? $sekolahData['foto_kepsek'] : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop' }}"
             alt=""
             aria-hidden="true"
             class="absolute inset-0 w-full h-80 sm:h-96 object-cover blur-md scale-125 opacity-40 pointer-events-none">
 
           <!-- Main Fit Photo -->
-          <img src="{{ $sekolahData['foto_kepsek'] }}"
-            alt="{{ $sekolahData['kepsek'] }}"
+          <img src="{{ !empty($sekolahData['foto_kepsek']) ? $sekolahData['foto_kepsek'] : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop' }}"
+            alt="{{ $sekolahData['nama_kepsek'] ?? $sekolahData['kepsek'] ?? 'Kepala Sekolah' }}"
             @style([\App\Services\MediaService::getCropStyle($sekolahData['foto_kepsek'] ?? '')])
             class="relative z-10 w-full h-80 sm:h-96 object-cover">
           <div class="p-5 theme-bg-dark text-white">
-            <h3 class="font-heading font-bold text-base sm:text-lg text-white leading-tight">{{ $sekolahData['kepsek'] }}</h3>
-            <p class="text-xs text-white/90 font-medium mt-0.5">Kepala SMK Negeri 2 Bandung</p>
-            <p class="text-[11px] text-white/80 mt-1">NIP. {{ $sekolahData['nip_kepsek'] }}</p>
+            <h3 class="font-heading font-bold text-base sm:text-lg text-white leading-tight">{{ $sekolahData['nama_kepsek'] ?? $sekolahData['kepsek'] ?? 'Dr. H. Hasanudin, M.Pd.' }}</h3>
+            <p class="text-xs text-white/90 font-medium mt-0.5">Kepala {{ $sekolahData['nama'] ?? 'SMK Negeri 2 Bandung' }}</p>
+            <p class="text-[11px] text-white/80 mt-1">NIP. {{ $sekolahData['nip_kepsek'] ?? '19680512 199303 1 004' }}</p>
           </div>
         </div>
       </div>
@@ -414,9 +416,16 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           Mewujudkan Pendidikan Vokasi yang Unggul, Adaptif, dan Berkarakter
         </h2>
         <div class="theme-accent-text text-sm sm:text-base leading-relaxed space-y-3">
-          @if(!empty($sekolahData['sambutan']))
+          @php
+            $teksSambutan = !empty($sekolahData['sambutan_kepsek']) ? $sekolahData['sambutan_kepsek'] : ($sekolahData['sambutan'] ?? '');
+          @endphp
+          @if(!empty($teksSambutan))
           <p class="italic text-slate-800 font-medium border-l-4 pl-4 py-1" style="border-left-color: var(--theme-color);">
-            "{{ $sekolahData['sambutan'] }}"
+            "{{ $teksSambutan }}"
+          </p>
+          @else
+          <p class="italic text-slate-800 font-medium border-l-4 pl-4 py-1" style="border-left-color: var(--theme-color);">
+            "Selamat datang di portal resmi {{ $sekolahData['nama'] ?? 'SMK Negeri 2 Bandung' }}. Kami berkomitmen mencetak generasi vokasi unggul berakhlak mulia yang siap bersaing di kancah industri global."
           </p>
           @endif
           <p>
@@ -424,6 +433,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           </p>
         </div>
         <div class="pt-2 flex flex-wrap gap-3">
+          @if($fiturList['profil'] ?? true)
           <a href="{{ url(app('tenant')->slug . '/profil') }}"
             class="inline-flex items-center px-5 py-2.5 theme-btn-primary font-semibold text-sm rounded-lg transition-colors shadow-xs">
             Profil Lengkap
@@ -431,10 +441,13 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </a>
+          @endif
+          @if($fiturList['visi_misi'] ?? true)
           <a href="{{ url(app('tenant')->slug . '/profil/visi-misi') }}"
             class="inline-flex items-center px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm rounded-lg transition-colors border border-slate-200">
             Visi & Misi Sekolah
           </a>
+          @endif
         </div>
       </div>
 

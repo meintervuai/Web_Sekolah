@@ -61,15 +61,60 @@ $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) &
             <!-- Left Main Content -->
             <div class="lg:col-span-8 space-y-8 w-full">
 
+                <!-- Sambutan Kepala Sekolah -->
+                <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="sambutan-kepsek">
+                    <div class="flex items-center gap-2 mb-6 pb-2 border-b border-slate-100">
+                        <div class="w-2 h-5 bg-blue-600 rounded-full"></div>
+                        <h2 class="font-heading font-bold text-xl text-slate-900">
+                            Sambutan Kepala Sekolah
+                        </h2>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                        <div class="w-36 h-48 sm:w-40 sm:h-52 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shrink-0 shadow-sm relative">
+                            <img src="{{ !empty($sekolah['foto_kepsek']) ? $sekolah['foto_kepsek'] : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop' }}"
+                                alt="{{ $sekolah['nama_kepsek'] ?? 'Kepala Sekolah' }}"
+                                @style([\App\Services\MediaService::getCropStyle($sekolah['foto_kepsek'] ?? '')])
+                                class="w-full h-full object-cover">
+                        </div>
+                        <div class="space-y-3 flex-1">
+                            <div>
+                                <h3 class="font-heading font-bold text-lg text-slate-900 leading-tight">
+                                    {{ $sekolah['nama_kepsek'] ?? 'Dr. H. Hasanudin, M.Pd.' }}
+                                </h3>
+                                <p class="text-xs text-blue-700 font-semibold mt-0.5">Kepala {{ $sekolah['nama'] }}</p>
+                                <p class="text-[11px] text-slate-500 font-mono mt-0.5">NIP. {{ $sekolah['nip_kepsek'] ?? '19680512 199303 1 004' }}</p>
+                            </div>
+                            <div class="text-sm text-slate-700 leading-relaxed space-y-2">
+                                @php
+                                    $sambutanText = !empty($sekolah['sambutan_kepsek']) ? $sekolah['sambutan_kepsek'] : ($sekolah['sambutan'] ?? '');
+                                @endphp
+                                @if(!empty($sambutanText))
+                                <p class="italic font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border-l-4 border-blue-600">
+                                    "{{ $sambutanText }}"
+                                </p>
+                                @else
+                                <p class="italic font-medium text-slate-800 bg-slate-50 p-3 rounded-xl border-l-4 border-blue-600">
+                                    "Selamat datang di portal resmi {{ $sekolah['nama'] }}. Kami berkomitmen mencetak insan vokasi unggul, kompeten berdaya saing global, dan berakhlak mulia."
+                                </p>
+                                @endif
+                                <p class="text-xs text-slate-600">
+                                    Kami mengedepankan pembelajaran berbasis Teaching Factory (TEFA), penguatan karakter Profil Pelajar Pancasila, dan sinergi kemitraan aktif dengan puluhan Dunia Usaha dan Dunia Industri (DUDI).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if(!empty($profil->isi_konten))
-                <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
+                <!-- Konten Profil & Budaya Sekolah (WYSIWYG Dinamis) -->
                 <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="profil-sekolah">
                     <div class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
                         {!! $profil->isi_konten !!}
                     </div>
                 </div>
-                @elseif($showDataPokok)
-                <!-- Fallback Identitas Satuan Pendidikan jika WYSIWYG belum diisi -->
+                @endif
+
+                <!-- Identitas Satuan Pendidikan -->
                 <div class="theme-card bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs" id="identitas-sekolah">
                     <h2 class="font-heading font-bold text-xl text-slate-900 mb-6 pb-2 border-b border-slate-100">
                         Identitas Satuan Pendidikan
@@ -95,7 +140,6 @@ $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) &
                         </div>
                     </div>
                 </div>
-                @endif
 
                 <!-- Sejarah -->
                 @if($showSejarah)
@@ -190,15 +234,60 @@ $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) &
         <!-- Mode 1 Kolom Terpusat (Elegan & Rapi Saat Video Disembunyikan) -->
         <div class="max-w-4xl mx-auto space-y-8">
 
+            <!-- Sambutan Kepala Sekolah -->
+            <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="sambutan-kepsek">
+                <div class="flex items-center gap-2 mb-6 pb-3 border-b border-slate-100">
+                    <div class="w-2 h-5 bg-blue-600 rounded-full"></div>
+                    <h2 class="font-heading font-bold text-xl sm:text-2xl text-slate-900">
+                        Sambutan Kepala Sekolah
+                    </h2>
+                </div>
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+                    <div class="w-36 h-48 sm:w-44 sm:h-56 rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shrink-0 shadow-sm relative">
+                        <img src="{{ !empty($sekolah['foto_kepsek']) ? $sekolah['foto_kepsek'] : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop' }}"
+                            alt="{{ $sekolah['nama_kepsek'] ?? 'Kepala Sekolah' }}"
+                            @style([\App\Services\MediaService::getCropStyle($sekolah['foto_kepsek'] ?? '')])
+                            class="w-full h-full object-cover">
+                    </div>
+                    <div class="space-y-4 flex-1">
+                        <div>
+                            <h3 class="font-heading font-bold text-xl text-slate-900 leading-tight">
+                                {{ $sekolah['nama_kepsek'] ?? 'Dr. H. Hasanudin, M.Pd.' }}
+                            </h3>
+                            <p class="text-xs text-blue-700 font-semibold mt-0.5">Kepala {{ $sekolah['nama'] }}</p>
+                            <p class="text-xs text-slate-500 font-mono mt-0.5">NIP. {{ $sekolah['nip_kepsek'] ?? '19680512 199303 1 004' }}</p>
+                        </div>
+                        <div class="text-sm text-slate-700 leading-relaxed space-y-2.5">
+                            @php
+                                $sambutanText = !empty($sekolah['sambutan_kepsek']) ? $sekolah['sambutan_kepsek'] : ($sekolah['sambutan'] ?? '');
+                            @endphp
+                            @if(!empty($sambutanText))
+                            <p class="italic font-medium text-slate-800 bg-slate-50 p-4 rounded-xl border-l-4 border-blue-600">
+                                "{{ $sambutanText }}"
+                            </p>
+                            @else
+                            <p class="italic font-medium text-slate-800 bg-slate-50 p-4 rounded-xl border-l-4 border-blue-600">
+                                "Selamat datang di portal resmi {{ $sekolah['nama'] }}. Kami berkomitmen mencetak insan vokasi unggul, kompeten berdaya saing global, dan berakhlak mulia."
+                            </p>
+                            @endif
+                            <p class="text-xs text-slate-600">
+                                Kami mengedepankan pembelajaran berbasis Teaching Factory (TEFA), penguatan karakter Profil Pelajar Pancasila, dan sinergi kemitraan aktif dengan puluhan Dunia Usaha dan Dunia Industri (DUDI).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             @if(!empty($profil->isi_konten))
-            <!-- Konten Profil & Identitas Sekolah (WYSIWYG Dinamis) -->
+            <!-- Konten Profil & Budaya Sekolah (WYSIWYG Dinamis) -->
             <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="profil-sekolah">
                 <div class="prose prose-slate max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4">
                     {!! $profil->isi_konten !!}
                 </div>
             </div>
-            @elseif($showDataPokok)
-            <!-- Fallback Identitas Satuan Pendidikan jika WYSIWYG belum diisi -->
+            @endif
+
+            <!-- Identitas Satuan Pendidikan -->
             <div class="theme-card bg-white rounded-2xl p-6 sm:p-10 border border-slate-200/80 shadow-xs" id="identitas-sekolah">
                 <h2 class="font-heading font-bold text-xl sm:text-2xl text-slate-900 mb-6 pb-3 border-b border-slate-100">
                     Identitas Satuan Pendidikan
@@ -224,7 +313,6 @@ $showVisiMisi = \App\Models\Tenant\PengaturanFitur::isAktif('visi_misi', true) &
                     </div>
                 </div>
             </div>
-            @endif
 
             <!-- Sejarah -->
             @if($showSejarah)

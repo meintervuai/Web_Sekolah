@@ -11,57 +11,24 @@ use Illuminate\View\View;
 class PengaturanController extends Controller
 {
     /**
-     * Tampilkan formulir pengaturan tema dan palet warna portal sekolah.
+     * Halaman pengaturan tema dialihkan atau dibatasi karena tema dikelola eksklusif oleh Super Admin.
      */
-    public function index(): View
+    public function index(): RedirectResponse
     {
         $tenant = app('tenant');
 
-        // Ambil seluruh konfigurasi tampilan dalam bentuk key => value
-        $pengaturanRaw = PengaturanUmum::all()->pluck('nilai', 'kunci')->toArray();
-
-        return view('tenant.admin.pengaturan.index', compact('tenant', 'pengaturanRaw'));
+        return redirect()->route('tenant.admin.profil.index', ['tenant' => $tenant->slug])
+            ->with('info', 'Pengaturan tema dan palet warna portal dikelola secara terpusat oleh Super Admin.');
     }
 
     /**
-     * Simpan perubahan tema dan palet warna portal sekolah.
+     * Mencegah pembaruan tema dari admin sekolah.
      */
     public function update(Request $request): RedirectResponse
     {
         $tenant = app('tenant');
 
-        // 13 kunci warna tema: identitas, tipografi, latar, garis, tombol, header & footer
-        $kunciWarna = [
-            'warna_tema',
-            'warna_aksen',
-            'warna_judul',
-            'warna_teks',
-            'warna_teks_sekunder',
-            'warna_latar_halaman',
-            'warna_latar_section',
-            'warna_kartu',
-            'warna_border',
-            'warna_tombol',
-            'warna_tombol_teks',
-            'warna_header',
-            'warna_footer',
-        ];
-
-        $aturan = ['skema_tema' => ['nullable', 'string', 'max:50']];
-
-        foreach ($kunciWarna as $kunci) {
-            $aturan[$kunci] = ['nullable', 'string', 'max:25'];
-        }
-
-        $validated = $request->validate($aturan, [
-            'skema_tema.max' => 'Nama skema tema maksimal 50 karakter.',
-        ]);
-
-        foreach ($validated as $kunci => $nilai) {
-            PengaturanUmum::simpan($kunci, $nilai);
-        }
-
-        return redirect()->route('tenant.admin.pengaturan.index', ['tenant' => $tenant->slug])
-            ->with('sukses', 'Tema dan palet warna portal sekolah berhasil disimpan.');
+        return redirect()->route('tenant.admin.profil.index', ['tenant' => $tenant->slug])
+            ->with('error', 'Akses ditolak: Konfigurasi tema hanya dapat diubah oleh Super Admin.');
     }
 }

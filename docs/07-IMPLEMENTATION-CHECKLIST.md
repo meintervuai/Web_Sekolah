@@ -245,9 +245,28 @@
   - **5. Sarana & Fasilitas** (`/fasilitas`): Manajemen katalog fasilitas (foto utama rasio 4:3, repeater galeri multi-foto), counter statistik sarpras (`stats_ruang_kelas`, `stats_bengkel_lab`, `stats_perpustakaan`, `stats_akses_internet`), hero banner, dan feature toggle status.
 - [x] Controller `InformasiController` (`App\Http\Controllers\Tenant\Admin\InformasiController`): Menyediakan endpoint CRUD lengkap 5 modul, sinkronisasi otomatis `MediaService`, update hero banner global, dan toggle status AJAX.
 - [x] Desain & Interaksi Konsisten Tailgrids: Seluruh blade view (`berita.blade.php`, `pengumuman.blade.php`, `agenda.blade.php`, `galeri.blade.php`, `fasilitas.blade.php`) menggunakan pola visual modern, indikator loading spinner (anti-freeze), toast notification terpadu, modal konfirmasi kustom (bukan native browser confirm), dan integrasi pemilih berkas Media Picker.
-- [x] Keamanan Relasi Database: 100% tabel berelasi Foreign Key cascade (`album_id`, `fasilitas_id`, `kategori_id`, `pengguna_id`), tidak ada orphan record.
-- [x] Automated Feature Test: `tests/Feature/TenantAdminInformasiTest.php` mencakup seluruh alur CRUD 5 modul, upload media, hero banner, dan status toggle AJAX.
-- [x] Verifikasi: Full suite Pest **86 test / 566 assertions PASSED** (100% Green).
+---
+
+## Tahap 18: Pemindahan Pengaturan Visibilitas Menu & Rute ke Super Admin Platform (Central)
+**Status:** Selesai
+
+- [x] Sentralisasi Kontrol Visibilitas ke Super Admin (`/superadmin/tenants/{tenant}`):
+  - Super Admin kini memiliki wewenang eksklusif untuk mengaktifkan/menonaktifkan modul menu navbar dan rute publik tenant (`menus` & `pengaturan_fitur`).
+  - Mendukung kontrol tingkat menu induk, rute publik, serta sub-komponen cascading (data pokok, sambutan kepsek, video profil, bagan struktur, daftar pejabat, dll.).
+- [x] Backend Controller Central (`App\Http\Controllers\Central\TenantController`):
+  - Method `show()` membaca konfigurasi `pengaturan_fitur` & `menus` dari database tenant secara dinamis.
+  - Method `toggleMenu()` melakukan update AJAX dengan dynamic database switching (`tenant_{slug}`) dan auto-cascading state.
+- [x] Antarmuka Tailgrids & Interaksi Anti-Freeze:
+  - Kartu kontrol visibilitas dilengkapi dengan toggle switch interaktif Alpine.js, spinner animasi ("Menyinkronkan..."), status badge sukses, dan penanganan error responsif tanpa reload halaman.
+- [x] Pembersihan Panel Admin Sekolah:
+  - Tab 5 Visibilitas dihapus dari Pengaturan Profil Sekolah (`tab-visibilitas.blade.php`).
+  - Tab 4 Visibilitas dihapus dari Pengaturan Program Keahlian / Jurusan (`tab-visibilitas.blade.php`).
+  - Admin Sekolah kini fokus murni pada pengelolaan konten, media, dan tema visual portal sekolah.
+- [x] Automated Feature Test:
+  - `tests/Feature/SuperAdminAuthTest.php` memvalidasi akses Super Admin dan eksekusi toggle menu AJAX.
+  - `tests/Feature/TenantAdminProfilTest.php` & `tests/Feature/TenantAdminJurusanTest.php` disinkronkan.
+- [x] Verifikasi: Full suite Pest **92 test / 618 assertions PASSED** (100% Green).
+
 
 
 

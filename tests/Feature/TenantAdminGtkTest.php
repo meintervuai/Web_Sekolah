@@ -38,6 +38,9 @@ beforeEach(function () {
 });
 
 test('admin can access dedicated gtk index page with sub-tabs', function () {
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'struktur_organisasi')->update(['is_aktif' => true]);
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'guru_staf')->update(['is_aktif' => true]);
+
     $response = $this->actingAs($this->admin, 'tenant_admin')
         ->get('/smk-negeri-2-bandung/admin/gtk');
 
