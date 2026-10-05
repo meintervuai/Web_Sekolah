@@ -108,6 +108,16 @@
                 </a>
 
                 <a
+                    href="{{ route('tenant.admin.gtk.index', ['tenant' => app('tenant')->slug]) }}"
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.gtk.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                >
+                    <svg class="w-4 h-4 shrink-0 {{ request()->routeIs('tenant.admin.gtk.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span>Struktur &amp; GTK</span>
+                </a>
+
+                <a
                     href="{{ route('tenant.admin.jurusan.index', ['tenant' => app('tenant')->slug]) }}"
                     class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('tenant.admin.jurusan.*') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
                 >
@@ -116,6 +126,70 @@
                     </svg>
                     <span>Program Keahlian</span>
                 </a>
+
+                <!-- Informasi Sekolah (Collapsible Sub-Navigation) -->
+                @php
+                    $isInformasiActive = request()->routeIs('tenant.admin.informasi.*');
+                @endphp
+                <div x-data="{ open: @js($isInformasiActive) }" class="space-y-1">
+                    <button
+                        type="button"
+                        @click="open = !open"
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isInformasiActive ? 'bg-blue-50/70 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                    >
+                        <div class="flex items-center gap-3">
+                            <svg class="w-4 h-4 shrink-0 {{ $isInformasiActive ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                            </svg>
+                            <span>Informasi Sekolah</span>
+                        </div>
+                        <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="open ? 'rotate-180 text-blue-600' : 'text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-collapse class="pl-4 pr-1 space-y-1 pt-1 border-l-2 border-blue-100 ml-5">
+                        <a
+                            href="{{ route('tenant.admin.informasi.berita', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.berita*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                            <span>Berita &amp; Artikel</span>
+                        </a>
+
+                        <a
+                            href="{{ route('tenant.admin.informasi.pengumuman', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.pengumuman*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                            <span>Pengumuman Resmi</span>
+                        </a>
+
+                        <a
+                            href="{{ route('tenant.admin.informasi.agenda', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.agenda*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                            <span>Agenda &amp; Kegiatan</span>
+                        </a>
+
+                        <a
+                            href="{{ route('tenant.admin.informasi.galeri', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.galeri*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                            <span>Galeri Foto &amp; Video</span>
+                        </a>
+
+                        <a
+                            href="{{ route('tenant.admin.informasi.fasilitas', ['tenant' => app('tenant')->slug]) }}"
+                            class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
+                        >
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('tenant.admin.informasi.fasilitas*') ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
+                            <span>Fasilitas &amp; Sarpras</span>
+                        </a>
+                    </div>
+                </div>
 
                 <!-- Section: PENGATURAN TAMPILAN -->
                 <div class="px-3 pt-3 pb-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">

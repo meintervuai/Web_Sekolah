@@ -2,7 +2,86 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Pengaturan Program Keahlian / Jurusan CMS & Manajemen Hero] - 2026-09-30
+## [Penyederhanaan & Pemolesan Tampilan Pengumuman Resmi (Admin & Publik)] - 2026-10-05
+
+### Changed
+- **Penyederhanaan Form Admin Pengumuman ([resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php))**:
+  - Menyederhanakan formulir input pengumuman agar fokus pada 3 elemen esensial: **Judul Pengumuman**, **Gambar/Foto Surat Resmi**, dan **Isi Pengumuman** (WYSIWYG), ditambah status publikasi & tanggal.
+  - Menghilangkan field ringkasan manual yang redundan agar admin sekolah tidak perlu bekerja dua kali.
+- **Polesan Desain Publik Pengumuman ([resources/views/public/pages/pengumuman_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/pengumuman_detail.blade.php) & [pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/pengumuman.blade.php))**:
+  - Menerapkan skill **`antislop`** dan **`antislop-ui`**: antarmuka terstruktur, tipografi Plus Jakarta Sans, bebas dari AI slop, dan berstandar Tailgrids.
+  - Menghapus mockup kop surat & tanda tangan tiruan, digantikan dengan container dokumen surat resmi berkualitas tinggi.
+  - Menambahkan interactive **Lightbox Preview Modal (Alpine.js)** pada detail surat pengumuman sehingga surat edaran yang discan dapat dizoom layar penuh dan diunduh langsung dengan jelas oleh orang tua/wali dan siswa.
+  - Listing pengumuman dilengkapi live search, badge kategori resmi, thumbnail surat terformat, dan empty state yang humanis.
+
+## [Pemisahan Modul Mandiri Struktur & GTK di Sidebar Admin] - 2026-10-05
+
+### Added
+- **Modul Mandiri Struktur Organisasi & Guru Tenaga Kependidikan (GTK) ([app/Http/Controllers/Tenant/Admin/GtkController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/GtkController.php))**:
+  - Menyediakan menu sidebar mandiri **Struktur & GTK** (`/{tenant}/admin/gtk`) dengan 2 sub-tab navigasi terpadu:
+    1. **Struktur Organisasi**: Kustomisasi judul & banner hero publik, bagan diagram visual struktur hierarki organisasi, serta CRUD data pejabat struktural berelasi ke Guru & Staf.
+    2. **Guru & Tenaga Kependidikan**: Kustomisasi hero banner publik `/guru-staf` dan manajemen data master pendidik dan tenaga kependidikan (PTK).
+  - Tampilan admin Blade terpisah di [resources/views/tenant/admin/gtk/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/gtk/index.blade.php) beserta sub-komponen `tab-struktur.blade.php`, `tab-guru.blade.php`, dan `modals.blade.php`.
+  - Feature test otomatis di [tests/Feature/TenantAdminGtkTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminGtkTest.php) (5 skenario pengujian - 100% Passed).
+
+### Changed
+- **Penyederhanaan Halaman Profil Sekolah ([resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php))**:
+  - Mengeluarkan tab *5. Struktur Organisasi* dan *6. Guru & Tenaga Kependidikan* dari halaman Profil Sekolah.
+  - Halaman Profil Sekolah kini memiliki 5 tab fokus: 1. Data Diri Sekolah, 2. Profil Lengkap, 3. Sejarah Sekolah, 4. Visi, Misi & Tujuan, 5. Visibilitas Menu & Rute.
+- **Navigasi Sidebar Admin ([resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php))**:
+  - Menambahkan link navigasi sidebar **Struktur & GTK** dengan icon hierarki organisasi yang elegan di bawah Profil Sekolah.
+
+## [Reposisi Pengaturan Hero Banner di Seluruh Modul Informasi Sekolah] - 2026-10-05
+
+### Changed
+- **Penyatuan Pengaturan Hero Banner ke Tab Utama Daftar Modul Informasi ([berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php), [pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php), [agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php), [galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php), [fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php))**:
+  - Memindahkan card form kustomisasi Hero Banner halaman publik ke bagian atas card daftar tabel/item pada tab utama (Tab 1) di seluruh 5 modul Informasi Sekolah.
+  - Menghapus tab navigasi pill *Hero Banner Publik* terpisah agar alur kerja admin lebih ringkas, terpadu, dan efisien tanpa perlu berpindah tab.
+  - Menyesuaikan penomoran dan urutan pill navigasi tab di seluruh halaman terkait.
+
+## [Modul CMS Informasi Sekolah Terpadu (Sidebar Multi-Navigasi 5 Sub-Modul)] - 2026-10-01
+
+### Added
+- **Modul Pengaturan Informasi Sekolah CMS ([app/Http/Controllers/Tenant/Admin/InformasiController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/InformasiController.php))**:
+  - Menyediakan 5 panel navigasi terpisah yang mencakup seluruh kebutuhan publik:
+    1. **Berita & Artikel Sekolah** (`/berita`): CRUD berita, editor WYSIWYG Quill.js, filter kategori & status, pencarian, kustomisasi hero banner publik, dan sakelar visibilitas fitur.
+    2. **Pengumuman Resmi Sekolah** (`/pengumuman`): CRUD pengumuman resmi, filter status publikasi, kustomisasi hero banner publik, dan sakelar visibilitas fitur.
+    3. **Kalender & Agenda Kegiatan** (`/agenda`): Manajemen agenda mendatang/riwayat, tanggal mulai/selesai, jam pelaksanaan, lokasi, penyelenggara, tautan pendaftaran/konfirmasi daring eksternal, hero banner, dan visibilitas fitur.
+    4. **Galeri Foto & Video** (`/galeri`): Manajemen album galeri (tipe foto/video), cover album, manajemen item media/YouTube dalam album, hero banner, dan visibilitas fitur.
+    5. **Sarana & Fasilitas Sekolah** (`/fasilitas`): Manajemen katalog ruangan/bengkel (foto utama rasio 4:3, multi-foto tambahan repeater), counter statistik sarpras (ruang kelas teori, bengkel lab, perpustakaan, akses internet), hero banner, dan visibilitas fitur.
+- **Sidebar Admin Multi-Navigasi Collapsible ([resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php))**:
+  - Mengimplementasikan grup navigasi *Informasi Sekolah* dengan accordion Alpine.js dan 5 sub-navigasi independen sesuai preferensi arsitektur navigasi.
+- **Views Admin Blade Reusable Tailgrids Pattern**:
+  - [resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php)
+  - [resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php)
+  - [resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php)
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php)
+  - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php)
+- **Rute Admin & Feature Test Pest**:
+  - Rute admin di bawah prefix `{tenant}/admin/informasi/*` di [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php).
+  - Test suite komprehensif di [tests/Feature/TenantAdminInformasiTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminInformasiTest.php) (7 skenario pengujian - 100% Passed).
+
+### Changed
+- **Penyelarasan Konsistensi UI & Arsitektur Blade 100% Seragam (Standar Admin Profil & Jurusan)**:
+  - Melakukan refaktorisasi menyeluruh pada 5 sub-modul Informasi Sekolah (`agenda.blade.php`, `galeri.blade.php`, `fasilitas.blade.php`, `berita.blade.php`, `pengumuman.blade.php`).
+  - Menyeragamkan seluruh token desain:
+    1. **Tab Navigation Pills**: Menggunakan class standar `px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer` (Aktif: `bg-blue-600 text-white shadow-xs` | Inaktif: `bg-white text-slate-600 hover:bg-slate-100 border border-slate-200`).
+    2. **Container Card**: Seluruh pembungkus form dan tabel memakai `bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4` (atau `space-y-5`).
+    3. **Header Card**: Judul kartu menggunakan `text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5` dengan subjudul `text-xs text-slate-500`.
+    4. **Input, Select, & Textarea Form**: Menggunakan label `block text-xs font-bold text-slate-700 mb-1` dan input `w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition`.
+    5. **Tombol Form & Media Picker**: Tombol simpan `px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer`, tombol media picker `px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer`.
+    6. **Toast & Modal Dialog**: Toast di kanan bawah `fixed bottom-5 right-5 z-50 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 max-w-md` (`bg-emerald-600` / `bg-rose-600`) dan modal konfirmasi hapus kustom `bg-slate-900/60 backdrop-blur-xs`.
+
+## [Pembersihan Menu Publik Kesiswaan & Sinkronisasi Navigasi] - 2026-10-01
+
+### Removed
+- **Menu Navigasi Publik Kesiswaan & Sub-menu ([database/migrations/2026_10_01_142634_delete_kesiswaan_menu_and_submenus_from_tenant_menus.php](file:///d:/databaru/Magang/website_sekolah/database/migrations/2026_10_01_142634_delete_kesiswaan_menu_and_submenus_from_tenant_menus.php))**:
+  - Menghapus menu dropdown publik `Kesiswaan` beserta ketiga sub-menunya (`Prestasi Siswa`, `Ekstrakurikuler`, `OSIS & MPK`) dari tabel `menus` di seluruh database tenant sesuai instruksi (informasi dan dokumentasi OSIS/kesiswaan diarahkan masuk ke modul Berita, Agenda, dan Galeri Dokumentasi Resmi).
+  - Menghapus view statis [osis.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/osis.blade.php), helper method `PageController@osis`, dan grup route alias `/{tenant}/kesiswaan/*` di [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php).
+  - Memperbarui seeder [TenantSmkn2BandungSeeder.php](file:///d:/databaru/Magang/website_sekolah/database/seeders/TenantSmkn2BandungSeeder.php) dan [TenantDummySeeder.php](file:///d:/databaru/Magang/website_sekolah/database/seeders/TenantDummySeeder.php) agar urutan menu navbar tetap rapi dan konsisten.
+
+### Changed
+- **Penyelarasan Dokumentasi Rute ([docs/04-ROUTES-OR-API.md](file:///d:/databaru/Magang/website_sekolah/docs/04-ROUTES-OR-API.md))**: Memperbarui tabel rute dan catatan integrasi konten kesiswaan.
 
 ### Added
 - **Modul Pengaturan Program Keahlian Admin CMS ([resources/views/tenant/admin/jurusan/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/))**: Tab Katalog Program Keahlian (CRUD + FK `guru_staf`), Tab Hero Banner, Tab Visibilitas Menu & Rute, serta integrasi Media Picker.

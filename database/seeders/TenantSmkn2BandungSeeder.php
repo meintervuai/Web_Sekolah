@@ -991,24 +991,14 @@ class TenantSmkn2BandungSeeder extends Seeder
             ['id' => 46, 'name' => 'Fasilitas Sekolah', 'url' => '/fasilitas', 'parent_id' => 4, 'urutan' => 6, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // 5. Kesiswaan (Dropdown)
+        // 5. SPMB
         $tenantDb->table('menus')->insert([
-            'id' => 5, 'name' => 'Kesiswaan', 'url' => '#', 'parent_id' => null, 'urutan' => 5, 'is_aktif' => true, 'type' => 'dropdown', 'created_at' => now(), 'updated_at' => now(),
-        ]);
-        $tenantDb->table('menus')->insert([
-            ['id' => 51, 'name' => 'Prestasi Siswa', 'url' => '/prestasi', 'parent_id' => 5, 'urutan' => 1, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 52, 'name' => 'Ekstrakurikuler', 'url' => '/ekstrakurikuler', 'parent_id' => 5, 'urutan' => 2, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 53, 'name' => 'OSIS & MPK', 'url' => '/kesiswaan/osis', 'parent_id' => 5, 'urutan' => 3, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
+            'id' => 6, 'name' => 'SPMB 2026', 'url' => '/spmb', 'parent_id' => null, 'urutan' => 5, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now(),
         ]);
 
-        // 6. SPMB
+        // 6. Kontak
         $tenantDb->table('menus')->insert([
-            'id' => 6, 'name' => 'SPMB 2026', 'url' => '/spmb', 'parent_id' => null, 'urutan' => 6, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        // 7. Kontak
-        $tenantDb->table('menus')->insert([
-            'id' => 7, 'name' => 'Kontak', 'url' => '/kontak', 'parent_id' => null, 'urutan' => 7, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now(),
+            'id' => 7, 'name' => 'Kontak', 'url' => '/kontak', 'parent_id' => null, 'urutan' => 6, 'is_aktif' => true, 'type' => 'link', 'created_at' => now(), 'updated_at' => now(),
         ]);
 
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=1;');

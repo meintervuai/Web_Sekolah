@@ -364,13 +364,6 @@ class TenantDummySeeder extends Seeder
             ['name' => 'Fasilitas Sekolah', 'url' => '/fasilitas', 'parent_id' => $menuInformasiId, 'urutan' => 4, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        $menuKesiswaanId = $tenantDb->table('menus')->insertGetId(['name' => 'Kesiswaan', 'url' => '#', 'type' => 'dropdown', 'urutan' => 5, 'created_at' => now(), 'updated_at' => now()]);
-        $tenantDb->table('menus')->insert([
-            ['name' => 'Organisasi Siswa (OSIS)', 'url' => '/kesiswaan/osis', 'parent_id' => $menuKesiswaanId, 'urutan' => 1, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Ekstrakurikuler', 'url' => '/kesiswaan/ekstrakurikuler', 'parent_id' => $menuKesiswaanId, 'urutan' => 2, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Prestasi Siswa', 'url' => '/kesiswaan/prestasi', 'parent_id' => $menuKesiswaanId, 'urutan' => 3, 'type' => 'link', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
         $tenantDb->statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

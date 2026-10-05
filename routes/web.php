@@ -3,6 +3,8 @@
 use App\Http\Controllers\Central\AuthController;
 use App\Http\Controllers\Central\DashboardController;
 use App\Http\Controllers\Central\TenantController;
+use App\Http\Controllers\Tenant\Admin\GtkController;
+use App\Http\Controllers\Tenant\Admin\InformasiController;
 use App\Http\Controllers\Tenant\Admin\JurusanController;
 use App\Http\Controllers\Tenant\Admin\MediaController;
 use App\Http\Controllers\Tenant\Admin\PengaturanController;
@@ -151,12 +153,6 @@ Route::prefix('{tenant}')
             Route::get('/kalender', [PageController::class, 'agenda'])->name('kalender');
         });
 
-        Route::prefix('kesiswaan')->name('kesiswaan.')->group(function () {
-            Route::get('/ekstrakurikuler', [PageController::class, 'ekstrakurikuler'])->name('ekstrakurikuler');
-            Route::get('/prestasi', [PageController::class, 'prestasi'])->name('prestasi');
-            Route::get('/osis', [PageController::class, 'osis'])->name('osis');
-        });
-
         Route::prefix('informasi')->name('informasi.')->group(function () {
             Route::get('/berita', [PageController::class, 'berita'])->name('berita');
             Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('pengumuman');
@@ -201,6 +197,19 @@ Route::prefix('{tenant}')
                     Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
                 });
 
+                // Pengaturan Struktur Organisasi & Guru Tenaga Kependidikan (GTK) CMS
+                Route::prefix('gtk')->name('gtk.')->group(function () {
+                    Route::get('/', [GtkController::class, 'index'])->name('index');
+                    Route::put('/struktur', [GtkController::class, 'updateStruktur'])->name('struktur.update');
+                    Route::post('/pejabat', [GtkController::class, 'storePejabat'])->name('pejabat.store');
+                    Route::put('/pejabat/{pejabat}', [GtkController::class, 'updatePejabat'])->name('pejabat.update');
+                    Route::delete('/pejabat/{pejabat}', [GtkController::class, 'destroyPejabat'])->name('pejabat.destroy');
+                    Route::put('/guru-hero', [GtkController::class, 'updateGuruHero'])->name('guru.hero.update');
+                    Route::post('/guru', [GtkController::class, 'storeGuru'])->name('guru.store');
+                    Route::put('/guru/{guru}', [GtkController::class, 'updateGuru'])->name('guru.update');
+                    Route::delete('/guru/{guru}', [GtkController::class, 'destroyGuru'])->name('guru.destroy');
+                });
+
                 // Pengaturan Program Keahlian / Jurusan CMS
                 Route::prefix('program-keahlian')->name('jurusan.')->group(function () {
                     Route::get('/', [JurusanController::class, 'index'])->name('index');
@@ -209,6 +218,51 @@ Route::prefix('{tenant}')
                     Route::put('/{jurusan}', [JurusanController::class, 'update'])->name('update');
                     Route::delete('/{jurusan}', [JurusanController::class, 'destroy'])->name('destroy');
                     Route::post('/toggle-status', [JurusanController::class, 'toggleStatus'])->name('toggle-status');
+                });
+
+                // Pengaturan Informasi Sekolah CMS (Berita, Pengumuman, Agenda, Galeri, Fasilitas)
+                Route::prefix('informasi')->name('informasi.')->group(function () {
+                    // 1. Berita
+                    Route::get('/berita', [InformasiController::class, 'berita'])->name('berita');
+                    Route::post('/berita', [InformasiController::class, 'storeBerita'])->name('berita.store');
+                    Route::put('/berita/{berita}', [InformasiController::class, 'updateBerita'])->name('berita.update');
+                    Route::delete('/berita/{berita}', [InformasiController::class, 'destroyBerita'])->name('berita.destroy');
+                    Route::post('/kategori', [InformasiController::class, 'storeKategori'])->name('kategori.store');
+                    Route::put('/kategori/{kategori}', [InformasiController::class, 'updateKategori'])->name('kategori.update');
+                    Route::delete('/kategori/{kategori}', [InformasiController::class, 'destroyKategori'])->name('kategori.destroy');
+
+                    // 2. Pengumuman
+                    Route::get('/pengumuman', [InformasiController::class, 'pengumuman'])->name('pengumuman');
+                    Route::post('/pengumuman', [InformasiController::class, 'storePengumuman'])->name('pengumuman.store');
+                    Route::put('/pengumuman/{pengumuman}', [InformasiController::class, 'updatePengumuman'])->name('pengumuman.update');
+                    Route::delete('/pengumuman/{pengumuman}', [InformasiController::class, 'destroyPengumuman'])->name('pengumuman.destroy');
+
+                    // 3. Agenda
+                    Route::get('/agenda', [InformasiController::class, 'agenda'])->name('agenda');
+                    Route::post('/agenda', [InformasiController::class, 'storeAgenda'])->name('agenda.store');
+                    Route::put('/agenda/{agenda}', [InformasiController::class, 'updateAgenda'])->name('agenda.update');
+                    Route::delete('/agenda/{agenda}', [InformasiController::class, 'destroyAgenda'])->name('agenda.destroy');
+
+                    // 4. Galeri
+                    Route::get('/galeri', [InformasiController::class, 'galeri'])->name('galeri');
+                    Route::post('/galeri/album', [InformasiController::class, 'storeAlbum'])->name('galeri.album.store');
+                    Route::put('/galeri/album/{album}', [InformasiController::class, 'updateAlbum'])->name('galeri.album.update');
+                    Route::delete('/galeri/album/{album}', [InformasiController::class, 'destroyAlbum'])->name('galeri.album.destroy');
+                    Route::post('/galeri/album/{album}/item', [InformasiController::class, 'storeItem'])->name('galeri.item.store');
+                    Route::delete('/galeri/item/{item}', [InformasiController::class, 'destroyItem'])->name('galeri.item.destroy');
+
+                    // 5. Fasilitas
+                    Route::get('/fasilitas', [InformasiController::class, 'fasilitas'])->name('fasilitas');
+                    Route::post('/fasilitas', [InformasiController::class, 'storeFasilitas'])->name('fasilitas.store');
+                    Route::put('/fasilitas/{fasilitas}', [InformasiController::class, 'updateFasilitas'])->name('fasilitas.update');
+                    Route::delete('/fasilitas/{fasilitas}', [InformasiController::class, 'destroyFasilitas'])->name('fasilitas.destroy');
+                    Route::delete('/fasilitas/foto/{foto}', [InformasiController::class, 'destroyFotoFasilitas'])->name('fasilitas.foto.destroy');
+                    Route::match(['post', 'put'], '/fasilitas/stats/update', [InformasiController::class, 'updateStatsFasilitas'])->name('fasilitas.stats.update');
+
+                    // Global Hero & Feature Toggle
+                    Route::match(['post', 'put'], '/hero/{modul}', [InformasiController::class, 'updateHero'])->name('hero');
+                    Route::match(['post', 'put'], '/hero-update/{modul}', [InformasiController::class, 'updateHero'])->name('hero.update');
+                    Route::post('/toggle-status', [InformasiController::class, 'toggleStatus'])->name('toggle-status');
                 });
 
                 // Manajemen Media & File Manager Induk

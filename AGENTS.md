@@ -57,9 +57,10 @@ Jika ada file yang tidak ditemukan, lewati dan lanjutkan. Jangan asumsikan isiny
 6. **Pengecekan fungsi via MCP Postman**: Digunakan secara on-demand ketika user menginstruksikan untuk mengecek endpoint atau API flow dengan **MCP Postman** (`postman-mcp-server`).
 7. **Riset UI/UX via MCP Mobbin**: Digunakan secara on-demand ketika user menginstruksikan untuk meriset referensi desain via **MCP Mobbin** (`mobbin`).
 8. **Pemeriksaan via MCP Chrome DevTools**: Digunakan secara on-demand ketika user menginstruksikan untuk memeriksa tampilan atau console log via **MCP Chrome DevTools** (`chrome-devtools-mcp`).
-9. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
-10. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
-11. Baca browser logs untuk error UI jika tool tersedia.
+9. **Desain & Style via NeedMCP**: Digunakan untuk setup/desain style system (`needmcp style` / `needmcp design <slug>`) atau tool MCP NeedMCP untuk referensi dan arsitektur desain UI saat diminta.
+10. Gunakan Laravel Boost `database-schema` dan `database-query` untuk memeriksa schema dan data secara read-only jika tool tersedia.
+11. Gunakan `get-absolute-url` sebelum memberikan URL kepada user jika tool tersedia.
+12. Baca browser logs untuk error UI jika tool tersedia.
 
 Jika requirement belum jelas, tanyakan hanya hal yang benar-benar mengubah data, schema, security, biaya, atau arsitektur. Untuk hal kecil, gunakan asumsi minimal yang aman dan tuliskan asumsi tersebut.
 
@@ -207,6 +208,9 @@ npx @tailgrids/cli@latest add button dialog table card navbar sidebar
 
 ### Riset referensi UI/UX dengan MCP Mobbin (On-Demand / Saat Diminta User)
 Gunakan **MCP Mobbin** (`mobbin`: `search_screens`, `search_flows`, `search_sections`) hanya ketika user secara spesifik meminta untuk meriset referensi desain dari aplikasi/produk digital dunia nyata.
+
+### Desain & Style System via NeedMCP (On-Demand / Saat Diminta User)
+Gunakan **NeedMCP** (`needmcp style` / `needmcp design <slug>` atau MCP tool terkait) untuk mengambil design system, panduan style UI, atau arsitektur komponen visual saat diminta.
 
 ### Verifikasi visual dengan MCP Chrome DevTools (On-Demand / Saat Diminta User)
 Gunakan **MCP Chrome DevTools** (`chrome-devtools-mcp`: `take_screenshot`, `resize_page`, `list_console_messages`, `evaluate_script`) hanya ketika user menginstruksikan untuk memeriksa tampilan visual, responsivitas browser, atau console log aktif.

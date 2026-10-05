@@ -511,13 +511,6 @@ class PageController extends Controller
         return view('public.pages.kurikulum', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
     }
 
-    public function osis()
-    {
-        $halaman = Page::where('slug', 'osis')->first();
-
-        return view('public.pages.osis', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
-    }
-
     public function kalender()
     {
         return redirect()->route('tenant.agenda');

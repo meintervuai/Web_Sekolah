@@ -220,17 +220,35 @@
 ## Tahap 16: Pengaturan Program Keahlian / Jurusan CMS & Manajemen Hero
 **Status:** Selesai
 
-- [x] Membuat modul mandiri Pengaturan Program Keahlian Admin CMS (`resources/views/tenant/admin/jurusan/`) dengan struktur 3 tab terpadu:
+- [x] Membuat modul mandiri Pengaturan Program Keahlian Admin CMS (`resources/views/tenant/admin/jurusan/`) dengan struktur tab terpadu:
   - **Tab 1: Daftar Konsentrasi & Program Keahlian** (`tab-jurusan.blade.php`) - Tabel interaktif, thumbnail rasio baku 4:3, tombol toggle status publikasi instan (AJAX), tombol edit modal & hapus modal kustom.
-  - **Tab 2: Hero Banner Publik** (`tab-hero.blade.php`) - Kustomisasi judul, subjudul, dan foto sampul 16:9 yang terhubung dengan Pusat Media.
-  - **Tab 3: Visibilitas Menu & Rute** (`tab-visibilitas.blade.php`) - Sakelar feature flag `program_keahlian` yang otomatis menyinkronkan navbar, katalog beranda, dan proteksi rute 404 publik.
-  - **Modal Tambah/Edit Jurusan** (`modals.blade.php`) - Form input dengan auto-slug generator, integrasi WYSIWYG editor Quill.js, dropdown relasi kepala program keahlian (`guru_id` FK ke `guru_staf`), dan pemilih berkas Pustaka Media.
+  - **Tab 2: Form Program Keahlian** (`tab-form-jurusan.blade.php`) - Form input mandiri dedikasi luas dengan auto-slug generator, dual WYSIWYG editor Quill.js, dropdown relasi kepala program keahlian (`guru_id` FK ke `guru_staf`), galeri multi-foto dokumentasi bengkel/lab, dan pemilih berkas Pustaka Media.
+  - **Tab 3: Hero Banner Publik** (`tab-hero.blade.php`) - Kustomisasi judul, subjudul, dan foto sampul 16:9 yang terhubung dengan Pusat Media.
+  - **Tab 4: Visibilitas Menu & Rute** (`tab-visibilitas.blade.php`) - Sakelar feature flag `program_keahlian` yang otomatis menyinkronkan navbar, katalog beranda, dan proteksi rute 404 publik.
 - [x] Controller `JurusanController` (`App\Http\Controllers\Tenant\Admin\JurusanController`): Mengelola `index`, `updateHero`, `store`, `update`, `destroy`, dan `toggleStatus` dengan auto-sinkronisasi `MediaService`.
 - [x] Model `Jurusan` (`App\Models\Tenant\Jurusan`): Menambahkan helper `$jurusan->foto_crop_style` dan `$jurusan->foto_focal_position`.
 - [x] Sidebar Admin (`resources/views/layouts/tenant_admin.blade.php`): Menambahkan link menu navigasi "Program Keahlian" di bawah "Profil Sekolah".
 - [x] Halaman Publik `jurusan.blade.php` & `jurusan_detail.blade.php`: Terhubung dinamis dengan data hero banner yang disimpan admin serta rasio baku media 4:3 dengan double-layer ambient backdrop.
 - [x] Automated Feature Test: `tests/Feature/TenantAdminJurusanTest.php` mencakup pengujian aksesibilitas tab admin, update hero banner, CRUD jurusan, dan sakelar visibilitas fitur publik.
 - [x] Verifikasi: Full suite Pest **79 test / 525 assertions PASSED** (100% Green).
+
+---
+
+## Tahap 17: Modul CMS Informasi Sekolah Terpadu (Sidebar Multi-Navigasi 5 Sub-Modul)
+**Status:** Selesai
+
+- [x] Membuat 5 sub-navigasi independen untuk Informasi Sekolah di sidebar admin:
+  - **1. Berita & Artikel** (`/berita`): CRUD berita, editor WYSIWYG Quill.js, filter kategori & status publikasi, pencarian, hero banner, dan feature toggle status.
+  - **2. Pengumuman Resmi** (`/pengumuman`): CRUD pengumuman kedinasan, filter draft/published, WYSIWYG editor, hero banner, dan feature toggle status.
+  - **3. Agenda & Kegiatan** (`/agenda`): Manajemen kalender agenda (tgl mulai/selesai, jam mulai/selesai, lokasi, penyelenggara, deskripsi Quill.js, link formulir registrasi daring), hero banner, dan feature toggle status.
+  - **4. Galeri Foto & Video** (`/galeri`): Manajemen album dokumentasi (foto/video), cover album, manajemen item media/YouTube dalam album, hero banner, dan feature toggle status.
+  - **5. Sarana & Fasilitas** (`/fasilitas`): Manajemen katalog fasilitas (foto utama rasio 4:3, repeater galeri multi-foto), counter statistik sarpras (`stats_ruang_kelas`, `stats_bengkel_lab`, `stats_perpustakaan`, `stats_akses_internet`), hero banner, dan feature toggle status.
+- [x] Controller `InformasiController` (`App\Http\Controllers\Tenant\Admin\InformasiController`): Menyediakan endpoint CRUD lengkap 5 modul, sinkronisasi otomatis `MediaService`, update hero banner global, dan toggle status AJAX.
+- [x] Desain & Interaksi Konsisten Tailgrids: Seluruh blade view (`berita.blade.php`, `pengumuman.blade.php`, `agenda.blade.php`, `galeri.blade.php`, `fasilitas.blade.php`) menggunakan pola visual modern, indikator loading spinner (anti-freeze), toast notification terpadu, modal konfirmasi kustom (bukan native browser confirm), dan integrasi pemilih berkas Media Picker.
+- [x] Keamanan Relasi Database: 100% tabel berelasi Foreign Key cascade (`album_id`, `fasilitas_id`, `kategori_id`, `pengguna_id`), tidak ada orphan record.
+- [x] Automated Feature Test: `tests/Feature/TenantAdminInformasiTest.php` mencakup seluruh alur CRUD 5 modul, upload media, hero banner, dan status toggle AJAX.
+- [x] Verifikasi: Full suite Pest **86 test / 566 assertions PASSED** (100% Green).
+
 
 
 

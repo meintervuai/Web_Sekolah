@@ -1,4 +1,4 @@
-<!-- TAB 7: VISIBILITAS MENU, HALAMAN & SECTION PROFIL -->
+<!-- TAB 5: VISIBILITAS MENU, HALAMAN & SECTION PROFIL -->
 <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
         <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

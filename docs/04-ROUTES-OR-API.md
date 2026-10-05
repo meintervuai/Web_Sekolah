@@ -35,8 +35,8 @@ Untuk mencegah broken link pada rute sebelumnya, alias berikut tetap didukung da
 - `/{tenant}/profil/sejarah`, `/visi-misi`, `/struktur`, `/guru`, `/fasilitas`
 - `/{tenant}/akademik/jurusan` -> `tenant.program-keahlian`
 - `/{tenant}/informasi/berita`, `/pengumuman`, `/galeri`, `/fasilitas` -> `tenant.fasilitas` / `tenant.*`
-- `/{tenant}/kesiswaan/ekstrakurikuler` -> `tenant.ekstrakurikuler`
-- `/{tenant}/kesiswaan/prestasi` -> `tenant.prestasi`
+
+*Catatan: Menu publik Kesiswaan dan submenunya telah dihapus dari navbar; informasi kegiatan & OSIS diintegrasikan ke modul Berita & Agenda Sekolah.*
 
 ## 3. Feature Flag Protection
 
@@ -76,7 +76,41 @@ Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media,
 | 22 | `/{tenant}/admin/media` | `tenant.admin.media.index` | GET | `auth:tenant_admin` | Manajemen Pustaka Berkas & File Media Induk (mendukung JSON API picker). |
 | 23 | `/{tenant}/admin/media/upload` | `tenant.admin.media.upload` | POST | `auth:tenant_admin` | Unggah dan konversi berkas media ke WebP (berelasi `pengguna_id`). |
 | 24 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.index` | GET | `auth:tenant_admin` | Panel pengaturan tema & palet warna portal sekolah. |
-| 25 | `/{tenant}/admin/pengaturan` | `tenant.admin.pengaturan.update` | PUT | `auth:tenant_admin` | Menyimpan `skema_tema` dan 7 kunci warna palet ke tabel tenant `pengaturan_umum`. |
+| 26 | `/{tenant}/admin/informasi/berita` | `tenant.admin.informasi.berita` | GET | `auth:tenant_admin` | Manajemen Berita & Artikel Sekolah (listing, filter status, kategori). |
+| 27 | `/{tenant}/admin/informasi/berita` | `tenant.admin.informasi.berita.store` | POST | `auth:tenant_admin` | Tambah artikel berita baru dengan editor WYSIWYG & media picker. |
+| 28 | `/{tenant}/admin/informasi/berita/{berita}` | `tenant.admin.informasi.berita.update` | PUT | `auth:tenant_admin` | Perbarui artikel berita sekolah. |
+| 29 | `/{tenant}/admin/informasi/berita/{berita}` | `tenant.admin.informasi.berita.destroy` | DELETE | `auth:tenant_admin` | Hapus artikel berita sekolah. |
+| 30 | `/{tenant}/admin/informasi/pengumuman` | `tenant.admin.informasi.pengumuman` | GET | `auth:tenant_admin` | Manajemen Pengumuman Resmi Kedinasan/Sekolah. |
+| 31 | `/{tenant}/admin/informasi/pengumuman` | `tenant.admin.informasi.pengumuman.store` | POST | `auth:tenant_admin` | Terbitkan pengumuman resmi baru. |
+| 32 | `/{tenant}/admin/informasi/pengumuman/{pengumuman}` | `tenant.admin.informasi.pengumuman.update` | PUT | `auth:tenant_admin` | Perbarui pengumuman resmi. |
+| 33 | `/{tenant}/admin/informasi/pengumuman/{pengumuman}` | `tenant.admin.informasi.pengumuman.destroy` | DELETE | `auth:tenant_admin` | Hapus pengumuman resmi. |
+| 34 | `/{tenant}/admin/informasi/agenda` | `tenant.admin.informasi.agenda` | GET | `auth:tenant_admin` | Manajemen Kalender & Agenda Kegiatan (tanggal, waktu, lokasi, registrasi). |
+| 35 | `/{tenant}/admin/informasi/agenda` | `tenant.admin.informasi.agenda.store` | POST | `auth:tenant_admin` | Tambah agenda kegiatan baru. |
+| 36 | `/{tenant}/admin/informasi/agenda/{agenda}` | `tenant.admin.informasi.agenda.update` | PUT | `auth:tenant_admin` | Perbarui agenda kegiatan sekolah. |
+| 37 | `/{tenant}/admin/informasi/agenda/{agenda}` | `tenant.admin.informasi.agenda.destroy` | DELETE | `auth:tenant_admin` | Hapus agenda kegiatan sekolah. |
+| 38 | `/{tenant}/admin/informasi/galeri` | `tenant.admin.informasi.galeri` | GET | `auth:tenant_admin` | Manajemen Galeri Album Foto & Video Dokumentasi. |
+| 39 | `/{tenant}/admin/informasi/galeri/album` | `tenant.admin.informasi.galeri.album.store` | POST | `auth:tenant_admin` | Buat album galeri baru (tipe foto/video). |
+| 40 | `/{tenant}/admin/informasi/galeri/album/{album}` | `tenant.admin.informasi.galeri.album.update` | PUT | `auth:tenant_admin` | Perbarui data album galeri. |
+| 41 | `/{tenant}/admin/informasi/galeri/album/{album}` | `tenant.admin.informasi.galeri.album.destroy` | DELETE | `auth:tenant_admin` | Hapus album galeri beserta seluruh isinya. |
+| 42 | `/{tenant}/admin/informasi/galeri/album/{album}/item` | `tenant.admin.informasi.galeri.item.store` | POST | `auth:tenant_admin` | Tambah berkas foto / video YouTube ke dalam album. |
+| 43 | `/{tenant}/admin/informasi/galeri/item/{item}` | `tenant.admin.informasi.galeri.item.destroy` | DELETE | `auth:tenant_admin` | Hapus satu item media dari album. |
+| 44 | `/{tenant}/admin/informasi/fasilitas` | `tenant.admin.informasi.fasilitas` | GET | `auth:tenant_admin` | Manajemen Sarana & Fasilitas Sekolah (foto utama 4:3, multi-foto tambahan, stats). |
+| 45 | `/{tenant}/admin/informasi/fasilitas` | `tenant.admin.informasi.fasilitas.store` | POST | `auth:tenant_admin` | Tambah fasilitas/ruangan baru beserta galeri fotonya. |
+| 46 | `/{tenant}/admin/informasi/fasilitas/{fasilitas}` | `tenant.admin.informasi.fasilitas.update` | PUT | `auth:tenant_admin` | Perbarui data fasilitas dan galeri fotonya. |
+| 47 | `/{tenant}/admin/informasi/fasilitas/{fasilitas}` | `tenant.admin.informasi.fasilitas.destroy` | DELETE | `auth:tenant_admin` | Hapus fasilitas sekolah. |
+| 48 | `/{tenant}/admin/informasi/fasilitas/foto/{foto}` | `tenant.admin.informasi.fasilitas.foto.destroy` | DELETE | `auth:tenant_admin` | Hapus satu foto dokumentasi tambahan fasilitas. |
+| 49 | `/{tenant}/admin/informasi/fasilitas/stats/update` | `tenant.admin.informasi.fasilitas.stats.update` | POST/PUT | `auth:tenant_admin` | Simpan angka metrik statistik sarpras (ruang kelas, lab, perpustakaan, internet). |
+| 50 | `/{tenant}/admin/informasi/hero/{modul}` | `tenant.admin.informasi.hero` | POST/PUT | `auth:tenant_admin` | Simpan kustomisasi hero banner publik untuk modul informasi terkait. |
+| 51 | `/{tenant}/admin/informasi/toggle-status` | `tenant.admin.informasi.toggle-status` | POST | `auth:tenant_admin` | Sakelar AJAX untuk visibilitas per-item atau feature flag global modul informasi. |
+| 52 | `/{tenant}/admin/gtk` | `tenant.admin.gtk.index` | GET | `auth:tenant_admin` | Panel Manajemen Struktur Organisasi & Guru Tenaga Kependidikan (GTK). |
+| 53 | `/{tenant}/admin/gtk/struktur` | `tenant.admin.gtk.struktur.update` | PUT | `auth:tenant_admin` | Simpan kustomisasi banner hero & diagram struktur organisasi. |
+| 54 | `/{tenant}/admin/gtk/pejabat` | `tenant.admin.gtk.pejabat.store` | POST | `auth:tenant_admin` | Tambah data pejabat struktural baru. |
+| 55 | `/{tenant}/admin/gtk/pejabat/{pejabat}` | `tenant.admin.gtk.pejabat.update` | PUT | `auth:tenant_admin` | Perbarui data pejabat struktural. |
+| 56 | `/{tenant}/admin/gtk/pejabat/{pejabat}` | `tenant.admin.gtk.pejabat.destroy` | DELETE | `auth:tenant_admin` | Hapus data pejabat struktural. |
+| 57 | `/{tenant}/admin/gtk/guru-hero` | `tenant.admin.gtk.guru.hero.update` | PUT | `auth:tenant_admin` | Simpan pengaturan banner hero halaman Guru & Staf publik. |
+| 58 | `/{tenant}/admin/gtk/guru` | `tenant.admin.gtk.guru.store` | POST | `auth:tenant_admin` | Tambah data Guru / Tenaga Kependidikan baru. |
+| 59 | `/{tenant}/admin/gtk/guru/{guru}` | `tenant.admin.gtk.guru.update` | PUT | `auth:tenant_admin` | Perbarui data Guru / Tenaga Kependidikan. |
+| 60 | `/{tenant}/admin/gtk/guru/{guru}` | `tenant.admin.gtk.guru.destroy` | DELETE | `auth:tenant_admin` | Hapus data Guru / Tenaga Kependidikan. |
 
 ### 4.1 Shortcut Global
 

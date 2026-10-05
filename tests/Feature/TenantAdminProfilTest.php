@@ -47,8 +47,7 @@ test('admin can access profil index page with tabs', function () {
     $response->assertSee('Data Pokok Satuan Pendidikan');
     $response->assertSee('Sejarah Sekolah');
     $response->assertSee('Visi, Misi &amp; Sasaran Mutu', false);
-    $response->assertSee('Struktur Organisasi');
-    $response->assertSee('Kelola Struktur Organisasi');
+    $response->assertSee('Visibilitas Menu &amp; Rute', false);
 
     // Kontrol yang sudah dihapus tidak boleh muncul lagi di form admin
     $response->assertDontSee('pola_latar_profil');
