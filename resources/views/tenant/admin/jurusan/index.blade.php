@@ -6,33 +6,6 @@
 @push('styles')
 <!-- Quill WYSIWYG CSS -->
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<style>
-    .ql-toolbar.ql-snow {
-        border-top-left-radius: 0.75rem;
-        border-top-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        background-color: #f8fafc;
-        padding: 0.6rem 0.8rem;
-    }
-    .ql-container.ql-snow {
-        border-bottom-left-radius: 0.75rem;
-        border-bottom-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-        font-size: 0.875rem;
-        min-height: 200px;
-        background-color: #ffffff;
-    }
-    .ql-editor {
-        min-height: 200px;
-        line-height: 1.65;
-        color: #1e293b;
-    }
-    .ql-editor.ql-blank::before {
-        color: #94a3b8;
-        font-style: normal;
-    }
-</style>
 @endpush
 
 @section('content')
@@ -42,6 +15,7 @@
          toastMsg: @js(session('success') ?? ''),
          bannerHeroPreview: @js(old('gambar_banner_jurusan', $halamanJurusan->gambar_banner ?? '')),
          isFiturAktif: @js((bool) $isFiturAktif),
+         totalJurusan: @js($jurusanList->count()),
          nextUrutan: @js($jurusanList->count() + 1),
          routes: {
              mediaIndex: @js(route('tenant.admin.media.index', ['tenant' => app('tenant')->slug])),
@@ -83,45 +57,110 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="setTab('jurusan')"
-                :class="activeTab === 'jurusan' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            1. Daftar Program Keahlian
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Navigation Pills -->
+            <div class="admin-tab-nav taildash-scrollbar">
+                <button type="button" @click="setTab('jurusan')"
+                        :class="activeTab === 'jurusan' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <span>1. Daftar Program Keahlian</span>
+                </button>
 
-        <!-- Tab Form (Edit / Tambah) - Permanen Aktif -->
-        <button type="button" @click="setTab('form_jurusan')"
-                :class="activeTab === 'form_jurusan' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span x-text="jurusanForm.id ? '2. Edit: ' + (jurusanForm.singkatan || jurusanForm.nama_jurusan) : '2. Form Program Keahlian'"></span>
-        </button>
+                <!-- Tab Form (Edit / Tambah) - Permanen Aktif -->
+                <button type="button" @click="setTab('form_jurusan')"
+                        :class="activeTab === 'form_jurusan' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span x-text="jurusanForm.id ? '2. Edit: ' + (jurusanForm.singkatan || jurusanForm.nama_jurusan) : '2. Form Program Keahlian'"></span>
+                </button>
 
-        <button type="button" @click="setTab('hero')"
-                :class="activeTab === 'hero' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            3. Hero Banner Publik
-        </button>
+                <button type="button" @click="setTab('hero')"
+                        :class="activeTab === 'hero' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>3. Hero Banner Publik</span>
+                </button>
 
-        <button type="button" @click="setTab('visibilitas')"
-                :class="activeTab === 'visibilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            4. Visibilitas Menu &amp; Rute
-        </button>
+                <button type="button" @click="setTab('visibilitas')"
+                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span>4. Visibilitas Menu &amp; Rute</span>
+                </button>
+            </div>
+
+            <!-- Sticky Top Action Buttons -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'jurusan'">
+                    <button type="button" @click="openFormJurusan()" 
+                            class="admin-btn-save">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Tambah Program Keahlian</span>
+                    </button>
+                </template>
+
+                <template x-if="activeTab === 'form_jurusan'">
+                    <div class="flex items-center gap-2">
+                        <template x-if="jurusanForm.id">
+                            <button type="button" @click="openFormJurusan()" 
+                                    class="admin-btn-create">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>[+] Form Baru</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="setTab('jurusan')" 
+                                class="admin-btn-cancel">
+                            Batal
+                        </button>
+                        <button type="button" 
+                                @click="submitActiveForm('form-jurusan-main')" 
+                                :disabled="formSubmitLoading"
+                                class="admin-btn-save">
+                            <template x-if="formSubmitLoading">
+                                <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </template>
+                            <template x-if="!formSubmitLoading">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </template>
+                            <span x-text="formSubmitLoading ? 'Menyimpan...' : (jurusanForm.id ? 'Simpan Perubahan' : 'Tambah Program Keahlian')"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'hero'">
+                    <button type="button" 
+                            @click="submitActiveForm('form-jurusan-hero')" 
+                            :disabled="submitLoading"
+                            class="admin-btn-save">
+                        <template x-if="submitLoading">
+                            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </template>
+                        <template x-if="!submitLoading">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </template>
+                        <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Pengaturan Hero'"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- INCLUDED TAB PARTIALS -->
@@ -151,7 +190,26 @@
             bannerHeroPreview: config.bannerHeroPreview || '',
             isFiturAktif: !!config.isFiturAktif,
 
-            totalJurusan: @js($jurusanList->count()),
+            totalJurusan: config.totalJurusan || 0,
+            jurusanForm: {
+                id: null,
+                nama_jurusan: '',
+                singkatan: '',
+                logo: '',
+                slug: '',
+                guru_id: '',
+                deskripsi_singkat: '',
+                deskripsi_lengkap: '',
+                informasi_tambahan: '',
+                ikon_atau_foto: '',
+                foto_crop_style: '',
+                jenjang: 'SMK (3 Tahun)',
+                peluang_kerja: 'Industri & Wirausaha',
+                sertifikasi: 'LSP-P1 / BNSP',
+                urutan: config.nextUrutan || 1,
+                is_aktif: true,
+                galeri_fotos: []
+            },
             get maxUrutanOptions() {
                 const total = Math.max(this.totalJurusan + (this.jurusanForm.id ? 0 : 1), 1);
                 const opts = [];
@@ -268,6 +326,23 @@
                 if (this.quillInfoProgram) {
                     const ta2 = document.getElementById('informasi_tambahan');
                     if (ta2) ta2.value = this.quillInfoProgram.root.innerHTML;
+                }
+            },
+
+            submitActiveForm(formId) {
+                if (formId === 'form-jurusan-main') {
+                    this.syncEditors();
+                    this.formSubmitLoading = true;
+                } else if (formId === 'form-jurusan-hero') {
+                    this.submitLoading = true;
+                }
+                const form = document.getElementById(formId);
+                if (form) {
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();
+                    }
                 }
             },
 
@@ -439,8 +514,8 @@
                         page: page,
                         per_page: this.pickerPerPage
                     });
-                    const url = config.routes && config.routes.mediaIndex ? config.routes.mediaIndex : `/${@js(app('tenant')->slug)}/admin/media`;
-                    const res = await fetch(`${url}?${params}`, {
+                    const baseUrl = (config.routes && config.routes.mediaIndex) ? config.routes.mediaIndex : '/admin/media';
+                    const res = await fetch(`${baseUrl}?${params}`, {
                         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
                     const json = await res.json();
@@ -493,8 +568,8 @@
                 this.pickerLoading = true;
                 try {
                     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const url = config.routes && config.routes.mediaUpload ? config.routes.mediaUpload : `/${@js(app('tenant')->slug)}/admin/media/upload`;
-                    const res = await fetch(url, {
+                    const uploadUrl = (config.routes && config.routes.mediaUpload) ? config.routes.mediaUpload : '/admin/media/upload';
+                    const res = await fetch(uploadUrl, {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
@@ -533,8 +608,8 @@
                 this.pickerLoading = true;
                 try {
                     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    const url = config.routes && config.routes.mediaImportUrl ? config.routes.mediaImportUrl : `/${@js(app('tenant')->slug)}/admin/media/import-url`;
-                    const res = await fetch(url, {
+                    const importUrl = (config.routes && config.routes.mediaImportUrl) ? config.routes.mediaImportUrl : '/admin/media/import-url';
+                    const res = await fetch(importUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

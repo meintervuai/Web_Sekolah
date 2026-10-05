@@ -276,7 +276,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="absolute inset-0 w-full h-full"
-         style="{{ $hasHeroBannerVid ? 'display: none;' : '' }}">
+         @style(['display: none' => $hasHeroBannerVid])>
       
       <img src="{{ $sekolahData['hero_banner'] }}"
            alt="Banner Hero {{ $sekolahData['nama'] }}"
@@ -395,7 +395,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           <!-- Main Fit Photo -->
           <img src="{{ $sekolahData['foto_kepsek'] }}"
             alt="{{ $sekolahData['kepsek'] }}"
-            style="{{ \App\Services\MediaService::getCropStyle($sekolahData['foto_kepsek'] ?? '') }}"
+            @style([\App\Services\MediaService::getCropStyle($sekolahData['foto_kepsek'] ?? '')])
             class="relative z-10 w-full h-80 sm:h-96 object-cover">
           <div class="p-5 theme-bg-dark text-white">
             <h3 class="font-heading font-bold text-base sm:text-lg text-white leading-tight">{{ $sekolahData['kepsek'] }}</h3>

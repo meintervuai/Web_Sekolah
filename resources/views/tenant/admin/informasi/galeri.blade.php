@@ -16,7 +16,8 @@
              mediaIndex: @js(route('tenant.admin.media.index', ['tenant' => app('tenant')->slug])),
              mediaUpload: @js(route('tenant.admin.media.upload', ['tenant' => app('tenant')->slug])),
              mediaImportUrl: @js(route('tenant.admin.media.import-url', ['tenant' => app('tenant')->slug])),
-             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug]))
+             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug])),
+             storeAlbum: @js(route('tenant.admin.informasi.galeri.album.store', ['tenant' => app('tenant')->slug]))
          }
      })"
      x-init="init()">
@@ -53,47 +54,91 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="activeTab = 'album'"
-                :class="activeTab === 'album' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            1. Daftar Album Dokumentasi
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Pills -->
+            <div class="admin-tab-nav">
+                <button type="button" @click="activeTab = 'album'"
+                        :class="activeTab === 'album' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    1. Daftar Album
+                </button>
 
-        @if($selectedAlbum)
-        <button type="button" @click="activeTab = 'items'"
-                :class="activeTab === 'items' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <span>Isi Media: {{ Str::limit($selectedAlbum->nama_album, 18) }}</span>
-            <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 text-white font-bold">{{ $selectedAlbum->items->count() }}</span>
-        </button>
-        @endif
+                @if($selectedAlbum)
+                <button type="button" @click="activeTab = 'items'"
+                        :class="activeTab === 'items' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Isi Media: {{ Str::limit($selectedAlbum->nama_album, 18) }}</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 text-white font-bold">{{ $selectedAlbum->items->count() }}</span>
+                </button>
+                @endif
 
-        <button type="button" @click="activeTab = 'form'"
-                :class="activeTab === 'form' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span x-text="editMode ? 'Edit Album: ' + formNamaAlbum.substring(0,20) + '...' : 'Buat Album Baru'"></span>
-        </button>
+                <button type="button" @click="activeTab = 'form'"
+                        :class="activeTab === 'form' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span x-text="editMode ? 'Edit: ' + (formNamaAlbum ? formNamaAlbum.substring(0,18) + '...' : 'Album') : '2. Buat Album Baru'"></span>
+                </button>
 
-        <button type="button" @click="activeTab = 'visibilitas'"
-                :class="activeTab === 'visibilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            Visibilitas Menu &amp; Rute
-        </button>
+                <button type="button" @click="activeTab = 'visibilitas'"
+                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Visibilitas Menu
+                </button>
+            </div>
+
+            <!-- Sticky Right Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'album'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="tambahAlbumBaru()" 
+                                class="admin-btn-create">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Buat Album</span>
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-galeri-hero')" :disabled="submitLoading"
+                                class="admin-btn-save bg-slate-800 hover:bg-slate-900">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Hero'"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'form'">
+                    <div class="flex items-center gap-2">
+                        <template x-if="editMode">
+                            <button type="button" @click="tambahAlbumBaru()" 
+                                    class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>[+] Album Baru</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="activeTab = 'album'" 
+                                class="admin-btn-cancel text-xs">
+                            Batal
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-galeri-album')" :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : (editMode ? 'Simpan Album' : 'Buat Album')"></span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- =========================================================================
@@ -101,7 +146,7 @@
     ========================================================================== -->
     <div x-show="activeTab === 'album'" x-cloak class="space-y-6">
         <!-- Pengaturan Hero Banner Galeri Publik -->
-        <form action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'galeri']) }}" method="POST">
+        <form id="form-galeri-hero" action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'galeri']) }}" method="POST" @submit="submitLoading = true">
             @csrf
             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
                 <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -164,12 +209,6 @@
                         <p class="text-[10px] text-slate-400 mt-1">Resolusi minimal 1600x600px rasio lebar untuk tampilan tajam di layar desktop &amp; mobile.</p>
                     </div>
                 </div>
-
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                        Simpan Perubahan Banner Hero
-                    </button>
-                </div>
             </div>
         </form>
 
@@ -221,65 +260,63 @@
                 </div>
             </form>
 
-            <!-- Album Grid Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
+            <!-- Album Grid Cards (Sama Persis dengan Manajemen Media) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pt-2">
                 @forelse($albumList as $alb)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition overflow-hidden flex flex-col group">
-                    <!-- Cover Image Box -->
-                    <div class="aspect-16/10 bg-slate-100 relative overflow-hidden">
+                <div class="group bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between relative">
+                    <!-- Badge Media Count & Tipe -->
+                    <div class="absolute top-2 right-2 z-30 pointer-events-auto">
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded-md shadow-xs {{ $alb->tipe === 'video' ? 'bg-rose-600 text-white' : 'bg-blue-600 text-white' }}">
+                            {{ $alb->items_count }} {{ $alb->tipe === 'video' ? 'Vid' : 'Foto' }}
+                        </span>
+                    </div>
+
+                    <!-- Cover Preview Box -->
+                    <div class="relative bg-slate-900 aspect-square overflow-hidden flex items-center justify-center">
                         @if($alb->cover_album)
-                            <img src="{{ $alb->cover_album }}" alt="{{ $alb->nama_album }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <!-- Ambient Blurred Backdrop -->
+                            <img src="{{ $alb->cover_album }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                            <!-- Main Cover Image -->
+                            <img src="{{ $alb->cover_album }}" alt="{{ $alb->nama_album }}" loading="lazy" class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
                             <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                                <svg class="w-10 h-10 mb-1 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span class="text-[10px]">Belum ada cover</span>
+                                <svg class="w-8 h-8 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="text-[9px]">Tanpa Cover</span>
                             </div>
                         @endif
 
-                        <div class="absolute top-3 left-3">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-xs {{ $alb->tipe === 'video' ? 'bg-rose-900/80 text-rose-200 border border-rose-700/50' : 'bg-blue-900/80 text-blue-200 border border-blue-700/50' }}">
-                                {{ $alb->tipe === 'video' ? 'Video' : 'Foto' }}
-                            </span>
-                        </div>
+                        <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold rounded uppercase">
+                            {{ $alb->tipe }}
+                        </span>
 
-                        <div class="absolute bottom-3 right-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-900/80 text-white backdrop-blur-md">
-                                {{ $alb->items_count }} Media
-                            </span>
+                        <!-- Hover Overlay Action Bar -->
+                        <div class="absolute inset-0 z-40 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                            <a href="{{ route('tenant.admin.informasi.galeri', ['tenant' => app('tenant')->slug, 'tab' => 'items', 'album_id' => $alb->id]) }}" 
+                               class="p-2 bg-white text-blue-600 rounded-xl hover:bg-blue-50 shadow-xs text-xs font-semibold cursor-pointer transition" 
+                               title="Kelola Media">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </a>
+                            <button type="button" 
+                                    @click="editAlbumItem(@js($alb))" 
+                                    class="p-2 bg-white text-amber-600 rounded-xl hover:bg-amber-50 shadow-xs text-xs font-semibold cursor-pointer transition" 
+                                    title="Edit Album">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            </button>
+                            <button type="button" 
+                                    @click="konfirmasiHapusAlbum(@js($alb->id), @js($alb->nama_album), @js($alb->items_count))" 
+                                    class="p-2 bg-white text-rose-600 rounded-xl hover:bg-rose-50 shadow-xs text-xs font-semibold cursor-pointer transition" 
+                                    title="Hapus Album">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Card Body -->
-                    <div class="p-4 sm:p-5 flex-1 flex flex-col">
-                        <h3 class="font-bold text-slate-900 font-heading text-xs sm:text-sm mb-1 group-hover:text-blue-600 transition line-clamp-1">
-                            {{ $alb->nama_album }}
-                        </h3>
-                        <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4 flex-1">
-                            {{ $alb->deskripsi ?? 'Dokumentasi kegiatan resmi lingkungan sekolah.' }}
-                        </p>
-
-                        <!-- Action Bar -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <a href="{{ route('tenant.admin.informasi.galeri', ['tenant' => app('tenant')->slug, 'tab' => 'items', 'album_id' => $alb->id]) }}" 
-                               class="inline-flex items-center text-xs font-bold text-blue-600 hover:text-blue-800 transition">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Kelola Media ({{ $alb->items_count }})
-                            </a>
-
-                            <div class="flex items-center space-x-1">
-                                <button type="button" 
-                                        @click="editAlbumItem(@js($alb))" 
-                                        class="p-1.5 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer" 
-                                        title="Edit Info Album">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button type="button" 
-                                        @click="konfirmasiHapusAlbum(@js($alb->id), @js($alb->nama_album), @js($alb->items_count))" 
-                                        class="p-1.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer" 
-                                        title="Hapus Album">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
+                    <!-- Meta Details -->
+                    <div class="p-2.5">
+                        <div class="font-bold text-slate-900 text-xs truncate" title="{{ $alb->nama_album }}">{{ $alb->nama_album }}</div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+                            <span class="truncate capitalize font-semibold {{ $alb->tipe === 'video' ? 'text-rose-600' : 'text-blue-600' }}">{{ $alb->tipe }}</span>
+                            <span>{{ $alb->items_count }} Media</span>
                         </div>
                     </div>
                 </div>
@@ -367,39 +404,47 @@
                 </div>
             </form>
 
-            <!-- Items Grid in Selected Album -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pt-2">
+            <!-- Items Grid in Selected Album (Identik dengan Manajemen Media) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pt-2">
                 @forelse($selectedAlbum->items as $item)
                 @php
                     $itemSrc = $item->file_media_atau_link ?? $item->file_path ?? '';
                     $isVideoItem = Str::contains($itemSrc, ['youtube.com', 'youtu.be', '.mp4', '.webm', '.mov']) || $selectedAlbum->tipe === 'video';
                 @endphp
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden group flex flex-col">
-                    <div class="aspect-4/3 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+                <div class="group bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between relative">
+                    <div class="relative bg-slate-900 aspect-square overflow-hidden flex items-center justify-center">
                         @if($isVideoItem)
                             <div class="w-full h-full bg-slate-900 flex flex-col items-center justify-center text-white p-2 text-center">
                                 <svg class="w-8 h-8 text-rose-500 mb-1" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-                                <span class="text-[10px] font-bold truncate max-w-full text-slate-300">{{ Str::limit($item->judul_item ?? $itemSrc, 20) }}</span>
+                                <span class="text-[9px] font-bold truncate max-w-full text-slate-300">{{ Str::limit($item->judul_item ?? $itemSrc, 16) }}</span>
                             </div>
                         @else
-                            <img src="{{ $itemSrc }}" alt="{{ $item->judul_item }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <!-- Ambient Blurred Backdrop -->
+                            <img src="{{ $itemSrc }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                            <!-- Main Item Image -->
+                            <img src="{{ $itemSrc }}" alt="{{ $item->judul_item }}" loading="lazy" class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @endif
 
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
-                            <a href="{{ $itemSrc }}" target="_blank" class="p-2 bg-white/90 hover:bg-white text-slate-800 rounded-lg text-xs font-bold shadow-xs transition" title="Lihat Asli">
+                        <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold rounded uppercase">
+                            {{ $isVideoItem ? 'video' : 'foto' }}
+                        </span>
+
+                        <!-- Hover Overlay Action Bar -->
+                        <div class="absolute inset-0 z-40 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                            <a href="{{ $itemSrc }}" target="_blank" class="p-2 bg-white text-blue-600 rounded-xl hover:bg-blue-50 shadow-xs text-xs font-semibold transition" title="Lihat Asli">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                             </a>
                             <form action="{{ route('tenant.admin.informasi.galeri.item.destroy', ['tenant' => app('tenant')->slug, 'item' => $item->id]) }}" method="POST" onsubmit="return confirm('Hapus media ini dari album?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="p-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-xs transition cursor-pointer" title="Hapus Media">
+                                <button type="submit" class="p-2 bg-white text-rose-600 rounded-xl hover:bg-rose-50 shadow-xs text-xs font-semibold cursor-pointer transition" title="Hapus Media">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </form>
                         </div>
                     </div>
-                    <div class="p-3">
-                        <span class="text-xs font-bold text-slate-800 block truncate">{{ $item->judul_item ?? 'Foto Dokumentasi' }}</span>
+                    <div class="p-2.5">
+                        <div class="font-bold text-slate-900 text-xs truncate" title="{{ $item->judul_item ?? 'Foto Dokumentasi' }}">{{ $item->judul_item ?: 'Foto Dokumentasi' }}</div>
                     </div>
                 </div>
                 @empty
@@ -416,7 +461,7 @@
          TAB 3: FORM BUAT / EDIT ALBUM
     ========================================================================== -->
     <div x-show="activeTab === 'form'" x-cloak class="space-y-6">
-        <form :action="formAlbumActionUrl" method="POST">
+        <form id="form-galeri-album" :action="formAlbumActionUrl" method="POST" @submit="submitLoading = true">
             @csrf
             <template x-if="editMode">
                 <input type="hidden" name="_method" value="PUT">
@@ -488,7 +533,7 @@
                         <div class="flex gap-2 items-center">
                             <input type="text" 
                                    name="cover_album" 
-                                   id="input_cover_album"
+                                   id="input_cover_album" 
                                    x-model="formCoverAlbum" 
                                    placeholder="https://... atau pilih media" 
                                    class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
@@ -500,15 +545,6 @@
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <button type="button" @click="activeTab = 'album'" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition cursor-pointer">
-                        Batal
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer">
-                        <span x-text="editMode ? 'Simpan Perubahan Album' : 'Buat Album & Lanjutkan'"></span>
-                    </button>
                 </div>
             </div>
         </form>
@@ -593,6 +629,23 @@ document.addEventListener('alpine:init', () => {
         bannerHeroPreview: config.bannerHeroPreview,
         isFiturAktif: config.isFiturAktif,
         isToggling: false,
+        submitLoading: false,
+
+        submitActiveForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            if (form.reportValidity && !form.reportValidity()) {
+                return;
+            }
+
+            this.submitLoading = true;
+            if (form.requestSubmit) {
+                form.requestSubmit();
+            } else {
+                form.submit();
+            }
+        },
 
         // Modal hapus
         modalHapus: false,
@@ -602,7 +655,7 @@ document.addEventListener('alpine:init', () => {
 
         // Form Album State
         editMode: false,
-        formAlbumActionUrl: @js(route('tenant.admin.informasi.galeri.album.store', ['tenant' => app('tenant')->slug])),
+        formAlbumActionUrl: (config.routes && config.routes.storeAlbum) ? config.routes.storeAlbum : '',
         formNamaAlbum: '',
         formTipeAlbum: 'foto',
         formDeskripsiAlbum: '',
@@ -622,7 +675,7 @@ document.addEventListener('alpine:init', () => {
 
         tambahAlbumBaru() {
             this.editMode = false;
-            this.formAlbumActionUrl = @js(route('tenant.admin.informasi.galeri.album.store', ['tenant' => app('tenant')->slug]));
+            this.formAlbumActionUrl = (config.routes && config.routes.storeAlbum) ? config.routes.storeAlbum : '';
             this.formNamaAlbum = '';
             this.formTipeAlbum = 'foto';
             this.formDeskripsiAlbum = '';
@@ -632,7 +685,8 @@ document.addEventListener('alpine:init', () => {
 
         editAlbumItem(album) {
             this.editMode = true;
-            this.formAlbumActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/galeri/album/${album.id}`;
+            const baseUrl = (config.routes && config.routes.storeAlbum) ? config.routes.storeAlbum : '';
+            this.formAlbumActionUrl = `${baseUrl}/${album.id}`;
             this.formNamaAlbum = album.nama_album;
             this.formTipeAlbum = album.tipe || 'foto';
             this.formDeskripsiAlbum = album.deskripsi || '';
@@ -643,7 +697,8 @@ document.addEventListener('alpine:init', () => {
         konfirmasiHapusAlbum(id, nama, count) {
             this.hapusNama = nama;
             this.hapusCount = count;
-            this.hapusActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/galeri/album/${id}`;
+            const baseUrl = (config.routes && config.routes.storeAlbum) ? config.routes.storeAlbum : '';
+            this.hapusActionUrl = `${baseUrl}/${id}`;
             this.modalHapus = true;
         },
 

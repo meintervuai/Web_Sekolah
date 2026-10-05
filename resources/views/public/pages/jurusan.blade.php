@@ -62,7 +62,7 @@
                                 <!-- Main Image -->
                                 <img src="{{ $j->ikon_atau_foto }}" 
                                      alt="{{ $j->nama_jurusan }}" 
-                                     style="{{ \App\Services\MediaService::getCropStyle($j->ikon_atau_foto) }}"
+                                     @style([\App\Services\MediaService::getCropStyle($j->ikon_atau_foto)])
                                      class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 <div class="absolute inset-0 z-20 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none"></div>
                             @else

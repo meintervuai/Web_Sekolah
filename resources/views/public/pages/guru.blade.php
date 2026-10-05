@@ -77,7 +77,7 @@
                     <!-- Main Fit Photo -->
                     <img src="{{ $g->foto ?? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop' }}" 
                          alt="{{ $g->nama_lengkap }}" 
-                         style="{{ $g->foto_crop_style }}"
+                         @style([$g->foto_crop_style])
                          class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                 </div>
 

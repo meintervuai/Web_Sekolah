@@ -61,7 +61,7 @@
                         <!-- Main Image with Smart Crop -->
                         <img src="{{ $detailFoto }}" 
                              alt="{{ $jurusan->nama_jurusan }}" 
-                             style="{{ \App\Services\MediaService::getCropStyle($detailFoto) }}"
+                             @style([\App\Services\MediaService::getCropStyle($detailFoto)])
                              class="relative z-10 w-full h-full object-cover">
                     </div>
                 </div>

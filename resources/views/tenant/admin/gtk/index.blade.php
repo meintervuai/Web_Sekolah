@@ -51,25 +51,83 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="setTab('struktur')"
-                :class="activeTab === 'struktur' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            1. Struktur Organisasi
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Navigation Pills -->
+            <div class="admin-tab-nav taildash-scrollbar">
+                <button type="button" @click="setTab('struktur')"
+                        :class="activeTab === 'struktur' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>1. Struktur Organisasi</span>
+                </button>
 
-        <button type="button" @click="setTab('guru')"
-                :class="activeTab === 'guru' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-            2. Guru &amp; Tenaga Kependidikan
-        </button>
+                <button type="button" @click="setTab('guru')"
+                        :class="activeTab === 'guru' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <span>2. Guru &amp; Tenaga Kependidikan</span>
+                </button>
+            </div>
+
+            <!-- Sticky Top Action Buttons -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'struktur'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="openModalPejabat()" 
+                                class="admin-btn-action">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Tambah Pejabat</span>
+                        </button>
+                        <button type="button" 
+                                @click="submitActiveForm('form-gtk-struktur')" 
+                                :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <template x-if="submitLoading">
+                                <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </template>
+                            <template x-if="!submitLoading">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </template>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Bagan & Hero Struktur'"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'guru'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="openModalGuru()" 
+                                class="admin-btn-action">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Tambah Guru / Staf</span>
+                        </button>
+                        <button type="button" 
+                                @click="submitActiveForm('form-gtk-guru-hero')" 
+                                :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <template x-if="submitLoading">
+                                <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </template>
+                            <template x-if="!submitLoading">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </template>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Hero Guru'"></span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- INCLUDED TAB PARTIALS -->
@@ -175,6 +233,18 @@
                 const url = new URL(window.location);
                 url.searchParams.set('tab', tab);
                 window.history.replaceState({}, '', url);
+            },
+
+            submitActiveForm(formId) {
+                this.submitLoading = true;
+                const form = document.getElementById(formId);
+                if (form) {
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();
+                    }
+                }
             },
 
             // Media Picker Handlers

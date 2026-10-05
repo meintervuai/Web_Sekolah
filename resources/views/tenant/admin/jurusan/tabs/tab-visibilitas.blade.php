@@ -1,45 +1,50 @@
 <!-- TAB 3: VISIBILITAS MENU & RUTE PROGRAM KEAHLIAN -->
 <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
-        <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="admin-card space-y-5">
+        <div class="admin-card-header">
             <div>
-                <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">Sakelar Visibilitas Menu &amp; Rute Program Keahlian</h2>
-                <p class="text-xs text-slate-500 mt-0.5">
+                <h2 class="admin-card-title">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Sakelar Visibilitas Menu &amp; Rute Program Keahlian
+                </h2>
+                <p class="admin-card-subtitle mt-0.5">
                     Kontrol ketersediaan menu navigasi di header/footer, katalog di halaman beranda, dan akses rute publik (<code>/program-keahlian</code>).
                 </p>
             </div>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 self-start">
+            <span class="admin-badge-primary self-start">
                 <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
                 Feature Flag Protection
             </span>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-700">
-                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+            <table class="admin-table">
+                <thead class="admin-table-thead">
                     <tr>
-                        <th class="px-4 py-3">Komponen &amp; Rute</th>
-                        <th class="px-4 py-3">Tipe &amp; Penempatan</th>
-                        <th class="px-4 py-3">Kode Fitur</th>
-                        <th class="px-4 py-3">Status Saat Ini</th>
-                        <th class="px-4 py-3 text-right">Sakelar Visibilitas</th>
+                        <th class="admin-table-th">Komponen &amp; Rute</th>
+                        <th class="admin-table-th">Tipe &amp; Penempatan</th>
+                        <th class="admin-table-th">Kode Fitur</th>
+                        <th class="admin-table-th">Status Saat Ini</th>
+                        <th class="admin-table-th text-right">Sakelar Visibilitas</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <tr class="bg-blue-50/60 font-bold text-slate-900 border-t-2 border-blue-200">
-                        <td class="px-4 py-3.5 flex items-center gap-2">
+                        <td class="admin-table-td flex items-center gap-2">
                             <div class="w-3 h-3 rounded-md bg-blue-600 flex items-center justify-center text-[9px] text-white">★</div>
                             <span class="text-xs sm:text-sm text-blue-950">Menu Utama &amp; Rute Program Keahlian</span>
                         </td>
-                        <td class="px-4 py-3.5 font-mono text-xs text-blue-800">Navbar / Katalog / Detail</td>
-                        <td class="px-4 py-3.5 font-mono text-xs text-blue-700 font-semibold">program_keahlian</td>
-                        <td class="px-4 py-3.5">
-                            <span :class="isFiturAktif ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
-                                  class="px-2.5 py-1 rounded-full text-[10px] font-bold">
+                        <td class="admin-table-td font-mono text-xs text-blue-800">Navbar / Katalog / Detail</td>
+                        <td class="admin-table-td font-mono text-xs text-blue-700 font-semibold">program_keahlian</td>
+                        <td class="admin-table-td">
+                            <span :class="isFiturAktif ? 'admin-badge-success' : 'admin-badge-slate'">
                                 <span x-text="isFiturAktif ? 'Aktif (Tampil di Publik)' : 'Nonaktif (Disembunyikan)'"></span>
                             </span>
                         </td>
-                        <td class="px-4 py-3.5 text-right">
+                        <td class="admin-table-td text-right">
                             <button type="button" 
                                     @click="toggleFeatureFlag(!isFiturAktif)"
                                     :class="isFiturAktif ? 'bg-blue-600' : 'bg-slate-300'"

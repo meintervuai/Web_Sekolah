@@ -6,33 +6,6 @@
 @push('styles')
 <!-- Quill WYSIWYG CSS -->
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<style>
-    .ql-toolbar.ql-snow {
-        border-top-left-radius: 0.75rem;
-        border-top-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        background-color: #f8fafc;
-        padding: 0.6rem 0.8rem;
-    }
-    .ql-container.ql-snow {
-        border-bottom-left-radius: 0.75rem;
-        border-bottom-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-        font-size: 0.875rem;
-        min-height: 220px;
-        background-color: #ffffff;
-    }
-    .ql-editor {
-        min-height: 220px;
-        line-height: 1.65;
-        color: #1e293b;
-    }
-    .ql-editor.ql-blank::before {
-        color: #94a3b8;
-        font-style: normal;
-    }
-</style>
 @endpush
 
 @section('content')
@@ -47,7 +20,8 @@
              mediaIndex: @js(route('tenant.admin.media.index', ['tenant' => app('tenant')->slug])),
              mediaUpload: @js(route('tenant.admin.media.upload', ['tenant' => app('tenant')->slug])),
              mediaImportUrl: @js(route('tenant.admin.media.import-url', ['tenant' => app('tenant')->slug])),
-             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug]))
+             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug])),
+             storeAgenda: @js(route('tenant.admin.informasi.agenda.store', ['tenant' => app('tenant')->slug]))
          }
      })"
      x-init="init()">
@@ -84,35 +58,79 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="activeTab = 'agenda'"
-                :class="activeTab === 'agenda' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            1. Daftar Agenda &amp; Kegiatan
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Pills -->
+            <div class="admin-tab-nav">
+                <button type="button" @click="activeTab = 'agenda'"
+                        :class="activeTab === 'agenda' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    1. Daftar Agenda &amp; Kegiatan
+                </button>
 
-        <button type="button" @click="activeTab = 'form'"
-                :class="activeTab === 'form' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span x-text="editMode ? '2. Edit Agenda: ' + formJudul.substring(0,25) + '...' : '2. Jadwalkan Agenda Baru'"></span>
-        </button>
+                <button type="button" @click="activeTab = 'form'"
+                        :class="activeTab === 'form' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span x-text="editMode ? '2. Edit Agenda: ' + (formJudul ? formJudul.substring(0,25) + '...' : '') : '2. Jadwalkan Agenda Baru'"></span>
+                </button>
 
-        <button type="button" @click="activeTab = 'visibilitas'"
-                :class="activeTab === 'visibilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            3. Visibilitas Menu &amp; Rute
-        </button>
+                <button type="button" @click="activeTab = 'visibilitas'"
+                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    3. Visibilitas Menu
+                </button>
+            </div>
+
+            <!-- Sticky Right Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'agenda'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="tambahAgendaBaru()" 
+                                class="admin-btn-create">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Jadwalkan Agenda</span>
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-agenda-hero')" :disabled="isSubmitting"
+                                class="admin-btn-save bg-slate-800 hover:bg-slate-900">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="isSubmitting ? 'Menyimpan...' : 'Simpan Hero'"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'form'">
+                    <div class="flex items-center gap-2">
+                        <template x-if="editMode">
+                            <button type="button" @click="tambahAgendaBaru()" 
+                                    class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>[+] Jadwal Baru</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="activeTab = 'agenda'" 
+                                class="admin-btn-cancel text-xs">
+                            Batal
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-agenda-main')" :disabled="isSubmitting"
+                                class="admin-btn-save">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="isSubmitting ? 'Menyimpan...' : (editMode ? 'Perbarui Agenda' : 'Simpan Agenda')"></span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- =========================================================================
@@ -120,7 +138,7 @@
     ========================================================================== -->
     <div x-show="activeTab === 'agenda'" x-cloak class="space-y-6">
         <!-- Pengaturan Hero Banner Agenda Publik -->
-        <form action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'agenda']) }}" method="POST">
+        <form id="form-agenda-hero" action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'agenda']) }}" method="POST" @submit="isSubmitting = true">
             @csrf
             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
                 <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -182,12 +200,6 @@
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1">Resolusi minimal 1600x600px rasio lebar untuk tampilan tajam di layar desktop &amp; mobile.</p>
                     </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                        Simpan Perubahan Banner Hero
-                    </button>
                 </div>
             </div>
         </form>
@@ -355,7 +367,7 @@
          TAB 2: FORM TAMBAH / EDIT AGENDA
     ========================================================================== -->
     <div x-show="activeTab === 'form'" x-cloak class="space-y-6">
-        <form :action="formActionUrl" method="POST" @submit="submitAgendaForm($event)">
+        <form id="form-agenda-main" :action="formActionUrl" method="POST" @submit="submitAgendaForm($event)">
             @csrf
             <template x-if="editMode">
                 <input type="hidden" name="_method" value="PUT">
@@ -543,18 +555,6 @@
                                 </div>
                             </label>
                         </div>
-
-                        <!-- Action Submit Form -->
-                        <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
-                            <button type="submit" 
-                                    :disabled="isSubmitting" 
-                                    class="w-full px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-                                <template x-if="isSubmitting">
-                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                </template>
-                                <span x-text="editMode ? 'Perbarui Agenda Kegiatan' : 'Simpan & Publikasikan Agenda'"></span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -650,7 +650,7 @@ document.addEventListener('alpine:init', () => {
 
         // Form Agenda State
         editMode: false,
-        formActionUrl: @js(route('tenant.admin.informasi.agenda.store', ['tenant' => app('tenant')->slug])),
+        formActionUrl: (config.routes && config.routes.storeAgenda) ? config.routes.storeAgenda : '',
         formJudul: '',
         formTglMulai: '',
         formTglSelesai: '',
@@ -704,7 +704,7 @@ document.addEventListener('alpine:init', () => {
 
         tambahAgendaBaru() {
             this.editMode = false;
-            this.formActionUrl = @js(route('tenant.admin.informasi.agenda.store', ['tenant' => app('tenant')->slug]));
+            this.formActionUrl = (config.routes && config.routes.storeAgenda) ? config.routes.storeAgenda : '';
             this.formJudul = '';
             this.formTglMulai = new Date().toISOString().split('T')[0];
             this.formTglSelesai = '';
@@ -727,7 +727,8 @@ document.addEventListener('alpine:init', () => {
 
         editAgendaItem(agenda) {
             this.editMode = true;
-            this.formActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/agenda/${agenda.id}`;
+            const baseUrl = (config.routes && config.routes.storeAgenda) ? config.routes.storeAgenda : '';
+            this.formActionUrl = `${baseUrl}/${agenda.id}`;
             this.formJudul = agenda.judul;
             this.formTglMulai = agenda.tgl_mulai ? agenda.tgl_mulai.substring(0, 10) : '';
             this.formTglSelesai = agenda.tgl_selesai ? agenda.tgl_selesai.substring(0, 10) : '';
@@ -748,17 +749,43 @@ document.addEventListener('alpine:init', () => {
             this.activeTab = 'form';
         },
 
+        submitActiveForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            if (formId === 'form-agenda-main') {
+                if (this.quillInstance) {
+                    this.formDeskripsiLengkap = this.quillInstance.root.innerHTML;
+                    const el = document.getElementById('input-deskripsi-lengkap');
+                    if (el) el.value = this.formDeskripsiLengkap;
+                }
+            }
+
+            if (form.reportValidity && !form.reportValidity()) {
+                return;
+            }
+
+            this.isSubmitting = true;
+            if (form.requestSubmit) {
+                form.requestSubmit();
+            } else {
+                form.submit();
+            }
+        },
+
         submitAgendaForm(event) {
             if (this.quillInstance) {
                 this.formDeskripsiLengkap = this.quillInstance.root.innerHTML;
-                document.getElementById('input-deskripsi-lengkap').value = this.formDeskripsiLengkap;
+                const el = document.getElementById('input-deskripsi-lengkap');
+                if (el) el.value = this.formDeskripsiLengkap;
             }
             this.isSubmitting = true;
         },
 
         konfirmasiHapusAgenda(id, judul) {
             this.hapusJudul = judul;
-            this.hapusActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/agenda/${id}`;
+            const baseUrl = (config.routes && config.routes.storeAgenda) ? config.routes.storeAgenda : '';
+            this.hapusActionUrl = `${baseUrl}/${id}`;
             this.modalHapus = true;
         },
 

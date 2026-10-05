@@ -15,7 +15,8 @@
              mediaIndex: @js(route('tenant.admin.media.index', ['tenant' => app('tenant')->slug])),
              mediaUpload: @js(route('tenant.admin.media.upload', ['tenant' => app('tenant')->slug])),
              mediaImportUrl: @js(route('tenant.admin.media.import-url', ['tenant' => app('tenant')->slug])),
-             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug]))
+             toggleStatus: @js(route('tenant.admin.informasi.toggle-status', ['tenant' => app('tenant')->slug])),
+             storeFasilitas: @js(route('tenant.admin.informasi.fasilitas.store', ['tenant' => app('tenant')->slug]))
          }
      })"
      x-init="init()">
@@ -52,44 +53,98 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="activeTab = 'fasilitas'"
-                :class="activeTab === 'fasilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            1. Daftar Sarana &amp; Fasilitas
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Pills -->
+            <div class="admin-tab-nav">
+                <button type="button" @click="activeTab = 'fasilitas'"
+                        :class="activeTab === 'fasilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    1. Daftar Sarana &amp; Fasilitas
+                </button>
 
-        <button type="button" @click="activeTab = 'form'"
-                :class="activeTab === 'form' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span x-text="editMode ? 'Edit Fasilitas: ' + formNamaFasilitas.substring(0,25) + '...' : 'Tambah Fasilitas Baru'"></span>
-        </button>
+                <button type="button" @click="activeTab = 'form'"
+                        :class="activeTab === 'form' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span x-text="editMode ? 'Edit: ' + (formNamaFasilitas ? formNamaFasilitas.substring(0,18) + '...' : 'Fasilitas') : '2. Tambah Fasilitas'"></span>
+                </button>
 
-        <button type="button" @click="activeTab = 'stats'"
-                :class="activeTab === 'stats' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            3. Statistik Cepat Sarpras
-        </button>
+                <button type="button" @click="activeTab = 'stats'"
+                        :class="activeTab === 'stats' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    3. Statistik Sarpras
+                </button>
 
-        <button type="button" @click="activeTab = 'visibilitas'"
-                :class="activeTab === 'visibilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            4. Visibilitas Menu &amp; Rute
-        </button>
+                <button type="button" @click="activeTab = 'visibilitas'"
+                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    4. Visibilitas Menu
+                </button>
+            </div>
+
+            <!-- Sticky Right Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'fasilitas'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="tambahFasilitasBaru()" 
+                                class="admin-btn-create">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Tambah Fasilitas</span>
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-fasilitas-hero')" :disabled="submitLoading"
+                                class="admin-btn-save bg-slate-800 hover:bg-slate-900">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Hero'"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'form'">
+                    <div class="flex items-center gap-2">
+                        <template x-if="editMode">
+                            <button type="button" @click="tambahFasilitasBaru()" 
+                                    class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>[+] Tambah Baru</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="activeTab = 'fasilitas'" 
+                                class="admin-btn-cancel text-xs">
+                            Batal
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-fasilitas-main')" :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : (editMode ? 'Perbarui Fasilitas' : 'Simpan Fasilitas')"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'stats'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="submitActiveForm('form-fasilitas-stats')" :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Statistik'"></span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- =========================================================================
@@ -97,7 +152,7 @@
     ========================================================================== -->
     <div x-show="activeTab === 'fasilitas'" x-cloak class="space-y-6">
         <!-- Pengaturan Hero Banner Fasilitas Publik -->
-        <form action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'fasilitas']) }}" method="POST">
+        <form id="form-fasilitas-hero" action="{{ route('tenant.admin.informasi.hero', ['tenant' => app('tenant')->slug, 'modul' => 'fasilitas']) }}" method="POST" @submit="submitLoading = true">
             @csrf
             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
                 <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -146,7 +201,7 @@
                             </div>
                             <input type="text" 
                                    name="gambar_banner" 
-                                   id="input_banner_hero_fasilitas"
+                                   id="input_banner_hero_fasilitas" 
                                    x-model="bannerHeroPreview" 
                                    placeholder="https://... atau pilih dari Pusat Media" 
                                    class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
@@ -159,12 +214,6 @@
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1">Resolusi minimal 1600x600px rasio lebar untuk tampilan tajam di layar desktop &amp; mobile.</p>
                     </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                        Simpan Perubahan Banner Hero
-                    </button>
                 </div>
             </div>
         </form>
@@ -210,69 +259,55 @@
                 </div>
             </form>
 
-            <!-- Facilities Grid Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            <!-- Facilities Grid Cards (Sama Persis dengan Manajemen Media) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 pt-2">
                 @forelse($fasilitasList as $f)
-                <div class="bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition overflow-hidden flex flex-col group">
-                    <!-- Foto Utama 4:3 -->
-                    <div class="aspect-4/3 bg-slate-100 relative overflow-hidden">
-                        <img src="{{ $f->foto_utama ?? 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop' }}" 
-                             alt="{{ $f->nama_fasilitas }}" 
-                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                        
-                        <div class="absolute top-3 right-3">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold backdrop-blur-md {{ $f->is_aktif ? 'bg-emerald-900/80 text-emerald-200 border border-emerald-700/50' : 'bg-slate-900/80 text-slate-300' }}">
-                                {{ $f->is_aktif ? 'Aktif' : 'Draft' }}
-                            </span>
-                        </div>
-
-                        @if($f->fotoLainnya && $f->fotoLainnya->count() > 0)
-                            <div class="absolute bottom-3 left-3">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-900/80 text-white backdrop-blur-md">
-                                    +{{ $f->fotoLainnya->count() }} Foto Tambahan
-                                </span>
-                            </div>
-                        @endif
+                <div class="group bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between relative">
+                    <!-- Status Badge -->
+                    <div class="absolute top-2 right-2 z-30 pointer-events-auto">
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded-md shadow-xs {{ $f->is_aktif ? 'bg-emerald-600 text-white' : 'bg-black/60 backdrop-blur-xs text-slate-300 border border-white/20' }}">
+                            {{ $f->is_aktif ? 'Aktif' : 'Draft' }}
+                        </span>
                     </div>
 
-                    <!-- Body Info -->
-                    <div class="p-4 sm:p-5 flex-1 flex flex-col">
-                        <h3 class="font-bold text-slate-900 font-heading text-xs sm:text-sm mb-1 group-hover:text-blue-600 transition">
-                            {{ $f->nama_fasilitas }}
-                        </h3>
-                        <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-4 flex-1">
-                            {{ $f->deskripsi }}
-                        </p>
-
-                        <!-- Foto Tambahan Mini Preview -->
-                        @if($f->fotoLainnya && $f->fotoLainnya->count() > 0)
-                            <div class="flex items-center space-x-1.5 mb-4 overflow-x-auto pb-1">
-                                @foreach($f->fotoLainnya->take(4) as $ft)
-                                    <div class="w-8 h-8 rounded-md overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                                        <img src="{{ $ft->file_foto }}" alt="Foto" class="w-full h-full object-cover">
-                                    </div>
-                                @endforeach
-                            </div>
+                    <!-- Media Preview Box -->
+                    <div class="relative bg-slate-900 aspect-square overflow-hidden flex items-center justify-center">
+                        @if($f->foto_utama)
+                            <!-- Ambient Blurred Backdrop -->
+                            <img src="{{ $f->foto_utama }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none z-0">
+                            <!-- Main Image -->
+                            <img src="{{ $f->foto_utama }}" alt="{{ $f->nama_fasilitas }}" loading="lazy" class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        @else
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop" alt="{{ $f->nama_fasilitas }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                         @endif
 
-                        <!-- Action Bar -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <span class="text-[11px] text-slate-400 font-medium">Sarpras SMK</span>
-                            <div class="flex items-center space-x-1.5">
-                                <button type="button" 
-                                        @click="editFasilitasItem(@js($f))" 
-                                        class="p-1.5 rounded-lg text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition cursor-pointer" 
-                                        title="Edit Fasilitas">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                </button>
-                                <button type="button" 
-                                        @click="konfirmasiHapusFasilitas(@js($f->id), @js($f->nama_fasilitas))" 
-                                        class="p-1.5 rounded-lg text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition cursor-pointer" 
-                                        title="Hapus Fasilitas">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </div>
+                        @if($f->fotoLainnya && $f->fotoLainnya->count() > 0)
+                            <span class="absolute bottom-2 left-2 z-20 px-1.5 py-0.5 bg-black/70 backdrop-blur-xs text-white text-[9px] font-bold rounded">
+                                +{{ $f->fotoLainnya->count() }} Foto
+                            </span>
+                        @endif
+
+                        <!-- Hover Overlay Action Bar -->
+                        <div class="absolute inset-0 z-40 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                            <button type="button" 
+                                    @click="editFasilitasItem(@js($f))" 
+                                    class="p-2 bg-white text-blue-600 rounded-xl hover:bg-blue-50 shadow-xs text-xs font-semibold cursor-pointer transition" 
+                                    title="Edit Fasilitas">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </button>
+                            <button type="button" 
+                                    @click="konfirmasiHapusFasilitas(@js($f->id), @js($f->nama_fasilitas))" 
+                                    class="p-2 bg-white text-rose-600 rounded-xl hover:bg-rose-50 shadow-xs text-xs font-semibold cursor-pointer transition" 
+                                    title="Hapus Fasilitas">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
                         </div>
+                    </div>
+
+                    <!-- Meta Details -->
+                    <div class="p-2.5">
+                        <div class="font-bold text-slate-900 text-xs truncate" title="{{ $f->nama_fasilitas }}">{{ $f->nama_fasilitas }}</div>
+                        <div class="text-[10px] text-slate-500 line-clamp-1 mt-0.5" title="{{ $f->deskripsi }}">{{ $f->deskripsi }}</div>
                     </div>
                 </div>
                 @empty
@@ -296,7 +331,7 @@
          TAB 2: FORM TAMBAH / EDIT FASILITAS
     ========================================================================== -->
     <div x-show="activeTab === 'form'" x-cloak class="space-y-6">
-        <form :action="formFasilitasActionUrl" method="POST">
+        <form id="form-fasilitas-main" :action="formFasilitasActionUrl" method="POST" @submit="submitLoading = true">
             @csrf
             <template x-if="editMode">
                 <input type="hidden" name="_method" value="PUT">
@@ -420,13 +455,13 @@
                             <p class="text-xs text-slate-500">Foto utama 4:3 &amp; sakelar status</p>
                         </div>
 
-                        <!-- 4:3 Image Box -->
+                        <!-- 1:1 Square Image Box -->
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">
-                                Foto Utama Fasilitas (Rasio 4:3) <span class="text-rose-500">*</span>
+                                Foto Utama Fasilitas (Rasio 1:1 Persegi) <span class="text-rose-500">*</span>
                             </label>
 
-                            <div class="aspect-4/3 rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center relative mb-2">
+                            <div class="aspect-square max-w-xs mx-auto rounded-xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center relative mb-2">
                                 <template x-if="formFotoUtama">
                                     <img :src="formFotoUtama" alt="Foto Utama" class="w-full h-full object-cover">
                                 </template>
@@ -466,14 +501,6 @@
                                 </div>
                             </label>
                         </div>
-
-                        <!-- Action Submit Form -->
-                        <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
-                            <button type="submit" 
-                                    class="w-full px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
-                                <span x-text="editMode ? 'Simpan Perubahan Fasilitas' : 'Simpan & Publikasikan Fasilitas'"></span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -484,7 +511,7 @@
          TAB 3: STATISTIK CEPAT SARPRAS
     ========================================================================== -->
     <div x-show="activeTab === 'stats'" x-cloak class="space-y-6">
-        <form action="{{ route('tenant.admin.informasi.fasilitas.stats.update', ['tenant' => app('tenant')->slug]) }}" method="POST">
+        <form id="form-fasilitas-stats" action="{{ route('tenant.admin.informasi.fasilitas.stats.update', ['tenant' => app('tenant')->slug]) }}" method="POST" @submit="submitLoading = true">
             @csrf
             <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4 max-w-2xl">
                 <div class="border-b border-slate-100 pb-3">
@@ -527,12 +554,6 @@
                         <input type="text" name="stats_akses_internet" value="{{ old('stats_akses_internet', $stats['akses_internet']) }}" required placeholder="Contoh: 100%" 
                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                     </div>
-                </div>
-
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                        Simpan Statistik Sarpras
-                    </button>
                 </div>
             </div>
         </form>
@@ -622,6 +643,23 @@ document.addEventListener('alpine:init', () => {
         bannerHeroPreview: config.bannerHeroPreview,
         isFiturAktif: config.isFiturAktif,
         isToggling: false,
+        submitLoading: false,
+
+        submitActiveForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            if (form.reportValidity && !form.reportValidity()) {
+                return;
+            }
+
+            this.submitLoading = true;
+            if (form.requestSubmit) {
+                form.requestSubmit();
+            } else {
+                form.submit();
+            }
+        },
 
         // Modal hapus
         modalHapus: false,
@@ -630,7 +668,7 @@ document.addEventListener('alpine:init', () => {
 
         // Form Fasilitas State
         editMode: false,
-        formFasilitasActionUrl: @js(route('tenant.admin.informasi.fasilitas.store', ['tenant' => app('tenant')->slug])),
+        formFasilitasActionUrl: (config.routes && config.routes.storeFasilitas) ? config.routes.storeFasilitas : '',
         formNamaFasilitas: '',
         formDeskripsiFasilitas: '',
         formFotoUtama: '',
@@ -650,7 +688,7 @@ document.addEventListener('alpine:init', () => {
 
         tambahFasilitasBaru() {
             this.editMode = false;
-            this.formFasilitasActionUrl = @js(route('tenant.admin.informasi.fasilitas.store', ['tenant' => app('tenant')->slug]));
+            this.formFasilitasActionUrl = (config.routes && config.routes.storeFasilitas) ? config.routes.storeFasilitas : '';
             this.formNamaFasilitas = '';
             this.formDeskripsiFasilitas = '';
             this.formFotoUtama = '';
@@ -662,7 +700,8 @@ document.addEventListener('alpine:init', () => {
 
         editFasilitasItem(fasilitas) {
             this.editMode = true;
-            this.formFasilitasActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/fasilitas/${fasilitas.id}`;
+            const baseUrl = (config.routes && config.routes.storeFasilitas) ? config.routes.storeFasilitas : '';
+            this.formFasilitasActionUrl = `${baseUrl}/${fasilitas.id}`;
             this.formNamaFasilitas = fasilitas.nama_fasilitas;
             this.formDeskripsiFasilitas = fasilitas.deskripsi || '';
             this.formFotoUtama = fasilitas.foto_utama || '';
@@ -683,14 +722,16 @@ document.addEventListener('alpine:init', () => {
         hapusFotoFasilitasDb(fotoId) {
             if (confirm('Hapus foto dokumentasi tambahan ini?')) {
                 const form = document.getElementById('form-hapus-foto-fasilitas');
-                form.action = `/{{ app('tenant')->slug }}/admin/informasi/fasilitas/foto/${fotoId}`;
+                const baseUrl = (config.routes && config.routes.storeFasilitas) ? config.routes.storeFasilitas : '';
+                form.action = `${baseUrl}/foto/${fotoId}`;
                 form.submit();
             }
         },
 
         konfirmasiHapusFasilitas(id, nama) {
             this.hapusNama = nama;
-            this.hapusActionUrl = `/{{ app('tenant')->slug }}/admin/informasi/fasilitas/${id}`;
+            const baseUrl = (config.routes && config.routes.storeFasilitas) ? config.routes.storeFasilitas : '';
+            this.hapusActionUrl = `${baseUrl}/${id}`;
             this.modalHapus = true;
         },
 

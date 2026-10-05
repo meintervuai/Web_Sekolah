@@ -36,7 +36,7 @@
         }
     </style>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/admin-panel.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
 <body class="min-h-full bg-[#f4f7fb] text-slate-800" x-data="{ sidebarOpen: false, searchOpen: false }">

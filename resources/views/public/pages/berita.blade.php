@@ -95,7 +95,7 @@
                     <img src="{{ $item->gambar_sampul ?? 'https://images.unsplash.com/photo-1546410531-ea4cea477149?q=80&w=800&auto=format&fit=crop' }}" 
                          alt="{{ $item->judul }}" 
                          loading="lazy"
-                         style="{{ \App\Services\MediaService::getCropStyle($item->gambar_sampul ?? '') }}"
+                         @style([\App\Services\MediaService::getCropStyle($item->gambar_sampul ?? '')])
                          class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     @if($item->kategori)
                     <span class="absolute top-3 left-3 z-20 bg-blue-900/85 backdrop-blur-xs text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">

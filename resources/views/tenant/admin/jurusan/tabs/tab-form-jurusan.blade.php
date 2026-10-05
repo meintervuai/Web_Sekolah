@@ -1,9 +1,9 @@
 <!-- TAB 2: EDIT / TAMBAH PROGRAM KEAHLIAN (FULL TAB FORM DEDIKASI) -->
 <div x-show="activeTab === 'form_jurusan'" x-cloak class="space-y-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
+    <div class="admin-card space-y-5">
         
         <!-- Header Form Tab -->
-        <div class="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="admin-card-header">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold font-heading text-base shrink-0 shadow-xs">
                     <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -11,14 +11,21 @@
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading" x-text="jurusanForm.id ? ('Edit Program Keahlian: ' + jurusanForm.nama_jurusan) : 'Tambah Program Keahlian Baru'"></h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Kelola informasi lengkap, silabus kompetensi, kepala program keahlian, dan foto sampul program keahlian.</p>
+                    <h2 class="admin-card-title" x-text="jurusanForm.id ? ('Edit Program Keahlian: ' + jurusanForm.nama_jurusan) : 'Tambah Program Keahlian Baru'"></h2>
+                    <p class="admin-card-subtitle">Kelola informasi lengkap, silabus kompetensi, kepala program keahlian, dan foto sampul program keahlian.</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
+                <template x-if="jurusanForm.id">
+                    <button type="button" @click="openFormJurusan()" 
+                            class="admin-btn-create">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Form Tambah Baru</span>
+                    </button>
+                </template>
                 <button type="button" @click="setTab('jurusan')" 
-                        class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                        class="admin-btn-cancel">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Kembali ke Daftar</span>
                 </button>
@@ -26,7 +33,8 @@
         </div>
 
         <!-- Form Input -->
-        <form :action="jurusanForm.id ? `{{ url(app('tenant')->slug . '/admin/program-keahlian') }}/${jurusanForm.id}` : `{{ route('tenant.admin.jurusan.store', ['tenant' => app('tenant')->slug]) }}`" 
+        <form id="form-jurusan-main"
+              :action="jurusanForm.id ? `{{ url(app('tenant')->slug . '/admin/program-keahlian') }}/${jurusanForm.id}` : `{{ route('tenant.admin.jurusan.store', ['tenant' => app('tenant')->slug]) }}`" 
               method="POST" 
               @submit="syncEditors(); formSubmitLoading = true"
               class="space-y-6">
@@ -44,26 +52,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <!-- Nama Program Keahlian -->
                     <div class="md:col-span-8">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Program Keahlian <span class="text-rose-500">*</span></label>
+                        <label class="admin-form-label">Nama Program Keahlian <span class="text-rose-500">*</span></label>
                         <input type="text" name="nama_jurusan" x-model="jurusanForm.nama_jurusan" @input="generateSlug()" required
-                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                               class="admin-form-input"
                                placeholder="Contoh: Pengembangan Perangkat Lunak dan Gim">
                     </div>
 
                     <!-- Singkatan / Kode -->
                     <div class="md:col-span-4">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Singkatan / Kode</label>
+                        <label class="admin-form-label">Singkatan / Kode</label>
                         <input type="text" name="singkatan" x-model="jurusanForm.singkatan"
-                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition uppercase font-bold text-blue-700"
+                               class="admin-form-input uppercase font-bold text-blue-700"
                                placeholder="Contoh: PPLG">
                     </div>
                 </div>
 
                 <!-- Baris 2: Deskripsi Singkat (Ringkasan Kartu) - Tepat di bawah Nama Jurusan -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Deskripsi Singkat (Ringkasan Kartu) <span class="text-rose-500">*</span></label>
+                    <label class="admin-form-label">Deskripsi Singkat (Ringkasan Kartu) <span class="text-rose-500">*</span></label>
                     <textarea name="deskripsi_singkat" x-model="jurusanForm.deskripsi_singkat" rows="2" required
-                              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                              class="admin-form-input"
                               placeholder="Ringkasan kompetensi keahlian untuk tampilan kartu katalog beranda & publik."></textarea>
                 </div>
 
@@ -71,7 +79,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <!-- Logo / Lambang Jurusan (Opsional - Media Library) -->
                     <div class="md:col-span-6">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Logo / Lambang Jurusan (Opsional)</label>
+                        <label class="admin-form-label">Logo / Lambang Jurusan (Opsional)</label>
                         <div class="flex gap-2 items-center">
                             <div class="w-10 h-10 rounded-xl border border-slate-200 bg-slate-50 overflow-hidden shrink-0 flex items-center justify-center relative">
                                 <template x-if="jurusanForm.logo">
@@ -82,15 +90,15 @@
                                 </template>
                             </div>
                             <input type="text" name="logo" id="input_logo_jurusan" x-model="jurusanForm.logo"
-                                   class="flex-1 px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                   class="admin-form-input flex-1"
                                    placeholder="URL logo atau pilih media...">
                             <button type="button" @click="openMediaPicker('input_logo_jurusan')"
-                                    class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold rounded-xl shrink-0 transition flex items-center gap-1 cursor-pointer">
-                                <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    class="admin-btn-action shrink-0">
+                                <svg class="w-3.5 h-3.5 text-blue-600 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 <span>Media</span>
                             </button>
                             <template x-if="jurusanForm.logo">
-                                <button type="button" @click="jurusanForm.logo = ''" class="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition" title="Hapus Logo">
+                                <button type="button" @click="jurusanForm.logo = ''" class="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition cursor-pointer" title="Hapus Logo">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </template>
@@ -99,9 +107,9 @@
 
                     <!-- Kepala Program Keahlian (Relasi Guru & Staf) -->
                     <div class="md:col-span-6">
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Kepala Program Keahlian (Relasi Guru &amp; Staf)</label>
+                        <label class="admin-form-label">Kepala Program Keahlian (Relasi Guru &amp; Staf)</label>
                         <select name="guru_id" x-model="jurusanForm.guru_id"
-                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
+                                class="admin-form-input">
                             <option value="">-- Pilih Guru / Tenaga Pendidik --</option>
                             @foreach($guruList as $guru)
                                 <option value="{{ $guru->id }}">
@@ -109,13 +117,13 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="text-[10px] text-slate-400 mt-1">Tampil otomatis pada sidebar profil &amp; informasi program publik.</p>
+                        <p class="admin-form-helper">Tampil otomatis pada sidebar profil &amp; informasi program publik.</p>
                     </div>
                 </div>
 
                 <!-- Baris 4: Foto Sampul Utama (Pusat Media) -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Foto Sampul Utama Jurusan (Pusat Media)</label>
+                    <label class="admin-form-label">Foto Sampul Utama Jurusan (Pusat Media)</label>
                     <div class="flex gap-2 items-center">
                         <div class="w-16 h-10 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden shrink-0 relative flex items-center justify-center">
                             <template x-if="jurusanForm.ikon_atau_foto">
@@ -133,28 +141,28 @@
                         </div>
                         <input type="text" name="ikon_atau_foto" id="input_foto_jurusan" 
                                x-model="jurusanForm.ikon_atau_foto"
-                               class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                               class="admin-form-input flex-1"
                                placeholder="https://... atau pilih dari Pusat Media">
                         <button type="button" @click="openMediaPicker('input_foto_jurusan')" 
-                                class="px-3.5 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold rounded-xl shrink-0 transition flex items-center gap-1.5 cursor-pointer">
+                                class="admin-btn-action shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             Pilih Media
                         </button>
                         <template x-if="jurusanForm.ikon_atau_foto">
                             <button type="button" @click="jurusanForm.ikon_atau_foto = ''; jurusanForm.foto_crop_style = ''" 
-                                    class="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition border border-rose-200" title="Hapus Foto">
+                                    class="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition border border-rose-200 cursor-pointer" title="Hapus Foto">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </template>
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-1">Opsional: Jika dikosongkan, halaman publik akan menggunakan lambang/singkatan tanpa gambar dummy palsu.</p>
+                    <p class="admin-form-helper">Opsional: Jika dikosongkan, halaman publik akan menggunakan lambang/singkatan tanpa gambar dummy palsu.</p>
                 </div>
 
                 <!-- Baris 5: Informasi Program (WYSIWYG Editor Bebas) -->
                 <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between">
                         <div>
-                            <label class="block text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <label class="admin-form-label text-slate-800 flex items-center gap-1.5">
                                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 Informasi Program &amp; Ringkasan Kejuruan (WYSIWYG Editor Sidebar)
                             </label>
@@ -176,7 +184,7 @@
                             <p class="text-[11px] text-slate-500">Tambahkan beberapa foto kegiatan, bengkel, lab komputer, atau hasil karya siswa.</p>
                         </div>
                         <button type="button" @click="tambahGaleriFoto()"
-                                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-2xs transition flex items-center gap-1 cursor-pointer">
+                                class="admin-btn-save">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             <span>Tambah Foto</span>
                         </button>
@@ -195,14 +203,14 @@
                                     </template>
                                 </div>
                                 <input type="text" :name="'galeri_foto[' + index + ']'" :id="'input_galeri_foto_' + index" x-model="foto.url"
-                                       class="flex-1 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                       class="admin-form-input flex-1"
                                        placeholder="URL Berkas Foto...">
                                 <input type="text" :name="'galeri_judul[' + index + ']'" x-model="foto.judul"
-                                       class="w-full sm:w-48 px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition"
+                                       class="admin-form-input w-full sm:w-48"
                                        placeholder="Judul / Keterangan foto (Opsional)">
                                 <div class="flex items-center gap-1 shrink-0">
                                     <button type="button" @click="openMediaPicker('input_galeri_foto_' + index)"
-                                            class="px-2.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-200 transition cursor-pointer"
+                                            class="admin-btn-action"
                                             title="Pilih dari Media Library">
                                         <svg class="w-3.5 h-3.5 text-blue-600 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                         Pilih
@@ -223,12 +231,10 @@
                     </div>
                 </div>
 
-
-
                 <!-- Baris 7: Uraian Lengkap / Silabus (WYSIWYG Editor) -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-bold text-slate-700">Uraian Lengkap, Silabus &amp; Profil Kejuruan (WYSIWYG Editor Luas)</label>
+                        <label class="admin-form-label">Uraian Lengkap, Silabus &amp; Profil Kejuruan (WYSIWYG Editor Luas)</label>
                         <span class="text-[10px] text-slate-400">Gunakan toolbar untuk heading, silabus materi, dan prospek karir</span>
                     </div>
                     <textarea name="deskripsi_lengkap" id="deskripsi_lengkap" class="hidden"></textarea>
@@ -238,18 +244,18 @@
                 <!-- Baris 8: Urutan Tampil & Status Publikasi -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-100 items-center">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Urutan Tampil (Posisi Katalog)</label>
+                        <label class="admin-form-label">Urutan Tampil (Posisi Katalog)</label>
                         <select name="urutan" x-model="jurusanForm.urutan"
-                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 font-semibold focus:bg-white focus:border-blue-500 transition">
+                                class="admin-form-input font-semibold">
                             <template x-for="pos in maxUrutanOptions" :key="pos">
                                 <option :value="pos" :selected="jurusanForm.urutan == pos" x-text="'Urutan ' + pos + (pos === 1 ? ' (Paling Awal / Utama)' : '')"></option>
                             </template>
                         </select>
-                        <p class="text-[10px] text-slate-400 mt-1">Menentukan urutan kemunculan kartu jurusan pada beranda dan halaman katalog.</p>
+                        <p class="admin-form-helper">Menentukan urutan kemunculan kartu jurusan pada beranda dan halaman katalog.</p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Status Publikasi</label>
+                        <label class="admin-form-label">Status Publikasi</label>
                         <input type="hidden" name="is_aktif" value="0">
                         <label class="inline-flex items-center gap-2.5 p-2 bg-slate-50 border border-slate-200 rounded-xl w-full cursor-pointer hover:bg-slate-100 transition">
                             <input type="checkbox" name="is_aktif" value="1" 
@@ -258,33 +264,15 @@
                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer">
                             <div>
                                 <span class="text-xs font-bold text-slate-800" x-text="jurusanForm.is_aktif ? 'Aktif (Ditampilkan Publik)' : 'Draft (Disembunyikan dari Publik)'"></span>
-                                <p class="text-[10px] text-slate-400">Jika dinonaktifkan, program keahlian ini tidak akan muncul di beranda dan katalog.</p>
+                                <p class="admin-form-helper">Jika dinonaktifkan, program keahlian ini tidak akan muncul di beranda dan katalog.</p>
                             </div>
                         </label>
                     </div>
                 </div>
 
             </div>
-
-            <!-- Form Action Footer -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                <button type="button" @click="setTab('jurusan')" 
-                        class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
-                    Batal
-                </button>
-                <button type="submit" 
-                        :disabled="formSubmitLoading"
-                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer disabled:opacity-50">
-                    <template x-if="formSubmitLoading">
-                        <svg class="animate-spin -ml-1 mr-1 h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </template>
-                    <span x-text="formSubmitLoading ? 'Menyimpan...' : (jurusanForm.id ? 'Simpan Perubahan' : 'Tambah Program Keahlian')"></span>
-                </button>
-            </div>
         </form>
 
     </div>
 </div>
+

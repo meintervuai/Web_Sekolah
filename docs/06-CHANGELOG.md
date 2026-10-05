@@ -2,6 +2,91 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Penyeragaman Rasio & Ukuran Grid Foto Galeri & Fasilitas 100% Identik Manajemen Media] - 2026-10-05
+
+### Changed
+- **Standardisasi Grid 6-Kolom (`grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4`) & Kartu Compact Persegi 1:1**:
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menyeragamkan grid album dan grid item media dokumentasi menjadi layout 6-kolom dengan kartu compact `aspect-square`, hover overlay action button, dan ambient blur backdrop identik dengan Manajemen Media.
+  - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php): Menyeragamkan grid sarpras fasilitas menjadi layout 6-kolom dengan kartu compact `aspect-square`, hover overlay action button, dan ambient blur backdrop identik dengan Manajemen Media.
+  - [resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php): Memindahkan inisialisasi route ke objek config `routes` pada Alpine.js.
+
+## [Perbaikan Blade Syntax & Pembersihan Directives JS / CSS Linter] - 2026-10-05
+
+### Fixed
+- **Pembersihan Blade Directives di Alpine.js Script ([resources/views/tenant/admin/jurusan/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/index.blade.php))**:
+  - Memindahkan inisialisasi `@js(...)` ke atribut HTML `x-data` config dan mengonsumsi `config.totalJurusan`, `config.nextUrutan`, serta `config.routes` langsung dari dalam script Alpine untuk mencegah error parser JS.
+- **Standarisasi Directive `@style` pada Elemen Gambar dengan Smart Crop & Hero Banner**:
+  - Mengganti atribut inline `style="{{ ... }}"` dengan Blade directive `@style(...)` pada [resources/views/public/pages/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/berita.blade.php), [resources/views/public/pages/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/galeri.blade.php), [resources/views/public/pages/jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php), [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php), [resources/views/public/pages/guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php), [resources/views/public/pages/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/pengumuman.blade.php), [resources/views/public/pages/jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php), dan [resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php).
+
+## [Standarisasi Penuh CSS & Modal Manajemen Media serta Media Picker (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Changed
+- **Standardisasi Modul Manajemen Media & Modal Picker Terpusat**:
+  - [resources/views/tenant/admin/media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php): Mengintegrasikan seluruh komponen tabel, sticky bar, modal upload, modal impor URL, modal rename informasi berkas, modal crop framing live, dan modal dialog konfirmasi hapus menggunakan class semantik terpusat (`.admin-sticky-bar`, `.admin-modal-overlay`, `.admin-modal-card`, `.admin-form-label`, `.admin-form-input`, `.admin-btn-save`, `.admin-btn-cancel`, `.admin-badge-*`).
+  - [resources/views/tenant/admin/media/picker-modal.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/picker-modal.blade.php): Menstandarisasikan dialog pemilih pustaka media (`.admin-modal-overlay`, `.admin-modal-card`, `.admin-btn-save`, `.admin-btn-cancel`, `.admin-form-input`) agar 100% serasi dengan modul pengaturan lainnya.
+
+## [Penyeragaman Rasio Foto & Video Galeri serta Sarana Prasarana] - 2026-10-05
+
+### Changed
+- **Standardisasi Rasio Aspek Foto & Media (4:3 Landscape)**:
+  - [resources/views/public/pages/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/galeri.blade.php): Menyeragamkan rasio kartu foto & video dokumentasi ke rasio `aspect-4/3` sehingga sejajar dan serasi dengan tampilan katalog sarana & fasilitas (`fasilitas.blade.php`).
+  - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menyeragamkan cover album ke rasio `aspect-4/3` yang identik dengan kartu fasilitas admin.
+
+## [Penyatuan CSS & Standarisasi Sticky Bar Modul Pusat Manajemen Media (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Changed
+- **Refactoring Modul Manajemen Media ([resources/views/tenant/admin/media/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/media/index.blade.php))**:
+  - Menerapkan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-btn-save` (Unggah Berkas), dan `.admin-btn-cancel` (Impor URL/YT) pada header atas.
+  - Memastikan keselarasan token warna dan class semantik terpadu dari `resources/css/admin-panel.css`.
+
+## [Penyatuan CSS & Standarisasi Sticky Bar Modul Tema & Warna Sekolah (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Changed
+- **Refactoring Modul Tema & Warna ([resources/views/tenant/admin/pengaturan/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/pengaturan/index.blade.php))**:
+  - Menerapkan `.admin-sticky-bar`, `.admin-sticky-container`, dan `.admin-btn-save` di bar navigasi atas.
+  - Menghapus tombol simpan duplikat di bagian bawah form.
+  - Memanfaatkan class semantik `.admin-card`, `.admin-card-header`, `.admin-card-title`, `.admin-card-subtitle` dari `resources/css/admin-panel.css`.
+
+## [Penyatuan CSS & Standarisasi Class Semantik Seluruh Modul Informasi Sekolah (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Changed
+- **Refactoring Modul Informasi Sekolah ([resources/views/tenant/admin/informasi/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/))**:
+  - Menghapus CSS inline Quill.js lokal di modul Berita, Pengumuman, dan Agenda untuk memanfaatkan stylesheet Quill global dari `resources/css/admin-panel.css`.
+  - [pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, `.admin-btn-cancel`.
+  - [berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, `.admin-btn-cancel`.
+  - [agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, `.admin-btn-cancel`.
+  - [galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, `.admin-btn-cancel`.
+  - [fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, `.admin-btn-cancel`.
+
+## [Penyatuan CSS & Standarisasi Class Semantik Modul Program Keahlian / Jurusan (Anti-Slop Vibecoding)] - 2026-10-05
+
+### Changed
+- **Refactoring Modul Program Keahlian ([resources/views/tenant/admin/jurusan/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/))**:
+  - Menghapus CSS inline Quill.js lokal dan menggunakan konfigurasi Quill global dari `resources/css/admin-panel.css`.
+  - [index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/index.blade.php): Menggunakan `.admin-sticky-bar`, `.admin-sticky-container`, `.admin-tab-nav`, `.admin-tab-pill-*`, `.admin-btn-save`, `.admin-btn-create`, dan `.admin-btn-cancel`.
+  - [tabs/tab-jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-jurusan.blade.php): Menggunakan `.admin-card`, `.admin-card-header`, `.admin-table`, `.admin-badge-*`, dan `.admin-btn-action`.
+  - [tabs/tab-form-jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-form-jurusan.blade.php): Menggunakan `.admin-card`, `.admin-card-header`, `.admin-card-title`, `.admin-card-subtitle`, `.admin-form-label`, `.admin-form-input`, `.admin-form-helper`, dan `.admin-btn-save`.
+  - [tabs/tab-hero.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-hero.blade.php): Menggunakan `.admin-card`, `.admin-form-label`, `.admin-form-input`, `.admin-btn-action`.
+  - [tabs/tab-visibilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/tab-visibilitas.blade.php): Menggunakan `.admin-card`, `.admin-table`, `.admin-badge-*`.
+  - [tabs/modals.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/tabs/modals.blade.php): Menggunakan `.admin-modal-overlay`, `.admin-modal-card`, `.admin-btn-cancel`.
+
+## [Standardisasi Sticky Tab Bar & Top Save Button di Seluruh Pengaturan Admin] - 2026-10-05
+
+### Changed
+- **Standardisasi Sticky Tab Bar & Top Save Action di Semua Modul Pengaturan Admin**:
+  - Menerapkan bar navigasi tab **`sticky top-16 z-30`** dengan efek `backdrop-blur-md` dan background kontras di seluruh modul pengaturan admin sekolah:
+    1. **Profil Sekolah** ([resources/views/tenant/admin/profil/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/))
+    2. **Program Keahlian / Jurusan** ([resources/views/tenant/admin/jurusan/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/jurusan/))
+    3. **Struktur & GTK** ([resources/views/tenant/admin/gtk/](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/gtk/))
+    4. **Pengumuman Resmi** ([resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php))
+    5. **Berita & Artikel** ([resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php))
+    6. **Agenda & Kegiatan** ([resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php))
+    7. **Galeri & Dokumentasi** ([resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php))
+    8. **Sarana & Fasilitas** ([resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php))
+  - **Tombol Simpan / Aksi Utama di Sebelah Kanan Atas Bar Tab**: Tombol aksi dinamis berubah sesuai tab yang sedang aktif (misal: tombol *Simpan Hero*, tombol *Terbitkan / Perbarui*, tombol *[+] Buat Baru*, tombol *Batal*).
+  - **Pembersihan Tombol Bawah**: Menghapus seluruh tombol simpan/submit di bagian bawah form agar tampilan tidak redundant (hanya ada 1 tombol simpan yang selalu terlihat di atas saat scroll).
+  - **Alpine.js Dynamic Submitter**: Mengintegrasikan method `submitActiveForm(formId)` yang menangani validasi native HTML5 form (`reportValidity()`), sinkronisasi konten Quill.js WYSIWYG, dan indikator loading state.
+
 ## [Penyederhanaan Format Pengumuman Resmi (Admin & Publik)] - 2026-10-05
 
 ### Changed

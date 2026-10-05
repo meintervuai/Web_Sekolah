@@ -1,18 +1,18 @@
 <!-- TAB 2: DAFTAR & KATALOG PROGRAM KEAHLIAN -->
 <div x-show="activeTab === 'jurusan'" x-cloak class="space-y-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
-        <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="admin-card space-y-4">
+        <div class="admin-card-header">
             <div>
-                <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading flex items-center gap-1.5">
+                <h2 class="admin-card-title">
                     <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
                     Daftar Konsentrasi &amp; Program Keahlian
                 </h2>
-                <p class="text-xs text-slate-500">Kelola kompetensi keahlian, silabus, kepala program, dan urutan tampil pada katalog publik.</p>
+                <p class="admin-card-subtitle">Kelola kompetensi keahlian, silabus, kepala program, dan urutan tampil pada katalog publik.</p>
             </div>
             <button type="button" @click="openFormJurusan()" 
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0 self-start sm:self-auto">
+                    class="admin-btn-action shrink-0 self-start sm:self-auto">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Tambah Program Keahlian</span>
             </button>
@@ -20,24 +20,24 @@
 
         <!-- Table Listing -->
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs text-slate-700">
-                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+            <table class="admin-table">
+                <thead class="admin-table-thead">
                     <tr>
-                        <th class="px-3 py-3 w-12 text-center">Urutan</th>
-                        <th class="px-3 py-3 w-20 text-center">Foto / Ikon</th>
-                        <th class="px-4 py-3">Nama Program Keahlian</th>
-                        <th class="px-4 py-3">Kepala Program</th>
-                        <th class="px-4 py-3 text-center">Status</th>
-                        <th class="px-4 py-3 text-right">Aksi</th>
+                        <th class="admin-table-th w-12 text-center">Urutan</th>
+                        <th class="admin-table-th w-20 text-center">Foto / Ikon</th>
+                        <th class="admin-table-th">Nama Program Keahlian</th>
+                        <th class="admin-table-th">Kepala Program</th>
+                        <th class="admin-table-th text-center">Status</th>
+                        <th class="admin-table-th text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($jurusanList as $item)
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="px-3 py-3 text-center font-bold text-slate-500">
+                        <tr class="admin-table-row">
+                            <td class="admin-table-td text-center font-bold text-slate-500">
                                 {{ $item->urutan }}
                             </td>
-                            <td class="px-3 py-3 text-center">
+                            <td class="admin-table-td text-center">
                                 <div class="w-14 h-10 mx-auto rounded-lg border border-slate-200 bg-slate-900 overflow-hidden relative flex items-center justify-center">
                                     @if($item->logo)
                                         <div class="w-full h-full bg-white flex items-center justify-center p-1">
@@ -49,7 +49,7 @@
                                              class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-40 pointer-events-none">
                                         <!-- Main Cropped Image -->
                                         <img src="{{ $item->ikon_atau_foto }}" alt="{{ $item->nama_jurusan }}" 
-                                             style="{{ $item->foto_crop_style }}"
+                                             @style([$item->foto_crop_style])
                                              class="relative z-10 w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-700 font-bold font-heading text-[10px]">
@@ -58,11 +58,11 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="admin-table-td">
                                 <div class="font-bold text-slate-900 text-xs flex items-center gap-2">
                                     <span>{{ $item->nama_jurusan }}</span>
                                     @if($item->singkatan)
-                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                        <span class="admin-badge-primary">
                                             {{ $item->singkatan }}
                                         </span>
                                     @endif
@@ -83,7 +83,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="admin-table-td">
                                 @if($item->kepalaProgram)
                                     <div class="flex items-center gap-2">
                                         @if($item->kepalaProgram->foto)
@@ -104,16 +104,15 @@
                                     <span class="text-slate-400 italic text-[11px]">- Belum ditentukan -</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="admin-table-td text-center">
                                 <button type="button" 
                                         @click="toggleJurusanStatus({{ $item->id }}, {{ $item->is_aktif ? 'false' : 'true' }}, '{{ addslashes($item->nama_jurusan) }}')"
-                                        :class="{{ $item->is_aktif ? 'true' : 'false' }} ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'"
-                                        class="px-2.5 py-1 rounded-full text-[10px] font-bold cursor-pointer hover:opacity-80 transition inline-flex items-center gap-1">
+                                        class="{{ $item->is_aktif ? 'admin-badge-success' : 'admin-badge-slate' }} cursor-pointer hover:opacity-80 transition">
                                     <span class="w-1.5 h-1.5 rounded-full {{ $item->is_aktif ? 'bg-emerald-600' : 'bg-slate-400' }}"></span>
                                     <span>{{ $item->is_aktif ? 'Aktif' : 'Draft' }}</span>
                                 </button>
                             </td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="admin-table-td text-right">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <button type="button" 
                                             @click="editFormJurusan({

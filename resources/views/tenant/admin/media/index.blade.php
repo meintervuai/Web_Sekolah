@@ -5,43 +5,46 @@
 @section('content')
 <div x-data="mediaManager()" class="space-y-5">
 
-    <!-- Page Header & Action Buttons -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                Pusat Manajemen Media
-            </h1>
-            <p class="text-xs text-slate-500 mt-1">
-                Pustaka berkas terpadu: kompresi WebP otomatis, video YouTube/lokal, dan seleksi kelola massal.
-            </p>
-        </div>
-        <div class="flex items-center gap-2.5 shrink-0">
-            <!-- Tombol Impor URL / YouTube -->
-            <button 
-                type="button" 
-                @click="openImportUrlModal()"
-                class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition cursor-pointer"
-            >
-                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                </svg>
-                <span>Impor URL / YouTube</span>
-            </button>
+    <!-- Sticky Header & Action Buttons -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold text-slate-900 font-heading">Pusat Manajemen Media</h1>
+                    <p class="text-[11px] text-slate-500 hidden sm:block">Pustaka berkas terpadu: kompresi WebP otomatis, video YouTube/lokal, dan kelola massal.</p>
+                </div>
+            </div>
 
-            <!-- Tombol Unggah Berkas Baru -->
-            <button 
-                type="button" 
-                @click="openUploadModal()"
-                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition cursor-pointer"
-            >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                </svg>
-                <span>Unggah Berkas Baru</span>
-            </button>
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Tombol Impor URL / YouTube -->
+                <button 
+                    type="button" 
+                    @click="openImportUrlModal()"
+                    class="admin-btn-cancel text-xs flex items-center gap-1.5"
+                >
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                    <span>Impor URL / YT</span>
+                </button>
+
+                <!-- Tombol Unggah Berkas Baru -->
+                <button 
+                    type="button" 
+                    @click="openUploadModal()"
+                    class="admin-btn-save flex items-center gap-1.5"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    <span>Unggah Berkas</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -357,12 +360,12 @@
         <!-- ========================================================================= -->
         <!-- B. TAMPILAN TABEL / LIST -->
         <!-- ========================================================================= -->
-        <div x-show="viewMode === 'list'" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-2xs">
+        <div x-show="viewMode === 'list'" class="admin-card overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                <table class="admin-table">
+                    <thead class="admin-table-thead">
                         <tr>
-                            <th class="py-3 px-4 w-10 text-center">
+                            <th class="admin-table-th w-10 text-center">
                                 <input 
                                     type="checkbox" 
                                     @change="toggleSelectAll($event)" 
@@ -370,21 +373,21 @@
                                     class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer"
                                 >
                             </th>
-                            <th class="py-3 px-4 w-16">Preview</th>
-                            <th class="py-3 px-4">Nama / Judul Berkas</th>
-                            <th class="py-3 px-4">Status Pakai</th>
-                            <th class="py-3 px-4">Tipe &amp; Sumber</th>
-                            <th class="py-3 px-4">Kategori</th>
-                            <th class="py-3 px-4">Ukuran &amp; Dimensi</th>
-                            <th class="py-3 px-4">Tanggal</th>
-                            <th class="py-3 px-4 text-right w-28">Aksi</th>
+                            <th class="admin-table-th w-16">Preview</th>
+                            <th class="admin-table-th">Nama / Judul Berkas</th>
+                            <th class="admin-table-th">Status Pakai</th>
+                            <th class="admin-table-th">Tipe &amp; Sumber</th>
+                            <th class="admin-table-th">Kategori</th>
+                            <th class="admin-table-th">Ukuran &amp; Dimensi</th>
+                            <th class="admin-table-th">Tanggal</th>
+                            <th class="admin-table-th text-right w-28">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-700">
                         @foreach($medias as $media)
-                            <tr class="hover:bg-slate-50/80 transition" :class="selectedIds.includes({{ $media->id }}) ? 'bg-blue-50/40' : ''">
+                            <tr class="admin-table-row" :class="selectedIds.includes({{ $media->id }}) ? 'bg-blue-50/40' : ''">
                                 <!-- Checkbox Baris -->
-                                <td class="py-2.5 px-4 text-center">
+                                <td class="admin-table-td text-center">
                                     <input 
                                         type="checkbox" 
                                         :value="{{ $media->id }}" 
@@ -394,7 +397,7 @@
                                 </td>
 
                                 <!-- Thumbnail -->
-                                <td class="py-2.5 px-4">
+                                <td class="admin-table-td">
                                     <div class="w-12 h-12 rounded-lg bg-slate-900 overflow-hidden shrink-0 border border-slate-200 relative flex items-center justify-center">
                                         @if($media->tipe_media === 'gambar')
                                             <img src="{{ $media->url }}" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-xs scale-125 opacity-40 pointer-events-none">
@@ -416,27 +419,27 @@
                                 </td>
 
                                 <!-- Judul & File Asli -->
-                                <td class="py-2.5 px-4 max-w-xs">
+                                <td class="admin-table-td max-w-xs">
                                     <div class="font-bold text-slate-900 truncate" title="{{ $media->judul }}">{{ $media->judul }}</div>
                                     <div class="text-[11px] text-slate-400 truncate">{{ $media->nama_file_asli ?: $media->nama_file_disimpan }}</div>
                                 </td>
 
                                 <!-- Status Penggunaan -->
-                                <td class="py-2.5 px-4 whitespace-nowrap">
+                                <td class="admin-table-td whitespace-nowrap">
                                     @if($media->is_digunakan)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200" title="Digunakan di: {{ implode(', ', $media->penggunaan) }}">
+                                        <span class="admin-badge-success" title="Digunakan di: {{ implode(', ', $media->penggunaan) }}">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             Digunakan ({{ count($media->penggunaan) }})
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-500">
+                                        <span class="admin-badge-slate">
                                             Bebas
                                         </span>
                                     @endif
                                 </td>
 
                                 <!-- Tipe & Sumber -->
-                                <td class="py-2.5 px-4 whitespace-nowrap">
+                                <td class="admin-table-td whitespace-nowrap">
                                     <div class="flex items-center gap-1.5">
                                         <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200/80">
                                             {{ $media->ekstensi ?: $media->tipe_media }}
@@ -448,25 +451,25 @@
                                 </td>
 
                                 <!-- Kategori -->
-                                <td class="py-2.5 px-4 whitespace-nowrap">
+                                <td class="admin-table-td whitespace-nowrap">
                                     <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 capitalize">
                                         {{ $media->kategori }}
                                     </span>
                                 </td>
 
                                 <!-- Ukuran & Dimensi -->
-                                <td class="py-2.5 px-4 whitespace-nowrap text-[11px] text-slate-600">
+                                <td class="admin-table-td whitespace-nowrap text-[11px] text-slate-600">
                                     <div>{{ $media->ukuran_formatted }}</div>
                                     <div class="text-slate-400 text-[10px]">{{ $media->dimensi ?: '-' }}</div>
                                 </td>
 
                                 <!-- Tanggal -->
-                                <td class="py-2.5 px-4 whitespace-nowrap text-[11px] text-slate-500">
+                                <td class="admin-table-td whitespace-nowrap text-[11px] text-slate-500">
                                     {{ $media->created_at ? $media->created_at->format('d M Y') : '-' }}
                                 </td>
 
                                 <!-- Aksi -->
-                                <td class="py-2.5 px-4 text-right whitespace-nowrap">
+                                <td class="admin-table-td text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-1.5">
                                         @if($media->tipe_media === 'gambar')
                                         <button 
@@ -519,11 +522,11 @@
     <div 
         x-show="isUploadModalOpen" 
         x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="admin-modal-overlay"
     >
         <div 
             @click.away="!isSubmitting && (isUploadModalOpen = false)" 
-            class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 relative"
+            class="admin-modal-card max-w-lg w-full p-6 space-y-4 relative"
         >
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
@@ -542,7 +545,7 @@
 
                 <!-- File Input Drag & Drop Zone -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Berkas (Gambar / Video / PDF)</label>
+                    <label class="admin-form-label mb-1">Pilih Berkas (Gambar / Video / PDF)</label>
                     <input 
                         type="file" 
                         name="file" 
@@ -550,30 +553,30 @@
                         accept="image/*,video/mp4,video/webm,application/pdf"
                         class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-xl p-2 bg-slate-50 cursor-pointer"
                     >
-                    <p class="text-[11px] text-slate-400 mt-1">
+                    <p class="admin-form-helper mt-1">
                         * Gambar otomatis dikonversi ke format <strong>.webp</strong> &amp; dikompresi agar loading halaman secepat kilat.
                     </p>
                 </div>
 
                 <!-- Judul Kustom -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama / Judul Berkas (Opsional)</label>
+                    <label class="admin-form-label mb-1">Nama / Judul Berkas (Opsional)</label>
                     <input 
                         type="text" 
                         name="judul" 
                         placeholder="Contoh: Gedung Workshop TBSM Baru" 
-                        class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        class="admin-form-input"
                     >
                 </div>
 
                 <!-- Kategori Fleksibel -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Kategori</label>
+                    <label class="admin-form-label mb-1">Pilih Kategori</label>
                     <select 
                         name="kategori_select" 
                         x-model="uploadKategoriSelect"
                         @change="onUploadKategoriChange()"
-                        class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        class="admin-form-input"
                     >
                         @foreach($daftarKategori as $kat)
                             <option value="{{ $kat }}">{{ ucfirst($kat) }}</option>
@@ -590,7 +593,7 @@
                             name="kategori_custom" 
                             x-model="uploadKategoriCustom"
                             placeholder="Ketik nama kategori baru..." 
-                            class="w-full text-xs px-3 py-2 bg-white border border-blue-300 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input border-blue-300"
                         >
                     </div>
                     <input type="hidden" name="kategori" :value="uploadFinalKategori">
@@ -598,20 +601,20 @@
 
                 <!-- Alt Teks -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Alt Teks / Deskripsi (SEO)</label>
+                    <label class="admin-form-label mb-1">Alt Teks / Deskripsi (SEO)</label>
                     <input 
                         type="text" 
                         name="alt_teks" 
                         placeholder="Deskripsi singkat gambar..." 
-                        class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        class="admin-form-input"
                     >
                 </div>
 
                 <div class="pt-2 flex items-center justify-end gap-2">
-                    <button type="button" :disabled="isSubmitting" @click="isUploadModalOpen = false" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold cursor-pointer disabled:opacity-50">
+                    <button type="button" :disabled="isSubmitting" @click="isUploadModalOpen = false" class="admin-btn-cancel text-xs">
                         Batal
                     </button>
-                    <button type="submit" :disabled="isSubmitting" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-60">
+                    <button type="submit" :disabled="isSubmitting" class="admin-btn-save">
                         <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -629,11 +632,11 @@
     <div 
         x-show="isImportModalOpen" 
         x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="admin-modal-overlay"
     >
         <div 
             @click.away="!isSubmitting && (isImportModalOpen = false)" 
-            class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4"
+            class="admin-modal-card max-w-lg w-full p-6 space-y-4 relative"
         >
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
@@ -652,7 +655,7 @@
 
                 <!-- URL Input + Live Check Button -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tautan URL Gambar atau Video YouTube</label>
+                    <label class="admin-form-label mb-1">Tautan URL Gambar atau Video YouTube</label>
                     <div class="flex gap-2">
                         <input 
                             type="url" 
@@ -660,7 +663,7 @@
                             x-model="importUrlInput"
                             required 
                             placeholder="https://www.youtube.com/watch?v=... atau https://domain.com/gambar.jpg" 
-                            class="flex-1 text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input flex-1"
                         >
                         <button 
                             type="button" 
@@ -696,24 +699,24 @@
 
                 <!-- Judul Kustom -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama / Judul Berkas</label>
+                    <label class="admin-form-label mb-1">Nama / Judul Berkas</label>
                     <input 
                         type="text" 
                         name="judul" 
                         x-model="importJudul"
                         placeholder="Judul untuk media ini" 
-                        class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        class="admin-form-input"
                     >
                 </div>
 
                 <!-- Kategori Fleksibel -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Kategori</label>
+                    <label class="admin-form-label mb-1">Pilih Kategori</label>
                     <select 
                         name="kategori_select" 
                         x-model="importKategoriSelect"
                         @change="onImportKategoriChange()"
-                        class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        class="admin-form-input"
                     >
                         @foreach($daftarKategori as $kat)
                             <option value="{{ $kat }}">{{ ucfirst($kat) }}</option>
@@ -730,17 +733,17 @@
                             name="kategori_custom" 
                             x-model="importKategoriCustom"
                             placeholder="Ketik nama kategori baru..." 
-                            class="w-full text-xs px-3 py-2 bg-white border border-blue-300 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input border-blue-300"
                         >
                     </div>
                     <input type="hidden" name="kategori" :value="importFinalKategori">
                 </div>
 
                 <div class="pt-2 flex items-center justify-end gap-2">
-                    <button type="button" :disabled="isSubmitting" @click="isImportModalOpen = false" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold cursor-pointer disabled:opacity-50">
+                    <button type="button" :disabled="isSubmitting" @click="isImportModalOpen = false" class="admin-btn-cancel text-xs">
                         Batal
                     </button>
-                    <button type="submit" :disabled="isSubmitting" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-60">
+                    <button type="submit" :disabled="isSubmitting" class="admin-btn-save">
                         <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -758,11 +761,11 @@
     <div 
         x-show="isRenameModalOpen" 
         x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="admin-modal-overlay"
     >
         <div 
             @click.away="!isSubmitting && (isRenameModalOpen = false)" 
-            class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4"
+            class="admin-modal-card max-w-md w-full p-6 space-y-4 relative"
         >
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 class="font-bold text-slate-900 text-base">Ubah Informasi Berkas</h3>
@@ -777,22 +780,22 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Judul / Nama Tampilan Berkas</label>
+                        <label class="admin-form-label mb-1">Judul / Nama Tampilan Berkas</label>
                         <input 
                             type="text" 
                             name="judul" 
                             x-model="selectedMedia.judul" 
                             required 
-                            class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input"
                         >
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori</label>
+                        <label class="admin-form-label mb-1">Kategori</label>
                         <select 
                             x-model="editKategoriSelect"
                             @change="onEditKategoriChange()"
-                            class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input"
                         >
                             @foreach($daftarKategori as $kat)
                                 <option value="{{ $kat }}">{{ ucfirst($kat) }}</option>
@@ -805,20 +808,20 @@
                                 type="text" 
                                 x-model="editKategoriCustom"
                                 placeholder="Ketik nama kategori baru..." 
-                                class="w-full text-xs px-3 py-2 bg-white border border-blue-300 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                                class="admin-form-input border-blue-300"
                             >
                         </div>
                         <input type="hidden" name="kategori" :value="editFinalKategori">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Alt Teks / Deskripsi SEO</label>
+                        <label class="admin-form-label mb-1">Alt Teks / Deskripsi SEO</label>
                         <input 
                             type="text" 
                             name="alt_teks" 
                             x-model="selectedMedia.alt_teks" 
                             placeholder="Deskripsi gambar untuk aksesibilitas & SEO"
-                            class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                            class="admin-form-input"
                         >
                     </div>
 
@@ -855,10 +858,10 @@
                     </div>
 
                     <div class="pt-2 flex items-center justify-end gap-2">
-                        <button type="button" :disabled="isSubmitting" @click="isRenameModalOpen = false" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold cursor-pointer disabled:opacity-50">
+                        <button type="button" :disabled="isSubmitting" @click="isRenameModalOpen = false" class="admin-btn-cancel text-xs">
                             Batal
                         </button>
-                        <button type="submit" :disabled="isSubmitting" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-60">
+                        <button type="submit" :disabled="isSubmitting" class="admin-btn-save">
                             <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -877,11 +880,11 @@
     <div 
         x-show="isEditorModalOpen" 
         x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4 select-none"
+        class="admin-modal-overlay select-none"
     >
         <div 
             @click.away="isEditorModalOpen = false" 
-            class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-slate-200 space-y-4"
+            class="admin-modal-card max-w-3xl w-full p-6 space-y-4 relative"
         >
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
@@ -987,10 +990,10 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-2">
-                    <button type="button" :disabled="isSubmitting" @click="isEditorModalOpen = false" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 text-xs font-semibold cursor-pointer disabled:opacity-50">
+                    <button type="button" :disabled="isSubmitting" @click="isEditorModalOpen = false" class="admin-btn-cancel text-xs">
                         Tutup
                     </button>
-                    <button type="button" :disabled="isSubmitting" @click="saveCropSettings()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-60">
+                    <button type="button" :disabled="isSubmitting" @click="saveCropSettings()" class="admin-btn-save">
                         <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -1008,11 +1011,11 @@
     <div 
         x-show="isConfirmModalOpen" 
         x-cloak
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        class="admin-modal-overlay"
     >
         <div 
             @click.away="!isSubmitting && (isConfirmModalOpen = false)" 
-            class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4"
+            class="admin-modal-card max-w-sm w-full p-6 text-center space-y-4 relative"
         >
             <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1030,7 +1033,7 @@
                     type="button" 
                     :disabled="isSubmitting"
                     @click="isConfirmModalOpen = false" 
-                    class="px-4 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 text-xs font-semibold cursor-pointer disabled:opacity-50"
+                    class="admin-btn-cancel text-xs"
                 >
                     Batal
                 </button>

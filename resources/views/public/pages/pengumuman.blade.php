@@ -81,7 +81,7 @@
                     <img src="{{ $p->gambar_sampul }}" 
                          alt="{{ $p->judul }}" 
                          loading="lazy"
-                         style="{{ \App\Services\MediaService::getCropStyle($p->gambar_sampul ?? '') }}"
+                         @style([\App\Services\MediaService::getCropStyle($p->gambar_sampul ?? '')])
                          class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300">
                     <div class="absolute inset-0 bg-slate-900/10 opacity-0 group-hover/img:opacity-100 transition-opacity"></div>
                     <span class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-slate-900/75 backdrop-blur-xs text-[10px] font-semibold text-white flex items-center gap-1">

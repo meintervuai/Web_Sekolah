@@ -6,33 +6,6 @@
 @push('styles')
 <!-- Quill WYSIWYG CSS -->
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<style>
-    .ql-toolbar.ql-snow {
-        border-top-left-radius: 0.75rem;
-        border-top-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        background-color: #f8fafc;
-        padding: 0.6rem 0.8rem;
-    }
-    .ql-container.ql-snow {
-        border-bottom-left-radius: 0.75rem;
-        border-bottom-right-radius: 0.75rem;
-        border-color: #cbd5e1;
-        font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-        font-size: 0.875rem;
-        min-height: 250px;
-        background-color: #ffffff;
-    }
-    .ql-editor {
-        min-height: 250px;
-        line-height: 1.65;
-        color: #1e293b;
-    }
-    .ql-editor.ql-blank::before {
-        color: #94a3b8;
-        font-style: normal;
-    }
-</style>
 @endpush
 
 @section('content')
@@ -84,35 +57,79 @@
     </div>
     @endif
 
-    <!-- Tab Navigation Pills -->
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 taildash-scrollbar text-xs font-semibold">
-        <button type="button" @click="setTab('pengumuman')"
-                :class="activeTab === 'pengumuman' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            1. Daftar Pengumuman Resmi
-        </button>
+    <!-- Sticky Tab Navigation & Top Action Bar -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <!-- Tab Pills -->
+            <div class="admin-tab-nav">
+                <button type="button" @click="setTab('pengumuman')"
+                        :class="activeTab === 'pengumuman' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    1. Daftar Pengumuman
+                </button>
 
-        <button type="button" @click="setTab('form_pengumuman')"
-                :class="activeTab === 'form_pengumuman' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span x-text="pengumumanForm.id ? '2. Edit Pengumuman' : '2. Buat Pengumuman Baru'"></span>
-        </button>
+                <button type="button" @click="setTab('form_pengumuman')"
+                        :class="activeTab === 'form_pengumuman' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span x-text="pengumumanForm.id ? '2. Edit Pengumuman' : '2. Buat Pengumuman Baru'"></span>
+                </button>
 
-        <button type="button" @click="setTab('visibilitas')"
-                :class="activeTab === 'visibilitas' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-                class="px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            3. Visibilitas Menu &amp; Rute
-        </button>
+                <button type="button" @click="setTab('visibilitas')"
+                        :class="activeTab === 'visibilitas' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    3. Visibilitas Menu
+                </button>
+            </div>
+
+            <!-- Sticky Right Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+                <template x-if="activeTab === 'pengumuman'">
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="openFormPengumuman()" 
+                                class="admin-btn-create">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Buat Pengumuman</span>
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-pengumuman-hero')" :disabled="submitLoading"
+                                class="admin-btn-save bg-slate-800 hover:bg-slate-900">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Hero'"></span>
+                        </button>
+                    </div>
+                </template>
+
+                <template x-if="activeTab === 'form_pengumuman'">
+                    <div class="flex items-center gap-2">
+                        <template x-if="pengumumanForm.id">
+                            <button type="button" @click="openFormPengumuman()" 
+                                    class="px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-xl transition flex items-center gap-1 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>[+] Buat Baru</span>
+                            </button>
+                        </template>
+                        <button type="button" @click="setTab('pengumuman')" 
+                                class="admin-btn-cancel text-xs">
+                            Batal
+                        </button>
+                        <button type="button" @click="submitActiveForm('form-pengumuman-main')" :disabled="submitLoading"
+                                class="admin-btn-save">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span x-text="submitLoading ? 'Menyimpan...' : (pengumumanForm.id ? 'Perbarui Pengumuman' : 'Terbitkan Pengumuman')"></span>
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
     </div>
 
     <!-- =========================================================================
@@ -120,8 +137,9 @@
     ========================================================================== -->
     <div x-show="activeTab === 'pengumuman'" x-cloak class="space-y-6">
         <!-- Pengaturan Hero Banner Pengumuman Publik -->
-        <form action="{{ route('tenant.admin.informasi.hero.update', ['tenant' => app('tenant')->slug, 'modul' => 'pengumuman']) }}" 
+        <form id="form-pengumuman-hero" action="{{ route('tenant.admin.informasi.hero.update', ['tenant' => app('tenant')->slug, 'modul' => 'pengumuman']) }}" 
               method="POST" 
+              @submit="submitLoading = true"
               class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
             @csrf
             @method('PUT')
@@ -177,12 +195,6 @@
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1">Rasio standar 16:9 / 21:9. Tampil sebagai latar banner di bagian atas direktori pengumuman publik.</p>
                 </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                    Simpan Hero Banner Pengumuman
-                </button>
             </div>
         </form>
 
@@ -297,7 +309,8 @@
          TAB 2: FORM PENGUMUMAN
     ========================================================================== -->
     <div x-show="activeTab === 'form_pengumuman'" x-cloak class="space-y-6">
-        <form :action="pengumumanForm.id ? '{{ url(app('tenant')->slug . '/admin/informasi/pengumuman') }}/' + pengumumanForm.id : '{{ route('tenant.admin.informasi.pengumuman.store', ['tenant' => app('tenant')->slug]) }}'" 
+        <form id="form-pengumuman-main"
+              :action="pengumumanForm.id ? '{{ url(app('tenant')->slug . '/admin/informasi/pengumuman') }}/' + pengumumanForm.id : '{{ route('tenant.admin.informasi.pengumuman.store', ['tenant' => app('tenant')->slug]) }}'" 
               method="POST" 
               @submit="preparePengumumanSubmit($event)"
               class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
@@ -365,15 +378,6 @@
                                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 focus:bg-white focus:border-blue-500 transition">
                     </div>
                 </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                <button type="button" @click="setTab('pengumuman')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
-                    Kembali ke Daftar
-                </button>
-                <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer">
-                    <span x-text="pengumumanForm.id ? 'Perbarui Pengumuman' : 'Terbitkan Pengumuman'"></span>
-                </button>
             </div>
         </form>
     </div>
@@ -473,6 +477,30 @@ function pengumumanManager(config) {
         routes: config.routes,
 
         quillKonten: null,
+        submitLoading: false,
+
+        submitActiveForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            if (formId === 'form-pengumuman-main') {
+                const hidden = document.getElementById('hiddenIsiKontenPengumuman');
+                if (this.quillKonten && hidden) {
+                    hidden.value = this.quillKonten.root.innerHTML;
+                }
+            }
+
+            if (form.reportValidity && !form.reportValidity()) {
+                return;
+            }
+
+            this.submitLoading = true;
+            if (form.requestSubmit) {
+                form.requestSubmit();
+            } else {
+                form.submit();
+            }
+        },
 
         pengumumanForm: {
             id: null,

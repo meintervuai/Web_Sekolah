@@ -1,10 +1,16 @@
 <!-- TAB 5: VISIBILITAS MENU, HALAMAN & SECTION PROFIL -->
 <div x-show="activeTab === 'visibilitas'" x-cloak class="space-y-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-5">
-        <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div class="admin-card space-y-5">
+        <div class="admin-card-header">
             <div>
-                <h2 class="text-sm sm:text-base font-bold text-slate-900 font-heading">Sakelar Visibilitas Menu, Sub-Menu &amp; Section Profil</h2>
-                <p class="text-xs text-slate-500 mt-0.5">
+                <h2 class="admin-card-title">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Sakelar Visibilitas Menu, Sub-Menu &amp; Section Profil
+                </h2>
+                <p class="admin-card-subtitle">
                     Kelola visibilitas hierarki dari Menu Utama, Halaman Khusus, hingga Bagian/Section internal. Jika menu tingkat tertinggi dinonaktifkan, seluruh sub-item dan section di bawahnya otomatis ikut dinonaktifkan.
                 </p>
             </div>

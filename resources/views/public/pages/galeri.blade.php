@@ -100,7 +100,7 @@
                      class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs hover:shadow-lg transition-all group flex flex-col cursor-pointer"
                      @click="openMedia('{{ $src }}', '{{ addslashes($item->judul_item ?? $item->caption ?? $alb->nama_album) }}', {{ $isVideo ? 'true' : 'false' }})">
                     
-                    <div class="aspect-square w-full overflow-hidden bg-slate-900 relative flex items-center justify-center">
+                    <div class="aspect-4/3 w-full overflow-hidden bg-slate-900 relative flex items-center justify-center">
                         @if($isVideo)
                             @if(Str::contains($src, ['.mp4', '.webm', '.mov']))
                                 <video src="{{ $src }}" class="w-full h-full object-cover" muted></video>
@@ -123,7 +123,7 @@
                             <img src="{{ $src }}" 
                                  alt="{{ $item->judul_item ?? $item->caption ?? $alb->nama_album }}" 
                                  loading="lazy"
-                                 style="{{ \App\Services\MediaService::getCropStyle($src) }}"
+                                 @style([\App\Services\MediaService::getCropStyle($src)])
                                  class="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <div class="absolute inset-0 z-20 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                 <span class="p-2.5 rounded-full bg-white/90 text-slate-900 shadow">

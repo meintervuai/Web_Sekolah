@@ -4,7 +4,7 @@
      Pencarian Live, Sorting Urutan/Terbaru, Impor URL/YouTube instan, dan Unggah WebP Otomatis.
 ========================================================================= -->
 <div x-show="mediaPickerOpen" x-cloak 
-     class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4"
+     class="admin-modal-overlay p-2 sm:p-4"
      x-transition:enter="transition ease-out duration-200"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100"
@@ -12,7 +12,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0">
     
-    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full h-[92vh] sm:h-[86vh] flex flex-col overflow-hidden border border-slate-200"
+    <div class="admin-modal-card max-w-4xl w-full h-[92vh] sm:h-[86vh] flex flex-col overflow-hidden"
          @click.outside="mediaPickerOpen = false">
         
         <!-- 1. Modal Header -->
@@ -74,7 +74,7 @@
                 </button>
 
                 <!-- Direct Upload Button inside Modal -->
-                <label class="h-8.5 px-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition inline-flex items-center justify-center gap-1.5 cursor-pointer shrink-0 shadow-xs active:scale-95">
+                <label class="admin-btn-save h-8.5 text-xs">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     <span class="whitespace-nowrap">Unggah Baru</span>
                     <input type="file" @change="uploadNewMedia($event)" class="hidden" accept="image/*,video/*">
@@ -90,14 +90,14 @@
                 <div class="relative flex-1">
                     <input type="url" x-model="pickerImportUrl" 
                            placeholder="Tempel URL YouTube (https://youtu.be/...) atau URL Gambar (https://...)" 
-                           class="w-full text-xs px-3 py-2 bg-white border border-blue-200 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600">
+                           class="admin-form-input">
                 </div>
                 <input type="text" x-model="pickerImportJudul" 
                        placeholder="Judul / Nama Media (opsional)" 
-                       class="sm:w-48 text-xs px-3 py-2 bg-white border border-blue-200 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600">
+                       class="admin-form-input sm:w-48">
                 <button type="button" @click="submitImportUrl()" 
                         :disabled="!pickerImportUrl || pickerLoading"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 cursor-pointer shadow-xs flex items-center justify-center gap-1.5 shrink-0">
+                        class="admin-btn-save h-8.5 text-xs whitespace-nowrap">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     <span>Simpan &amp; Pilih</span>
                 </button>
@@ -114,7 +114,7 @@
                 </span>
                 <input type="text" x-model="pickerSearchQuery" @keyup.debounce.300ms="fetchMedia(1)"
                        placeholder="Cari judul berkas..."
-                       class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 transition">
+                       class="admin-form-input pl-8 py-1.5 text-xs">
             </div>
 
             <!-- Sorting & Info -->
@@ -246,7 +246,7 @@
                 </div>
 
                 <button type="button" @click="mediaPickerOpen = false" 
-                        class="px-3.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs transition cursor-pointer">
+                        class="admin-btn-cancel text-xs py-1 px-3.5">
                     Tutup
                 </button>
             </div>

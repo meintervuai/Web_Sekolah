@@ -4,128 +4,148 @@
 @section('header_title', 'Tema & Warna Sekolah')
 
 @section('content')
-<div class="space-y-6">
+<div class="max-w-7xl mx-auto space-y-6"
+     x-data="{
+         selectedTheme: '{{ old('skema_tema', $pengaturanRaw['skema_tema'] ?? 'navy_classic') }}',
+         submitLoading: false,
 
-    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden"
-         x-data="{
-             selectedTheme: '{{ old('skema_tema', $pengaturanRaw['skema_tema'] ?? 'navy_classic') }}',
+         /* A. Warna Identitas */
+         primary: '{{ old('warna_tema', $pengaturanRaw['warna_tema'] ?? '#1E3A8A') }}',
+         accent: '{{ old('warna_aksen', $pengaturanRaw['warna_aksen'] ?? '#0284C7') }}',
 
-             /* A. Warna Identitas */
-             primary: '{{ old('warna_tema', $pengaturanRaw['warna_tema'] ?? '#1E3A8A') }}',
-             accent: '{{ old('warna_aksen', $pengaturanRaw['warna_aksen'] ?? '#0284C7') }}',
+         /* B. Tipografi & Teks */
+         heading: '{{ old('warna_judul', $pengaturanRaw['warna_judul'] ?? '#0F172A') }}',
+         bodyText: '{{ old('warna_teks', $pengaturanRaw['warna_teks'] ?? '#1E293B') }}',
+         muted: '{{ old('warna_teks_sekunder', $pengaturanRaw['warna_teks_sekunder'] ?? '#475569') }}',
 
-             /* B. Tipografi & Teks */
-             heading: '{{ old('warna_judul', $pengaturanRaw['warna_judul'] ?? '#0F172A') }}',
-             bodyText: '{{ old('warna_teks', $pengaturanRaw['warna_teks'] ?? '#1E293B') }}',
-             muted: '{{ old('warna_teks_sekunder', $pengaturanRaw['warna_teks_sekunder'] ?? '#475569') }}',
+         /* C. Latar & Permukaan */
+         pageBg: '{{ old('warna_latar_halaman', $pengaturanRaw['warna_latar_halaman'] ?? '#F8FAFC') }}',
+         sectionBg: '{{ old('warna_latar_section', $pengaturanRaw['warna_latar_section'] ?? '#F1F5F9') }}',
+         cardBg: '{{ old('warna_kartu', $pengaturanRaw['warna_kartu'] ?? '#FFFFFF') }}',
 
-             /* C. Latar & Permukaan */
-             pageBg: '{{ old('warna_latar_halaman', $pengaturanRaw['warna_latar_halaman'] ?? '#F8FAFC') }}',
-             sectionBg: '{{ old('warna_latar_section', $pengaturanRaw['warna_latar_section'] ?? '#F1F5F9') }}',
-             cardBg: '{{ old('warna_kartu', $pengaturanRaw['warna_kartu'] ?? '#FFFFFF') }}',
+         /* D. Garis & Batas */
+         garis: '{{ old('warna_border', $pengaturanRaw['warna_border'] ?? '#E2E8F0') }}',
 
-             /* D. Garis & Batas */
-             garis: '{{ old('warna_border', $pengaturanRaw['warna_border'] ?? '#E2E8F0') }}',
+         /* E. Tombol & Aksi */
+         btnBg: '{{ old('warna_tombol', $pengaturanRaw['warna_tombol'] ?? '#1D4ED8') }}',
+         btnText: '{{ old('warna_tombol_teks', $pengaturanRaw['warna_tombol_teks'] ?? '#FFFFFF') }}',
 
-             /* E. Tombol & Aksi */
-             btnBg: '{{ old('warna_tombol', $pengaturanRaw['warna_tombol'] ?? '#1D4ED8') }}',
-             btnText: '{{ old('warna_tombol_teks', $pengaturanRaw['warna_tombol_teks'] ?? '#FFFFFF') }}',
+         /* F. Header, Navigasi & Footer */
+         headerBg: '{{ old('warna_header', $pengaturanRaw['warna_header'] ?? '#1E3A8A') }}',
+         footerBg: '{{ old('warna_footer', $pengaturanRaw['warna_footer'] ?? '#172F63') }}',
 
-             /* F. Header, Navigasi & Footer */
-             headerBg: '{{ old('warna_header', $pengaturanRaw['warna_header'] ?? '#1E3A8A') }}',
-             footerBg: '{{ old('warna_footer', $pengaturanRaw['warna_footer'] ?? '#172F63') }}',
+         /* Pemetaan kunci preset ke variabel warna */
+         petaPreset: {
+             tema: 'primary', aksen: 'accent', judul: 'heading', teks: 'bodyText',
+             sekunder: 'muted', halaman: 'pageBg', section: 'sectionBg', kartu: 'cardBg',
+             border: 'garis', tombol: 'btnBg', tombol_teks: 'btnText',
+             header: 'headerBg', footer: 'footerBg'
+         },
 
-             /* Pemetaan kunci preset ke variabel warna */
-             petaPreset: {
-                 tema: 'primary', aksen: 'accent', judul: 'heading', teks: 'bodyText',
-                 sekunder: 'muted', halaman: 'pageBg', section: 'sectionBg', kartu: 'cardBg',
-                 border: 'garis', tombol: 'btnBg', tombol_teks: 'btnText',
-                 header: 'headerBg', footer: 'footerBg'
-             },
-
-             /* Auto-kontras WCAG - salinan App\Support\WarnaKontras agar
-                pratinjau ini sama persis dengan hasil render portal publik.
-                Warna teks pilihan dipertahankan bila kontrasnya >= 4.5:1,
-                jika tidak putih/tinta dipilih otomatis oleh luminans. */
-             luminans(hex) {
+         /* Auto-kontras WCAG */
+         luminans(hex) {
+             let h = String(hex || '').replace('#', '').trim();
+             if (h.length === 3) { h = h.split('').map((c) => c + c).join(''); }
+             if (!/^[0-9a-fA-F]{6}$/.test(h)) { return 1; }
+             const kanal = [0, 2, 4].map((i) => {
+                 const c = parseInt(h.substr(i, 2), 16) / 255;
+                 return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+             });
+             return 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2];
+         },
+         rasio(a, b) {
+             const la = this.luminans(a), lb = this.luminans(b);
+             return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+         },
+         pilihTeks(bg, pilihan, min = 4.5) {
+             if (this.rasio(bg, pilihan) >= min) { return pilihan; }
+             return this.rasio(bg, '#FFFFFF') >= this.rasio(bg, '#0F172A') ? '#FFFFFF' : '#0F172A';
+         },
+         campur(a, b, porsiA) {
+             const rgd = (hex) => {
                  let h = String(hex || '').replace('#', '').trim();
                  if (h.length === 3) { h = h.split('').map((c) => c + c).join(''); }
-                 if (!/^[0-9a-fA-F]{6}$/.test(h)) { return 1; }
-                 const kanal = [0, 2, 4].map((i) => {
-                     const c = parseInt(h.substr(i, 2), 16) / 255;
-                     return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-                 });
-                 return 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2];
-             },
-             rasio(a, b) {
-                 const la = this.luminans(a), lb = this.luminans(b);
-                 return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
-             },
-             pilihTeks(bg, pilihan, min = 4.5) {
-                 if (this.rasio(bg, pilihan) >= min) { return pilihan; }
-                 return this.rasio(bg, '#FFFFFF') >= this.rasio(bg, '#0F172A') ? '#FFFFFF' : '#0F172A';
-             },
-             campur(a, b, porsiA) {
-                 const rgd = (hex) => {
-                     let h = String(hex || '').replace('#', '').trim();
-                     if (h.length === 3) { h = h.split('').map((c) => c + c).join(''); }
-                     return /^[0-9a-fA-F]{6}$/.test(h) ? [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16)) : [0, 0, 0];
-                 };
-                 const A = rgd(a), B = rgd(b), t = porsiA / 100;
-                 return '#' + A.map((v, i) => Math.round(v * t + B[i] * (1 - t)).toString(16).padStart(2, '0')).join('').toUpperCase();
-             },
+                 return /^[0-9a-fA-F]{6}$/.test(h) ? [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16)) : [0, 0, 0];
+             };
+             const A = rgd(a), B = rgd(b), t = porsiA / 100;
+             return '#' + A.map((v, i) => Math.round(v * t + B[i] * (1 - t)).toString(16).padStart(2, '0')).join('').toUpperCase();
+         },
 
-             /* Warna teks per permukaan - dipakai pratinjau di bawah */
-             get fgHeader() { return this.pilihTeks(this.headerBg, this.btnText); },
-             get fgFooter() { return this.pilihTeks(this.footerBg, this.btnText); },
-             get fgTombol() { return this.pilihTeks(this.btnBg, this.btnText, 3); },
-             get fgAksen() { return this.pilihTeks(this.accent, this.btnText, 3); },
-             get fgKartuHeading() { return this.pilihTeks(this.cardBg, this.heading); },
-             get fgKartuTeks() { return this.pilihTeks(this.cardBg, this.bodyText); },
-             get fgKartuMuted() { return this.pilihTeks(this.cardBg, this.muted); },
-             get fgSectionHeading() { return this.pilihTeks(this.sectionBg, this.heading); },
-             get fgBadge() { return this.pilihTeks(this.campur(this.accent, this.pageBg, 15), this.campur(this.primary, '#000000', 85)); },
-             get fgLink() { return this.pilihTeks(this.pageBg, this.accent, 2); },
+         /* Warna teks per permukaan */
+         get fgHeader() { return this.pilihTeks(this.headerBg, this.btnText); },
+         get fgFooter() { return this.pilihTeks(this.footerBg, this.btnText); },
+         get fgTombol() { return this.pilihTeks(this.btnBg, this.btnText, 3); },
+         get fgAksen() { return this.pilihTeks(this.accent, this.btnText, 3); },
+         get fgKartuHeading() { return this.pilihTeks(this.cardBg, this.heading); },
+         get fgKartuTeks() { return this.pilihTeks(this.cardBg, this.bodyText); },
+         get fgKartuMuted() { return this.pilihTeks(this.cardBg, this.muted); },
+         get fgSectionHeading() { return this.pilihTeks(this.sectionBg, this.heading); },
+         get fgBadge() { return this.pilihTeks(this.campur(this.accent, this.pageBg, 15), this.campur(this.primary, '#000000', 85)); },
+         get fgLink() { return this.pilihTeks(this.pageBg, this.accent, 2); },
 
-             presets: {
-                 navy_classic: { nama: 'Biru Navy Klasik', deskripsi: 'Formal dan berwibawa, lazim dipakai sekolah negeri.', tema: '#1E3A8A', aksen: '#0284C7', judul: '#0F172A', teks: '#1E293B', sekunder: '#475569', halaman: '#F8FAFC', section: '#F1F5F9', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1D4ED8', tombol_teks: '#FFFFFF', header: '#1E3A8A', footer: '#172F63' },
-                 emerald_nature: { nama: 'Hijau Zamrud Edukasi', deskripsi: 'Sejuk, alami, dan ramah lingkungan.', tema: '#065F46', aksen: '#10B981', judul: '#052E1F', teks: '#0F2A22', sekunder: '#4B6B62', halaman: '#F6FBF9', section: '#E7F4EF', kartu: '#FFFFFF', border: '#D5E9E2', tombol: '#059669', tombol_teks: '#FFFFFF', header: '#065F46', footer: '#044435' },
-                 maroon_prestige: { nama: 'Merah Marun Prestisius', deskripsi: 'Tegas dan berkarakter kuat untuk sekolah berprestasi.', tema: '#881337', aksen: '#F43F5E', judul: '#4C0519', teks: '#3F0B1A', sekunder: '#7C5160', halaman: '#FDF6F7', section: '#FBEAEE', kartu: '#FFFFFF', border: '#F2D7DD', tombol: '#BE123C', tombol_teks: '#FFFFFF', header: '#881337', footer: '#6B0E2B' },
+         presets: {
+             navy_classic: { nama: 'Biru Navy Klasik', deskripsi: 'Formal dan berwibawa, lazim dipakai sekolah negeri.', tema: '#1E3A8A', aksen: '#0284C7', judul: '#0F172A', teks: '#1E293B', sekunder: '#475569', halaman: '#F8FAFC', section: '#F1F5F9', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1D4ED8', tombol_teks: '#FFFFFF', header: '#1E3A8A', footer: '#172F63' },
+             emerald_nature: { nama: 'Hijau Zamrud Edukasi', deskripsi: 'Sejuk, alami, dan ramah lingkungan.', tema: '#065F46', aksen: '#10B981', judul: '#052E1F', teks: '#0F2A22', sekunder: '#4B6B62', halaman: '#F6FBF9', section: '#E7F4EF', kartu: '#FFFFFF', border: '#D5E9E2', tombol: '#059669', tombol_teks: '#FFFFFF', header: '#065F46', footer: '#044435' },
+             maroon_prestige: { nama: 'Merah Marun Prestisius', deskripsi: 'Tegas dan berkarakter kuat untuk sekolah berprestasi.', tema: '#881337', aksen: '#F43F5E', judul: '#4C0519', teks: '#3F0B1A', sekunder: '#7C5160', halaman: '#FDF6F7', section: '#FBEAEE', kartu: '#FFFFFF', border: '#F2D7DD', tombol: '#BE123C', tombol_teks: '#FFFFFF', header: '#881337', footer: '#6B0E2B' },
+             royal_purple: { nama: 'Ungu Dinamis Kreatif', deskripsi: 'Modern dan kreatif untuk sekolah seni dan teknologi.', tema: '#581C87', aksen: '#A855F7', judul: '#3B0764', teks: '#3F1D5C', sekunder: '#6B5B7B', halaman: '#FAF7FD', section: '#F2E9FA', kartu: '#FFFFFF', border: '#E4D4F0', tombol: '#7E22CE', tombol_teks: '#FFFFFF', header: '#581C87', footer: '#431263' },
+             slate_dark: { nama: 'Abu Gelap Elegan', deskripsi: 'Minimalis modern berorientasi industri.', tema: '#0F172A', aksen: '#38BDF8', judul: '#0F172A', teks: '#1E293B', sekunder: '#64748B', halaman: '#F8FAFC', section: '#EEF2F7', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1E293B', tombol_teks: '#FFFFFF', header: '#0F172A', footer: '#020617' },
+             amber_sunset: { nama: 'Emas Oranye Enerjik', deskripsi: 'Hangat dan inovatif untuk kewirausahaan.', tema: '#78350F', aksen: '#F59E0B', judul: '#451A03', teks: '#431407', sekunder: '#7C5A3C', halaman: '#FFFAF3', section: '#FDF0DC', kartu: '#FFFFFF', border: '#F3DFC2', tombol: '#D97706', tombol_teks: '#FFFFFF', header: '#78350F', footer: '#57260A' },
+             teal_modern: { nama: 'Teal Bahari Futuristik', deskripsi: 'Profesional dan futuristik untuk teknologi dan sains.', tema: '#134E4A', aksen: '#14B8A6', judul: '#042F2E', teks: '#073B39', sekunder: '#476A69', halaman: '#F5FBFB', section: '#E5F4F2', kartu: '#FFFFFF', border: '#CFE9E6', tombol: '#0D9488', tombol_teks: '#FFFFFF', header: '#134E4A', footer: '#0A3633' }
+         },
 
-                 royal_purple: { nama: 'Ungu Dinamis Kreatif', deskripsi: 'Modern dan kreatif untuk sekolah seni dan teknologi.', tema: '#581C87', aksen: '#A855F7', judul: '#3B0764', teks: '#3F1D5C', sekunder: '#6B5B7B', halaman: '#FAF7FD', section: '#F2E9FA', kartu: '#FFFFFF', border: '#E4D4F0', tombol: '#7E22CE', tombol_teks: '#FFFFFF', header: '#581C87', footer: '#431263' },
-                 slate_dark: { nama: 'Abu Gelap Elegan', deskripsi: 'Minimalis modern berorientasi industri.', tema: '#0F172A', aksen: '#38BDF8', judul: '#0F172A', teks: '#1E293B', sekunder: '#64748B', halaman: '#F8FAFC', section: '#EEF2F7', kartu: '#FFFFFF', border: '#E2E8F0', tombol: '#1E293B', tombol_teks: '#FFFFFF', header: '#0F172A', footer: '#020617' },
-                 amber_sunset: { nama: 'Emas Oranye Enerjik', deskripsi: 'Hangat dan inovatif untuk kewirausahaan.', tema: '#78350F', aksen: '#F59E0B', judul: '#451A03', teks: '#431407', sekunder: '#7C5A3C', halaman: '#FFFAF3', section: '#FDF0DC', kartu: '#FFFFFF', border: '#F3DFC2', tombol: '#D97706', tombol_teks: '#FFFFFF', header: '#78350F', footer: '#57260A' },
-                 teal_modern: { nama: 'Teal Bahari Futuristik', deskripsi: 'Profesional dan futuristik untuk teknologi dan sains.', tema: '#134E4A', aksen: '#14B8A6', judul: '#042F2E', teks: '#073B39', sekunder: '#476A69', halaman: '#F5FBFB', section: '#E5F4F2', kartu: '#FFFFFF', border: '#CFE9E6', tombol: '#0D9488', tombol_teks: '#FFFFFF', header: '#134E4A', footer: '#0A3633' }
-             },
+         terapkanPreset(kunciPreset) {
+             const preset = this.presets[kunciPreset];
+             if (!preset) { return; }
+             this.selectedTheme = kunciPreset;
+             for (const kunci in this.petaPreset) {
+                 this[this.petaPreset[kunci]] = preset[kunci];
+             }
+         },
 
-             terapkanPreset(kunciPreset) {
-                 const preset = this.presets[kunciPreset];
-                 if (!preset) { return; }
-                 this.selectedTheme = kunciPreset;
-                 for (const kunci in this.petaPreset) {
-                     this[this.petaPreset[kunci]] = preset[kunci];
-                 }
-             },
+         tandaiCustom() { this.selectedTheme = 'custom'; },
 
-             tandaiCustom() { this.selectedTheme = 'custom'; }
-         }">
+         submitForm() {
+             this.submitLoading = true;
+             document.getElementById('form-tema-warna').submit();
+         }
+     }">
 
+    <!-- Sticky Action Bar Atas -->
+    <div class="admin-sticky-bar">
+        <div class="admin-sticky-container">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-slate-800">Skema Terpilih:</span>
+                    <span class="ml-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200"
+                          x-text="selectedTheme === 'custom' ? 'Custom Warna' : (presets[selectedTheme] ? presets[selectedTheme].nama : selectedTheme)"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button type="button" @click="submitForm()" :disabled="submitLoading"
+                        class="admin-btn-save">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span x-text="submitLoading ? 'Menyimpan...' : 'Simpan Perubahan Tema'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card">
         <!-- Header Kartu Pengaturan -->
-        <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="admin-card-header">
             <div>
-                <h3 class="text-base font-bold text-slate-900">Pengaturan Tema & Warna Portal Sekolah</h3>
-                <p class="text-xs text-slate-500 mt-1 font-medium">
+                <h3 class="admin-card-title">Pengaturan Tema & Warna Portal Sekolah</h3>
+                <p class="admin-card-subtitle">
                     Setiap bagian tampilan punya warna tersendiri: huruf judul, teks isi, teks sekunder, latar halaman, latar section, kartu, garis pembatas, tombol, header, dan footer.
                 </p>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-                <span class="text-xs font-bold text-slate-500">Skema terpilih:</span>
-                <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200"
-                      x-text="selectedTheme === 'custom' ? 'Custom warna' : (presets[selectedTheme] ? presets[selectedTheme].nama : selectedTheme)"></span>
-            </div>
         </div>
 
-        <form action="{{ route('tenant.admin.pengaturan.update', ['tenant' => $tenant->slug]) }}" method="POST" class="p-6 sm:p-8 space-y-8">
+        <form id="form-tema-warna" action="{{ route('tenant.admin.pengaturan.update', ['tenant' => $tenant->slug]) }}" method="POST" class="p-6 sm:p-8 space-y-8">
             @csrf
             @method('PUT')
 
@@ -347,15 +367,11 @@
                 </div>
             </div>
 
-            <!-- Tombol Simpan -->
-            <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <p class="text-[11px] text-slate-500 font-medium">
+            <!-- Informasi Penyimpanan -->
+            <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[11px] text-slate-500 font-medium">
+                <p>
                     Nilai disimpan pada tabel <code class="font-mono">pengaturan_umum</code> dan langsung dipakai seluruh halaman publik sekolah.
                 </p>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition cursor-pointer inline-flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    <span>Simpan Perubahan</span>
-                </button>
             </div>
         </form>
 
