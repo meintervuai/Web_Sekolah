@@ -2,6 +2,15 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Konfigurasi Deployment Vercel Serverless] - 2026-10-06
+
+### Added
+- **Konfigurasi Serverless Vercel**:
+  - [api/index.php](file:///d:/databaru/Magang/website_sekolah/api/index.php): Handler serverless function Vercel dengan otomatisasi pembuatan folder ephemeral `/tmp` untuk cache, view compiler, dan session storage.
+  - [vercel.json](file:///d:/databaru/Magang/website_sekolah/vercel.json): Konfigurasi runtime PHP `vercel-php@0.7.3`, routing rute statis (`/build`, `/storage`, `/assets`), dan routing dinamis Laravel.
+  - [.vercelignore](file:///d:/databaru/Magang/website_sekolah/.vercelignore): Konfigurasi filter berkas agar deploy Vercel ringan dan optimal.
+
+
 ## [Pemisahan Menu Navigasi Admin Informasi Sekolah Menjadi Menu Mandiri] - 2026-10-06
 
 ### Refactored & Enhanced

@@ -7,6 +7,7 @@ use App\Models\Tenant\Jurusan;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\Post;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property string $tenantSlug
@@ -31,7 +32,7 @@ beforeEach(function () {
         ]
     );
 
-    \Illuminate\Support\Facades\DB::connection('tenant')->table('pengaturan_fitur')->update(['is_aktif' => true]);
+    DB::connection('tenant')->table('pengaturan_fitur')->update(['is_aktif' => true]);
 });
 
 test('0. root url menampilkan portal direktori sekolah dan tidak redirect otomatis', function () {
@@ -143,7 +144,6 @@ test('6. halaman pengumuman dan detail pengumuman dapat diakses', function () {
     }
 });
 
-
 test('8. halaman kegiatan dokumentasi sekolah dapat diakses', function () {
     $response = $this->get('/'.$this->tenantSlug.'/kegiatan');
     $response->assertStatus(200);
@@ -188,12 +188,12 @@ test('12. halaman galeri foto dapat diakses', function () {
 test('13. halaman informasi spmb dan ppdb dapat diakses', function () {
     $response = $this->get('/'.$this->tenantSlug.'/spmb');
     $response->assertStatus(200);
-    $response->assertSee('Bergabung Bersama SMK Negeri 2 Bandung');
+    $response->assertSee('SPMB / PPDB');
 
     // Alias ppdb juga harus bekerja
     $alias = $this->get('/'.$this->tenantSlug.'/ppdb');
     $alias->assertStatus(200);
-    $alias->assertSee('Bergabung Bersama SMK Negeri 2 Bandung');
+    $alias->assertSee('SPMB / PPDB');
 });
 
 test('14. halaman kontak dapat diakses dan form pengiriman pesan berhasil disimpan', function () {

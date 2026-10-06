@@ -1,0 +1,15 @@
+/node_modules
+/tests
+/docs
+/doc
+/.git
+/.github
+/.agents
+/.ai
+/.claude
+/.kilo
+/.env
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
