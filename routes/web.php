@@ -90,10 +90,10 @@ Route::prefix('{tenant}')
         Route::get('/home', [HomeController::class, 'index'])->name('home');
 
         // 2. Profil Sekolah
-        Route::get('/profil', [PageController::class, 'profil'])->name('tenant.profil')->middleware('tenant.feature:profil,menu_profil');
-        Route::get('/profil/sejarah', [PageController::class, 'sejarah'])->name('tenant.profil.sejarah')->middleware('tenant.feature:sejarah,menu_profil');
-        Route::get('/profil/visi-misi', [PageController::class, 'visiMisi'])->name('tenant.profil.visi-misi')->middleware('tenant.feature:visi_misi,menu_profil');
-        Route::get('/profil/struktur', [PageController::class, 'struktur'])->name('tenant.profil.struktur')->middleware('tenant.feature:struktur_organisasi,menu_profil');
+        Route::get('/profil', [PageController::class, 'profil'])->name('tenant.profil')->middleware('tenant.feature:profil');
+        Route::get('/profil/sejarah', [PageController::class, 'sejarah'])->name('tenant.profil.sejarah')->middleware('tenant.feature:sejarah');
+        Route::get('/profil/visi-misi', [PageController::class, 'visiMisi'])->name('tenant.profil.visi-misi')->middleware('tenant.feature:visi_misi');
+        Route::get('/profil/struktur', [PageController::class, 'struktur'])->name('tenant.profil.struktur')->middleware('tenant.feature:struktur_organisasi');
 
         // 3. Program Keahlian / Jurusan
         Route::get('/program-keahlian', [PageController::class, 'programKeahlian'])->name('tenant.program-keahlian')->middleware('tenant.feature:program_keahlian');
@@ -135,9 +135,9 @@ Route::prefix('{tenant}')
         Route::get('/spmb', [PageController::class, 'spmb'])->name('tenant.spmb')->middleware('tenant.feature:spmb');
         Route::get('/ppdb', [PageController::class, 'spmb'])->name('ppdb')->middleware('tenant.feature:spmb');
 
-        // 13. Kontak
-        Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak')->middleware('tenant.feature:kontak');
-        Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim')->middleware('tenant.feature:kontak');
+        // 13. Kontak (Halaman Dasar Wajib - Aktif Permanen)
+        Route::get('/kontak', [PageController::class, 'kontak'])->name('tenant.kontak');
+        Route::post('/kontak', [PageController::class, 'kirimKontak'])->name('tenant.kontak.kirim');
 
         // Backward Compatibility Sub-prefix Aliases
         Route::prefix('profil')->name('profil.')->group(function () {

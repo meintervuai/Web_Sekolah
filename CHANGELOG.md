@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Sinkronisasi Granular Menu Profil & Sub-Fitur Dropdown Navbar] - 2026-10-06
+
+### Fixed
+- **Sinkronisasi Reaktif Induk Menu Profil saat Mengaktifkan Sub-Fitur**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Ketika salah satu sub-fitur profil (`profil`, `profil_video`, `sejarah`, `visi_misi`, `struktur_organisasi`, `guru_staf`) diaktifkan (`aktif: true`), sistem otomatis menyinkronkan status induk `menu_profil` dan data tabel `menus` (`Profil`) ke aktif (`is_aktif = 1`).
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Memperbaiki rendering dropdown navbar publik agar menu `Profil` muncul secara dinamis selama terdapat minimal 1 sub-fitur yang berstatus aktif (hanya sub-fitur aktif yang ditampilkan di dropdown).
+  - [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php): Memisahkan middleware `tenant.feature` per sub-rute profil (`tenant.feature:sejarah`, `tenant.feature:visi_misi`, `tenant.feature:struktur_organisasi`) agar akses sub-halaman bekerja secara mandiri dan presisi.
+  - [tests/Feature/TenantRouteVisibilityTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantRouteVisibilityTest.php): Menambahkan automated test untuk memvalidasi skenario aktivasi granular sub-fitur profil setelah induk dinonaktifkan.
+
+## [Penyelarasan Visibilitas Menu Dropdown Kosong & Tombol CTA SPMB Navbar] - 2026-10-06
+
+### Fixed
+- **Kondisionalitas Tombol CTA SPMB 2026**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Membungkus tombol CTA `SPMB 2026` di header desktop, mobile header, dan drawer footer mobile dengan pengecekan `PengaturanFitur::isAktif('spmb', true)`.
+- **Penyembunyian Menu Induk Dropdown Kosong**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Mengeliminasi menu induk dropdown (seperti `Informasi`) dari navbar apabila seluruh sub-menunya nonaktif.
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menyinkronkan status menu `/kegiatan` saat toggle fitur galeri diubah.
+- **Halaman Dasar Kontak & Hubungi Kami Dijadikan Permanen**:
+  - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Menghapus sakelar toggle `Kontak & Buku Tamu` dari Kontrol Visibilitas Super Admin karena **Beranda** dan **Kontak** merupakan halaman wajib utama setiap sekolah.
+  - [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php): Menghapus pembatasan middleware feature flag pada rute `/{tenant}/kontak` sehingga selalu aktif dan berstatus 200 OK.
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Menetapkan menu navigasi dan tautan footer Kontak sebagai elemen permanen.
+- **Penyelarasan Hero Slider & Footer**:
+  - [app/Http/Controllers/Tenant/Public/HomeController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/HomeController.php): Menyaring tombol slider beranda jika modul tujuan nonaktif.
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Menyaring tautan cepat footer berdasarkan status aktif fitur.
+
 ## [Proteksi Ketat Rute Admin Sekolah & Penegakan Otoritas Master Super Admin] - 2026-10-05
 
 ### Added

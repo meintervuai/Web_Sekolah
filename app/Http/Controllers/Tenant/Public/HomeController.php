@@ -87,15 +87,29 @@ class HomeController extends Controller
         $fiturList = PengaturanFitur::all()->pluck('is_aktif', 'kode_fitur')->toArray();
 
         // 1. Slider Beranda
-        $slider = SliderBeranda::aktif()->get();
+        $slider = SliderBeranda::aktif()->get()->map(function ($s) use ($fiturList) {
+            $link = '/' . ltrim($s->link_tombol, '/');
+            if ($link === '/spmb' && !($fiturList['spmb'] ?? true)) {
+                $s->link_tombol = null;
+            } elseif ($link === '/program-keahlian' && !($fiturList['program_keahlian'] ?? true)) {
+                $s->link_tombol = null;
+            } elseif ($link === '/prestasi' && !($fiturList['prestasi'] ?? true)) {
+                $s->link_tombol = null;
+            } elseif ($link === '/profil' && !($fiturList['profil'] ?? true)) {
+                $s->link_tombol = null;
+            }
+            return $s;
+        });
+
         if ($slider->isEmpty()) {
+            $isSpmb = (bool) ($fiturList['spmb'] ?? true);
             $slider = collect([
                 (object) [
                     'gambar' => 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=1600&auto=format&fit=crop',
                     'judul' => 'Mencetak Generasi Vokasi Berdaya Saing Global',
                     'subjudul' => 'SMK Negeri 2 Bandung memadukan kurikulum industri, teknologi modern, dan karakter Profil Pelajar Pancasila.',
-                    'link_tombol' => '/spmb',
-                    'teks_tombol' => 'Info SPMB 2026',
+                    'link_tombol' => $isSpmb ? '/spmb' : null,
+                    'teks_tombol' => $isSpmb ? 'Info SPMB 2026' : null,
                 ],
             ]);
         }

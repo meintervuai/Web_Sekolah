@@ -204,34 +204,16 @@
                 '/galeri' => 'galeri',
                 '/fasilitas' => 'fasilitas',
                 '/kegiatan' => 'galeri',
-                '/kontak' => 'kontak',
             ];
 
             $isMenuProfilAktif = \App\Models\Tenant\PengaturanFitur::isAktif('menu_profil', true);
             $isProfilPageAktif = \App\Models\Tenant\PengaturanFitur::isAktif('profil', true);
             $isJurusanPageAktif = \App\Models\Tenant\PengaturanFitur::isAktif('program_keahlian', true);
+            $isSpmbAktif = \App\Models\Tenant\PengaturanFitur::isAktif('spmb', true);
             $jurusanAktifSlugs = \App\Models\Tenant\Jurusan::where('is_aktif', true)->pluck('slug')->toArray();
 
-            $navMenus = $navMenus->reject(function($menu) use ($menuFeatureMap, $isMenuProfilAktif) {
-                // Reject SPMB dari dropdown
-                if (str_contains(strtolower($menu->name), 'spmb')) return true;
-
-                $menuNameLower = strtolower(trim($menu->name));
-                // Jika induk profil dimatikan
-                if (($menuNameLower === 'profil' || $menuNameLower === 'profil sekolah') && !$isMenuProfilAktif) {
-                    return true;
-                }
-
-                // Periksa status fitur
-                $cleanUrl = '/' . ltrim($menu->url, '/');
-                if (isset($menuFeatureMap[$cleanUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$cleanUrl], true) && $menu->children->isEmpty()) {
-                    return true;
-                }
-
-                return false;
-            })
-            ->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif, $isProfilPageAktif, $isJurusanPageAktif, $jurusanAktifSlugs) {
-                $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $isMenuProfilAktif, $jurusanAktifSlugs) {
+            $navMenus = $navMenus->map(function($menu) use ($menuFeatureMap, $isMenuProfilAktif, $isProfilPageAktif, $isJurusanPageAktif, $jurusanAktifSlugs) {
+                $menu->setRelation('children', $menu->children->reject(function($child) use ($menuFeatureMap, $jurusanAktifSlugs) {
                     if (str_contains(strtolower($child->name), 'spmb')) return true;
                     if (strtolower(trim($child->name)) === 'profil lengkap') return true;
                     if (strtolower(trim($child->name)) === 'semua program keahlian') return true;
@@ -261,6 +243,32 @@
                 }
 
                 return $menu;
+            })
+            ->reject(function($menu) use ($menuFeatureMap) {
+                // Reject SPMB dari dropdown
+                if (str_contains(strtolower($menu->name), 'spmb')) return true;
+
+                // Periksa status fitur untuk single menu link
+                $cleanUrl = '/' . ltrim($menu->url, '/');
+                if ($cleanUrl !== '/' && $menu->children->isEmpty()) {
+                    // Jika URL terdaftar di pengaturan fitur dan tidak aktif
+                    if (isset($menuFeatureMap[$cleanUrl]) && !\App\Models\Tenant\PengaturanFitur::isAktif($menuFeatureMap[$cleanUrl], true)) {
+                        return true;
+                    }
+                    // Jika URL '#' (dropdown) tapi seluruh children sudah habis ter-filter
+                    if ($menu->url === '#' || empty(trim($menu->url, '/'))) {
+                        if ($cleanUrl !== '/') {
+                            return true;
+                        }
+                    }
+                }
+
+                // Jika menu tipe dropdown (memiliki parent/container) tetapi children-nya kosong
+                if ($menu->url === '#' && $menu->children->isEmpty()) {
+                    return true;
+                }
+
+                return false;
             });
             $currentPath = trim(request()->path(), '/');
             $relativePath = trim(\Illuminate\Support\Str::after($currentPath, $tenantSlug), '/');
@@ -320,6 +328,7 @@
                 @endif
                 @endforeach
 
+                @if($isSpmbAktif)
                 <!-- CTA SPMB -->
                 <a href="{{ url($tenantSlug . '/spmb') }}"
                     class="ml-3 inline-flex items-center px-4 py-2 theme-btn-primary text-sm font-bold btn-radius shadow-md transition-all hover:shadow-lg">
@@ -328,13 +337,16 @@
                     </svg>
                     SPMB 2026
                 </a>
+                @endif
             </div>
 
             <!-- Mobile Hamburger Button -->
             <div class="lg:hidden flex items-center space-x-2">
+                @if($isSpmbAktif)
                 <a href="{{ url($tenantSlug . '/spmb') }}" class="px-3 py-1.5 text-xs font-bold btn-radius theme-btn-primary shadow-xs">
                     SPMB 2026
                 </a>
+                @endif
                 <button @click="mobileNav = true"
                     class="p-2 rounded-xl text-blue-800 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     aria-label="Buka Menu Navigasi">
@@ -439,6 +451,7 @@
                 @endforeach
             </div>
 
+            @if($isSpmbAktif)
             <!-- Drawer Footer CTA -->
             <div class="p-5 border-t border-blue-100 bg-blue-50">
                 <a href="{{ url($tenantSlug . '/spmb') }}"
@@ -447,6 +460,7 @@
                     Daftar SPMB Online 2026
                 </a>
             </div>
+            @endif
         </div>
     </div>
 
@@ -550,18 +564,31 @@
                 <div>
                     <h3 class="font-heading font-bold text-white text-base mb-4 tracking-wide uppercase">Tautan Cepat</h3>
                     <ul class="space-y-2 text-sm">
+                        @if($isProfilPageAktif)
                         <li><a href="{{ url($tenantSlug . '/profil') }}" class="hover:text-blue-300 transition">Profil & Sejarah</a></li>
-                        <li><a href="{{ url($tenantSlug . '/program-keahlian') }}" class="hover:text-blue-300 transition">7 Program Keahlian</a></li>
+                        @endif
+                        @if($isJurusanPageAktif)
+                        <li><a href="{{ url($tenantSlug . '/program-keahlian') }}" class="hover:text-blue-300 transition">Program Keahlian</a></li>
+                        @endif
+                        @if(\App\Models\Tenant\PengaturanFitur::isAktif('berita', true))
                         <li><a href="{{ url($tenantSlug . '/berita') }}" class="hover:text-blue-300 transition">Berita & Informasi</a></li>
+                        @endif
+                        @if(\App\Models\Tenant\PengaturanFitur::isAktif('agenda', true))
                         <li><a href="{{ url($tenantSlug . '/agenda') }}" class="hover:text-blue-300 transition">Agenda & Kegiatan</a></li>
+                        @endif
+                        @if(\App\Models\Tenant\PengaturanFitur::isAktif('prestasi', true))
                         <li><a href="{{ url($tenantSlug . '/prestasi') }}" class="hover:text-blue-300 transition">Prestasi Siswa</a></li>
+                        @endif
+                        @if($isSpmbAktif)
                         <li><a href="{{ url($tenantSlug . '/spmb') }}" class="hover:text-blue-300 transition">Penerimaan Siswa (SPMB)</a></li>
+                        @endif
+                        <li><a href="{{ url($tenantSlug . '/kontak') }}" class="hover:text-blue-300 transition">Hubungi Kami</a></li>
                     </ul>
                 </div>
 
                 <!-- Col 3: Programs & Facilities -->
                 @php
-                $footerJurusan = \App\Models\Tenant\Jurusan::where('is_aktif', true)->orderBy('urutan')->take(5)->get();
+                $footerJurusan = $isJurusanPageAktif ? \App\Models\Tenant\Jurusan::where('is_aktif', true)->orderBy('urutan')->take(5)->get() : collect();
                 @endphp
                 @if($footerJurusan->isNotEmpty())
                 <div>

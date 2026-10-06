@@ -156,3 +156,85 @@ test('rute admin sekolah dialihkan atau ditolak ketika fiturnya dinonaktifkan ol
             'aktif' => true,
         ])->assertStatus(200);
 });
+
+test('tombol SPMB dan menu dropdown tanpa anak tidak tampil di navbar saat seluruh fitur dimatikan', function () {
+    $sekolah = Sekolah::where('slug', 'smk-negeri-2-bandung')->first();
+    $superadmin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-route-test@example.com'],
+        ['nama' => 'Super Admin Test', 'password' => Hash::make('secret123')]
+    );
+
+    // Matikan SPMB, Profil, Jurusan, Berita, Agenda, Pengumuman, Galeri, Fasilitas
+    $fiturNonaktif = ['spmb', 'menu_profil', 'program_keahlian', 'berita', 'agenda', 'pengumuman', 'galeri', 'fasilitas'];
+    foreach ($fiturNonaktif as $fitur) {
+        $this->actingAs($superadmin, 'superadmin')
+            ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+                'key' => $fitur,
+                'type' => 'menu',
+                'aktif' => false,
+            ])->assertStatus(200);
+    }
+
+    $response = $this->get('/smk-negeri-2-bandung');
+    $response->assertStatus(200);
+
+    // SPMB 2026 CTA button should not exist
+    $response->assertDontSee('SPMB 2026');
+    $response->assertDontSee('Daftar SPMB Online 2026');
+    // Dropdown Informasi should not exist when all sub-items are disabled
+    $response->assertDontSee('Informasi');
+    // Beranda & Kontak tetap tampil permanen
+    $response->assertSee('Beranda');
+    $response->assertSee('Kontak');
+
+    // Rute /kontak selalu dapat diakses publik (200 OK)
+    $responseKontak = $this->get('/smk-negeri-2-bandung/kontak');
+    $responseKontak->assertStatus(200);
+});
+
+test('mengaktifkan kembali salah satu sub-fitur profil akan memunculkan menu dropdown profil beserta sub-fiturnya di navbar', function () {
+    $sekolah = Sekolah::where('slug', 'smk-negeri-2-bandung')->first();
+    $superadmin = SuperAdmin::firstOrCreate(
+        ['email' => 'superadmin-route-test@example.com'],
+        ['nama' => 'Super Admin Test', 'password' => Hash::make('secret123')]
+    );
+
+    // 1. Matikan induk menu profil (otomatis mematikan seluruh sub-fiturnya)
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'menu_profil',
+            'type' => 'menu',
+            'aktif' => false,
+        ])->assertStatus(200);
+
+    // Pastikan menu Profil hilang dari navbar
+    $resOff = $this->get('/smk-negeri-2-bandung');
+    $resOff->assertStatus(200);
+    $resOff->assertDontSee('Sejarah Sekolah');
+
+    // 2. Aktifkan HANYA 'sejarah'
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'sejarah',
+            'type' => 'sub_section',
+            'aktif' => true,
+        ])->assertStatus(200);
+
+    // Sekarang navbar harus memunculkan 'Profil' dan 'Sejarah Sekolah'
+    $resOn = $this->get('/smk-negeri-2-bandung');
+    $resOn->assertStatus(200);
+    $resOn->assertSee('Profil');
+    $resOn->assertSee('Sejarah');
+
+    // Rute /profil/sejarah aktif (200), sementara /profil/visi-misi tetap nonaktif (404)
+    $this->get('/smk-negeri-2-bandung/profil/sejarah')->assertStatus(200);
+    $this->get('/smk-negeri-2-bandung/profil/visi-misi')->assertStatus(404);
+});
+
+afterEach(function () {
+    // Reset all features to true in tenant database so other tests are not affected
+    DB::connection('tenant')->table('pengaturan_fitur')->update(['is_aktif' => true]);
+    DB::connection('tenant')->table('menus')->update(['is_aktif' => true]);
+});
+
+

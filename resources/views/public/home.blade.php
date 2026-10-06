@@ -819,7 +819,6 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       <div class="pt-3 flex flex-wrap justify-center gap-3">
         <a href="{{ url(app('tenant')->slug . '/spmb') }}"
           style="color: var(--theme-color);"
-          class="px-6 py-3 bg-white hover:bg-slate-100 font-semibold text-sm rounded-lg shadow-sm transition-colors">
           class="px-6 py-3 bg-white hover:bg-slate-100 font-bold text-sm rounded-lg shadow-sm transition-colors">
           Informasi & Syarat SPMB
         </a>

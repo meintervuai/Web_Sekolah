@@ -67,6 +67,8 @@ beforeEach(function () use ($paletUji) {
     foreach ($paletUji as $kunci => $nilai) {
         PengaturanUmum::simpan($kunci, $nilai);
     }
+
+    \App\Models\Tenant\PengaturanFitur::updateOrInsert(['kode_fitur' => 'berita'], ['nama_fitur' => 'Berita', 'is_aktif' => true]);
 });
 
 afterEach(function () {

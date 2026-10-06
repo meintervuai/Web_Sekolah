@@ -251,14 +251,6 @@ class TenantController extends Controller
                 'aktif' => $fiturVisibilitas['spmb'],
                 'sub_sections' => [],
             ],
-            [
-                'key' => 'kontak',
-                'label' => 'Kontak & Buku Tamu',
-                'description' => 'Informasi kontak sekolah, lokasi Google Maps, dan formulir pengiriman pesan publik.',
-                'type' => 'menu',
-                'aktif' => $fiturVisibilitas['kontak'],
-                'sub_sections' => [],
-            ],
         ];
 
         return view('central.tenants.show', compact('tenant', 'fiturVisibilitas', 'menuItems'));
@@ -342,14 +334,44 @@ class TenantController extends Controller
             );
 
             if (isset($urlMap[$kode])) {
-                DB::connection('tenant')->table('menus')->where(function ($q) use ($urlMap, $kode) {
-                    $q->where('url', $urlMap[$kode])
-                        ->orWhere('url', ltrim($urlMap[$kode], '/'));
-                })->update(['is_aktif' => $isAktif, 'updated_at' => now()]);
+                $targetUrls = [$urlMap[$kode], ltrim($urlMap[$kode], '/')];
+                if ($kode === 'galeri') {
+                    $targetUrls[] = '/kegiatan';
+                    $targetUrls[] = 'kegiatan';
+                }
+                DB::connection('tenant')->table('menus')->whereIn('url', $targetUrls)
+                    ->update(['is_aktif' => $isAktif, 'updated_at' => now()]);
             }
 
-            // Cascade Logic untuk Menu Profil Induk
+            // Auto-activate parent menu_profil jika salah satu sub-fiturnya diaktifkan
+            $profilSubFeatures = ['profil', 'profil_video', 'sejarah', 'visi_misi', 'struktur_organisasi', 'guru_staf'];
+            if ($isAktif && in_array($kode, $profilSubFeatures)) {
+                DB::connection('tenant')->table('pengaturan_fitur')->updateOrInsert(
+                    ['kode_fitur' => 'menu_profil'],
+                    [
+                        'nama_fitur' => 'Menu Profil Sekolah',
+                        'is_aktif' => true,
+                        'updated_at' => now(),
+                    ]
+                );
+                DB::connection('tenant')->table('menus')
+                    ->where(function ($q) {
+                        $q->where('url', '#')->where('name', 'Profil');
+                    })
+                    ->update(['is_aktif' => 1, 'updated_at' => now()]);
+            }
+
+            // Cascade Logic untuk Menu Profil Induk jika dimatikan atau dihidupkan
             if ($kode === 'menu_profil') {
+                if ($isAktif) {
+                    // Pastikan record menu induk 'Profil' berstatus aktif
+                    DB::connection('tenant')->table('menus')
+                        ->where(function ($q) {
+                            $q->where('url', '#')->where('name', 'Profil');
+                        })
+                        ->update(['is_aktif' => 1, 'updated_at' => now()]);
+                }
+
                 $subFeatures = [
                     'profil', 'profil_video', 'sejarah', 'visi_misi', 'struktur_organisasi', 'guru_staf',
                 ];
