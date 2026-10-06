@@ -217,6 +217,16 @@ Route::prefix('{tenant}')
                     Route::post('/toggle-status', [JurusanController::class, 'toggleStatus'])->name('toggle-status');
                 });
 
+                // Pengaturan SPMB / PPDB CMS
+                Route::prefix('spmb')->name('spmb.')->middleware('tenant.feature:spmb')->group(function () {
+                    Route::get('/', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'index'])->name('index');
+                    Route::put('/hero', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'updateHero'])->name('hero.update');
+                    Route::put('/alur', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'updateAlur'])->name('alur.update');
+                    Route::put('/syarat', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'updateSyarat'])->name('syarat.update');
+                    Route::put('/sidebar', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'updateSidebar'])->name('sidebar.update');
+                    Route::post('/toggle-status', [\App\Http\Controllers\Tenant\Admin\SpmbController::class, 'toggleStatus'])->name('toggle-status');
+                });
+
                 // Pengaturan Informasi Sekolah CMS (Berita, Pengumuman, Agenda, Galeri, Fasilitas)
                 Route::prefix('informasi')->name('informasi.')->group(function () {
                     // 1. Berita

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Penyederhanaan & Kustomisasi Modul SPMB / PPDB] - 2026-10-06
+
+### Refactored & Enhanced
+- **Penyederhanaan Modul Panel Admin SPMB (`/admin/spmb`)**:
+  - Menghapus tab *Jalur Seleksi* untuk menyederhanakan alur navigasi admin.
+  - Mengubah *Persyaratan Dokumen* menjadi form editor **WYSIWYG (Quill)** fleksibel, sehingga admin dapat memformat daftar dokumen persyaratan umum, berkas khusus, dan catatan pendaftaran secara bebas dengan teks kaya (bold, list, bullet, dsb.).
+  - Menghapus input *Helpdesk* dan *Daya Tampung / Kuota Rombel Jurusan* dari tab Sidebar karena informasi kontak dan lokasi sudah terpusat di modul Halaman Kontak.
+  - Tab Sidebar difokuskan khusus untuk konfigurasi *Portal Pendaftaran Resmi (Eksternal)* (Nama portal, tautan resmi, deskripsi, dan teks tombol).
+- **Sinkronisasi Tampilan Publik SPMB (`/spmb`)**:
+  - [resources/views/public/pages/spmb.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/spmb.blade.php): Halaman publik SPMB sekarang terbagi rapi menjadi Hero Banner, Alur & Prosedur Pendaftaran Step-by-Step, Persyaratan Dokumen (WYSIWYG), dan Sidebar Portal Pendaftaran Eksternal.
+  - [app/Http/Controllers/Tenant/Public/PageController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/PageController.php): Mengalirkan data persyaratan WYSIWYG `syaratKonten` dan konfigurasi portal resmi secara presisi.
+
 ## [Kustomisasi Embed Google Maps, Filter Medsos Simbol Strip, dan Fleksibilitas Jam Layanan] - 2026-10-06
 
 ### Added & Enhanced

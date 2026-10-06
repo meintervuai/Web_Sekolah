@@ -426,9 +426,64 @@ class PageController extends Controller
     public function spmb()
     {
         $this->checkFitur('spmb');
+        $tenant = app('tenant');
         $halaman = Page::where('slug', 'spmb')->first();
 
-        return view('public.pages.spmb', ['sekolah' => $this->getSekolahData(), 'halaman' => $halaman]);
+        // 1. Alur List
+        $alurListRaw = PengaturanUmum::ambil('spmb_alur_list', null);
+        $alurList = $alurListRaw ? json_decode($alurListRaw, true) : [
+            [
+                'langkah' => 1,
+                'judul' => 'Registrasi Akun PPDB Online',
+                'deskripsi' => 'Siswa mendapatkan akun dari sekolah asal (SMP/MTs) dan login ke portal resmi PPDB Jawa Barat.',
+            ],
+            [
+                'langkah' => 2,
+                'judul' => 'Pemilihan Sekolah & Kompetensi Keahlian',
+                'deskripsi' => 'Pilih ' . ($tenant->nama_sekolah ?? 'sekolah kami') . ' dan tentukan prioritas Program Keahlian yang diminati.',
+            ],
+            [
+                'langkah' => 3,
+                'judul' => 'Unggah Berkas & Verifikasi Data',
+                'deskripsi' => 'Upload dokumen persyaratan: KK, Akta Kelahiran, Nilai Rapor, Surat Sehat & Tidak Buta Warna (khusus jurusan keteknikan).',
+            ],
+            [
+                'langkah' => 4,
+                'judul' => 'Pengumuman & Daftar Ulang',
+                'deskripsi' => 'Cek hasil seleksi secara online. Peserta yang dinyatakan lolos wajib melakukan daftar ulang di kampus sekolah.',
+            ],
+        ];
+
+        // 2. Persyaratan Dokumen (WYSIWYG)
+        $syaratKonten = PengaturanUmum::ambil('spmb_syarat_konten', null);
+        if ($syaratKonten === null) {
+            $syaratKonten = '<ul>
+<li>Ijazah SMP/MTs/Sederajat atau Surat Keterangan Lulus (SKL) asli.</li>
+<li>Akta Kelahiran asli dan fotokopi legalisir.</li>
+<li>Kartu Keluarga (KK) yang diterbitkan minimal 1 tahun sebelum tanggal pendaftaran.</li>
+<li>Buku Rapor SMP/MTs semester 1 sampai semester 5.</li>
+<li>Surat Keterangan Sehat dan Tidak Buta Warna dari dokter pemerintah/Puskesmas.</li>
+<li>Surat Tanggung Jawab Mutlak (SPTJM) bermaterai dari orang tua/wali.</li>
+</ul>';
+        }
+
+        // 3. Portal Config
+        $portalNama = PengaturanUmum::ambil('spmb_portal_nama', 'Portal PPDB Jawa Barat');
+        $portalUrl = PengaturanUmum::ambil('spmb_portal_url', 'https://ppdb.jabarprov.go.id');
+        $portalDeskripsi = PengaturanUmum::ambil('spmb_portal_deskripsi', 'Seluruh pendaftaran dilaksanakan secara daring melalui sistem resmi Dinas Pendidikan Provinsi Jawa Barat.');
+        $portalTombol = PengaturanUmum::ambil('spmb_portal_tombol', 'Akses Portal PPDB Jabar');
+
+        return view('public.pages.spmb', [
+            'sekolah' => $this->getSekolahData(),
+            'halaman' => $halaman,
+            'gambarBanner' => $halaman->gambar_banner ?? null,
+            'alurList' => $alurList,
+            'syaratKonten' => $syaratKonten,
+            'portalNama' => $portalNama,
+            'portalUrl' => $portalUrl,
+            'portalDeskripsi' => $portalDeskripsi,
+            'portalTombol' => $portalTombol,
+        ]);
     }
 
     // 13. KONTAK & PENGIRIMAN PESAN
