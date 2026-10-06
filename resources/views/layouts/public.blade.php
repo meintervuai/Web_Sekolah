@@ -576,9 +576,6 @@
                         @if(\App\Models\Tenant\PengaturanFitur::isAktif('agenda', true))
                         <li><a href="{{ url($tenantSlug . '/agenda') }}" class="hover:text-blue-300 transition">Agenda & Kegiatan</a></li>
                         @endif
-                        @if(\App\Models\Tenant\PengaturanFitur::isAktif('prestasi', true))
-                        <li><a href="{{ url($tenantSlug . '/prestasi') }}" class="hover:text-blue-300 transition">Prestasi Siswa</a></li>
-                        @endif
                         @if($isSpmbAktif)
                         <li><a href="{{ url($tenantSlug . '/spmb') }}" class="hover:text-blue-300 transition">Penerimaan Siswa (SPMB)</a></li>
                         @endif

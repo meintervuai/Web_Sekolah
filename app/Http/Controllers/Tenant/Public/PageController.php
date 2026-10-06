@@ -15,7 +15,6 @@ use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\PengaturanUmum;
 use App\Models\Tenant\PesanMasuk;
 use App\Models\Tenant\Post;
-use App\Models\Tenant\PrestasiSiswa;
 use App\Models\Tenant\StrukturOrganisasi;
 use Illuminate\Http\Request;
 
@@ -336,45 +335,6 @@ class PageController extends Controller
             'sekolah' => $this->getSekolahData(),
             'post' => $post,
             'pengumumanLainnya' => $pengumumanLainnya,
-        ]);
-    }
-
-    // 6. PRESTASI
-    public function prestasi(Request $request)
-    {
-        $this->checkFitur('prestasi');
-        $query = PrestasiSiswa::query();
-
-        if ($tingkat = $request->input('tingkat')) {
-            $query->where('tingkat', $tingkat);
-        }
-
-        if ($tahun = $request->input('tahun')) {
-            $query->where('tahun', $tahun);
-        }
-
-        $prestasi = $query->orderBy('tanggal', 'desc')->paginate(9)->withQueryString();
-        $daftarTingkat = PrestasiSiswa::select('tingkat')->distinct()->whereNotNull('tingkat')->pluck('tingkat');
-        $daftarTahun = PrestasiSiswa::select('tahun')->distinct()->whereNotNull('tahun')->orderBy('tahun', 'desc')->pluck('tahun');
-
-        return view('public.pages.prestasi', [
-            'sekolah' => $this->getSekolahData(),
-            'prestasi' => $prestasi,
-            'daftarTingkat' => $daftarTingkat,
-            'daftarTahun' => $daftarTahun,
-        ]);
-    }
-
-    public function detailPrestasi(string $slug)
-    {
-        $this->checkFitur('prestasi');
-        $prestasi = PrestasiSiswa::where('slug', $slug)->firstOrFail();
-        $prestasiLainnya = PrestasiSiswa::where('id', '!=', $prestasi->id)->orderBy('tanggal', 'desc')->take(3)->get();
-
-        return view('public.pages.prestasi_detail', [
-            'sekolah' => $this->getSekolahData(),
-            'prestasi' => $prestasi,
-            'prestasiLainnya' => $prestasiLainnya,
         ]);
     }
 

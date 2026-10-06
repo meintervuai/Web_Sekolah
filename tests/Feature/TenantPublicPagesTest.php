@@ -7,7 +7,6 @@ use App\Models\Tenant\Jurusan;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\Post;
-use App\Models\Tenant\PrestasiSiswa;
 
 /**
  * @property string $tenantSlug
@@ -142,19 +141,6 @@ test('6. halaman pengumuman dan detail pengumuman dapat diakses', function () {
     }
 });
 
-test('7. halaman prestasi dan detail prestasi dapat diakses', function () {
-    $response = $this->get('/'.$this->tenantSlug.'/prestasi');
-    $response->assertStatus(200);
-    $response->assertSee('Jejak Prestasi Siswa');
-
-    // Detail prestasi
-    $prestasi = PrestasiSiswa::on('tenant')->first();
-    if ($prestasi) {
-        $detail = $this->get('/'.$this->tenantSlug.'/prestasi/'.$prestasi->slug);
-        $detail->assertStatus(200);
-        $detail->assertSee($prestasi->judul_prestasi);
-    }
-});
 
 test('8. halaman kegiatan dokumentasi sekolah dapat diakses', function () {
     $response = $this->get('/'.$this->tenantSlug.'/kegiatan');
@@ -235,15 +221,15 @@ test('14. halaman kontak dapat diakses dan form pengiriman pesan berhasil disimp
 });
 
 test('15. feature flag menonaktifkan rute publik dengan respons 404 ketika dimatikan', function () {
-    // Matikan fitur prestasi sementara
-    PengaturanFitur::on('tenant')->where('kode_fitur', 'prestasi')->update(['is_aktif' => false]);
+    // Matikan fitur agenda sementara
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'agenda')->update(['is_aktif' => false]);
 
-    $response = $this->get('/'.$this->tenantSlug.'/prestasi');
+    $response = $this->get('/'.$this->tenantSlug.'/agenda');
     $response->assertStatus(404);
 
     // Kembalikan lagi ke aktif
-    PengaturanFitur::on('tenant')->where('kode_fitur', 'prestasi')->update(['is_aktif' => true]);
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'agenda')->update(['is_aktif' => true]);
 
-    $responseActive = $this->get('/'.$this->tenantSlug.'/prestasi');
+    $responseActive = $this->get('/'.$this->tenantSlug.'/agenda');
     $responseActive->assertStatus(200);
 });

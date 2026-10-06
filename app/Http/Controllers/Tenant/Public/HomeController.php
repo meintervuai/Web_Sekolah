@@ -12,7 +12,6 @@ use App\Models\Tenant\Menu;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\PengaturanUmum;
 use App\Models\Tenant\Post;
-use App\Models\Tenant\PrestasiSiswa;
 use App\Models\Tenant\SliderBeranda;
 
 class HomeController extends Controller
@@ -138,19 +137,16 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        // 6. Prestasi Siswa
-        $prestasi = PrestasiSiswa::orderBy('tanggal', 'desc')->take(4)->get();
-
-        // 7. Ekstrakurikuler
+        // 6. Ekstrakurikuler
         $ekskul = Ekstrakurikuler::aktif()->take(4)->get();
 
-        // 8. Fasilitas
+        // 7. Fasilitas
         $fasilitas = Fasilitas::aktif()->take(4)->get();
 
-        // 9. Galeri Foto
+        // 8. Galeri Foto
         $galeri = GaleriItem::with('album')->orderBy('created_at', 'desc')->take(6)->get();
 
-        // 10. Navigasi Menus
+        // 9. Navigasi Menus
         $menus = Menu::whereNull('parent_id')
             ->where('is_aktif', true)
             ->with(['children' => function ($query) {
@@ -170,7 +166,6 @@ class HomeController extends Controller
             'berita',
             'pengumuman',
             'agenda',
-            'prestasi',
             'ekskul',
             'fasilitas',
             'galeri',
@@ -178,3 +173,4 @@ class HomeController extends Controller
         ));
     }
 }
+

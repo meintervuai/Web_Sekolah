@@ -749,56 +749,9 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 @endif
 
 <!-- ==========================================
-     8. PRESTASI SISWA & EKSTRAKURIKULER
+     8. CTA SPMB BANNER (Solid Navy Resmi, Tanpa Gradien Ungu)
 =========================================== -->
-@if($fiturList['prestasi'] ?? true)
-<section class="section-py bg-white border-b border-slate-200">
-  <div class="container-custom">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8">
-      <div>
-        <span class="text-blue-700 font-semibold text-xs uppercase tracking-wider">Bakat & Kejuaraan</span>
-        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900 mt-1">Prestasi Membanggakan</h2>
-        <p class="text-xs sm:text-sm text-slate-600">Dedikasi siswa berprestasi di tingkat Kota, Provinsi, dan Nasional</p>
-      </div>
-      <a href="{{ url(app('tenant')->slug . '/prestasi') }}" class="hidden md:inline-flex items-center text-sm font-semibold text-blue-700 hover:text-blue-800">
-        Lihat Seluruh Prestasi &rarr;
-      </a>
-    </div>
 
-    <div class="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
-      @foreach($prestasi as $pres)
-      <div class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col justify-between h-full">
-        <div class="relative h-44 w-full bg-slate-100 overflow-hidden">
-          <img src="{{ $pres->foto }}" alt="{{ $pres->nama_prestasi }}" class="w-full h-full object-cover">
-          <span class="absolute top-3 left-3 bg-theme-color/90 text-white font-semibold text-[10px] px-2.5 py-0.5 rounded">
-            Tingkat {{ $pres->tingkat ?? 'Nasional' }}
-          </span>
-          <span class="absolute top-3 right-3 bg-white/90 text-slate-800 font-semibold text-[10px] px-2 py-0.5 rounded border border-slate-200">
-            {{ $pres->tahun ?? date('Y') }}
-          </span>
-        </div>
-        <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            <p class="text-xs font-semibold text-slate-600">{{ $pres->nama_siswa }}</p>
-            <h3 class="font-heading font-bold text-sm text-slate-900 mt-1 line-clamp-2 leading-snug">
-              {{ $pres->nama_prestasi }}
-            </h3>
-            <p class="text-xs text-slate-600 mt-1.5 line-clamp-2">
-              {{ $pres->deskripsi }}
-            </p>
-          </div>
-          <div class="pt-3 mt-2 border-t border-slate-100">
-            <a href="{{ url(app('tenant')->slug . '/prestasi/' . ($pres->slug ?? $pres->id)) }}" class="text-xs font-semibold text-blue-700 hover:text-blue-800">
-              Rincian Capaian &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-      @endforeach
-    </div>
-  </div>
-</section>
-@endif
 
 <!-- ==========================================
      9. CTA SPMB BANNER (Solid Navy Resmi, Tanpa Gradien Ungu)

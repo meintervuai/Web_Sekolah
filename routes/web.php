@@ -111,11 +111,7 @@ Route::prefix('{tenant}')
         Route::get('/pengumuman', [PageController::class, 'pengumuman'])->name('tenant.pengumuman')->middleware('tenant.feature:pengumuman');
         Route::get('/pengumuman/{slug}', [PageController::class, 'detailPengumuman'])->name('tenant.pengumuman.detail')->middleware('tenant.feature:pengumuman');
 
-        // 7. Prestasi
-        Route::get('/prestasi', [PageController::class, 'prestasi'])->name('tenant.prestasi')->middleware('tenant.feature:prestasi');
-        Route::get('/prestasi/{slug}', [PageController::class, 'detailPrestasi'])->name('tenant.prestasi.detail')->middleware('tenant.feature:prestasi');
-
-        // 8. Kegiatan
+        // 7. Kegiatan
         Route::get('/kegiatan', [PageController::class, 'kegiatan'])->name('tenant.kegiatan')->middleware('tenant.feature:agenda,kegiatan');
 
         // 9. Ekstrakurikuler

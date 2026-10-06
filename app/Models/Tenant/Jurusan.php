@@ -46,10 +46,6 @@ class Jurusan extends Model
         return $this->hasMany(PendaftarPpdb::class, 'pilihan_jurusan_id');
     }
 
-    public function prestasi()
-    {
-        return $this->hasMany(PrestasiSiswa::class, 'jurusan_id');
-    }
 
     /**
      * Helper CSS object-position dari media library.
