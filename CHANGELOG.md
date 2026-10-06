@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Kustomisasi Embed Google Maps, Filter Medsos Simbol Strip, dan Fleksibilitas Jam Layanan] - 2026-10-06
+
+### Added & Enhanced
+- **Input Embed Google Maps (Iframe Peta Lokasi)**:
+  - [resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php): Menambahkan input khusus `peta_embed` untuk memasukkan URL atau kode iframe embed resmi Google Maps sekolah.
+  - [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php): Memvalidasi dan menyimpan kunci `peta_embed` ke tabel database `pengaturan_umum`.
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php) & [resources/views/public/pages/kontak.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kontak.blade.php): Peta Google Maps sekarang 100% kondisional hanya dirender bila admin telah menginput embed peta (tidak lagi menampilkan peta default tiruan/dummy jika input kosong).
+- **Dukungan Simbol Strip (`-`) untuk Menyembunyikan Ikon Media Sosial**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php) & [resources/views/public/pages/kontak.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kontak.blade.php): Menambahkan helper sanitasi `isValidSocial()`. Jika kolom media sosial (Instagram, TikTok, YouTube, Facebook, Twitter) diisi tanda `-`, `#`, string kosong, atau `null`, ikon dan tombolnya otomatis tidak ditampilkan di seluruh portal publik (footer & halaman kontak).
+  - Mengizinkan input URL maupun username biasa (otomatis diformat dengan prefix URL resmi).
+- **Pembersihan Topbar & Penataan Jam Layanan di Footer**:
+  - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Menghapus jam layanan dari topbar atas agar header tetap ringkas, bersih, dan tidak tumpang tindih. Jam layanan ditempatkan di Kolom Kontak & Lokasi di footer dan Halaman Kontak dengan dukungan multi-line (`whitespace-pre-line`).
+  - [resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/tab-datadiri.blade.php): Mengubah input jam layanan menjadi `textarea` multi-line agar sekolah dapat mendeskripsikan jam buka/tutup harian secara lengkap.
+
 ## [Penghapusan Bersih Modul Prestasi & Penyelarasan Section Beranda] - 2026-10-06
 
 ### Removed

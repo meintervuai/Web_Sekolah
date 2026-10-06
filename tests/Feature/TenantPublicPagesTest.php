@@ -30,6 +30,8 @@ beforeEach(function () {
             ],
         ]
     );
+
+    \Illuminate\Support\Facades\DB::connection('tenant')->table('pengaturan_fitur')->update(['is_aktif' => true]);
 });
 
 test('0. root url menampilkan portal direktori sekolah dan tidak redirect otomatis', function () {

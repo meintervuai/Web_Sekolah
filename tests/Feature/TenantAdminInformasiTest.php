@@ -26,6 +26,8 @@ beforeEach(function () {
 
     $this->tenantSlug = 'smk-negeri-2-bandung';
     $this->admin = Pengguna::first();
+
+    PengaturanFitur::on('tenant')->whereIn('kode_fitur', ['berita', 'agenda', 'fasilitas', 'galeri', 'pengumuman'])->update(['is_aktif' => true]);
 });
 
 afterEach(function () {

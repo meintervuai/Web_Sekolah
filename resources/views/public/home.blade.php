@@ -798,30 +798,35 @@ $isPengumumanAktif = $fiturList['pengumuman'] ?? true;
 @if($fiturList['kontak'] ?? true)
 <section class="section-py bg-slate-50 border-t border-slate-200">
   <div class="container-custom">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-      <div class="lg:col-span-5 space-y-4">
+    @php
+      $hasPetaEmbed = !empty($sekolahData['peta_embed']);
+    @endphp
+    <div class="grid grid-cols-1 {{ $hasPetaEmbed ? 'lg:grid-cols-12' : 'lg:grid-cols-1 max-w-3xl mx-auto' }} gap-8 items-center">
+      <div class="{{ $hasPetaEmbed ? 'lg:col-span-5' : 'lg:col-span-1 text-center sm:text-left' }} space-y-4">
         <span class="theme-accent-text font-semibold text-xs uppercase tracking-wider">Lokasi Kampus</span>
-        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900">Kunjungi SMK Negeri 2 Bandung</h2>
+        <h2 class="font-heading font-bold text-2xl sm:text-3xl text-slate-900">Kunjungi {{ $sekolahData['nama'] ?? 'SMK Negeri 2 Bandung' }}</h2>
         <p class="text-sm theme-accent-text leading-relaxed">
-          Terletak strategis di kawasan Bandung Wetan, mudah diakses melalui transportasi umum dan kendaraan pribadi.
+          Terletak strategis, mudah diakses melalui transportasi umum dan kendaraan pribadi.
         </p>
         <div class="space-y-2 text-sm text-slate-700">
-          <p class="flex items-start">
-            <strong class="w-24 shrink-0 text-slate-900">Alamat:</strong>
+          <p class="flex items-start {{ $hasPetaEmbed ? '' : 'sm:justify-start' }}">
+            <strong class="w-28 shrink-0 text-slate-900">Alamat:</strong>
             <span>{{ $sekolahData['alamat'] }}</span>
           </p>
           <p class="flex items-center">
-            <strong class="w-24 shrink-0 text-slate-900">Telepon:</strong>
+            <strong class="w-28 shrink-0 text-slate-900">Telepon:</strong>
             <span>{{ $sekolahData['telepon'] }}</span>
           </p>
           <p class="flex items-center">
-            <strong class="w-24 shrink-0 text-slate-900">Email:</strong>
+            <strong class="w-28 shrink-0 text-slate-900">Email:</strong>
             <span>{{ $sekolahData['email'] }}</span>
           </p>
-          <p class="flex items-center">
-            <strong class="w-24 shrink-0 text-slate-900">Jam Layanan:</strong>
-            <span>{{ $sekolahData['jam_layanan'] }}</span>
+          @if(!empty($sekolahData['jam_layanan']))
+          <p class="flex items-start">
+            <strong class="w-28 shrink-0 text-slate-900">Jam Layanan:</strong>
+            <span class="whitespace-pre-line">{{ $sekolahData['jam_layanan'] }}</span>
           </p>
+          @endif
         </div>
         <div class="pt-2">
           <a href="{{ url(app('tenant')->slug . '/kontak') }}" class="inline-flex items-center px-5 py-2.5 bg-theme-color hover:bg-theme-color/90 text-white font-semibold text-sm rounded-lg transition-colors">
@@ -830,18 +835,26 @@ $isPengumumanAktif = $fiturList['pengumuman'] ?? true;
         </div>
       </div>
 
+      @if($hasPetaEmbed)
       <div class="lg:col-span-7">
         <div class="rounded-xl overflow-hidden shadow-xs border border-slate-200 h-80 sm:h-96 w-full bg-slate-200">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.915720919426!2d107.62512397499625!3d-6.900693593098544!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e64c39f06121%3A0x6b4887342617f164!2sSMK%20Negeri%202%20Bandung!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+          @php
+            $homeMapsSrc = $sekolahData['peta_embed'];
+            if (preg_match('/src=["\']([^"\']+)["\']/', $homeMapsSrc, $matchIframeHome)) {
+                $homeMapsSrc = $matchIframeHome[1];
+            }
+          @endphp
+          <iframe src="{{ $homeMapsSrc }}"
             width="100%"
             height="100%"
             style="border:0;"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            title="Peta Lokasi SMK Negeri 2 Bandung"></iframe>
+            title="Peta Lokasi {{ $sekolahData['nama'] }}"></iframe>
         </div>
       </div>
+      @endif
     </div>
   </div>
 </section>

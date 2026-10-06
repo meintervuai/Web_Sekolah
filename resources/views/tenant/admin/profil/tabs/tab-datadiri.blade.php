@@ -113,7 +113,7 @@
                     </div>
                 </div>
 
-                <!-- Bagian 3: Alamat & Jam Layanan -->
+                <!-- Bagian 3: Alamat, Peta & Jam Layanan -->
                 <div class="pt-4 border-t border-slate-100 space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="sm:col-span-2">
@@ -124,10 +124,23 @@
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label class="admin-form-label">Jam Layanan Sekolah</label>
-                            <input type="text" name="jam_layanan" value="{{ old('jam_layanan', $pengaturan['jam_layanan']) }}"
-                                   class="admin-form-input"
-                                   placeholder="Contoh: Senin - Jumat: 07.00 - 16.00 WIB">
+                            <label class="admin-form-label">Embed URL Google Maps (Iframe Source / Peta Lokasi)</label>
+                            <input type="text" name="peta_embed" value="{{ old('peta_embed', $pengaturan['peta_embed'] ?? '') }}"
+                                   class="admin-form-input text-xs font-mono"
+                                   placeholder="https://www.google.com/maps/embed?pb=... (atau link embed dari Google Maps)">
+                            <p class="admin-form-helper text-[11px] text-slate-500 mt-1">
+                                Salin tautan <code>src="..."</code> dari menu Bagikan &gt; Sematkan Peta di Google Maps. Peta interaktif ini akan tampil di Beranda dan Halaman Kontak.
+                            </p>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="admin-form-label">Jam Operasional &amp; Layanan Sekolah</label>
+                            <textarea name="jam_layanan" rows="2"
+                                      class="admin-form-input resize-none"
+                                      placeholder="Contoh: Senin - Kamis: 07.00 - 16.00 WIB | Jumat: 07.00 - 15.30 WIB | Sabtu & Minggu: Libur">{{ old('jam_layanan', $pengaturan['jam_layanan'] ?? 'Senin - Jumat: 07.00 - 16.00 WIB (Sabtu, Minggu & Libur Nasional Tutup)') }}</textarea>
+                            <p class="admin-form-helper text-[11px] text-slate-500 mt-1">
+                                Tuliskan jadwal layanan secara detail dan fleksibel (misal: jadwal per hari, jadwal piket Sabtu, atau status hari libur).
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -135,59 +148,65 @@
                 <!-- Bagian 4: Media Sosial Resmi Satuan Pendidikan -->
                 <div class="pt-4 border-t border-slate-100 space-y-3">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                            Akun Media Sosial Resmi (Tampil di Footer Portal)
-                        </h3>
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                Akun Media Sosial Resmi (Tampil di Footer Portal)
+                            </h3>
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                Masukkan tautan profil atau username. Isi tanda hubung strip (<code>-</code>) atau kosongkan jika tidak memiliki akun tersebut agar tombol ikon tidak tampil di publik.
+                            </p>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="admin-form-label text-slate-600">Instagram URL</label>
+                            <label class="admin-form-label text-slate-600">Instagram URL / Username</label>
                             <div class="relative">
-                                <input type="url" name="instagram" value="{{ old('instagram', $pengaturan['instagram'] ?? '') }}"
+                                <input type="text" name="instagram" value="{{ old('instagram', $pengaturan['instagram'] ?? '') }}"
                                        class="admin-form-input text-xs"
-                                       placeholder="https://instagram.com/akunsekolah">
+                                       placeholder="https://instagram.com/akunsekolah atau -">
                             </div>
                         </div>
 
                         <div>
                             <label class="admin-form-label text-slate-600">Facebook URL</label>
                             <div class="relative">
-                                <input type="url" name="facebook" value="{{ old('facebook', $pengaturan['facebook'] ?? '') }}"
+                                <input type="text" name="facebook" value="{{ old('facebook', $pengaturan['facebook'] ?? '') }}"
                                        class="admin-form-input text-xs"
-                                       placeholder="https://facebook.com/akunsekolah">
+                                       placeholder="https://facebook.com/akunsekolah atau -">
                             </div>
                         </div>
 
                         <div>
                             <label class="admin-form-label text-slate-600">YouTube Channel URL</label>
                             <div class="relative">
-                                <input type="url" name="youtube" value="{{ old('youtube', $pengaturan['youtube'] ?? '') }}"
+                                <input type="text" name="youtube" value="{{ old('youtube', $pengaturan['youtube'] ?? '') }}"
                                        class="admin-form-input text-xs"
-                                       placeholder="https://youtube.com/@akunsekolah">
+                                       placeholder="https://youtube.com/@akunsekolah atau -">
                             </div>
                         </div>
 
                         <div>
-                            <label class="admin-form-label text-slate-600">TikTok URL</label>
+                            <label class="admin-form-label text-slate-600">TikTok URL / Username</label>
                             <div class="relative">
-                                <input type="url" name="tiktok" value="{{ old('tiktok', $pengaturan['tiktok'] ?? '') }}"
+                                <input type="text" name="tiktok" value="{{ old('tiktok', $pengaturan['tiktok'] ?? '') }}"
                                        class="admin-form-input text-xs"
-                                       placeholder="https://tiktok.com/@akunsekolah">
+                                       placeholder="https://tiktok.com/@akunsekolah atau -">
                             </div>
                         </div>
 
                         <div class="sm:col-span-2">
                             <label class="admin-form-label text-slate-600">X (Twitter) URL</label>
                             <div class="relative">
-                                <input type="url" name="twitter" value="{{ old('twitter', $pengaturan['twitter'] ?? '') }}"
+                                <input type="text" name="twitter" value="{{ old('twitter', $pengaturan['twitter'] ?? '') }}"
                                        class="admin-form-input text-xs"
-                                       placeholder="https://x.com/akunsekolah">
+                                       placeholder="https://x.com/akunsekolah atau -">
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Kepala Sekolah & Media Profil (Right 5 Cols) -->

@@ -139,12 +139,6 @@
                     </svg>
                     {{ $sekolah['email'] ?? 'humas@smkn2bandung.sch.id' }}
                 </span>
-                <span class="flex items-center text-blue-200 hidden lg:inline-flex">
-                    <svg class="w-3.5 h-3.5 mr-1.5 text-amber-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {{ $sekolah['jam_layanan'] ?? 'Senin - Jumat: 07.00 - 16.00 WIB' }}
-                </span>
             </div>
             <div class="flex items-center space-x-4">
                 <span class="text-blue-200">NPSN: <strong class="text-white">{{ $sekolah['npsn'] ?? '20219146' }}</strong></span>
@@ -513,51 +507,87 @@
                     </div>
 
                     <!-- Media Sosial Resmi -->
+                    @php
+                        $isValidSocial = function(?string $url): bool {
+                            if (empty($url)) return false;
+                            $trimmed = trim($url);
+                            return $trimmed !== '' && $trimmed !== '-' && $trimmed !== '#' && !in_array(strtolower($trimmed), ['null', 'none', '-']);
+                        };
+                        $formatSocialUrl = function(?string $url, string $prefix): string {
+                            $trimmed = trim($url ?? '');
+                            if (str_starts_with($trimmed, 'http://') || str_starts_with($trimmed, 'https://')) {
+                                return $trimmed;
+                            }
+                            return rtrim($prefix, '/') . '/' . ltrim($trimmed, '@/');
+                        };
+                        $hasSocial = $isValidSocial($sekolah['instagram'] ?? null) 
+                                  || $isValidSocial($sekolah['tiktok'] ?? null) 
+                                  || $isValidSocial($sekolah['youtube'] ?? null) 
+                                  || $isValidSocial($sekolah['facebook'] ?? null) 
+                                  || $isValidSocial($sekolah['twitter'] ?? null);
+                    @endphp
+
+                    @if($hasSocial)
                     <div class="pt-2">
                         <p class="text-xs font-semibold text-blue-200 uppercase tracking-wider mb-2.5">Media Sosial Resmi</p>
                         <div class="flex items-center flex-wrap gap-2.5">
                             <!-- Instagram -->
-                            <a href="{{ $sekolah['instagram'] ?? 'https://instagram.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer"
+                            @if($isValidSocial($sekolah['instagram'] ?? null))
+                            <a href="{{ $formatSocialUrl($sekolah['instagram'], 'https://instagram.com') }}" target="_blank" rel="noopener noreferrer"
                                 class="w-9 h-9 rounded-xl bg-blue-800 border border-blue-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group"
                                 title="Instagram">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                                 </svg>
                             </a>
+                            @endif
+
                             <!-- TikTok -->
-                            <a href="{{ $sekolah['tiktok'] ?? 'https://tiktok.com/@smkn2bandung' }}" target="_blank" rel="noopener noreferrer"
+                            @if($isValidSocial($sekolah['tiktok'] ?? null))
+                            <a href="{{ $formatSocialUrl($sekolah['tiktok'], 'https://tiktok.com') }}" target="_blank" rel="noopener noreferrer"
                                 class="w-9 h-9 rounded-xl bg-blue-800 border border-blue-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group"
                                 title="TikTok">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298 0 .591.045.87.134V9.42a6.35 6.35 0 0 0-.87-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.75a8.28 8.28 0 0 0 4.84 1.55v-3.5a4.85 4.85 0 0 1-1.07-.11z" />
                                 </svg>
                             </a>
+                            @endif
+
                             <!-- YouTube -->
-                            <a href="{{ $sekolah['youtube'] ?? 'https://youtube.com/@smkn2bandung' }}" target="_blank" rel="noopener noreferrer"
+                            @if($isValidSocial($sekolah['youtube'] ?? null))
+                            <a href="{{ $formatSocialUrl($sekolah['youtube'], 'https://youtube.com') }}" target="_blank" rel="noopener noreferrer"
                                 class="w-9 h-9 rounded-xl bg-blue-800 border border-blue-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group"
                                 title="YouTube">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                                 </svg>
                             </a>
+                            @endif
+
                             <!-- Facebook -->
-                            <a href="{{ $sekolah['facebook'] ?? 'https://facebook.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer"
+                            @if($isValidSocial($sekolah['facebook'] ?? null))
+                            <a href="{{ $formatSocialUrl($sekolah['facebook'], 'https://facebook.com') }}" target="_blank" rel="noopener noreferrer"
                                 class="w-9 h-9 rounded-xl bg-blue-800 border border-blue-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group"
                                 title="Facebook">
                                 <svg class="w-4 h-4 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                                 </svg>
                             </a>
+                            @endif
+
                             <!-- X (Twitter) -->
-                            <a href="{{ $sekolah['twitter'] ?? 'https://x.com/smkn2bandung' }}" target="_blank" rel="noopener noreferrer"
+                            @if($isValidSocial($sekolah['twitter'] ?? null))
+                            <a href="{{ $formatSocialUrl($sekolah['twitter'], 'https://x.com') }}" target="_blank" rel="noopener noreferrer"
                                 class="w-9 h-9 rounded-xl bg-blue-800 border border-blue-700 hover:bg-blue-600 hover:border-blue-500 text-white flex items-center justify-center transition shadow-sm group"
                                 title="X (Twitter)">
                                 <svg class="w-3.5 h-3.5 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                                 </svg>
                             </a>
+                            @endif
                         </div>
                     </div>
+                    @endif
                 </div>
 
                 <!-- Col 2: Navigation Links -->
@@ -621,6 +651,14 @@
                             </svg>
                             <span>{{ $sekolah['email'] ?? 'humas@smkn2bandung.sch.id' }}</span>
                         </li>
+                        @if(!empty($sekolah['jam_layanan']))
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 mr-2 text-blue-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="whitespace-pre-line leading-relaxed">{{ $sekolah['jam_layanan'] }}</span>
+                        </li>
+                        @endif
                         <li class="pt-2">
                             <a href="{{ url($tenantSlug . '/kontak') }}" class="inline-flex items-center text-xs font-semibold text-blue-300 hover:text-white">
                                 Buka Formulir Hubungi Kami &rarr;

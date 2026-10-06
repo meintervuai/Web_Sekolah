@@ -41,6 +41,8 @@ beforeEach(function () {
             'status_aktif' => true,
         ]
     );
+
+    PengaturanFitur::on('tenant')->where('kode_fitur', 'program_keahlian')->update(['is_aktif' => true]);
 });
 
 test('admin can access program keahlian index page with tabs', function () {
