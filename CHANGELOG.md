@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Pemisahan Menu Navigasi Admin Informasi Sekolah Menjadi Menu Mandiri] - 2026-10-06
+
+### Refactored & Enhanced
+- **Pemisahan Menu Sidebar Admin**:
+  - [resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php): Mengubah grup dropdown *Informasi Sekolah* menjadi item menu tingkat atas (top-level) mandiri:
+    1. **Berita & Artikel** (`/admin/informasi/berita`)
+    2. **Pengumuman** (`/admin/informasi/pengumuman`)
+    3. **Agenda Kegiatan** (`/admin/informasi/agenda`)
+    4. **Galeri Dokumentasi** (`/admin/informasi/galeri`)
+    5. **Fasilitas & Sarpras** (`/admin/informasi/fasilitas`)
+  - Setiap menu memiliki ikon khas sendiri dan tetap dikontrol secara reaktif oleh feature flag masing-masing.
+
 ## [Penyederhanaan & Kustomisasi Modul SPMB / PPDB] - 2026-10-06
 
 ### Refactored & Enhanced
