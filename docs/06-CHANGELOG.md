@@ -2,6 +2,22 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Penghapusan Bersih Modul Prestasi & Penyelarasan Section Beranda] - 2026-10-06
+
+### Removed
+- **Modul & Section Prestasi Siswa**:
+  - Menghapus section *"Bakat & Kejuaraan / Prestasi Membanggakan"* dari [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php).
+  - Menghapus database table `prestasi_siswa` di seluruh database tenant via migration [database/migrations/tenant/2026_10_06_042507_drop_prestasi_siswa_table.php](file:///d:/databaru/Magang/website_sekolah/database/migrations/tenant/2026_10_06_042507_drop_prestasi_siswa_table.php).
+  - Menghapus Model Eloquent `App\Models\Tenant\PrestasiSiswa`, relasi `prestasi()` dari `Jurusan`, serta view template `prestasi.blade.php` dan `prestasi_detail.blade.php`.
+  - Menghapus rute publik `/prestasi` dan `/prestasi/{slug}` dari [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php).
+  - Membersihkan referensi controller di [app/Http/Controllers/Tenant/Public/HomeController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/HomeController.php), [app/Http/Controllers/Tenant/Public/PageController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Public/PageController.php), [app/Services/MediaService.php](file:///d:/databaru/Magang/website_sekolah/app/Services/MediaService.php), dan tautan footer di [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php).
+
+### Fixed
+- **Penyelarasan Tampilan Section Berita & Pengumuman di Beranda**:
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php): Membungkus seluruh kontainer `<section>` Berita & Pengumuman dengan kondisi `@if($isBeritaAktif || $isPengumumanAktif)`.
+  - Jika kedua fitur dinonaktifkan, kontainer section dan border pemisahnya hilang total tanpa menyisakan ruang putih kosong.
+  - Jika hanya salah satu fitur yang aktif (misal Berita aktif, Pengumuman nonaktif atau sebaliknya), lebar kolom otomatis meluas penuh (`lg:col-span-12`) dengan penataan grid yang proporsional.
+
 ## [Sinkronisasi Granular Menu Profil & Proteksi Tab CMS Admin Sekolah] - 2026-10-06
 
 ### Fixed & Security

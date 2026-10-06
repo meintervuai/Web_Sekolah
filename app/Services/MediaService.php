@@ -482,11 +482,6 @@ class MediaService
             $recordUsage($e->foto, 'Ekskul: ' . $e->nama_ekstrakurikuler);
         }
 
-        // 7. Prestasi Siswa
-        $prestasi = \App\Models\Tenant\PrestasiSiswa::all();
-        foreach ($prestasi as $pr) {
-            $recordUsage($pr->foto, 'Prestasi: ' . $pr->nama_prestasi);
-        }
 
         // 8. Fasilitas & Foto Fasilitas
         $fasilitas = \App\Models\Tenant\Fasilitas::all();

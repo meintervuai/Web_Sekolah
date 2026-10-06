@@ -569,13 +569,19 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
 <!-- ==========================================
      6. BERITA & PENGUMUMAN PENTING (SPLIT GRID)
 =========================================== -->
+@php
+$isBeritaAktif = $fiturList['berita'] ?? true;
+$isPengumumanAktif = $fiturList['pengumuman'] ?? true;
+@endphp
+
+@if($isBeritaAktif || $isPengumumanAktif)
 <section class="section-py bg-white border-b border-slate-200">
   <div class="container-custom">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
-      <!-- Left: Berita Terbaru (8 Cols) -->
-      @if($fiturList['berita'] ?? true)
-      <div class="lg:col-span-8">
+      <!-- Left: Berita Terbaru -->
+      @if($isBeritaAktif)
+      <div class="{{ $isPengumumanAktif ? 'lg:col-span-8' : 'lg:col-span-12' }}">
         <div class="flex justify-between items-center mb-6">
           <div>
             <span class="text-blue-700 font-semibold text-xs uppercase tracking-wider">Publikasi</span>
@@ -591,7 +597,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           Belum ada berita yang dipublikasikan.
         </div>
         @else
-        <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+        <div class="flex sm:grid sm:grid-cols-2 {{ $isPengumumanAktif ? 'md:grid-cols-3' : 'md:grid-cols-4' }} gap-4 sm:gap-5 overflow-x-auto sm:overflow-visible snap-x snap-mandatory pb-4 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
           @foreach($berita as $post)
           <article class="w-[85vw] max-w-[300px] sm:w-auto sm:max-w-none shrink-0 snap-start theme-card rounded-xl border border-slate-200 overflow-hidden shadow-xs hover-card flex flex-col h-full">
             <div class="relative h-40 w-full overflow-hidden bg-slate-100">
@@ -631,9 +637,9 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
       </div>
       @endif
 
-      <!-- Right: Pengumuman Resmi (4 Cols) -->
-      @if($fiturList['pengumuman'] ?? true)
-      <div class="lg:col-span-4">
+      <!-- Right: Pengumuman Resmi -->
+      @if($isPengumumanAktif)
+      <div class="{{ $isBeritaAktif ? 'lg:col-span-4' : 'lg:col-span-12' }}">
         <div class="flex justify-between items-center mb-6">
           <div>
             <span class="text-slate-600 font-semibold text-xs uppercase tracking-wider">Informasi Resmi</span>
@@ -649,8 +655,8 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
           Tidak ada pengumuman saat ini.
         </div>
         @else
-        <div class="space-y-3">
-          @foreach($pengumuman->take(2) as $p)
+        <div class="{{ $isBeritaAktif ? 'space-y-3' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' }}">
+          @foreach($pengumuman->take($isBeritaAktif ? 2 : 6) as $p)
           <div class="p-4 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl transition-colors">
             <div class="flex items-center justify-between text-[11px] text-slate-600 font-semibold mb-1">
               <span class="bg-slate-200 text-slate-800 px-2 py-0.5 rounded text-[10px]">PENTING</span>
@@ -674,6 +680,7 @@ $hasHeroBannerVid = !empty($sekolahData['hero_banner_video']);
     </div>
   </div>
 </section>
+@endif
 
 <!-- ==========================================
      7. AGENDA KEGIATAN MENDATANG
