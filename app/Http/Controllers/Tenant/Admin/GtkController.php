@@ -20,10 +20,37 @@ class GtkController extends Controller
     /**
      * Menampilkan halaman manajemen Struktur Organisasi dan Guru & Tenaga Kependidikan (GTK).
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\RedirectResponse
     {
         $adminId = auth('tenant_admin')->id();
         $sekolah = app('tenant');
+
+        $isStrukturAktif = PengaturanFitur::isAktif('struktur_organisasi', true);
+        $isGuruAktif = PengaturanFitur::isAktif('guru_staf', true);
+
+        // Jika kedua fitur nonaktif, tolak akses dan alihkan ke profil
+        if (! $isStrukturAktif && ! $isGuruAktif) {
+            return redirect()
+                ->route('tenant.admin.profil.index', ['tenant' => $sekolah->slug])
+                ->with('error', 'Akses ditolak: Modul Struktur Organisasi & Direktori GTK sedang dinonaktifkan oleh Super Admin.');
+        }
+
+        // Validasi tab jika dispesifikasikan dalam query
+        $requestedTab = $request->query('tab');
+        if ($requestedTab === 'struktur' && ! $isStrukturAktif) {
+            return redirect()
+                ->route('tenant.admin.gtk.index', ['tenant' => $sekolah->slug, 'tab' => 'guru'])
+                ->with('error', 'Akses ditolak: Modul Struktur Organisasi sedang dinonaktifkan oleh Super Admin.');
+        }
+        if ($requestedTab === 'guru' && ! $isGuruAktif) {
+            return redirect()
+                ->route('tenant.admin.gtk.index', ['tenant' => $sekolah->slug, 'tab' => 'struktur'])
+                ->with('error', 'Akses ditolak: Modul Direktori Guru & Tenaga Kependidikan sedang dinonaktifkan oleh Super Admin.');
+        }
+
+        // Tentukan default tab jika tab yang diminta kosong
+        $defaultTab = $isStrukturAktif ? 'struktur' : 'guru';
+        $activeTab = $requestedTab ?: $defaultTab;
 
         // 1. Data Halaman Statis Hero (Struktur & Guru)
         $halamanStruktur = Page::firstOrCreate(
@@ -88,7 +115,8 @@ class GtkController extends Controller
             'pejabatList',
             'guruList',
             'allGuru',
-            'fiturGtk'
+            'fiturGtk',
+            'activeTab'
         ));
     }
 

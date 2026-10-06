@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6" 
      x-data="gtkManager({
-         activeTab: @js(request('tab', 'struktur')),
+         activeTab: @js($activeTab ?? request('tab', 'struktur')),
          toastMsg: @js(session('success') ?? ''),
          diagrams: @js($diagrams ?? []),
          bannerStrukturPreview: @js(old('gambar_banner_struktur', $halamanStruktur->gambar_banner ?? '')),

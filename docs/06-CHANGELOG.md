@@ -2,14 +2,20 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
-## [Sinkronisasi Granular Menu Profil & Sub-Fitur Dropdown Navbar] - 2026-10-06
+## [Sinkronisasi Granular Menu Profil & Proteksi Tab CMS Admin Sekolah] - 2026-10-06
 
-### Fixed
+### Fixed & Security
+- **Proteksi Akses Tab Profil & GTK CMS Admin Sekolah (`?tab=sejarah`, `?tab=visimisi`, `?tab=guru`, `?tab=struktur`)**:
+  - [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php): Menambahkan proteksi validasi query param `tab` pada method `index()`. Jika admin mencoba mengakses URL tab yang fiturnya dimatikan oleh Super Admin (seperti `?tab=sejarah`), sistem otomatis mengalihkan (redirect) ke tab Data Diri (`?tab=datadiri`) dengan pesan flash error `"Akses ditolak: Modul Sejarah sedang dinonaktifkan oleh Super Admin."`.
+  - [app/Http/Controllers/Tenant/Admin/GtkController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/GtkController.php): Menambahkan proteksi validasi query param `tab` (`?tab=guru` dan `?tab=struktur`). Jika salah satu dimatikan, otomatis fallback ke tab yang aktif; jika kedua modul GTK dimatikan, akses seluruh rute `/admin/gtk` ditolak dan dialihkan ke `/admin/profil`.
+  - [resources/views/layouts/tenant_admin.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/tenant_admin.blade.php): Menyesuaikan teks label menu sidebar admin secara dinamis (*"Struktur Organisasi"*, *"Direktori Guru & GTK"*, atau *"Struktur & GTK"*) sesuai sub-fitur yang sedang aktif, dan menyembunyikannya secara total jika kedua sub-fitur nonaktif.
+  - [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php): Menambahkan guard pengecekan fitur pada method `updateIdentitas()` dan `updateHalaman()` agar submit form dari sub-fitur yang dinonaktifkan langsung ditolak.
+
 - **Sinkronisasi Reaktif Induk Menu Profil saat Mengaktifkan Sub-Fitur**:
   - [app/Http/Controllers/Central/TenantController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Central/TenantController.php): Ketika salah satu sub-fitur profil (`profil`, `profil_video`, `sejarah`, `visi_misi`, `struktur_organisasi`, `guru_staf`) diaktifkan (`aktif: true`), sistem otomatis menyinkronkan status induk `menu_profil` dan data tabel `menus` (`Profil`) ke aktif (`is_aktif = 1`).
   - [resources/views/layouts/public.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/layouts/public.blade.php): Memperbaiki rendering dropdown navbar publik agar menu `Profil` muncul secara dinamis selama terdapat minimal 1 sub-fitur yang berstatus aktif (hanya sub-fitur aktif yang ditampilkan di dropdown).
   - [routes/web.php](file:///d:/databaru/Magang/website_sekolah/routes/web.php): Memisahkan middleware `tenant.feature` per sub-rute profil (`tenant.feature:sejarah`, `tenant.feature:visi_misi`, `tenant.feature:struktur_organisasi`) agar akses sub-halaman bekerja secara mandiri dan presisi.
-  - [tests/Feature/TenantRouteVisibilityTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantRouteVisibilityTest.php): Menambahkan automated test untuk memvalidasi skenario aktivasi granular sub-fitur profil setelah induk dinonaktifkan.
+  - [tests/Feature/TenantRouteVisibilityTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantRouteVisibilityTest.php): Menambahkan automated test untuk memvalidasi proteksi URL tab admin sekolah dan pengalihan ke tab aman saat fiturnya nonaktif.
 
 ## [Penyelarasan Visibilitas Menu Dropdown Kosong & Tombol CTA SPMB Navbar] - 2026-10-06
 

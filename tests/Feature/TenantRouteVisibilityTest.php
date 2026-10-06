@@ -134,7 +134,48 @@ test('rute admin sekolah dialihkan atau ditolak ketika fiturnya dinonaktifkan ol
     $responseAdminJurusan->assertRedirect('/smk-negeri-2-bandung/admin/profil');
     $responseAdminJurusan->assertSessionHas('error');
 
-    // 4. Kembalikan semua ke aktif
+    // 4. Nonaktifkan fitur 'sejarah' dan verifikasi tab=sejarah dialihkan
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'sejarah',
+            'type' => 'sub_section',
+            'aktif' => false,
+        ])->assertStatus(200);
+
+    // Admin Sekolah mencoba akses /smk-negeri-2-bandung/admin/profil?tab=sejarah -> harus redirect ke tab=datadiri dengan flash error
+    $responseAdminSejarah = $this->actingAs($admin, 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/profil?tab=sejarah');
+    $responseAdminSejarah->assertRedirect('/smk-negeri-2-bandung/admin/profil?tab=datadiri');
+    $responseAdminSejarah->assertSessionHas('error');
+
+    // 5. Nonaktifkan 'guru_staf' dan verifikasi tab=guru dialihkan
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'guru_staf',
+            'type' => 'sub_section',
+            'aktif' => false,
+        ])->assertStatus(200);
+
+    // Admin Sekolah mencoba akses /smk-negeri-2-bandung/admin/gtk?tab=guru -> harus redirect ke tab=struktur dengan flash error
+    $responseAdminGuru = $this->actingAs($admin, 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/gtk?tab=guru');
+    $responseAdminGuru->assertRedirect('/smk-negeri-2-bandung/admin/gtk?tab=struktur');
+    $responseAdminGuru->assertSessionHas('error');
+
+    // Nonaktifkan juga 'struktur_organisasi' -> seluruh modul GTK mati -> redirect ke profil
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'struktur_organisasi',
+            'type' => 'sub_section',
+            'aktif' => false,
+        ])->assertStatus(200);
+
+    $responseAdminGtkAll = $this->actingAs($admin, 'tenant_admin')
+        ->get('/smk-negeri-2-bandung/admin/gtk');
+    $responseAdminGtkAll->assertRedirect('/smk-negeri-2-bandung/admin/profil');
+    $responseAdminGtkAll->assertSessionHas('error');
+
+    // 6. Kembalikan semua ke aktif
     $this->actingAs($superadmin, 'superadmin')
         ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
             'key' => 'berita',
@@ -153,6 +194,27 @@ test('rute admin sekolah dialihkan atau ditolak ketika fiturnya dinonaktifkan ol
         ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
             'key' => 'program_keahlian',
             'type' => 'menu',
+            'aktif' => true,
+        ])->assertStatus(200);
+
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'sejarah',
+            'type' => 'sub_section',
+            'aktif' => true,
+        ])->assertStatus(200);
+
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'guru_staf',
+            'type' => 'sub_section',
+            'aktif' => true,
+        ])->assertStatus(200);
+
+    $this->actingAs($superadmin, 'superadmin')
+        ->patchJson(route('superadmin.tenants.toggle-menu', $sekolah), [
+            'key' => 'struktur_organisasi',
+            'type' => 'sub_section',
             'aktif' => true,
         ])->assertStatus(200);
 });

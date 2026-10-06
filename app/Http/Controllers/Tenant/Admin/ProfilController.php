@@ -21,10 +21,27 @@ class ProfilController extends Controller
     /**
      * Menampilkan halaman dashboard manajemen profil sekolah.
      */
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\RedirectResponse
     {
         $adminId = auth('tenant_admin')->id();
         $sekolah = app('tenant');
+
+        // Validasi akses tab berdasarkan status feature flags
+        $requestedTab = $request->query('tab');
+        $tabFeatureMap = [
+            'identitas' => 'profil',
+            'sejarah' => 'sejarah',
+            'visimisi' => 'visi_misi',
+        ];
+
+        if ($requestedTab && isset($tabFeatureMap[$requestedTab])) {
+            $requiredFeature = $tabFeatureMap[$requestedTab];
+            if (! PengaturanFitur::isAktif($requiredFeature, true)) {
+                return redirect()
+                    ->route('tenant.admin.profil.index', ['tenant' => $sekolah->slug, 'tab' => 'datadiri'])
+                    ->with('error', 'Akses ditolak: Modul '.ucfirst(str_replace('_', ' ', $requiredFeature)).' sedang dinonaktifkan oleh Super Admin.');
+            }
+        }
 
         // 1. Data Identitas & Pengaturan Umum
         $pengaturan = [
@@ -198,6 +215,12 @@ class ProfilController extends Controller
         $adminId = auth('tenant_admin')->id();
 
         if ($formType === 'halaman_profil') {
+            if (! PengaturanFitur::isAktif('profil', true)) {
+                return redirect()
+                    ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'datadiri'])
+                    ->with('error', 'Akses ditolak: Modul Profil Lengkap sedang dinonaktifkan oleh Super Admin.');
+            }
+
             $validated = $request->validate([
                 'judul_profil' => ['required', 'string', 'max:200'],
                 'subjudul_profil' => ['nullable', 'string', 'max:500'],
@@ -224,6 +247,7 @@ class ProfilController extends Controller
                 ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'identitas'])
                 ->with('success', 'Halaman profil lengkap dan uraian budaya sekolah berhasil disimpan.');
         }
+
 
         $validated = $request->validate([
             'nama_sekolah' => ['required', 'string', 'max:150'],
@@ -318,6 +342,13 @@ class ProfilController extends Controller
     {
         if (! in_array($slug, ['sejarah', 'visi-misi', 'profil'], true)) {
             abort(404, 'Halaman tidak ditemukan.');
+        }
+
+        $featureKey = $slug === 'visi-misi' ? 'visi_misi' : $slug;
+        if (! PengaturanFitur::isAktif($featureKey, true)) {
+            return redirect()
+                ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'datadiri'])
+                ->with('error', 'Akses ditolak: Modul '.ucfirst(str_replace('_', ' ', $featureKey)).' sedang dinonaktifkan oleh Super Admin.');
         }
 
         $validated = $request->validate([
