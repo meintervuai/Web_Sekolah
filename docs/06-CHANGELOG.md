@@ -2,6 +2,26 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Refactoring Modularisasi View Admin Informasi Sekolah] - 2026-10-07
+
+### Refactored & Reorganized
+- **Pemisahan Modul View Informasi ke Folder Masing-Masing**:
+  - Menghapus folder monolitik `resources/views/tenant/admin/informasi/` dan memisahkannya menjadi modul folder mandiri berarsitektur tab (`index.blade.php` + `tabs/tab-*.blade.php` + `tabs/modals.blade.php`):
+    1. **Berita** (`resources/views/tenant/admin/berita/`):
+       - `index.blade.php`, `tabs/tab-berita.blade.php`, `tabs/tab-form.blade.php`, `tabs/tab-kategori.blade.php`, `tabs/modals.blade.php`
+    2. **Pengumuman** (`resources/views/tenant/admin/pengumuman/`):
+       - `index.blade.php`, `tabs/tab-pengumuman.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    3. **Agenda** (`resources/views/tenant/admin/agenda/`):
+       - `index.blade.php`, `tabs/tab-agenda.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    4. **Galeri** (`resources/views/tenant/admin/galeri/`):
+       - `index.blade.php`, `tabs/tab-album.blade.php`, `tabs/tab-items.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    5. **Fasilitas** (`resources/views/tenant/admin/fasilitas/`):
+       - `index.blade.php`, `tabs/tab-fasilitas.blade.php`, `tabs/tab-form.blade.php`, `tabs/tab-stats.blade.php`, `tabs/modals.blade.php`
+- **Pembaruan Controller View Return**:
+  - Mengarahkan `InformasiController.php` untuk me-render view baru: `tenant.admin.berita.index`, `tenant.admin.pengumuman.index`, `tenant.admin.agenda.index`, `tenant.admin.galeri.index`, dan `tenant.admin.fasilitas.index`.
+- **Verifikasi Pengujian**:
+  - Feature test suite Pest `TenantAdminInformasiTest.php` (7 passed, 38 assertions).
+
 ## [Penyempurnaan Full-Width Hero Banner Halaman Publik] - 2026-10-07
 
 ### Enhanced

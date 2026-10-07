@@ -65,7 +65,7 @@ class InformasiController extends Controller
 
         $isFiturAktif = PengaturanFitur::isAktif('berita', true);
 
-        return view('tenant.admin.informasi.berita', compact(
+        return view('tenant.admin.berita.index', compact(
             'beritaList',
             'kategoriList',
             'halamanBerita',
@@ -253,7 +253,7 @@ class InformasiController extends Controller
 
         $isFiturAktif = PengaturanFitur::isAktif('pengumuman', true);
 
-        return view('tenant.admin.informasi.pengumuman', compact(
+        return view('tenant.admin.pengumuman.index', compact(
             'pengumumanList',
             'halamanPengumuman',
             'isFiturAktif'
@@ -393,7 +393,7 @@ class InformasiController extends Controller
 
         $isFiturAktif = PengaturanFitur::isAktif('agenda', true);
 
-        return view('tenant.admin.informasi.agenda', compact(
+        return view('tenant.admin.agenda.index', compact(
             'agendaList',
             'halamanAgenda',
             'isFiturAktif'
@@ -555,7 +555,7 @@ class InformasiController extends Controller
 
         $isFiturAktif = PengaturanFitur::isAktif('galeri', true);
 
-        return view('tenant.admin.informasi.galeri', compact(
+        return view('tenant.admin.galeri.index', compact(
             'albumList',
             'selectedAlbum',
             'halamanGaleri',
@@ -723,7 +723,7 @@ class InformasiController extends Controller
 
         $isFiturAktif = PengaturanFitur::isAktif('fasilitas', true);
 
-        return view('tenant.admin.informasi.fasilitas', compact(
+        return view('tenant.admin.fasilitas.index', compact(
             'fasilitasList',
             'halamanFasilitas',
             'stats',
@@ -903,17 +903,17 @@ class InformasiController extends Controller
         );
 
         $routeMap = [
-            'berita' => 'tenant.admin.informasi.berita',
-            'pengumuman' => 'tenant.admin.informasi.pengumuman',
-            'agenda' => 'tenant.admin.informasi.agenda',
-            'galeri' => 'tenant.admin.informasi.galeri',
-            'fasilitas' => 'tenant.admin.informasi.fasilitas',
+            'berita' => ['route' => 'tenant.admin.informasi.berita', 'tab' => 'berita'],
+            'pengumuman' => ['route' => 'tenant.admin.informasi.pengumuman', 'tab' => 'pengumuman'],
+            'agenda' => ['route' => 'tenant.admin.informasi.agenda', 'tab' => 'agenda'],
+            'galeri' => ['route' => 'tenant.admin.informasi.galeri', 'tab' => 'album'],
+            'fasilitas' => ['route' => 'tenant.admin.informasi.fasilitas', 'tab' => 'fasilitas'],
         ];
 
-        $targetRoute = $routeMap[$modul] ?? 'tenant.admin.informasi.berita';
+        $target = $routeMap[$modul] ?? ['route' => 'tenant.admin.informasi.berita', 'tab' => 'berita'];
 
         return redirect()
-            ->route($targetRoute, ['tenant' => app('tenant')->slug, 'tab' => 'hero'])
+            ->route($target['route'], ['tenant' => app('tenant')->slug, 'tab' => $target['tab']])
             ->with('success', 'Kustomisasi hero banner publik untuk '.ucfirst($modul).' berhasil disimpan.');
     }
 

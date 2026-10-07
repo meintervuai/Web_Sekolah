@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Refactoring Modularisasi View Admin Informasi Sekolah] - 2026-10-07
+
+### Refactored & Reorganized
+- **Pemisahan Modul View Informasi ke Folder Masing-Masing**:
+  - Menghapus folder monolitik `resources/views/tenant/admin/informasi/` dan memisahkannya menjadi modul folder mandiri berarsitektur tab (`index.blade.php` + `tabs/tab-*.blade.php` + `tabs/modals.blade.php`):
+    1. **Berita** (`resources/views/tenant/admin/berita/`):
+       - `index.blade.php`, `tabs/tab-berita.blade.php`, `tabs/tab-form.blade.php`, `tabs/tab-kategori.blade.php`, `tabs/modals.blade.php`
+    2. **Pengumuman** (`resources/views/tenant/admin/pengumuman/`):
+       - `index.blade.php`, `tabs/tab-pengumuman.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    3. **Agenda** (`resources/views/tenant/admin/agenda/`):
+       - `index.blade.php`, `tabs/tab-agenda.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    4. **Galeri** (`resources/views/tenant/admin/galeri/`):
+       - `index.blade.php`, `tabs/tab-album.blade.php`, `tabs/tab-items.blade.php`, `tabs/tab-form.blade.php`, `tabs/modals.blade.php`
+    5. **Fasilitas** (`resources/views/tenant/admin/fasilitas/`):
+       - `index.blade.php`, `tabs/tab-fasilitas.blade.php`, `tabs/tab-form.blade.php`, `tabs/tab-stats.blade.php`, `tabs/modals.blade.php`
+- **Pembaruan Controller View Return**:
+  - Mengarahkan `InformasiController.php` untuk me-render view baru: `tenant.admin.berita.index`, `tenant.admin.pengumuman.index`, `tenant.admin.agenda.index`, `tenant.admin.galeri.index`, dan `tenant.admin.fasilitas.index`.
+- **Verifikasi Pengujian**:
+  - Feature test suite Pest `TenantAdminInformasiTest.php` (7 passed, 38 assertions).
+
+## [Perbaikan Alpine.js Media Picker & Konfigurasi Database Lokal] - 2026-10-07
+
+### Fixed & Enhanced
+- **Sinkronisasi Alpine Data pada Reusable Media Picker (`picker-modal.blade.php`)**:
+  - Memperbaiki error `ReferenceError: mediaPickerOpen is not defined`, `pickerFilterType is not defined`, `pickerShowImportForm is not defined`, dll. pada halaman admin informasi.
+  - Menyelaraskan kontrak state dan methods Alpine.js di:
+    - [resources/views/tenant/admin/informasi/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/berita.blade.php)
+    - [resources/views/tenant/admin/informasi/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/pengumuman.blade.php)
+    - [resources/views/tenant/admin/informasi/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/agenda.blade.php)
+    - [resources/views/tenant/admin/informasi/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/galeri.blade.php)
+    - [resources/views/tenant/admin/informasi/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/informasi/fasilitas.blade.php)
+- **Konfigurasi Database Lokal**:
+  - Mengalihkan database tenant & central ke MySQL lokal (`127.0.0.1:3306`).
+  - Memperbaiki seeder `TenantSmkn2BandungSeeder.php` dan `TenantDummySeeder.php` agar selaras dengan skema database aktif.
+
+
 ## [Fitur Pengaturan Tab Banner & Slider Hero Beranda untuk Publik] - 2026-10-07
 
 ### Added & Enhanced
