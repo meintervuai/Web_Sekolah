@@ -15,7 +15,7 @@ Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
     - [resources/views/public/pages/struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php) (Struktur Organisasi)
     - [resources/views/public/pages/guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php) (Direktori Guru & Tenaga Kependidikan)
     - [resources/views/public/pages/jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php) (Daftar Program Keahlian)
-    - [resources/views/public/pages/jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php) (Detail Program Keahlian)
+    - [resources/views/public/pages/jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php) (Detail Program Keahlian: gambar ikon/foto diposisikan pada Hero Banner dan blok informasi program kosong secara otomatis disembunyikan)
     - [resources/views/public/pages/kurikulum.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kurikulum.blade.php) (Struktur Kurikulum)
     - [resources/views/public/pages/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/fasilitas.blade.php) (Sarana & Prasarana)
     - [resources/views/public/pages/spmb.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/spmb.blade.php) (Informasi SPMB / PPDB)

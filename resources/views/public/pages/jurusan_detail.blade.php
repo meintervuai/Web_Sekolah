@@ -7,11 +7,15 @@
 <!-- Page Header / Breadcrumb -->
 <section class="theme-bg-dark text-white py-12 lg:py-16 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(var(--theme-accent)_1px,transparent_1px)] [background-size:16px_16px]"></div>
-    @if(!empty($jurusan->foto_utama ?? $jurusan->gambar ?? null))
+    @php
+        $heroBanner = $jurusan->ikon_atau_foto ?? $jurusan->foto_utama ?? $jurusan->gambar ?? null;
+    @endphp
+    @if(!empty($heroBanner))
         <!-- Full-Width Hero Banner Image with Dark Theme Gradient Overlay -->
         <div class="absolute inset-0 pointer-events-none z-0">
-            <img src="{{ $jurusan->foto_utama ?? $jurusan->gambar }}" alt="{{ $jurusan->nama_jurusan }}" 
-                 class="w-full h-full object-cover object-center">
+            <img src="{{ $heroBanner }}" alt="{{ $jurusan->nama_jurusan }}" 
+                 @style([\App\Services\MediaService::getCropStyle($heroBanner)])
+                 class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-950/60"></div>
             <div class="absolute inset-0" style="background: linear-gradient(135deg, color-mix(in srgb, var(--theme-header,#0f172a) 85%, black 15%) 0%, color-mix(in srgb, var(--theme-header,#0f172a) 40%, transparent) 70%, transparent 100%); opacity: 0.85;"></div>
         </div>
@@ -46,27 +50,6 @@
             
             <!-- Left: Main Information (2 Columns) -->
             <div class="lg:col-span-2 space-y-8">
-                
-                <!-- Hero Image with Aspect Ratio (Hanya tampil jika foto diisi) -->
-                @php
-                    $detailFoto = $jurusan->foto_utama ?? $jurusan->ikon_atau_foto;
-                @endphp
-                @if(!empty($detailFoto))
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80">
-                    <div class="aspect-video w-full overflow-hidden bg-slate-900 relative flex items-center justify-center">
-                        <!-- Ambient Blurred Backdrop -->
-                        <img src="{{ $detailFoto }}" 
-                             alt="" 
-                             aria-hidden="true" 
-                             class="absolute inset-0 w-full h-full object-cover blur-md scale-125 opacity-40 pointer-events-none">
-                        <!-- Main Image with Smart Crop -->
-                        <img src="{{ $detailFoto }}" 
-                             alt="{{ $jurusan->nama_jurusan }}" 
-                             @style([\App\Services\MediaService::getCropStyle($detailFoto)])
-                             class="relative z-10 w-full h-full object-cover">
-                    </div>
-                </div>
-                @endif
 
                 <!-- Profil Utama & Deskripsi Lengkap -->
                 <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200/80">
@@ -139,6 +122,15 @@
 
             <!-- Right: Sidebar (1 Column) -->
             <div class="space-y-6">
+                @php
+                    $rawInfo = $jurusan->informasi_tambahan ?? '';
+                    $cleanInfoText = trim(html_entity_decode(strip_tags($rawInfo, '<img><video><audio><iframe>')));
+                    $cleanInfoText = preg_replace('/\s+/', '', $cleanInfoText);
+                    $hasRichInfo = !empty($cleanInfoText) || str_contains($rawInfo, '<img') || str_contains($rawInfo, '<iframe');
+                    $hasGeneralInfo = !empty($jurusan->jenjang) || !empty($jurusan->peluang_kerja) || !empty($jurusan->sertifikasi);
+                @endphp
+
+                @if($jurusan->kepalaProgram || $hasRichInfo || $hasGeneralInfo)
                 <!-- KARTU TERPADU: KEPALA PROGRAM KEAHLIAN & INFORMASI PROGRAM -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-5">
                     @if($jurusan->kepalaProgram)
@@ -169,6 +161,7 @@
                     </div>
                     @endif
 
+                    @if($hasRichInfo || $hasGeneralInfo)
                     <!-- Sub-Section: Informasi Program (WYSIWYG Rich Content) -->
                     <div class="{{ $jurusan->kepalaProgram ? 'pt-4 border-t border-slate-100' : '' }}">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 pb-2 border-b border-slate-100 flex items-center gap-1.5">
@@ -176,11 +169,11 @@
                             Informasi Program
                         </h3>
                         
-                        @if(!empty($jurusan->informasi_tambahan))
+                        @if($hasRichInfo)
                             <div class="prose prose-slate prose-xs max-w-none text-xs leading-relaxed text-slate-600 space-y-2 prose-ul:my-1 prose-li:my-0.5 prose-p:my-1">
                                 {!! $jurusan->informasi_tambahan !!}
                             </div>
-                        @else
+                        @elseif($hasGeneralInfo)
                             <ul class="space-y-3 text-xs md:text-sm">
                                 <li class="flex justify-between items-center text-slate-600">
                                     <span>Jenjang:</span>
@@ -207,7 +200,9 @@
                             </ul>
                         @endif
                     </div>
+                    @endif
                 </div>
+                @endif
 
                 <!-- Jurusan Lainnya Navigation -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
