@@ -20,7 +20,10 @@
          bannerProfilPreview: @js(old('gambar_banner_profil', $halamanProfil->gambar_banner ?? '')),
          bannerStrukturPreview: @js(old('gambar_banner_struktur', $halamanStruktur->gambar_banner ?? '')),
          bannerGuruPreview: @js(old('gambar_banner_guru', $halamanGuru->gambar_banner ?? '')),
+         heroBannerPreview: @js(old('hero_banner', $pengaturan['hero_banner'] ?? '')),
+         heroBannerVideoPreview: @js(old('hero_banner_video', $pengaturan['hero_banner_video'] ?? '')),
          pejabatNextUrutan: @js($pejabatList->count() + 1),
+         sliderNextUrutan: @js($sliderList->count() + 1),
          routes: {
              mediaIndex: @js(route('tenant.admin.media.index', ['tenant' => app('tenant')->slug])),
              mediaUpload: @js(route('tenant.admin.media.upload', ['tenant' => app('tenant')->slug])),
@@ -120,6 +123,15 @@
                         <span>4. Visi, Misi &amp; Tujuan</span>
                     </button>
                 @endif
+
+                <button type="button" @click="setTab('slider')"
+                        :class="activeTab === 'slider' ? 'admin-tab-pill-active' : 'admin-tab-pill-inactive'"
+                        class="admin-tab-pill">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>5. Banner &amp; Slider Beranda</span>
+                </button>
             </div>
 
             <!-- Sticky Top Save Button (Dispatched to active form) -->
@@ -204,6 +216,7 @@
     @include('tenant.admin.profil.tabs.tab-profil')
     @include('tenant.admin.profil.tabs.tab-sejarah')
     @include('tenant.admin.profil.tabs.tab-visimisi')
+    @include('tenant.admin.profil.tabs.tab-slider')
 
     <!-- MODALS (MEDIA PICKER, CONFIRM TOGGLE) -->
     @include('tenant.admin.profil.tabs.modals')
@@ -227,6 +240,24 @@
             bannerProfilPreview: config.bannerProfilPreview || '',
             bannerStrukturPreview: config.bannerStrukturPreview || '',
             bannerGuruPreview: config.bannerGuruPreview || '',
+            heroBannerPreview: config.heroBannerPreview || '',
+            heroBannerVideoPreview: config.heroBannerVideoPreview || '',
+
+            // Modals Slider Hero Beranda
+            modalSliderOpen: false,
+            modalDeleteSliderOpen: false,
+            deleteTargetSliderId: null,
+            deleteTargetSliderJudul: '',
+            sliderForm: {
+                id: null,
+                judul: '',
+                subjudul: '',
+                media: '',
+                link_tombol: '',
+                teks_tombol: '',
+                urutan: config.sliderNextUrutan || 1,
+                is_aktif: true
+            },
 
             // Quill Editors
             quillProfil: null,
@@ -683,6 +714,41 @@
                 this.deleteTargetGuruId = id;
                 this.deleteTargetGuruNama = nama;
                 this.modalDeleteGuruOpen = true;
+            },
+
+            // Slider Modal Handlers
+            openModalSlider() {
+                this.sliderForm = {
+                    id: null,
+                    judul: '',
+                    subjudul: '',
+                    media: '',
+                    link_tombol: '',
+                    teks_tombol: '',
+                    urutan: config.sliderNextUrutan || 1,
+                    is_aktif: true
+                };
+                this.modalSliderOpen = true;
+            },
+
+            editSlider(data) {
+                this.sliderForm = {
+                    id: data.id,
+                    judul: data.judul || '',
+                    subjudul: data.subjudul || '',
+                    media: data.video || data.gambar || '',
+                    link_tombol: data.link_tombol || '',
+                    teks_tombol: data.teks_tombol || '',
+                    urutan: data.urutan || 1,
+                    is_aktif: !!data.is_aktif
+                };
+                this.modalSliderOpen = true;
+            },
+
+            deleteSliderConfirm(id, judul) {
+                this.deleteTargetSliderId = id;
+                this.deleteTargetSliderJudul = judul;
+                this.modalDeleteSliderOpen = true;
             },
 
             triggerToast(msg) {

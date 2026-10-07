@@ -69,6 +69,8 @@ class ProfilController extends Controller
             'video_profil' => PengaturanUmum::ambil('video_profil', 'https://www.youtube.com/watch?v=kYJydU5jUqM'),
             'video_profil_judul' => PengaturanUmum::ambil('video_profil_judul', 'Profil & Kilas Pembelajaran Vokasi'),
             'video_profil_deskripsi' => PengaturanUmum::ambil('video_profil_deskripsi', 'Saksikan tayangan visual fasilitas modern, lingkungan belajar TEFA, dan aktivitas siswa vokasi unggulan kami.'),
+            'hero_banner' => PengaturanUmum::ambil('hero_banner', ''),
+            'hero_banner_video' => PengaturanUmum::ambil('hero_banner_video', ''),
         ];
 
         // 2. Data Halaman Statis (Profil, Sejarah, Visi Misi, Struktur)
@@ -279,6 +281,8 @@ class ProfilController extends Controller
             'video_profil' => ['nullable', 'string', 'max:500'],
             'video_profil_judul' => ['nullable', 'string', 'max:200'],
             'video_profil_deskripsi' => ['nullable', 'string', 'max:500'],
+            'hero_banner' => ['nullable', 'string', 'max:500'],
+            'hero_banner_video' => ['nullable', 'string', 'max:500'],
             'judul_profil' => ['nullable', 'string', 'max:200'],
             'subjudul_profil' => ['nullable', 'string', 'max:500'],
             'gambar_banner_profil' => ['nullable', 'string', 'max:500'],
@@ -295,6 +299,12 @@ class ProfilController extends Controller
         if (! empty($validated['video_profil'])) {
             $validated['video_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['video_profil'], $adminId, 'profil', $validated['video_profil_judul'] ?: 'Video Profil Sekolah');
         }
+        if (! empty($validated['hero_banner'])) {
+            $validated['hero_banner'] = $mediaService->sinkronisasiOtomatisUrl($validated['hero_banner'], $adminId, 'profil', 'Banner Hero Beranda Utama');
+        }
+        if (! empty($validated['hero_banner_video'])) {
+            $validated['hero_banner_video'] = $mediaService->sinkronisasiOtomatisUrl($validated['hero_banner_video'], $adminId, 'profil', 'Video Banner Hero Beranda');
+        }
         if (! empty($validated['gambar_banner_profil'])) {
             $validated['gambar_banner_profil'] = $mediaService->sinkronisasiOtomatisUrl($validated['gambar_banner_profil'], $adminId, 'profil', 'Banner Hero Profil Sekolah');
         }
@@ -306,6 +316,7 @@ class ProfilController extends Controller
                 'logo', 'instagram', 'facebook', 'twitter', 'youtube', 'tiktok',
                 'nama_kepsek', 'nip_kepsek', 'foto_kepsek', 'sambutan_kepsek',
                 'video_profil', 'video_profil_judul', 'video_profil_deskripsi',
+                'hero_banner', 'hero_banner_video',
             ];
 
             foreach ($keysToSave as $kunci) {

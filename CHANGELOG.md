@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Fitur Pengaturan Tab Banner & Slider Hero Beranda untuk Publik] - 2026-10-07
+
+### Added & Enhanced
+- **Tab Baru 5. Banner & Slider Beranda di Panel Admin Profil**:
+  - [resources/views/tenant/admin/profil/tabs/tab-slider.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/tab-slider.blade.php): Menyediakan antarmuka visual lengkap untuk:
+    1. **Pengaturan Hero Banner Beranda**: Pengaturan cover gambar poster (`hero_banner`) dan video latar/profil (`hero_banner_video`) beranda dengan live preview & integrasi Media Picker.
+    2. **Tabel Manajemen Slider Carousel Beranda**: Daftar slide interaktif (`$sliderList`), badge status aktif/draft, urutan tampil, preview thumbnail media, tombol CTA, serta aksi edit & hapus.
+  - [resources/views/tenant/admin/profil/tabs/modals.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/tabs/modals.blade.php): Menambahkan modal kustom Tambah/Edit Slide Hero Beranda dan modal konfirmasi hapus slide ramah pengguna.
+  - [resources/views/tenant/admin/profil/index.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/tenant/admin/profil/index.blade.php): Menambahkan pill tab navigasi `slider` ("5. Banner & Slider Beranda"), tombol simpan sticky top bar, integrasi Alpine.js manager untuk slide carousel & banner hero.
+- **Backend Controller & Sanitasi**:
+  - [app/Http/Controllers/Tenant/Admin/ProfilController.php](file:///d:/databaru/Magang/website_sekolah/app/Http/Controllers/Tenant/Admin/ProfilController.php):
+    - Mengintegrasikan pengambilan kunci `hero_banner` dan `hero_banner_video` di method `index()`.
+    - Menambahkan validasi dan auto-sinkronisasi media via `MediaService::sinkronisasiOtomatisUrl()` untuk `hero_banner` dan `hero_banner_video` pada method `updateIdentitas()`.
+- **Integrasi Penuh dengan Beranda Publik**:
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php): Menampilkan hero slider dan banner beranda yang telah dikonfigurasi langsung oleh admin sekolah.
+
 ## [Fitur Pengaturan Hero Banner / Slider Beranda di Admin & Super Admin] - 2026-10-07
 
 ### Added & Enhanced

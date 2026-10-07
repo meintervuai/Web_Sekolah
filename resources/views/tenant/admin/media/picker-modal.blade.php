@@ -147,7 +147,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3">
                     <template x-for="item in mediaItems" :key="item.id">
                         <div class="group relative rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs hover:border-blue-500 hover:shadow-md transition cursor-pointer flex flex-col justify-between"
-                             @click="selectMediaItem(item)">
+                             @click.stop="selectMediaItem(item)">
                             <div class="aspect-square bg-slate-900 overflow-hidden relative flex items-center justify-center">
                                 
                                 <!-- 1. Gambar -->
