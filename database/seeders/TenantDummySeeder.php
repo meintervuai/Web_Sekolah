@@ -196,31 +196,7 @@ class TenantDummySeeder extends Seeder
         ];
         $tenantDb->table('ekstrakurikuler')->insert($ekskul);
 
-        // Prestasi Siswa
-        $tenantDb->table('prestasi_siswa')->truncate();
-        $prestasi = [
-            [
-                'nama_siswa' => 'Budi Santoso',
-                'nama_prestasi' => 'Juara 1 Lomba Web Design Provinsi',
-                'tingkat' => 'Provinsi',
-                'tanggal' => '2026-05-15',
-                'deskripsi' => 'Budi berhasil memenangkan lomba Web Design antar SMK se-Jawa Barat.',
-                'foto' => 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=800&auto=format&fit=crop',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nama_siswa' => 'Siti Aminah',
-                'nama_prestasi' => 'Medali Emas Olimpiade Jaringan Nasional',
-                'tingkat' => 'Nasional',
-                'tanggal' => '2026-08-20',
-                'deskripsi' => 'Siti meraih medali emas pada kompetisi instalasi jaringan tingkat nasional.',
-                'foto' => 'https://images.unsplash.com/photo-1531545514256-b1400bc00f31?q=80&w=800&auto=format&fit=crop',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ];
-        $tenantDb->table('prestasi_siswa')->insert($prestasi);
+
         // Kalender Akademik
         $tenantDb->table('kalender_akademik')->truncate();
         $kalender = [
