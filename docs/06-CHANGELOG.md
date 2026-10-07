@@ -2,6 +2,31 @@
 
 Format mengacu pada [Keep a Changelog](https://keepachangelog.com/).
 
+## [Penyempurnaan Full-Width Hero Banner Halaman Publik] - 2026-10-07
+
+### Enhanced
+- **Pelebaran Gambar Hero Banner Halaman Publik (Full-Width Header)**:
+  - Mengubah seluruh layout gambar banner hero pada halaman publik dari yang sebelumnya terbatas di sisi kanan (`w-full md:w-3/5 lg:w-1/2` dengan gradasi `mask-image`) menjadi berukuran penuh seukuran kontainer hero banner (`absolute inset-0 w-full h-full object-cover`).
+  - Menyelaraskan overlay gradien gelap ganda (`bg-gradient-to-r from-slate-950/90 via-slate-900/80 to-slate-950/60` dan `color-mix` tema dinamis) untuk menjamin keterbacaan teks judul & breadcrumb tetap tajam dan memenuhi standar kontras WCAG AA.
+  - Halaman publik yang diperbarui:
+    - [resources/views/public/pages/profil.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/profil.blade.php) (Profil & Sambutan Kepala Sekolah)
+    - [resources/views/public/pages/sejarah.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/sejarah.blade.php) (Sejarah Sekolah)
+    - [resources/views/public/pages/visi-misi.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/visi-misi.blade.php) (Visi & Misi)
+    - [resources/views/public/pages/struktur.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/struktur.blade.php) (Struktur Organisasi)
+    - [resources/views/public/pages/guru.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/guru.blade.php) (Direktori Guru & Tenaga Kependidikan)
+    - [resources/views/public/pages/jurusan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan.blade.php) (Daftar Program Keahlian)
+    - [resources/views/public/pages/jurusan_detail.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/jurusan_detail.blade.php) (Detail Program Keahlian)
+    - [resources/views/public/pages/kurikulum.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kurikulum.blade.php) (Struktur Kurikulum)
+    - [resources/views/public/pages/fasilitas.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/fasilitas.blade.php) (Sarana & Prasarana)
+    - [resources/views/public/pages/spmb.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/spmb.blade.php) (Informasi SPMB / PPDB)
+    - [resources/views/public/pages/berita.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/berita.blade.php) (Warta & Berita Sekolah)
+    - [resources/views/public/pages/pengumuman.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/pengumuman.blade.php) (Pengumuman Resmi)
+    - [resources/views/public/pages/agenda.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/agenda.blade.php) (Agenda Kegiatan)
+    - [resources/views/public/pages/kalender.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kalender.blade.php) (Kalender Akademik)
+    - [resources/views/public/pages/kegiatan.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kegiatan.blade.php) (Dokumentasi Aktivitas)
+    - [resources/views/public/pages/galeri.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/galeri.blade.php) (Galeri Foto & Video)
+    - [resources/views/public/pages/kontak.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/pages/kontak.blade.php) (Hubungi Kami & Peta)
+
 ## [Fitur Pengaturan Tab Banner & Slider Hero Beranda untuk Publik] - 2026-10-07
 
 ### Added & Enhanced
