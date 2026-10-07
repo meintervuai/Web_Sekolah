@@ -489,6 +489,15 @@
                     if (this.mediaPickerTargetInput === 'input_banner_guru') {
                         this.bannerGuruPreview = item.url;
                     }
+                    if (this.mediaPickerTargetInput === 'input_media_slider_modal') {
+                        this.sliderForm.media = item.url;
+                    }
+                    if (this.mediaPickerTargetInput === 'input_gambar_slider_modal') {
+                        this.sliderForm.media = item.url;
+                    }
+                    if (this.mediaPickerTargetInput === 'input_video_slider_modal') {
+                        this.sliderForm.media = item.url;
+                    }
                     if (this.mediaPickerTargetInput.startsWith('input_diag_')) {
                         const idx = parseInt(this.mediaPickerTargetInput.replace('input_diag_', ''));
                         if (!isNaN(idx) && this.diagramList[idx]) {

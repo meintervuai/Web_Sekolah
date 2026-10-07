@@ -4,7 +4,7 @@
      Pencarian Live, Sorting Urutan/Terbaru, Impor URL/YouTube instan, dan Unggah WebP Otomatis.
 ========================================================================= -->
 <div x-show="mediaPickerOpen" x-cloak 
-     class="admin-modal-overlay p-2 sm:p-4"
+     class="admin-modal-overlay fixed inset-0 z-[60] bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto"
      x-transition:enter="transition ease-out duration-200"
      x-transition:enter-start="opacity-0"
      x-transition:enter-end="opacity-100"
@@ -12,7 +12,7 @@
      x-transition:leave-start="opacity-100"
      x-transition:leave-end="opacity-0">
     
-    <div class="admin-modal-card max-w-4xl w-full h-[92vh] sm:h-[86vh] flex flex-col overflow-hidden"
+    <div class="admin-modal-card relative z-[61] max-w-4xl w-full h-[92vh] sm:h-[86vh] flex flex-col overflow-hidden bg-white rounded-2xl shadow-2xl border border-slate-200"
          @click.outside="mediaPickerOpen = false">
         
         <!-- 1. Modal Header -->

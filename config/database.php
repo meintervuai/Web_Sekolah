@@ -60,8 +60,12 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ?: (ini_get('openssl.cafile') ?: ini_get('curl.cainfo')),
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', false),
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ], fn ($value) => $value !== null && $value !== '') : [
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ],
         ],
 
         'tenant' => [
@@ -80,8 +84,12 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA') ?: (ini_get('openssl.cafile') ?: ini_get('curl.cainfo')),
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', false),
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ], fn ($value) => $value !== null && $value !== '') : [
+                PDO::ATTR_EMULATE_PREPARES => true,
+            ],
         ],
 
         'mariadb' => [

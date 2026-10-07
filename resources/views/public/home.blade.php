@@ -70,7 +70,7 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
       class="absolute inset-0 w-full h-full"
       style="display: none;">
 
-      <!-- Background Media (Video atau Gambar) -->
+      <!-- Background Media (Video, Gambar, atau Gradient Polos jika tanpa media) -->
       @if(!empty($item->video))
       <video src="{{ $item->video }}"
         class="w-full h-full object-cover object-center"
@@ -82,15 +82,21 @@ $tenantSlug = app()->bound('tenant') ? app('tenant')->slug : 'smk-negeri-2-bandu
         @else
           loop
         @endif></video>
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-slate-950/40"></div>
+      <div class="absolute inset-0" style="background: linear-gradient(135deg, color-mix(in srgb, var(--theme-color) 75%, black 25%) 0%, color-mix(in srgb, var(--theme-color) 30%, transparent) 65%, transparent 100%); opacity: 0.75;"></div>
       @elseif(!empty($item->gambar))
       <img src="{{ $item->gambar }}"
         alt="{{ $item->judul ?? 'SMK Negeri 2 Bandung' }}"
         class="w-full h-full object-cover object-center"
         loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-slate-950/40"></div>
+      <div class="absolute inset-0" style="background: linear-gradient(135deg, color-mix(in srgb, var(--theme-color) 75%, black 25%) 0%, color-mix(in srgb, var(--theme-color) 30%, transparent) 65%, transparent 100%); opacity: 0.75;"></div>
+      @else
+      <!-- Tanpa Media / Foto (Tampilan Clean Gradient Tema Sekolah) -->
+      <div class="w-full h-full" style="background: radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--theme-color) 45%, #0f172a 55%) 0%, #090d16 100%);"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] opacity-60"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
       @endif
-
-      <!-- Clean High-Contrast Overlay -->
-      <div class="absolute inset-0" style="background-color: color-mix(in srgb, var(--theme-color) 85%, black);"></div>
 
       <!-- Slide Content -->
       <div class="absolute inset-0 flex items-center">

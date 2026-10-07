@@ -191,6 +191,9 @@ Route::prefix('{tenant}')
                     Route::post('/guru', [ProfilController::class, 'storeGuru'])->name('guru.store')->middleware('tenant.feature:guru_staf');
                     Route::put('/guru/{guru}', [ProfilController::class, 'updateGuru'])->name('guru.update')->middleware('tenant.feature:guru_staf');
                     Route::delete('/guru/{guru}', [ProfilController::class, 'destroyGuru'])->name('guru.destroy')->middleware('tenant.feature:guru_staf');
+                    Route::post('/slider', [ProfilController::class, 'storeSlider'])->name('slider.store');
+                    Route::put('/slider/{slider}', [ProfilController::class, 'updateSlider'])->name('slider.update');
+                    Route::delete('/slider/{slider}', [ProfilController::class, 'destroySlider'])->name('slider.destroy');
                     Route::post('/toggle-menu', [ProfilController::class, 'toggleMenu'])->name('toggle-menu');
                 });
 

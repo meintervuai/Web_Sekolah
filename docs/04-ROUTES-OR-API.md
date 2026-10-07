@@ -67,7 +67,10 @@ Panel admin sekolah mengelola identitas, konten profil sekolah, manajemen media,
 | 13 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.update` | PUT | `auth:tenant_admin` | Perbarui data Guru & Tenaga Kependidikan. |
 | 14 | `/{tenant}/admin/profil/guru/{guru}` | `tenant.admin.profil.guru.destroy` | DELETE | `auth:tenant_admin` | Hapus data Guru & Tenaga Kependidikan. |
 | 15 | `/{tenant}/admin/profil/toggle-menu` | `tenant.admin.profil.toggle-menu` | POST | `auth:tenant_admin` | Sakelar AJAX untuk sembunyikan/tampilkan menu/rute profil di publik (`menus` & `pengaturan_fitur`). |
-| 16 | `/{tenant}/admin/program-keahlian` | `tenant.admin.jurusan.index` | GET | `auth:tenant_admin` | Manajemen Program Keahlian CMS (Katalog Jurusan, Hero Banner Publik, Visibilitas). |
+| 16 | `/{tenant}/admin/profil/slider` | `tenant.admin.profil.slider.store` | POST | `auth:tenant_admin` | Tambah slide baru ke Carousel Hero Beranda (judul, subjudul, foto/video MP4, link & teks tombol, urutan). |
+| 17 | `/{tenant}/admin/profil/slider/{slider}` | `tenant.admin.profil.slider.update` | PUT | `auth:tenant_admin` | Perbarui slide Hero Banner Beranda. |
+| 18 | `/{tenant}/admin/profil/slider/{slider}` | `tenant.admin.profil.slider.destroy` | DELETE | `auth:tenant_admin` | Hapus slide Hero Banner Beranda. |
+| 19 | `/{tenant}/admin/program-keahlian` | `tenant.admin.jurusan.index` | GET | `auth:tenant_admin` | Manajemen Program Keahlian CMS (Katalog Jurusan, Hero Banner Publik, Visibilitas). |
 | 17 | `/{tenant}/admin/program-keahlian/hero` | `tenant.admin.jurusan.hero.update` | PUT | `auth:tenant_admin` | Simpan hero banner (judul, subjudul, gambar latar 16:9) halaman katalog jurusan. |
 | 18 | `/{tenant}/admin/program-keahlian` | `tenant.admin.jurusan.store` | POST | `auth:tenant_admin` | Tambah program keahlian baru (FK `guru_id`, sinkronisasi Media, slug). |
 | 19 | `/{tenant}/admin/program-keahlian/{jurusan}` | `tenant.admin.jurusan.update` | PUT | `auth:tenant_admin` | Perbarui data program keahlian. |

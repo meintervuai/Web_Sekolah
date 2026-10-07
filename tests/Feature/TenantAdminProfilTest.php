@@ -380,3 +380,67 @@ test('admin can perform CRUD operations on guru and tenaga kependidikan', functi
 
     expect(GuruStaf::find($guru->id))->toBeNull();
 });
+
+test('admin can perform CRUD operations on hero banner slider beranda', function () {
+    // 1. Create Slider
+    $storePayload = [
+        'judul' => 'Inovasi Digital Pendidikan Vokasi Unggul',
+        'subjudul' => 'Menghubungkan kurikulum industri masa depan dengan talenta siswa berdaya saing global.',
+        'gambar' => 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+        'video' => null,
+        'teks_tombol' => 'Jelajahi Program',
+        'link_tombol' => '/jurusan',
+        'urutan' => 1,
+        'is_aktif' => 1,
+    ];
+
+    $responseStore = $this->actingAs($this->admin, 'tenant_admin')
+        ->post('/smk-negeri-2-bandung/admin/profil/slider', $storePayload);
+
+    $responseStore->assertRedirect('/smk-negeri-2-bandung/admin/profil?tab=slider');
+    $responseStore->assertSessionHas('success');
+
+    $slider = \App\Models\Tenant\SliderBeranda::where('judul', 'Inovasi Digital Pendidikan Vokasi Unggul')->first();
+    expect($slider)->not->toBeNull()
+        ->and($slider->teks_tombol)->toBe('Jelajahi Program')
+        ->and($slider->link_tombol)->toBe('/jurusan')
+        ->and($slider->is_aktif)->toBeTrue();
+
+    // 2. Update Slider
+    $updatePayload = [
+        'judul' => 'Mencetak Generasi Unggul Siap Kerja',
+        'subjudul' => 'Pembelajaran berbasis proyek riil bersama mitra industri terkemuka.',
+        'gambar' => 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+        'video' => null,
+        'teks_tombol' => 'Daftar Sekarang',
+        'link_tombol' => '/spmb',
+        'urutan' => 2,
+        'is_aktif' => 1,
+    ];
+
+    $responseUpdate = $this->actingAs($this->admin, 'tenant_admin')
+        ->put("/smk-negeri-2-bandung/admin/profil/slider/{$slider->id}", $updatePayload);
+
+    $responseUpdate->assertRedirect('/smk-negeri-2-bandung/admin/profil?tab=slider');
+    $responseUpdate->assertSessionHas('success');
+
+    $slider->refresh();
+    expect($slider->judul)->toBe('Mencetak Generasi Unggul Siap Kerja')
+        ->and($slider->teks_tombol)->toBe('Daftar Sekarang')
+        ->and($slider->urutan)->toBe(2);
+
+    // 3. Check Homepage reflects the slider
+    $homeResponse = $this->get('/smk-negeri-2-bandung');
+    $homeResponse->assertStatus(200);
+    $homeResponse->assertSee('Mencetak Generasi Unggul Siap Kerja');
+    $homeResponse->assertSee('Daftar Sekarang');
+
+    // 4. Delete Slider
+    $responseDelete = $this->actingAs($this->admin, 'tenant_admin')
+        ->delete("/smk-negeri-2-bandung/admin/profil/slider/{$slider->id}");
+
+    $responseDelete->assertRedirect('/smk-negeri-2-bandung/admin/profil?tab=slider');
+    $responseDelete->assertSessionHas('success');
+
+    expect(\App\Models\Tenant\SliderBeranda::find($slider->id))->toBeNull();
+});

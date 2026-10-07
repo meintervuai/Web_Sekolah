@@ -442,6 +442,20 @@
     border-radius: var(--admin-radius-md);
 }
 
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
 .admin-modal-card {
     background-color: #ffffff;
     border-radius: var(--admin-radius-lg);
@@ -449,6 +463,7 @@
     overflow: hidden;
     border: 1px solid var(--admin-slate-200);
     width: 100%;
+    z-index: 61;
 }
 
 .admin-modal-header {
@@ -459,4 +474,5 @@
     justify-content: space-between;
     background-color: var(--admin-slate-50);
 }
+
 

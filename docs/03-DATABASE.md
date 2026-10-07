@@ -152,8 +152,8 @@ erDiagram
         bigint id PK
         bigint pengguna_id FK
         string judul
-        string gambar
-        string video
+        string gambar nullable
+        string video nullable
         integer urutan
     }
     HALAMAN_STATIS {

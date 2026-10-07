@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Konfigurasi Deployment Vercel Serverless] - 2026-10-06
+## [Fitur Pengaturan Hero Banner / Slider Beranda di Admin & Super Admin] - 2026-10-07
+
+### Added & Enhanced
+- **Refactor Tab Profil Sekolah**:
+  - Menghapus tab *Hero Banner Beranda* dari Panel Profil Sekolah (`/admin/profil`) dan mengembalikan tata letak admin menjadi 4 tab utama (Data Pokok Satuan Pendidikan, Profil Lengkap, Sejarah, Visi Misi).
+  - [resources/views/public/home.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/public/home.blade.php): Memperbarui rendering banner hero beranda publik agar menampilkan gradien tema sekolah yang elegan & bersih saat tanpa foto/media terpasang, serta gradien semi-transparan WCAG AA saat terpasang foto/video.
+  - [database/migrations/tenant/2026_10_07_024000_make_gambar_nullable_on_slider_beranda_table.php](file:///d:/databaru/Magang/website_sekolah/database/migrations/tenant/2026_10_07_024000_make_gambar_nullable_on_slider_beranda_table.php): Menjadikan kolom `gambar` nullable pada tabel `slider_beranda` untuk mendukung banner hero clean tanpa media foto/video terpasang.
+- **Integrasi Pintasan Super Admin**:
+  - [resources/views/central/tenants/show.blade.php](file:///d:/databaru/Magang/website_sekolah/resources/views/central/tenants/show.blade.php): Menambahkan tombol pintasan langsung *Lihat Website* dan *Panel Admin Sekolah* pada halaman detail tenant Super Admin.
+- **Pest Automated Feature Test**:
+  - [tests/Feature/TenantAdminProfilTest.php](file:///d:/databaru/Magang/website_sekolah/tests/Feature/TenantAdminProfilTest.php): Menambahkan automated feature test lengkap untuk menguji operasi CRUD Hero Banner Slider Beranda dan verifikasi penayangan di halaman publik beranda (12 tests passed, 122 assertions).
 
 ### Added
 - **Konfigurasi Serverless Vercel**:

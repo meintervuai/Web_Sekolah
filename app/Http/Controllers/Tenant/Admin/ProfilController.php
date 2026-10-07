@@ -8,6 +8,7 @@ use App\Models\Tenant\Menu;
 use App\Models\Tenant\Page;
 use App\Models\Tenant\PengaturanFitur;
 use App\Models\Tenant\PengaturanUmum;
+use App\Models\Tenant\SliderBeranda;
 use App\Models\Tenant\StrukturOrganisasi;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
@@ -190,6 +191,9 @@ class ProfilController extends Controller
             'guru_staf' => PengaturanFitur::isAktif('guru_staf', true),
         ];
 
+        // 7. Slider Hero Banner Beranda
+        $sliderList = SliderBeranda::orderBy('urutan')->get();
+
         return view('tenant.admin.profil.index', compact(
             'pengaturan',
             'halamanProfil',
@@ -202,7 +206,8 @@ class ProfilController extends Controller
             'guruList',
             'allGuru',
             'menuProfil',
-            'fiturProfil'
+            'fiturProfil',
+            'sliderList'
         ));
     }
 
@@ -623,6 +628,112 @@ class ProfilController extends Controller
     }
 
     /**
+     * Simpan slide hero banner baru untuk beranda.
+     */
+    public function storeSlider(Request $request, MediaService $mediaService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul' => ['required', 'string', 'max:200'],
+            'subjudul' => ['nullable', 'string', 'max:500'],
+            'media' => ['nullable', 'string', 'max:1000'],
+            'gambar' => ['nullable', 'string', 'max:1000'],
+            'video' => ['nullable', 'string', 'max:1000'],
+            'link_tombol' => ['nullable', 'string', 'max:255'],
+            'teks_tombol' => ['nullable', 'string', 'max:100'],
+            'urutan' => ['nullable', 'integer', 'min:0'],
+            'is_aktif' => ['nullable', 'boolean'],
+        ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        // Pemrosesan input media tunggal (cerdas mendeteksi gambar atau video)
+        $rawMedia = $request->input('media') ?: ($request->input('gambar') ?: $request->input('video'));
+        if (! empty($rawMedia)) {
+            $isVid = preg_match('/\.(mp4|webm|ogg|mov)(\?.*)?$/i', $rawMedia) || str_contains($rawMedia, 'youtube.com') || str_contains($rawMedia, 'youtu.be');
+            if ($isVid) {
+                $validated['video'] = $mediaService->sinkronisasiOtomatisUrl($rawMedia, $adminId, 'profil', 'Video Slide '.$validated['judul']);
+                $validated['gambar'] = null;
+            } else {
+                $validated['gambar'] = $mediaService->sinkronisasiOtomatisUrl($rawMedia, $adminId, 'profil', 'Slide '.$validated['judul']);
+                $validated['video'] = null;
+            }
+        } else {
+            $validated['gambar'] = null;
+            $validated['video'] = null;
+        }
+
+        unset($validated['media']);
+
+        $validated['pengguna_id'] = $adminId;
+        $validated['urutan'] = $validated['urutan'] ?? ((SliderBeranda::max('urutan') ?? 0) + 1);
+        $validated['is_aktif'] = $request->boolean('is_aktif', true);
+
+        SliderBeranda::create($validated);
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'slider'])
+            ->with('success', 'Slide banner hero beranda berhasil ditambahkan.');
+    }
+
+    /**
+     * Perbarui data slide hero banner beranda.
+     */
+    public function updateSlider(Request $request, SliderBeranda $slider, MediaService $mediaService): RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul' => ['required', 'string', 'max:200'],
+            'subjudul' => ['nullable', 'string', 'max:500'],
+            'media' => ['nullable', 'string', 'max:1000'],
+            'gambar' => ['nullable', 'string', 'max:1000'],
+            'video' => ['nullable', 'string', 'max:1000'],
+            'link_tombol' => ['nullable', 'string', 'max:255'],
+            'teks_tombol' => ['nullable', 'string', 'max:100'],
+            'urutan' => ['nullable', 'integer', 'min:0'],
+            'is_aktif' => ['nullable', 'boolean'],
+        ]);
+
+        $adminId = auth('tenant_admin')->id();
+
+        // Pemrosesan input media tunggal (cerdas mendeteksi gambar atau video)
+        $rawMedia = $request->input('media') ?: ($request->input('gambar') ?: $request->input('video'));
+        if (! empty($rawMedia)) {
+            $isVid = preg_match('/\.(mp4|webm|ogg|mov)(\?.*)?$/i', $rawMedia) || str_contains($rawMedia, 'youtube.com') || str_contains($rawMedia, 'youtu.be');
+            if ($isVid) {
+                $validated['video'] = $mediaService->sinkronisasiOtomatisUrl($rawMedia, $adminId, 'profil', 'Video Slide '.$validated['judul']);
+                $validated['gambar'] = null;
+            } else {
+                $validated['gambar'] = $mediaService->sinkronisasiOtomatisUrl($rawMedia, $adminId, 'profil', 'Slide '.$validated['judul']);
+                $validated['video'] = null;
+            }
+        } else {
+            $validated['gambar'] = null;
+            $validated['video'] = null;
+        }
+
+        unset($validated['media']);
+
+        $validated['is_aktif'] = $request->boolean('is_aktif', true);
+
+        $slider->update($validated);
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'slider'])
+            ->with('success', 'Slide banner hero beranda berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus slide hero banner beranda.
+     */
+    public function destroySlider(SliderBeranda $slider): RedirectResponse
+    {
+        $slider->delete();
+
+        return redirect()
+            ->route('tenant.admin.profil.index', ['tenant' => app('tenant')->slug, 'tab' => 'slider'])
+            ->with('success', 'Slide banner hero beranda berhasil dihapus.');
+    }
+
+    /**
      * Sakelar visibilitas menu/modul eksklusif kewenangan Super Admin.
      */
     public function toggleMenu(Request $request): JsonResponse|RedirectResponse
@@ -639,3 +750,4 @@ class ProfilController extends Controller
             ->with('error', 'Akses ditolak: Visibilitas modul hanya dapat diatur oleh Super Admin.');
     }
 }
+
